@@ -476,7 +476,7 @@ if (!EMBED) {
   /* pagos (varios a la vez) */
   var pw = seg('');
   var PW = [['deposit', 'Depósito'], ['taxes', 'Tasas'], ['reservation', 'Pago reserva']];
-  var pwGet = function(){ try { return JSON.parse(localStorage.getItem('replica-gc-payments') || '[]'); } catch (e) { return []; } };
+  var pwGet = function(){ try { return JSON.parse(localStorage.getItem('replica-gc-payments') || '["reservation"]'); } catch (e) { return []; } };
   var pwPaint = function(){ var on = pwGet(); [].forEach.call(pw.querySelectorAll('[data-pw]'), function(c){ c.classList.toggle('on', on.indexOf(c.getAttribute('data-pw')) > -1); }); };
   pw.innerHTML = PW.map(function(g){ return '<button type="button" class="rs-chip" data-pw="' + g[0] + '">' + g[1] + '</button>'; }).join('');
   pw.addEventListener('click', function(e){

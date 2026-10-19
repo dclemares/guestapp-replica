@@ -88,7 +88,7 @@ var money = function(n){ return es2(n) + '\u20ac'; };
 var money2 = function(n){ return es2(n) + '\u20ac'; };   /* formato es-ES: 24,00€ (la producción usaba 24.00€) */
 var secure = 'Secured by Stripe with 3D Secure. Your card details never touch our servers.';
 /* ---------- V7 · Resumen: tarjeta «Order summary» (como «Who are we registering?») + una tarjeta por item (como «What's next») ---------- */
-var pays = function(){ var raw = null; try { raw = localStorage.getItem('replica-gc-payments'); } catch (e) {} if (raw === null) return ['taxes', 'deposit']; try { var a = JSON.parse(raw); return a && a.length ? a : []; } catch (e) { return ['taxes', 'deposit']; } };   /* sin tocar Controles → tasas + depósito; todo desmarcado → nada que pagar */
+var pays = function(){ var raw = null; try { raw = localStorage.getItem('replica-gc-payments'); } catch (e) {} if (raw === null) return ['reservation']; try { var a = JSON.parse(raw); return a && a.length ? a : []; } catch (e) { return ['taxes', 'deposit']; } };   /* sin tocar Controles → tasas + depósito; todo desmarcado → nada que pagar */
 /* ---------- V7 · cuatro versiones de la tarjeta de item (control «Tarjetas items») ---------- */
 var kebab7 = function(o){ return '<span class="pv7-kw"><button type="button" class="pv7-kb" data-m aria-label="Options for ' + o.t + '" aria-expanded="false">' + ic('dots') + '</button><div class="pv-menu" hidden>'
   + '<span class="pv-mh" aria-hidden="true"><i></i><b>' + o.t + '</b><em>' + (o.amt || '') + '</em></span>' + o.menu.map(function(x){ return x[2] ? '<button type="button" data-pp="' + x[2] + '">' + x[1] + '</button>' : '<button type="button" data-go="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div></span>'; };

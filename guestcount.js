@@ -68,7 +68,7 @@ paint = function(){ _paint(); var m = root.querySelector('[data-gc="max"]'); if 
   renderPeople(); paintReq(); };
 /* what the guest has to do before arriving: register everyone, plus the payments selected in the replica panel (Controles > Pagos) */
 var PAY = { deposit: ['Security deposit', 'Held on your card, released after your stay.'], taxes: ['Tourist tax', 'Per guest and night.'], reservation: ['Reservation payment', 'Pending amount for your booking.'] };
-function payments(){ try { return JSON.parse(localStorage.getItem('replica-gc-payments') || '[]').filter(function(k){ return PAY[k]; }); } catch (e) { return []; } }
+function payments(){ try { return JSON.parse(localStorage.getItem('replica-gc-payments') || '["reservation"]').filter(function(k){ return PAY[k]; }); } catch (e) { return []; } }
 function paintReq(){
   var box = $('req'); if (!box) return;
   var n = 0, row = function(t, sub){ n++; return '<li><span class="gcw-req__n">' + n + '</span><div><b>' + t + '</b><span>' + sub + '</span></div></li>'; };

@@ -47,7 +47,7 @@ var csw = document.createElement('div'); csw.className = 'chk-cs';
 csw.innerHTML = '<button type="button" data-st="new">Sin empezar</button><button type="button" data-st="way">En camino</button><button type="button" data-st="done">Completado</button>';
 function ensureIcons(){ [].forEach.call(document.querySelectorAll('.chk-vn4 .chk-cta'), function(c){ if (!c.querySelector('.chk-eye')) c.insertAdjacentHTML('beforeend', EYE + CHV + DOC + LUPA); }); }
 /* Pagos activos (Controles > Pagos): sin ninguno se oculta la fila; con alguno, título/descripción/CTA se adaptan */
-function paySel(){ try { return JSON.parse(localStorage.getItem('replica-gc-payments') || '[]').filter(function(k){ return ['deposit', 'taxes', 'reservation'].indexOf(k) > -1; }); } catch (e) { return []; } }
+function paySel(){ try { return JSON.parse(localStorage.getItem('replica-gc-payments') || '["reservation"]').filter(function(k){ return ['deposit', 'taxes', 'reservation'].indexOf(k) > -1; }); } catch (e) { return []; } }
 /* importes de demo: reservation = el de siempre (€12.00); tasa = 2 huéspedes × 2 noches × €1; depósito = €100 */
 var PAYAMT = { deposit: 100, taxes: 4, reservation: 12 };
 var eur = function(n){ return '€' + n.toFixed(2); };

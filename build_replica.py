@@ -297,4 +297,11 @@ figcaption a{margin-right:8px;color:#385bf8;text-decoration:none;font-weight:600
 %s</main></body></html>''' % cards
 open(os.path.join(SITE, 'screens.html'), 'w', encoding='utf-8').write(index)   # índice de pantallas
 shutil.copy(os.path.join(HERE, 'split.html'), os.path.join(SITE, 'index.html'))   # entrada por defecto: mockup móvil + escritorio
+# interfaz del prototipo en inglés: panel «Controls», barras de mockup e índice (traducción en tiempo de ejecución)
+shutil.copy(os.path.join(HERE, 'i18n-en.js'), os.path.join(SITE, 'assets', 'i18n-en.js'))
+for _p in glob.glob(os.path.join(SITE, '*.html')) + glob.glob(os.path.join(SITE, 'screens', '*.html')):
+    _t = open(_p, encoding='utf-8').read()
+    _rel = '../assets/' if os.sep + 'screens' + os.sep in _p else 'assets/'
+    if 'i18n-en.js' not in _t and '</body>' in _t:
+        open(_p, 'w', encoding='utf-8').write(_t.replace('</body>', '<script src="%si18n-en.js"></script></body>' % _rel, 1))
 print('done', sum(len(v) for v in screens.values()), 'pages')
