@@ -167,7 +167,7 @@ var v7 = function(){
   var items = [];
   if (tax) items.push({ k: 'tax', val: T, n: 0, icon: 'coins', t: 'Tourist taxes', s: TX.s, amt: money2(T), fee: FT, menu: [['cart-exemptions', 'Edit and see how it works'], ['', 'Postpone payment', 'pp:taxes']] });
   if (res) items.push({ k: 'res', val: R, n: 1, icon: 'card', t: 'Reservation payment', s: 'Due before check-in', amt: money2(R), fee: FR, menu: [['', 'Postpone payment', 'pp:reservation']] });
-  if (dep) items.push({ k: 'dep', val: D.auth, n: 2, icon: 'shield', dash: true, t: 'Security deposit', s: hold ? 'Held on your card' : 'Authorised only', amt: money2(D.auth), fee: FD, menu: [['pay-1-protection', 'See how it works and edit protection']] });
+  if (dep) items.push({ k: 'dep', val: D.auth, n: 2, icon: 'shield', dash: true, t: 'Security deposit', s: hold ? 'Held on your card' : 'Authorised only', amt: money2(D.auth), fee: FD, menu: [['pay-1-protection', 'Edit and see how it works']] });
   var cards = items.map(function(o){ return itemCard(o, tc); }).join('');
   var late = [];
   if (taxP) late.push({ k: 'tax', val: T, n: 0, icon: 'coins', t: 'Tourist taxes', s: TX.s, amt: money2(T), fee: FTp, due: 'Due before check-out', menu: [['', 'Pay now', 'pn:taxes'], ['cart-exemptions', 'Edit and see how it works']] });
