@@ -456,3 +456,8 @@ aside[data-slot="assistant-panel"]{overflow-y:auto!important}
 
 /* la barra superior fija es opaca en el guidebook: al saltar a una sección no se ve texto de la anterior por detrás */
 html body .bk-bar{background:rgb(245,245,247)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+
+/* cabecera Cristal sobre duotono: el duotono se hace con una capa de color normal (sin mix-blend-mode, que anula el desenfoque del cristal en algunos navegadores) */
+#gbs .gb-hd.gh6>img{mix-blend-mode:normal!important;opacity:1!important;filter:grayscale(1) contrast(1.08);z-index:0}
+#gbs .gb-hd.gh6::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(135deg,rgba(21,21,63,.8) 0%,rgba(46,75,208,.7) 100%)}
+#gbs .gb-hd.gh6 .gh6-gl{z-index:2;isolation:isolate;background:linear-gradient(135deg,rgba(255,255,255,.34),rgba(255,255,255,.12))!important;-webkit-backdrop-filter:blur(22px) saturate(1.7)!important;backdrop-filter:blur(22px) saturate(1.7)!important;box-shadow:0 18px 40px -20px rgba(10,10,40,.65)}
