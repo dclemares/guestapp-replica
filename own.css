@@ -129,3 +129,6 @@ aside[data-slot="assistant-panel"].vt3>p{display:none}
 
 /* panel de ofertas de Vela: sin scroll de ningún tipo (clip impide incluso el desplazamiento programático) */
 aside:has(.rail-vela){overflow:clip!important}
+
+/* la barra de navegación fija con efecto cristal real: el clip-path que usaba para dejar ver su sombra anulaba el desenfoque del fondo */
+html body .bk-bar{clip-path:none!important}

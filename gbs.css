@@ -454,8 +454,8 @@ aside[data-slot="assistant-panel"]>p{display:none}
 .vl4 .vlh b{display:none}.vl4 .vlh{margin:12px 0 6px}
 aside[data-slot="assistant-panel"]{overflow-y:hidden!important}
 
-/* la barra superior fija es opaca en el guidebook: al saltar a una sección no se ve texto de la anterior por detrás */
-html body .bk-bar{background:rgb(245,245,247)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+/* la barra superior fija (navegación) con efecto cristal como el resto de tarjetas; el desenfoque fuerte deja ilegible lo que pasa por detrás */
+html body .bk-bar{background:rgba(245,245,247,.74)!important;-webkit-backdrop-filter:blur(26px) saturate(1.7)!important;backdrop-filter:blur(26px) saturate(1.7)!important}
 
 /* cabecera Cristal sobre duotono: el duotono se hace con una capa de color normal (sin mix-blend-mode, que anula el desenfoque del cristal en algunos navegadores) */
 #gbs .gb-hd.gh6>img{mix-blend-mode:normal!important;opacity:1!important;filter:grayscale(1) contrast(1.08);z-index:0}
@@ -480,3 +480,8 @@ aside[data-slot="assistant-panel"]>section{flex:1 1 auto;display:flex;flex-direc
 aside[data-slot="assistant-panel"] .vl{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
 .vl-oth{flex:1 1 auto;border-radius:18px 18px 0 0;margin-bottom:calc(-1 * var(--vl-pb,56px));padding-bottom:calc(var(--vl-pb,56px) + 14px);align-content:start}
 .vf2 .vl-oth{padding-bottom:calc(var(--vl-pb,56px) + 10px)}
+
+/* «Other guidebooks»: pegada al borde inferior con el alto de su contenido (poco espacio bajo la última guía), no estirada hasta arriba */
+.vl-oth{flex:0 0 auto!important;margin-top:auto}
+aside[data-slot="assistant-panel"] .vl{justify-content:flex-start}
+.vl-cur{margin-bottom:18px}
