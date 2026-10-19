@@ -845,4 +845,15 @@ if (document.readyState !== 'loading' && !barDone) { barDone = true; addBar(); }
   }, true);
 })();
 
-
+/* Vela nunca recorta ni esconde: si el contenido del panel no cabe en la altura de la ventana, se compacta por niveles (vt1–vt3) */
+(function(){
+  var run = function(){
+    var a = document.querySelector('aside[data-slot="assistant-panel"]'); if (!a || a.querySelector('.vl') || document.querySelector('.rail-vela')) return;
+    ['vt1', 'vt2', 'vt3'].forEach(function(c){ a.classList.remove(c); });
+    for (var n = 0; n <= 3; n++) { if (n) a.classList.add('vt' + n); if (a.scrollHeight <= a.clientHeight + 1) break; }
+  };
+  var t = null, sched = function(){ clearTimeout(t); t = setTimeout(run, 120); };
+  window.addEventListener('resize', sched);
+  [300, 900, 2000].forEach(function(ms){ setTimeout(run, ms); });
+  try { new MutationObserver(sched).observe(document.body, { childList: true, subtree: true }); } catch (e) {}
+})();

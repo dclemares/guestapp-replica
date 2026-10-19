@@ -116,3 +116,16 @@
 .sec-h h2,.vela-heading>b{display:block;margin:0;font-family:Poppins,-apple-system,system-ui,sans-serif!important;font-size:18.4px!important;line-height:22.4px!important;font-weight:600!important;letter-spacing:-.015em!important;color:#161643!important}
 .sec-h h2 span{color:#385bf8}   /* el degradado lo pinta titles.js sobre el título entero */
 .sec-h p,.vela-heading>p{margin:4px 0 0!important;font-family:Poppins,system-ui,sans-serif!important;font-size:14px!important;line-height:21px!important;font-weight:500!important;color:#6b6b95!important}
+
+/* Vela compacta (vt1–vt3) para que el contenido quepa sin recortes */
+aside[data-slot="assistant-panel"].vt1 .vc-chip{padding:7px 11px;font-size:12.5px;line-height:17px}
+aside[data-slot="assistant-panel"].vt1 .pc-th,aside[data-slot="assistant-panel"].vt1 .pq-th{gap:6px}
+aside[data-slot="assistant-panel"].vt2 .vc-chip{padding:5px 10px;font-size:12px;line-height:16px}
+aside[data-slot="assistant-panel"].vt2 .pc-sg,aside[data-slot="assistant-panel"].vt2 .pq-ch{gap:4px;margin-top:4px}
+aside[data-slot="assistant-panel"].vt2>p{margin-top:8px}
+aside[data-slot="assistant-panel"].vt3 .vc-chip{padding:4px 9px;font-size:11.5px;line-height:15px}
+aside[data-slot="assistant-panel"].vt3 .vc-a,aside[data-slot="assistant-panel"].vt3 .vc-q{font-size:12px;line-height:17px}
+aside[data-slot="assistant-panel"].vt3>p{display:none}
+
+/* panel de ofertas de Vela: sin scroll de ningún tipo (clip impide incluso el desplazamiento programático) */
+aside:has(.rail-vela){overflow:clip!important}

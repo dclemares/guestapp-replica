@@ -1,6 +1,8 @@
 (function(){
 'use strict';
 var root = document.querySelector('.rail-multi'); if (!root) return;
+/* el panel de ofertas de Vela nunca hace scroll, tampoco el que provocan un foco o un scrollIntoView: se devuelve siempre a 0 */
+(function(){ var as = root.closest('aside'); if (!as) return; var back = function(){ if (as.scrollTop) as.scrollTop = 0; if (root.scrollTop) root.scrollTop = 0; }; as.addEventListener('scroll', back, true); setInterval(back, 400); })();
 var v = new URLSearchParams(location.search).get('rail') || 'actual';
 root.setAttribute('data-rail', v);
 var _sp = new URLSearchParams(location.search).get('set'), SET = _sp === null ? 'htfe' : _sp.toLowerCase().replace(/[^htfe]/g, '');   /* set vacío = ninguna oferta */

@@ -413,7 +413,7 @@ if (document.readyState !== 'loading') init(); else document.addEventListener('D
       var reveal = function(root, cb){ var t = root.querySelector('.ty.on'); if (!t) { if (cb) cb(); return; } if (window.__velaLoad) window.__velaLoad(t, cb); else setTimeout(function(){ t.classList.remove('on'); if (cb) cb(); }, 600); };
       var qBub = function(t){ return '<div class="vc-q">' + t + '</div>'; };
       var xchg = function(i, typing){ var x = document.createElement('div'); x.className = 'pc-x'; x.setAttribute('data-i', i); x.innerHTML = qBub(Q[i].t) + bubA(Q[i].a, typing); return x; };
-      var fitH = function(el, reserve, fixed){ var t = el.getBoundingClientRect().top - asd.getBoundingClientRect().top, h = Math.max(QR ? 100 : 140, asd.clientHeight - t - 56 - QR - (reserve ? reserve() : 0)) + 'px'; el.style[fixed ? 'height' : 'maxHeight'] = h; };
+      var fitH = function(el, reserve, fixed){ var t = el.getBoundingClientRect().top - asd.getBoundingClientRect().top, h = Math.max(QR ? 64 : 72, asd.clientHeight - t - 56 - QR - (reserve ? reserve() : 0)) + 'px'; el.style[fixed ? 'height' : 'maxHeight'] = h; };
       var down = function(el){ el.scrollTo({ top: el.scrollHeight, behavior: RM ? 'auto' : 'smooth' }); };
       var toTop = function(el, x){ el.scrollTo({ top: Math.max(0, x.offsetTop - el.offsetTop), behavior: RM ? 'auto' : 'smooth' }); };   /* la pregunta recién hecha queda arriba del hilo y su respuesta debajo */
       var wrapRefit = function(fn){ addEventListener('resize', function(){ setTimeout(fn, 60); }); setTimeout(fn, 0); setTimeout(fn, 400); };

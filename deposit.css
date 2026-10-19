@@ -161,3 +161,27 @@
 .dp-vfi button{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:11px 0;border:0;background:none;text-align:left;font:600 12.5px/17px Poppins,system-ui,sans-serif;color:#161643;cursor:pointer}
 .dp-vfi button svg{flex:none;color:#9a9ab8;transition:transform .18s ease}.dp-vfi.open button svg{transform:rotate(180deg)}
 .dp-vfi p{margin:-3px 0 0;padding:0 0 12px;font-size:12px;line-height:17px;color:#6b6b95}
+
+/* CTA de texto «Continue with protection» a la derecha del botón principal, dentro del cuadro azul (escritorio) */
+.dp-bact{display:flex;align-items:center;gap:6px}
+.dp-tl{display:none;flex:none;padding:10px 12px;border:0;background:transparent;color:#fff;font:600 14px/20px inherit;font-family:inherit;white-space:nowrap;cursor:pointer;border-radius:10px;transition:background .15s}
+.dp-tl:hover{background:rgba(255,255,255,.12)}.dp-tl:focus-visible{outline:2px solid #fff;outline-offset:2px}
+@media (min-width:1024px){
+  .dp-tl{display:inline-flex}
+  .dp-bft .dp-bact .tx-go-w{width:220px}
+}
+@media (min-width:1024px){
+  .dp-bft{flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:12px}
+  .dp-bft p{order:0;max-width:none}.dp-bft .dp-bact{order:1}
+  .dp-bft .dp-bact .tx-go-w{width:240px}
+}
+
+/* la línea del recorrido llega hasta el centro de cada círculo y un semicírculo transparente (radio del círculo + 4 px) la corta, así acaba siguiendo su circunferencia */
+.dp-mtl li:not(:last-child)::before{top:18px;bottom:-18px;
+  -webkit-mask-image:radial-gradient(circle 22px at 50% 0,transparent 21.5px,#000 22px),radial-gradient(circle 22px at 50% 100%,transparent 21.5px,#000 22px);-webkit-mask-composite:source-in;
+  mask-image:radial-gradient(circle 22px at 50% 0,transparent 21.5px,#000 22px),radial-gradient(circle 22px at 50% 100%,transparent 21.5px,#000 22px);mask-composite:intersect}
+@media (min-width:1024px){
+  .dp-mtl li:not(:last-child)::before,.dp-mtl li.ln.hold::before,.dp-mtl li.ln.cov::before,.dp-mtl li.ln.saved::before{left:50%;right:calc(-50% - 12px);bottom:auto;
+    -webkit-mask-image:radial-gradient(circle 22px at 0 50%,transparent 21.5px,#000 22px),radial-gradient(circle 22px at 100% 50%,transparent 21.5px,#000 22px);-webkit-mask-composite:source-in;
+    mask-image:radial-gradient(circle 22px at 0 50%,transparent 21.5px,#000 22px),radial-gradient(circle 22px at 100% 50%,transparent 21.5px,#000 22px);mask-composite:intersect}
+}

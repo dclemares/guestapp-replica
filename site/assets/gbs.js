@@ -309,6 +309,7 @@ var apply = function(){
         /* Vela nunca hace scroll ni esconde nada: si la lista no cabe en la altura de la ventana, se compacta nivel a nivel */
         var fitVl = function(){
           var h = document.querySelector('aside[data-slot="assistant-panel"] .vl'), a2 = h && h.closest('aside'); if (!h || !a2) return;
+          try { h.style.setProperty('--vl-pb', getComputedStyle(a2).paddingBottom); } catch (er) {}
           h.className = h.className.replace(/\bvf\d\b/g, '').replace(/\s+/g, ' ').trim();
           for (var n = 0; n <= 5; n++) { if (n) h.classList.add('vf' + n); if (a2.scrollHeight <= a2.clientHeight + 1) break; }
         };

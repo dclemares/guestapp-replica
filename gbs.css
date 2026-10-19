@@ -474,3 +474,9 @@ html body .bk-bar{background:rgb(245,245,247)!important;-webkit-backdrop-filter:
 .vf4 .vl-cur{display:grid;grid-template-columns:1fr 1fr;gap:0 4px}.vf4 .vl-cur .vlh{grid-column:1/-1}
 .vf4 .vl-cur .vl1r{padding:4px 6px}.vf4 .vl-cur .vl-ch{display:none}
 .vf5 .vl1r.o .ic{display:none}.vf5 .vl-oth{padding:8px}.vf5 .vlh{margin-bottom:4px}
+
+/* «Other guidebooks» nace del borde inferior de Vela: recta por abajo, sin hueco debajo, y ocupa lo que quede de alto */
+aside[data-slot="assistant-panel"]>section{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
+aside[data-slot="assistant-panel"] .vl{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
+.vl-oth{flex:1 1 auto;border-radius:18px 18px 0 0;margin-bottom:calc(-1 * var(--vl-pb,56px));padding-bottom:calc(var(--vl-pb,56px) + 14px);align-content:start}
+.vf2 .vl-oth{padding-bottom:calc(var(--vl-pb,56px) + 10px)}

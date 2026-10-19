@@ -85,7 +85,7 @@ var qaList = function(T){
 /* ---------- versiones sobre el cuadro azul: V10 · Una caja, V15 · Cobrado vs retenido, V16 · Mix V15 + V4 ---------- */
 var heldTxt = function(T, id){ return T[id].held ? '+ ' + money(T[id].held) + ' held, not charged' : (id === 'premium' ? 'No hold, no deposit' : 'Nothing held — your card is saved'); };
 var bseg = function(T){ return '<div class="dp-bseg" role="radiogroup" aria-label="Cover">' + ['deposit', 'premium'].map(function(o){ var on = st.choice === o; return '<button type="button" role="radio" aria-checked="' + on + '" class="dp-bsb' + (on ? ' on' : '') + '" data-dp="pick" data-v="' + o + '">' + T[o].name + (o === 'premium' ? '<em>Recommended</em>' : '') + '</button>'; }).join('') + '</div>'; };
-var boxFoot = function(){ return '<div class="dp-bft"><button type="button" class="tx-go tx-go-w" data-dp="go">Confirm and continue</button><p>This property requires one of the two. You can change this later from the cart, until you pay.</p></div>'; };
+var boxFoot = function(){ return '<div class="dp-bft"><div class="dp-bact"><button type="button" class="tx-go tx-go-w" data-dp="go">Confirm and continue</button>' + (st.choice !== 'premium' ? '<button type="button" class="dp-tl" data-dp="withprot">Continue with protection</button>' : '') + '</div><p>This property requires one of the two. You can change this later from the cart, until you pay.</p></div>'; };
 /* V10 · Una caja: el selector, el número y lo esencial, todo dentro del cuadro azul */
 var v10 = function(T){
   if (!st.choice) set('deposit');
@@ -162,6 +162,7 @@ document.addEventListener('click', function(e){
   e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
   var a = b.getAttribute('data-dp'), v = b.getAttribute('data-v');
   if (a === 'go') { if (st.choice) go(st.choice); return; }
+  if (a === 'withprot') { go('premium'); return; }
   if (a === 'skip') { LSset('replica-dep-choice', 'none'); go(''); return; }
   if (a === 'pick') set(v); else if (a === 'tg') st.open[v] = !st.open[v];
   else if (a === 'ask') st.ask = parseInt(v, 10);
