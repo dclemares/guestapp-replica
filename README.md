@@ -4,6 +4,10 @@ A static, click-through replica of the Chekin **guest app v2**, used to prototyp
 
 It is built from DOM snapshots of the staging app plus a layer of our own scripts and styles, so the screens keep the original components and look, and every flow can be walked through with real clicks. Nothing is saved anywhere: completing a flow never changes other screens, and reloading resets everything.
 
+## Live demo
+
+The `site/` folder is deployed to GitHub Pages on every push to `main`: https://dclemares.github.io/guestapp-replica/
+
 ## Run it
 
 The `site/` folder is the ready-to-use build. Serve it with any static server:

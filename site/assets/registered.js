@@ -142,7 +142,7 @@ function processing(){
   return '<div class="rg-pw"><div class="rg-pring" data-st="run"><svg viewBox="0 0 140 140" width="148" height="148" aria-hidden="true"><circle class="trk" cx="70" cy="70" r="60"/><circle class="arc" cx="70" cy="70" r="60"/></svg>'
     + '<span class="rg-pi u">' + ic('<circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 0 0-16 0"/>', 40) + '</span><span class="rg-pi k">' + I.ok + '</span><span class="rg-pi e">' + I2.warn + '</span></div>'
     + '<h1 class="rg-ph" role="status" aria-live="polite">Registering ' + esc(FIRST) + '…</h1><p class="rg-ps">Just a moment, this only takes a few seconds.</p>'
-    + '<ol class="rg-steps">' + steps.map(function(t, i){ return '<li data-i="' + i + '" class="pend"><span class="rg-sd"><i class="sp"></i><b class="ck">' + I.okS + '</b><b class="xx">' + I2.x + '</b></span><span class="rg-sl">' + t[0] + '</span></li>'; }).join('') + '</ol></div>'
+    + '<ol class="rg-steps">' + steps.map(function(t, i){ return '<li data-i="' + i + '" class="pend"><span class="rg-sd"><i class="sp"></i><b class="rg-stk">' + I.okS + '</b><b class="xx">' + I2.x + '</b></span><span class="rg-sl">' + t[0] + '</span></li>'; }).join('') + '</ol></div>'
     + '<p class="rg-pnote">' + I2.shield + 'Your details are saved on this device until we confirm</p>';
 }
 function failed(){
