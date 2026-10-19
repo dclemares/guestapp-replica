@@ -85,14 +85,14 @@ var qaList = function(T){
 /* ---------- versiones sobre el cuadro azul: V10 · Una caja, V15 · Cobrado vs retenido, V16 · Mix V15 + V4 ---------- */
 var heldTxt = function(T, id){ return T[id].held ? '+ ' + money(T[id].held) + ' held, not charged' : (id === 'premium' ? 'No hold, no deposit' : 'Nothing held — your card is saved'); };
 var bseg = function(T){ return '<div class="dp-bseg" role="radiogroup" aria-label="Cover">' + ['deposit', 'premium'].map(function(o){ var on = st.choice === o; return '<button type="button" role="radio" aria-checked="' + on + '" class="dp-bsb' + (on ? ' on' : '') + '" data-dp="pick" data-v="' + o + '">' + T[o].name + (o === 'premium' ? '<em>Recommended</em>' : '') + '</button>'; }).join('') + '</div>'; };
-var boxFoot = function(){ return '<div class="dp-bft"><div class="dp-bact"><button type="button" class="tx-go tx-go-w" data-dp="go">Confirm and continue</button>' + (st.choice !== 'premium' ? '<button type="button" class="dp-tl" data-dp="withprot">Continue with protection</button>' : '') + '</div><p>This property requires one of the two. You can change this later from the cart, until you pay.</p></div>'; };
+var boxFoot = function(T){ return '<div class="dp-bft"><div class="dp-bact"><button type="button" class="tx-go tx-go-w" data-dp="go">Confirm and continue</button>' + (!T.c.req ? '<button type="button" class="dp-tl" data-dp="skip">Continue without protection</button>' : '') + '</div><p>This property requires one of the two. You can change this later from the cart, until you pay.</p></div>'; };
 /* V10 · Una caja: el selector, el número y lo esencial, todo dentro del cuadro azul */
 var v10 = function(T){
   if (!st.choice) set('deposit');
   var id = st.choice;
   return '<div class="dp-bx dp-bx10">' + bseg(T)
     + '<div class="dp-bbig"><small>Charged today</small><b>' + money(T[id].charged) + '</b><span>' + heldTxt(T, id) + '</span></div>'
-    + '<ul class="dp-bfl">' + T[id].facts.map(function(f){ return '<li>' + ic(/Non-refundable|fee is charged/.test(f) ? 'info' : 'chk', 14) + f + '</li>'; }).join('') + '</ul>' + boxFoot() + '</div>';
+    + '<ul class="dp-bfl">' + T[id].facts.map(function(f){ return '<li>' + ic(/Non-refundable|fee is charged/.test(f) ? 'info' : 'chk', 14) + f + '</li>'; }).join('') + '</ul>' + boxFoot(T) + '</div>';
 };
 /* V15 · Cobrado vs retenido: dos contadores y una barra de tiempo que muestra cuánto dura cada cosa */
 var v15 = function(T){
@@ -103,7 +103,7 @@ var v15 = function(T){
   var seg = id === 'premium' ? { from: 1, to: 2, cls: 'cov', t: 'Covered up to ' + money(LIMIT) } : (c.hold ? { from: 0, to: 3, cls: 'hold', t: money(AUTH) + ' held — released ' + T.relTxt } : { from: 0, to: 2, cls: 'saved', t: 'Card saved — charged only if damage is reported' });
   var n = nodes.length;
   var bar = '<div class="dp-tb" style="--n:' + n + '"><div class="dp-tbl"><i class="dp-tbs ' + seg.cls + '" style="left:' + (seg.from / (n - 1) * 100) + '%;width:' + ((seg.to - seg.from) / (n - 1) * 100) + '%"></i>' + nodes.map(function(x, i){ return '<i class="dp-tbn" style="left:' + (i / (n - 1) * 100) + '%"></i>'; }).join('') + '</div><div class="dp-tbx">' + nodes.map(function(x, i){ return '<span style="left:' + (i / (n - 1) * 100) + '%">' + x + '</span>'; }).join('') + '</div><p class="dp-tbt ' + seg.cls + '">' + seg.t + '</p></div>';
-  return '<div class="dp-bx dp-bx15">' + bseg(T) + counters + '<span class="dp-bey">How long it lasts</span>' + bar + boxFoot() + '</div>';
+  return '<div class="dp-bx dp-bx15">' + bseg(T) + counters + '<span class="dp-bey">How long it lasts</span>' + bar + boxFoot(T) + '</div>';
 };
 
 /* V16 · Mix V15 + V4: la caja de V15 (selector + cobrado / retenido) con la línea de tiempo vertical de V4; la línea se colorea mientras dura cada cosa */
@@ -119,7 +119,7 @@ var v16 = function(T){
   var seg = id === 'premium' ? { from: 1, to: 2, cls: 'cov', t: 'Covered up to ' + money(LIMIT) + ' while you stay' } : (c.hold ? { from: 0, to: 3, cls: 'hold', t: money(AUTH) + ' held — released ' + T.relTxt } : { from: 0, to: 2, cls: 'saved', t: 'Card saved — charged only if damage is reported' });
   var tl = '<ol class="dp-mtl">' + steps.map(function(s, i){ var inSeg = i >= seg.from && i <= seg.to, line = i >= seg.from && i < seg.to;
     return '<li class="' + (inSeg ? 'in ' + seg.cls : '') + (line ? ' ln' : '') + '"><span class="dp-mti">' + ic(s[0], 16) + '</span><span class="dp-mtt"><small>' + s[1] + '</small><b>' + s[2] + '</b><span>' + s[3] + '</span></span></li>'; }).join('') + '</ol>';
-  return '<div class="dp-bx dp-bx16">' + bseg(T) + counters + '<span class="dp-bey">What happens to your money</span>' + tl + '<p class="dp-tbt ' + seg.cls + '">' + seg.t + '</p>' + boxFoot() + '</div>';
+  return '<div class="dp-bx dp-bx16">' + bseg(T) + counters + '<span class="dp-bey">What happens to your money</span>' + tl + '<p class="dp-tbt ' + seg.cls + '">' + seg.t + '</p>' + boxFoot(T) + '</div>';
 };
 var VIEWS = { '10': v10, '15': v15, '16': v16 };
 

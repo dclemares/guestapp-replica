@@ -186,3 +186,6 @@
 @media (max-width:1023.98px){
   .dp-mtl li:not(:last-child)::before{top:42px;bottom:0}
 }
+
+/* «Continue without protection» va dentro del cuadro azul en escritorio (a la derecha del botón principal); debajo de la caja solo en móvil */
+@media (min-width:1024px){.dp-v10 .dp-cta .dp-skip,.dp-v15 .dp-cta .dp-skip,.dp-v16 .dp-cta .dp-skip{display:none}}
