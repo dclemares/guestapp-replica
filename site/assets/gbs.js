@@ -306,6 +306,13 @@ var apply = function(){
           var b2 = ev.target.closest('[data-b]'); if (b2) { var u = new URL(location.href); u.searchParams.set('g', b2.getAttribute('data-b')); location.href = u.toString(); }
         });
         sc.setAttribute('data-gl', '1');
+        /* Vela nunca hace scroll ni esconde nada: si la lista no cabe en la altura de la ventana, se compacta nivel a nivel */
+        var fitVl = function(){
+          var h = document.querySelector('aside[data-slot="assistant-panel"] .vl'), a2 = h && h.closest('aside'); if (!h || !a2) return;
+          h.className = h.className.replace(/\bvf\d\b/g, '').replace(/\s+/g, ' ').trim();
+          for (var n = 0; n <= 5; n++) { if (n) h.classList.add('vf' + n); if (a2.scrollHeight <= a2.clientHeight + 1) break; }
+        };
+        fitVl(); setTimeout(fitVl, 300); setTimeout(fitVl, 1200); window.addEventListener('resize', fitVl);
         if (!window.__vlSpy) { window.__vlSpy = 1; var spy2 = function(){ var cur = 0; [].forEach.call(document.querySelectorAll('#gbs .sh-s[id^="gs-"]'), function(s, i){ if (s.getBoundingClientRect().top < 160) cur = i; }); [].forEach.call(document.querySelectorAll('aside[data-slot="assistant-panel"] [data-gi]'), function(e){ e.classList.toggle('on', e.getAttribute('data-gi') === String(cur)); }); }; window.addEventListener('scroll', spy2, true); setInterval(spy2, 600); }
         return true;
       }
