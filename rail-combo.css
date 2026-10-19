@@ -1,0 +1,297 @@
+/* Panel derecho: combinaciones de ofertas (selectores junto al switch). Con las cuatro activas se ve el panel "Actual". */
+.rv-combo{display:none}
+.rail-multi[data-rail=actual]:not([data-set="htfe"]) .rv-actual{display:none}
+.rail-multi[data-rail=actual]:not([data-set="htfe"]) .rv-combo{display:flex;flex:1 1 auto;flex-direction:column;gap:6px;min-height:0;font-family:Poppins,system-ui,sans-serif}
+.rv-combo>chekin-vela,.rv-combo>div{flex:0 0 auto!important}
+.rv-combo>.rc-grow{flex:1 0 auto!important}
+.rv-combo chekin-vela .vela-inner{flex:1 1 auto}
+.rv-combo chekin-vela .vela-scroll{flex:1 1 auto;display:flex;flex-direction:column}
+.rv-combo .rc-grow .vela-ride,.rv-combo .rc-grow .vela-tour{flex:1 1 auto}
+.rv-combo chekin-vela .vela-sec:first-child{margin-top:4px}
+/* ---- deals del host: carrusel / rejilla ---- */
+.rc-h.grid .vela-scroll>.vela-carwrap{flex:1 1 auto;display:flex;flex-direction:column}
+.rc-h.grid .vela-carwrap::after{display:none}
+.rc-h.grid .vela-car{flex:1 1 auto;display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:minmax(0,1fr);gap:10px;overflow:visible;padding:2px 0 4px;scroll-snap-type:none}
+.rc-h.grid .vela-dc{position:relative;display:flex;flex-direction:column;width:auto;min-width:0;min-height:112px;flex:none}
+.rc-h.grid .vela-dc .dc-img{flex:1 1 auto;height:auto!important;min-height:56px}
+.rc-h.grid .vela-dc .dc-coin{top:auto;bottom:65px;right:9px;width:46px;height:46px}
+.rc-h.grid .vela-dc .dc-info{height:88px;box-sizing:border-box;padding:26px 12px 8px;flex:none}
+.rc-h.grid .vela-dots{display:none}
+.rc-h.grid:not(.hero) .vela-dc:nth-child(n+5){display:none}
+.rc-h.grid.hero .vela-dc:first-child{grid-column:1/-1}
+.rc-h.grid.hero .vela-dc:first-child .dc-info b{font-size:16px}
+.rc-h.grid.hero .vela-dc:first-child .dc-coin{width:54px;height:54px;bottom:61px}
+.rv-combo .vela-dc{cursor:pointer}
+.rv-combo .vela-dc.added .dc-coin{background:#16a36a!important;box-shadow:0 6px 16px rgba(22,163,106,.5)}
+.rv-combo .vela-dc.added .dc-coin .p{opacity:0!important}
+.rv-combo .vela-dc.added .dc-coin .a{opacity:1!important;transform:none!important}
+.rv-combo .vela-dc.added{outline:2px solid #16a36a;outline-offset:-2px;border-radius:16px}
+/* ---- anuncios a pantalla completa cuando son los protagonistas ---- */
+.rd-pts,.tr-pts{display:none;list-style:none;margin:10px 0 0;padding:0;gap:6px;flex-wrap:wrap}
+.rd-pts li,.tr-pts li{font-size:10.5px;font-weight:700;padding:4px 9px;border-radius:99px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);color:#fff}
+.rail-vela.n-1 .rd-pts,.rail-vela.n-1 .tr-pts{display:flex}
+.rail-vela.n-1 .vela-ride{padding:20px 18px}
+.rail-vela.n-1 .vela-ride h4{font-size:26px;max-width:230px;line-height:1.12}
+.rail-vela.n-1 .vela-ride p{font-size:13px;max-width:210px}
+.rail-vela.n-1 .vela-ride .rd-cta{height:48px;font-size:14px;margin-top:14px}
+.rail-vela.n-1 .vela-ride{background-size:auto 120%}
+.rail-vela.n-1 .vela-tour{padding:20px 18px}
+.rail-vela.n-1 .vela-tour h4{font-size:26px;line-height:1.12}
+.rail-vela.n-1 .vela-tour p{font-size:13px}
+.rail-vela.n-1 .vela-tour .tr-cta{height:48px;font-size:14px;margin-top:14px}
+.rail-vela.n-1 .vela-tour .tr-free{top:16px;right:16px;font-size:11px;padding:5px 12px}
+.rail-vela.n-2 .vela-ride{padding:16px 16px}
+.rail-vela.n-2 .vela-ride h4{font-size:21px}
+.rail-vela.n-2 .vela-ride .rd-cta{height:44px;margin-top:12px}
+.rail-vela.n-2 .vela-tour h4{font-size:21px}
+.rail-vela.n-2 .vela-tour .tr-cta{height:44px}
+/* ---- eSIM protagonista ---- */
+.rc-esim-hero{position:relative;flex:1 0 auto;min-height:220px;border-radius:20px;padding:20px 18px;display:flex;flex-direction:column;justify-content:flex-end;gap:8px;color:#fff;cursor:pointer;overflow:hidden;
+  background:linear-gradient(150deg,#ff8a5b 0%,#ec3f86 48%,#7b3ff0 100%);box-shadow:0 14px 26px -10px rgba(123,63,240,.55);transition:transform .3s,box-shadow .3s}
+.rc-esim-hero:hover{transform:translateY(-3px);box-shadow:0 20px 32px -10px rgba(123,63,240,.7)}
+.rc-esim-hero::before{content:"";position:absolute;right:-40px;top:-40px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.14)}
+.rc-esim-hero .rp-esim__mark{position:absolute;top:18px;left:18px;width:30px;height:36px}
+.rc-esim-hero .rp-esim__mark i{width:16px}
+.rc-esim-hero .rp-esim__mark i:nth-child(1){height:25px}.rc-esim-hero .rp-esim__mark i:nth-child(2){left:11px;height:36px}
+.rc-esim-hero .rp-esim__tag{top:18px;right:18px;font-size:9px}
+.rc-esim-hero h4{margin:0;font-size:26px;line-height:1.12;font-weight:800;letter-spacing:-.01em;position:relative}
+.rc-esim-hero small{font-size:12px;opacity:.95;position:relative}
+.rc-esim-hero ul{list-style:none;margin:2px 0 0;padding:0;display:flex;gap:6px;flex-wrap:wrap;position:relative}
+.rc-esim-hero li{font-size:10.5px;font-weight:700;padding:4px 9px;border-radius:99px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35)}
+.rc-esim-hero button{position:relative;margin-top:8px;height:48px;border:0;border-radius:12px;background:#fff;color:#2a1250;font:inherit;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.rc-esim-bar{margin:auto -22px 0 -22px!important}
+/* ---- barra de añadidos: convierte el interés en acción ---- */
+.rc-addbar{display:none;align-items:center;justify-content:space-between;gap:10px;padding:8px 8px 8px 14px;border-radius:14px;background:#161643;color:#fff;font-size:12.5px;font-weight:700;box-shadow:0 10px 20px -8px rgba(22,22,67,.6)}
+.rc-addbar.show{display:flex}
+.rc-addbar b{font-weight:800}
+.rc-addbar button{height:34px;padding:0 16px;border:0;border-radius:10px;background:#fff;color:#161643;font:inherit;font-size:12.5px;font-weight:800;cursor:pointer}
+/* selectores del switch */
+.rail-switch{flex-wrap:wrap;max-width:calc(100vw - 640px)}
+.rs-sep{width:1px;height:18px;background:#e5e6ee;margin:0 4px}
+.rs-chip{border:0;background:#f1f2f9;color:#6b6b95;border-radius:99px;padding:6px 10px;font:inherit;cursor:pointer}
+.rs-chip.on{background:#161643;color:#fff}
+.rc-esim-hero{flex:1 0 auto!important}
+.rv-combo .vela-ride h4{max-width:none;padding-right:76px}
+.rv-combo .vela-ride p{max-width:230px}
+/* tarjetas altas: la foto manda y el degradado va de arriba abajo */
+.rail-vela.n-1 .vela-ride,.rail-vela.n-2 .vela-ride{background-size:cover;background-position:72% 100%}
+.rail-vela.n-1 .vela-ride::before,.rail-vela.n-2 .vela-ride::before{background:linear-gradient(180deg,rgba(10,14,72,.96) 0%,rgba(13,20,92,.86) 34%,rgba(16,26,110,.3) 66%,rgba(10,14,72,.65) 100%)}
+.rail-vela.n-1 .vela-ride h4{font-size:27px}
+.rv-combo>.rc-esim-hero{flex:1 0 auto!important}
+.rail-vela.n-1 .rv-combo .vela-ride h4{padding-right:0;font-size:27px;max-width:none}
+.rail-vela.n-2 .rv-combo .vela-ride h4{font-size:20px}
+.rc-esim-hero h4{margin-top:46px}
+
+/* ===== vistas de una sola oferta: foto protagonista + cuerpo con acción ===== */
+.rv-combo.no-bar{padding-bottom:22px}
+.rv-combo>.rc-hero{flex:1 0 auto!important;display:flex;flex-direction:column;border-radius:22px;overflow:hidden;cursor:pointer;color:#fff;min-height:420px;box-shadow:0 16px 30px -12px rgba(16,20,90,.55);transition:transform .3s,box-shadow .3s}
+.rc-hero:hover{transform:translateY(-3px);box-shadow:0 22px 36px -12px rgba(16,20,90,.7)}
+.rh-photo{position:relative;flex:1 1 auto;min-height:190px;background-size:cover;background-position:60% 55%}
+.rh-photo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,10,40,.45) 0%,rgba(10,10,40,0) 38%,rgba(10,10,40,.1) 70%,var(--rh-body) 100%)}
+.rh-photo>*{position:relative;z-index:2}
+.rh-kik{position:absolute!important;top:14px;left:14px;padding:5px 11px;border-radius:99px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);backdrop-filter:blur(6px);font-size:9.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.rh-body{position:relative;z-index:3;margin-top:-34px;padding:0 18px 18px;background:transparent;display:flex;flex-direction:column;gap:8px}
+.rc-hero{background:var(--rh-body)}
+.rh-body h4{margin:0;font-size:28px;line-height:1.1;font-weight:800;letter-spacing:-.02em;text-shadow:0 2px 12px rgba(0,0,0,.35)}
+.rh-body p{margin:0;font-size:13px;line-height:1.35;opacity:.92}
+.rh-body ul{list-style:none;margin:2px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
+.rh-body li{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600}
+.rh-body li svg{flex:none;width:18px;height:18px;padding:3px;border-radius:50%;background:rgba(255,255,255,.2)}
+.rh-cta{margin-top:8px;height:52px;border:0;border-radius:14px;font:inherit;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;transition:transform .2s;animation:rcPulse 2.8s ease-in-out infinite}
+.rc-hero:hover .rh-cta svg{transform:translateX(5px)}
+.rh-cta svg{transition:transform .3s}
+@keyframes rcPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.35)}50%{box-shadow:0 0 0 7px rgba(255,255,255,0)}}
+/* transfer */
+.rc-hero--t{--rh-body:#101a6e}
+.rc-hero--t .rh-body{background:linear-gradient(180deg,rgba(16,26,110,0),#101a6e 34px)}
+.rc-hero--t .rh-cta{background:#fff;color:#16183a}
+.rh-star{position:absolute!important;top:12px;right:12px;width:70px;height:70px;display:grid;place-items:center;text-align:center;font-size:10px;font-weight:900;line-height:1.05;color:#16183a;background:#ffc233;clip-path:polygon(50% 0,61% 12%,76% 6%,79% 23%,95% 25%,90% 41%,100% 50%,90% 59%,95% 75%,79% 77%,76% 94%,61% 88%,50% 100%,39% 88%,24% 94%,21% 77%,5% 75%,10% 59%,0 50%,10% 41%,5% 25%,21% 23%,24% 6%,39% 12%);transform:rotate(8deg)}
+.rh-route{position:absolute!important;left:16px;right:16px;bottom:44px;display:flex;align-items:center;gap:9px;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;text-shadow:0 1px 6px rgba(0,0,0,.6)}
+.rh-line{position:relative;flex:1;height:2px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.85) 0 5px,transparent 5px 10px)}
+.rh-line b{position:absolute;top:-4px;left:0;width:10px;height:10px;border-radius:50%;background:#385bf8;box-shadow:0 0 0 4px rgba(56,91,248,.35);animation:rhGo 16s linear infinite}
+@keyframes rhGo{0%{left:0;opacity:0}8%{left:0;opacity:1;animation-timing-function:cubic-bezier(.45,0,.55,1)}64%{left:calc(100% - 10px);opacity:1}70%{left:calc(100% - 10px);opacity:0}71%{left:0;opacity:0}100%{left:0;opacity:0}}
+/* tours */
+.rc-hero--f{--rh-body:#2a1233}
+.rc-hero--f .rh-body{background:linear-gradient(180deg,rgba(42,18,51,0),#2a1233 34px)}
+.rc-hero--f .rh-cta{background:#ffc233;color:#2a1600}
+.rh-free{position:absolute!important;top:14px;right:14px;padding:6px 14px;border-radius:99px;background:#ffc233;color:#2a1600;font-size:12px;font-weight:900;letter-spacing:.1em;box-shadow:0 6px 14px rgba(0,0,0,.35)}
+/* eSIM */
+.rc-hero--e{--rh-body:#6a2fe0;background:linear-gradient(160deg,#ff8a5b 0%,#ec3f86 46%,#7b3ff0 100%)}
+.rc-hero--e .rh-photo{background:none}
+.rc-hero--e .rh-photo::after{display:none}
+.rc-hero--e .rh-photo::before{content:"";position:absolute;right:-60px;top:-50px;width:240px;height:240px;border-radius:50%;background:rgba(255,255,255,.13)}
+.rc-hero--e .rh-body{margin-top:0}
+.rc-hero--e .rh-cta{background:#fff;color:#4a1fa8}
+.rc-hero--e .rp-esim__mark{position:absolute!important;top:16px;left:16px;width:26px;height:32px}
+.rc-hero--e .rp-esim__mark i{width:14px}.rc-hero--e .rp-esim__mark i:nth-child(1){height:22px}.rc-hero--e .rp-esim__mark i:nth-child(2){left:10px;height:32px}
+.rc-hero--e .rh-kik{left:54px;top:16px;background:rgba(255,255,255,.18)}
+.rh-spons{position:absolute!important;top:18px;right:14px;font-size:8px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:99px;background:rgba(255,255,255,.28)}
+.rh-price{position:absolute!important;left:18px;bottom:6px;display:flex;align-items:baseline;gap:8px}
+.rh-price small{font-size:14px;font-weight:700;opacity:.9}
+.rh-price b{font-size:64px;line-height:1;font-weight:800;letter-spacing:-.04em;text-shadow:0 4px 18px rgba(80,20,120,.35)}
+
+.rh-body h4{font-size:25px}
+.rc-hero--e .rh-photo::after{display:block;content:"eSIM";position:absolute;inset:auto;left:50%;top:46%;width:150px;height:96px;margin:-48px 0 0 -75px;border-radius:16px;background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.55);box-shadow:0 18px 30px -10px rgba(60,10,110,.5);transform:rotate(-8deg);display:grid;place-items:center;font-size:30px;font-weight:800;letter-spacing:-.02em;color:#fff}
+.rc-h.grid .vela-dc{min-height:88px}
+.rc-h.grid .vela-dc .dc-img{min-height:30px}
+.rc-h.hero .vela-dc:first-child .dc-img{min-height:84px}
+.rail-vela.fit-1 .rc-h.grid .vela-dc .dc-info small{display:none}
+.rail-vela.fit-2 .rc-h.grid .vela-car{gap:8px}
+.rail-vela.fit-3 .rc-h.hero .vela-dc:nth-child(n+4){display:none}
+.rail-vela.fit-3 .rc-h.hero .vela-dc:nth-child(3){grid-column:1/-1}
+.rc-h.grid .vela-dc{min-height:112px}
+.rc-h.hero .vela-dc:first-child .dc-img{min-height:84px}
+
+/* ===== dos y tres ofertas ===== */
+.rv-combo .rc-ad{flex:0 0 auto!important}
+.rv-combo .rc-ad .vela-ride{min-height:calc(196px + var(--ad-extra,0px))}
+.rv-combo .rc-ad .vela-tour{min-height:calc(176px + var(--ad-extra,0px))}
+.rail-vela.n-2 .rc-ad .vela-ride{min-height:210px}
+.rail-vela.n-2 .rc-ad .vela-tour{min-height:200px}
+.rv-combo .rc-h:not(.grid) .vela-dc .dc-img{height:var(--dc-h,104px)}
+.rv-combo .rc-h:not(.grid) .vela-dc .dc-coin{top:calc(var(--dc-h,104px) - 24px)}
+/* sin deals: los anuncios usan la tarjeta con foto, en versión compacta */
+.rc-hero--compact{min-height:0!important}
+.rc-hero--compact .rh-photo{min-height:120px}
+.rc-hero--compact .rh-body h4{font-size:22px}
+.rc-hero--compact .rh-body ul{flex-direction:row;flex-wrap:wrap}
+.rc-hero--compact .rh-body li{padding:3px 9px 3px 5px;border-radius:99px;background:rgba(255,255,255,.14);font-size:11px}
+.rc-hero--compact .rh-cta{height:46px;font-size:14px;margin-top:6px}
+.rc-hero--compact .rh-star{width:58px;height:58px;font-size:9px}
+.rc-hero--compact .rh-route{bottom:38px}
+.rc-hero--compact .rh-price b{font-size:48px}
+.rc-hero--compact.rc-hero--e .rh-photo::after{width:120px;height:78px;margin:-39px 0 0 -60px;font-size:24px}
+.rv-combo .rc-ad .vela-ride h4{font-size:19px;padding-right:62px}
+.rc-hero--compact .rh-route{display:none}
+
+/* ===== legibilidad de las etiquetas y ruta animada en la versión compacta ===== */
+.rh-kik{background:rgba(14,20,70,.9)!important;border:0!important;backdrop-filter:none!important;color:#fff;font-size:10.5px!important;padding:6px 12px!important;box-shadow:0 4px 12px rgba(0,0,0,.35)}
+.rc-hero--e .rh-kik{background:rgba(74,31,168,.9)!important}
+.rh-star{width:78px!important;height:78px!important;font-size:11.5px!important;box-shadow:0 8px 16px rgba(0,0,0,.35)}
+.rh-free{font-size:14px!important;padding:7px 16px!important;box-shadow:0 8px 16px rgba(0,0,0,.4)}
+.rc-hero--compact .rh-star{width:66px!important;height:66px!important;font-size:10.5px!important}
+.rc-hero--compact .rh-free{font-size:12.5px!important;padding:6px 14px!important}
+.rc-hero--compact .rh-photo{min-height:150px}
+.rc-hero--compact .rh-route{display:flex!important;bottom:40px}
+.rv-combo .vela-ride{background-size:cover;background-position:70% 30%}
+.rd-star{width:70px;height:70px}
+.rv-combo .vela-ride .rd-star,.rail-vela .vela-ride .rd-star{font-size:11px}
+.rail-vela .vela-ride .rd-kik,.rail-vela .vela-tour .tr-kik{font-size:9.5px}
+
+/* ===== transfer en negro (a juego con la van) ===== */
+.rail-vela chekin-vela .vela-ride{background-color:#0b0b0f}
+.rail-vela chekin-vela .vela-ride::before{background:linear-gradient(96deg,rgba(8,8,10,.97) 0%,rgba(10,10,13,.95) 42%,rgba(14,14,18,.6) 68%,rgba(14,14,18,.08) 100%)}
+.rail-vela.n-1 .vela-ride::before,.rail-vela.n-2 .vela-ride::before{background:linear-gradient(180deg,rgba(8,8,10,.96) 0%,rgba(10,10,13,.86) 34%,rgba(14,14,18,.3) 66%,rgba(8,8,10,.65) 100%)}
+.rc-hero--t{--rh-body:#0b0b0f}
+.rc-hero--t .rh-body{background:linear-gradient(180deg,rgba(11,11,15,0),#0b0b0f 34px)}
+.rc-hero--t .rh-kik{background:rgba(11,11,15,.9)!important}
+.rc-hero--t{box-shadow:0 16px 30px -12px rgba(0,0,0,.6)}
+.rh-line b{background:#ffc233;box-shadow:0 0 0 4px rgba(255,194,51,.35)}
+.rail-vela chekin-vela .vela-ride .rd-car{background:#ffc233;color:#0b0b0f;box-shadow:0 2px 8px rgba(255,194,51,.6)}
+
+/* cochecito dentro del punto de la ruta */
+.rh-line b{top:-11px;width:24px;height:24px;display:grid;place-items:center;color:#0b0b0f}
+.rh-line b svg{width:14px;height:14px}
+@keyframes rhGo{0%{left:0;opacity:0}8%{left:0;opacity:1;animation-timing-function:cubic-bezier(.45,0,.55,1)}64%{left:calc(100% - 24px);opacity:1}70%{left:calc(100% - 24px);opacity:0}71%{left:0;opacity:0}100%{left:0;opacity:0}}
+
+
+
+/* tag de tours: FREE en amarillo y más grande dentro de la etiqueta */
+.kk-free{color:#ffc233;font-size:1.45em;font-weight:900;letter-spacing:.06em;margin-right:7px;vertical-align:-1px}
+.rail-vela chekin-vela .vela-tour .tr-kik{display:inline-flex;align-items:center;align-self:flex-start;padding:5px 11px;border-radius:99px;background:rgba(42,18,51,.9);color:#fff;font-size:9.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;box-shadow:0 4px 12px rgba(0,0,0,.35);position:relative;margin-bottom:4px;z-index:3}
+.rail-vela.fit-4 chekin-vela .vela-tour .tr-kik{display:none}
+.rail-vela chekin-vela .vela-tour .tr-free{display:none!important}
+.rail-vela .rh-free{display:none!important}
+
+/* ===== encuadres de la foto del transfer ===== */
+/* tarjeta de texto sobre foto (Actual y con deals): la van queda a la derecha, libre del texto */
+.rail-vela chekin-vela .vela-ride{background-size:cover;background-position:100% 55%}
+.rail-vela chekin-vela .vela-ride::before{background:linear-gradient(96deg,rgba(8,8,10,.95) 0%,rgba(10,10,13,.88) 36%,rgba(14,14,18,.35) 62%,rgba(14,14,18,0) 100%)}
+.rail-vela.n-2 .vela-ride,.rail-vela.n-1 .vela-ride{background-position:88% 100%}
+/* tarjeta compacta: la foto entera arriba y el texto debajo, sin solaparse */
+.rc-hero--compact .rh-photo{min-height:190px;background-position:50% 55%}
+.rc-hero--compact .rh-photo::after{background:linear-gradient(180deg,rgba(10,10,40,.35) 0%,rgba(10,10,40,0) 30%,rgba(10,10,40,0) 78%,var(--rh-body) 100%)}
+.rc-hero--compact .rh-body{margin-top:0;padding-top:4px}
+.rc-hero--compact .rh-route{bottom:14px}
+.rc-hero--compact.rc-hero--f .rh-photo{background-position:50% 45%}
+/* transfer compacto: acercar la foto a viajera, chófer y van; sin suelo sobrante */
+.rc-hero--compact.rc-hero--t .rh-photo{background-size:cover;background-position:72% 50%}
+/* transfer compacto: la etiqueta baja al pie de la foto para no tapar caras; encuadre alto para que se vean las caras */
+.rc-hero--compact.rc-hero--t .rh-kik{top:auto;bottom:10px;left:14px}
+.rc-hero--compact.rc-hero--t .rh-route{bottom:46px}
+.rc-hero--compact.rc-hero--t .rh-photo{background-size:cover;background-position:72% 12%}
+
+/* compactación de las tarjetas con foto: solo se reduce la foto; ruta, etiquetas y textos se mantienen */
+.rail-vela.fit-1 .rc-hero--compact .rh-photo{min-height:170px}
+.rail-vela.fit-2 .rc-hero--compact .rh-photo{min-height:150px}
+.rail-vela.fit-3 .rc-hero--compact .rh-photo{min-height:130px}
+.rail-vela.fit-4 .rc-hero--compact .rh-photo{min-height:112px}
+.rail-vela.fit-5 .rc-hero--compact .rh-photo{min-height:96px}
+.rail-vela.fit-6 .rc-hero--compact .rh-photo{min-height:60px}
+.rail-vela.fit-6 .rc-hero--compact .rh-body h4{font-size:19px}
+.rail-vela.fit-6 .rc-hero--compact .rh-body{gap:5px;padding-bottom:12px}
+.rail-vela.fit-6 .rc-hero--compact .rh-body p{display:none}
+.rail-vela.fit-6 .rc-hero--compact .rh-cta{height:40px;margin-top:2px}
+.rail-vela.fit-6 .rc-hero--compact .rh-route{bottom:40px}
+.rail-vela.fit-6 .rc-hero--compact.rc-hero--t .rh-kik{bottom:6px}
+
+/* Transfer + Tours (con o sin eSIM): sin ruta animada ni sello PRE-BOOK; etiqueta amarilla con letras negras */
+.rail-multi[data-set="tf"] .rc-hero--t .rh-route,.rail-multi[data-set="tfe"] .rc-hero--t .rh-route,
+.rail-multi[data-set="tf"] .rc-hero--t .rh-star,.rail-multi[data-set="tfe"] .rc-hero--t .rh-star{display:none!important}
+.rail-multi[data-set="tf"] .rc-hero--t .rh-kik,.rail-multi[data-set="tfe"] .rc-hero--t .rh-kik{background:#ffc233!important;color:#0b0b0f!important;box-shadow:0 4px 12px rgba(0,0,0,.35)}
+/* fotos de los free tours: Madrid */
+.rh-photo--tour{background-image:url(../assets/vela/deals/madrid4.jpg);background-size:cover;background-position:50% 55%}
+.rail-vela chekin-vela .vela-tour{background-position:center 40%}
+
+/* FREE: con tag siempre "FREE Walking tours" completo; sin sitio para el tag, FREE pasa al botón */
+.vela-tour .tr-cta{position:relative}
+.vela-tour .cta-free{display:none;padding:3px 9px;border-radius:99px;background:#2a1600;color:#ffc233;font-size:10px;font-weight:900;letter-spacing:.1em;line-height:1}
+.rail-vela.fit-4 .vela-tour .cta-free{display:inline-block}
+.rail-vela.fit-4 chekin-vela .vela-tour .tr-cta{gap:6px;padding:0 10px}
+
+/* cabecera "Offers for your stay": solo tipografía (nada más cambia) */
+.rail-vela chekin-vela .vela-heading b{font-size:17px;font-weight:600;letter-spacing:-.015em;line-height:1.2}
+.rail-vela chekin-vela .vela-heading p{font-size:12px;line-height:1.4;font-weight:400;color:#6b76a0}
+
+/* ruta en zig zag de los free tours */
+.rc-hero--f .tr-route{display:block;width:100%;height:92px;margin:0;overflow:visible}
+.rail-vela.fit-3 .vela-tour .tr-route,.rail-vela.fit-4 .vela-tour .tr-route,.rail-vela.tour-nokik .vela-tour .tr-route{display:none}
+.rail-vela.fit-5 .rc-hero--f .tr-route,.rail-vela.fit-6 .rc-hero--f .tr-route{height:28px}
+
+/* (guardado) Tours solo con foto vertical del guía: sustituir la regla de abajo por background-image:url(../assets/vela/deals/tour-vertical.jpg) */
+.rail-vela.fit-1 .vela-tour .tr-route{height:80px}
+.rail-vela.fit-2 .vela-tour .tr-route{height:70px}
+.rail-vela.fit-3 .rc-hero--f .tr-route{height:64px}.rail-vela.fit-4 .rc-hero--f .tr-route{height:54px}.rail-vela.fit-5 .rc-hero--f .tr-route{height:48px}
+
+/* variante B: los selectores ocultan sus bloques */
+.rv-b [data-k][hidden]{display:none!important}
+
+/* Airalo + una oferta más: más aire entre bloques y sobre la banda de eSIM */
+.rail-multi.n-2 .rv-combo:has(.rc-esim-bar){gap:16px}
+.rail-multi.n-2 .rv-combo:has(.rc-esim-bar) .rc-esim-bar{margin-top:6px!important}
+.rail-multi.n-2.fit-4 .rv-combo:has(.rc-esim-bar){gap:10px}
+/* Transfer + Airalo usa exactamente la tarjeta de Transfer solo (sin reglas propias) */
+/* Tours solo: foto con la gente, centrada y con zoom */
+.rc-hero--f:not(.rc-hero--compact) .rh-photo--tour{background-image:none;overflow:hidden}
+.rc-hero--f:not(.rc-hero--compact) .rh-photo--tour::before{content:"";position:absolute;inset:0;z-index:0;background:url(../assets/vela/deals/tour-people.jpg) 52% 92%/cover no-repeat;transform:scale(1.12);transform-origin:52% 92%}
+/* Tours + eSIM: la imagen se ancla arriba y sin zoom para que se vea la sombrilla entera */
+.rail-multi[data-set="fe"] .rc-hero--f .rh-photo--tour::before{bottom:auto;height:var(--ih,100%);background-position:52% 0;transform-origin:52% 0;transform:translateY(var(--tz,-27%)) scale(var(--ts,1.14))}
+
+/* banner compacto de tours (fit-4, sin pisar los niveles más compactos fit-5/6 ni la tarjeta grande): mantiene FREE; el hueco se gana recortando el botón de traslados y el espaciado del banner de eSIM */
+.rail-vela.fit-4:not(.fit-5):not(.tour-full) chekin-vela .vela-tour{height:100px;padding:0 12px;gap:10px}
+.rail-vela.fit-4:not(.fit-5):not(.tour-full) chekin-vela .vela-tour h4{flex:1 1 0;min-width:0;max-height:none;overflow:visible;font-size:13px;line-height:1.2;letter-spacing:-.01em}
+.rail-vela.fit-4:not(.fit-5) .vela-tour .cta-free{display:inline-block;padding:2px 6px;font-size:8.5px}
+.rail-vela.fit-4:not(.fit-5):not(.tour-full) chekin-vela .vela-tour .tr-cta{flex:none;gap:6px;padding:0 9px;height:32px}
+.rail-vela.fit-4:not(.fit-5):not(.tour-full) chekin-vela .vela-tour .tr-cta span{font-size:11px}
+.rail-vela.fit-4 chekin-vela .vela-ride .rd-cta{height:32px}
+.rail-vela.fit-4 .rp-esim{min-height:60px;padding:7px 14px 7px 22px}
+/* en el nivel 5 el banner baja a 60 px y FREE no cabe */
+.rail-vela.fit-5 .vela-tour .cta-free{display:none!important}
+/* nivel 5: algo más de aire ganado para que el banner de tours quepa y no se oculte dejando un hueco */
+.rail-vela.fit-5 chekin-vela .vela-tour{margin:4px 0 0}
+.rail-vela.fit-5 .rp-esim{min-height:52px;padding:5px 14px 5px 22px}
+/* nivel 6 (sin banner de tours): el banner de eSIM se pega a las tarjetas en vez de quedar abajo con un hueco */
+.rail-vela.fit-6 .rp-esim{margin:10px -22px 0}
+/* FREE también en la tarjeta grande de tours, y el botón de traslados a todo el ancho como el de tours */
+.rail-vela.tour-full .vela-tour .cta-free,.rail-vela.fit-5.tour-full .vela-tour .cta-free{display:inline-block!important;padding:3px 9px;font-size:10px}
+.rail-vela chekin-vela .vela-ride .rd-cta,.rail-vela .vela-ride .rd-cta{width:100%;align-self:stretch;justify-content:center}

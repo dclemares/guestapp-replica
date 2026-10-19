@@ -1,0 +1,71 @@
+/* Home (escritorio): la columna derecha lleva el panel de Vela con ofertas, free tours y el banner de eSIM */
+aside[data-slot="collapsible-rail"]:has(.rail-vela){padding-bottom:0!important}
+aside[data-slot="collapsible-rail"]:has(.rail-vela) h2.lg\:block{display:none!important}
+.rail-vela{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
+.rail-vela chekin-vela{position:static!important;display:flex!important;flex-direction:column;flex:1 1 auto;width:auto!important;height:auto!important;min-height:0;
+  background:none!important;border:0!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;border-radius:0!important;overflow:visible!important}
+.rail-vela chekin-vela .vela-inner{position:static!important;inset:auto!important;flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
+.rail-vela chekin-vela .vela-inner::after,.rail-vela chekin-vela .vela-divider{display:none!important}
+.rail-vela chekin-vela .vela-heading{padding-right:36px;margin-bottom:6px}
+.rail-vela chekin-vela .vela-scroll{overflow:visible!important;margin:0!important;padding:0!important;flex:0 0 auto}
+.rail-vela chekin-vela .vela-banner{margin:auto -22px 0 -22px!important;width:auto}
+/* el contenedor con scroll recortaba el banner a pantalla completa: se deja visible (el panel cabe sin scroll) */
+aside[data-slot="collapsible-rail"]:has(.rail-vela) > div[id]{overflow:visible!important}
+
+/* El panel nunca hace scroll: rail.js lo compacta por niveles (fit-1..fit-4). Los deals del host y el coche de la ruta nunca se tocan. */
+.rail-vela.fit-1 chekin-vela .vela-ride p{display:none}
+.rail-vela.fit-1 chekin-vela .vela-ride{min-height:150px}
+.rail-vela.fit-1 chekin-vela .vela-tour p{display:none}
+.rail-vela.fit-1 chekin-vela .vela-tour{min-height:140px}
+.rail-vela.fit-1 .rv-actual .rp-esim{min-height:64px}
+.rail-vela.fit-2 chekin-vela .vela-heading p{display:none}
+.rail-vela.fit-2 chekin-vela .vela-dots{display:none}
+.rail-vela.fit-2 chekin-vela .vela-sec{margin-top:12px;margin-bottom:8px}
+.rail-vela.fit-3 chekin-vela .vela-ride{min-height:132px;padding-top:10px;padding-bottom:10px}
+.rail-vela.fit-3 chekin-vela .vela-ride h4{font-size:16px}
+.rail-vela.fit-3 chekin-vela .vela-tour{min-height:120px}
+.rail-vela.fit-3 .rv-actual .rp-esim{min-height:52px}
+.rail-vela.fit-4 chekin-vela .vela-tour{min-height:0;height:84px;flex-direction:row;align-items:center;gap:10px;padding:0 12px;margin:6px 0 2px}
+.rail-vela.fit-4 chekin-vela .vela-tour .tr-kik,.rail-vela.fit-4 chekin-vela .vela-tour p,.rail-vela.fit-4 chekin-vela .vela-tour .tr-free{display:none}
+.rail-vela.fit-4 chekin-vela .vela-tour h4{flex:1;margin:0;font-size:14.5px}
+.rail-vela.fit-5 chekin-vela .vela-tour{height:60px}
+.rail-vela.fit-5 chekin-vela .vela-tour h4{font-size:13px}
+.rail-vela.fit-5 chekin-vela .vela-ride{min-height:116px}
+.rail-vela.fit-5 .rv-actual .rp-esim{min-height:48px}
+.rail-vela.fit-5 chekin-vela .vela-sec{margin-top:8px;margin-bottom:6px}
+.rail-vela.fit-4 chekin-vela .vela-tour .tr-cta{width:auto;flex:none;margin:0;height:34px;padding:0 12px}
+.rail-vela.fit-4 chekin-vela .vela-tour .tr-cta span{font-size:11.5px}
+
+/* los dos anuncios de partner se apilan: un poco de aire entre ellos y respeto al primero de la sección */
+.rail-vela chekin-vela .vela-ride + .vela-ride{margin-top:8px}
+
+
+.rail-vela.fit-1 chekin-vela .vela-tour .tr-cta{height:32px}
+
+.rail-vela.fit-2 chekin-vela .vela-tour p{display:none}
+
+/* deals de "Offered by your host": crecen hasta ocupar el espacio libre (rail.js fija --dc-h); nunca encogen al resto */
+.rail-vela chekin-vela .vela-dc .dc-img{height:var(--dc-h,104px)}
+.rail-vela chekin-vela .vela-dc .dc-coin{top:calc(var(--dc-h,104px) - 24px)}
+
+/* eSIM igual que en la variante B (rp-esim) y menos aire bajo los deals */
+.rail-vela .rv-actual .rp-esim{margin:auto -22px 0 -22px}
+.rail-vela chekin-vela .vela-car{padding-bottom:6px}
+.rail-vela chekin-vela .vela-sec{margin-top:14px}
+.rail-vela chekin-vela .vela-dots{margin:0}
+.rail-vela.fit-1 .rv-actual .rp-esim{min-height:64px}
+.rail-vela.fit-3 .rv-actual .rp-esim{min-height:52px}
+
+.rail-vela.fit-6 chekin-vela .vela-tour{display:none}
+
+/* si sobra hueco entre los tours y el eSIM, la tarjeta recupera su estilo grande (foto, titular y botón amarillo) */
+.rail-vela.tour-full chekin-vela .vela-tour{height:var(--tour-h,150px);min-height:0;flex-direction:column;align-items:stretch;justify-content:flex-end;gap:0;padding:10px 14px 12px;margin:8px 0 4px}
+.rail-vela.tour-full chekin-vela .vela-tour .tr-free{display:block}
+.rail-vela.tour-full chekin-vela .vela-tour .tr-kik{display:block}
+.rail-vela.tour-full chekin-vela .vela-tour h4{flex:none;margin:3px 0 0;font-size:18px}
+.rail-vela.tour-full chekin-vela .vela-tour .tr-cta{width:100%;flex:none;margin-top:10px;height:38px;padding:0}
+.rail-vela.tour-full chekin-vela .vela-tour .tr-cta span{font-size:12.5px}
+.rail-vela.tour-nokik chekin-vela .vela-tour .tr-free{display:block;top:auto;bottom:19px;right:24px;z-index:3;font-size:9px;line-height:1;padding:3px 8px;background:#2a1600;color:#ffc233;box-shadow:none}
+.rail-vela.tour-nokik chekin-vela .vela-tour{padding:8px 14px 10px}
+.rail-vela.tour-nokik chekin-vela .vela-tour h4{font-size:16.5px}
+.rail-vela.tour-nokik chekin-vela .vela-tour .tr-cta{margin-top:8px;height:34px}

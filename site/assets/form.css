@@ -1,0 +1,230 @@
+/* Formulario de huésped: campos en dos columnas (siempre) y tres propuestas para la cabecera de cada sección (?fh=1|2|3). */
+.ff-sw{display:flex;flex-wrap:wrap;gap:3px}
+.ff-sw button{border:0;border-radius:99px;padding:3px 8px;background:#f1f2f9;color:#6b6b95;font:600 11px system-ui,sans-serif;cursor:pointer;white-space:nowrap}
+.ff-sw button.on{background:#161643;color:#fff}
+
+/* ===== dos columnas: nombre y apellido, fecha de nacimiento y sexo en la misma fila; el resto ocupa toda la fila ===== */
+section[data-ffk] [data-slot="form-section-body"]{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:12px;row-gap:14px}
+[data-field].ff-wide{grid-column:1 / -1}
+
+/* ===== 1: el título sale de la tarjeta y se escribe como las etiquetas de Registration; la tarjeta solo contiene los campos ===== */
+html[data-fh="1"] section[data-slot="form-section"]{border:0!important;background:transparent!important;box-shadow:none!important;border-radius:0!important}
+html[data-fh="1"] section[data-slot="form-section"] [data-slot="form-section-header"]{border-bottom:0!important;padding:0 2px 8px!important;background:transparent!important}
+html[data-fh="1"] section[data-slot="form-section"] [data-slot="form-section-header"]>span:first-child{display:none!important}
+html[data-fh="1"] section[data-slot="form-section"] [data-slot="form-section-header"] span{font-size:12px!important;font-weight:700!important;letter-spacing:.06em!important;text-transform:uppercase!important;color:#4a5072!important}
+html[data-fh="1"] section[data-slot="form-section"] [data-slot="form-section-body"]{padding:16px!important;border:1px solid var(--card-border,#e5e6ee);border-radius:var(--card-radius,18px);background:#fff}
+
+/* ===== 2: el icono va en un recuadro azul claro, como los avatares de Registration; título en minúsculas normales y sin línea ===== */
+html[data-fh="2"] section[data-slot="form-section"] [data-slot="form-section-header"]{border-bottom:0!important;padding:16px 16px 0!important;gap:12px!important;background:transparent!important}
+html[data-fh="2"] section[data-slot="form-section"] [data-slot="form-section-header"]>span:first-child{display:grid!important;place-items:center;width:36px;height:36px;border-radius:10px;background:#eff6ff;color:var(--chekin-color-brand-blue,#385bf8)!important}
+html[data-fh="2"] section[data-slot="form-section"] [data-slot="form-section-header"]>span:first-child svg{width:18px;height:18px}
+html[data-fh="2"] section[data-slot="form-section"] [data-slot="form-section-header"]>span:last-child{font-size:15.5px!important;font-weight:600!important;letter-spacing:0!important;text-transform:none!important;color:var(--chekin-color-brand-navy,#161643)!important}
+
+/* ===== 3: la cabecera es una píldora azul clara con el icono y el título, dentro de la tarjeta y sin línea ===== */
+html[data-fh="3"] section[data-slot="form-section"] [data-slot="form-section-header"]{width:fit-content;margin:16px 0 0 16px;padding:5px 14px 5px 9px!important;gap:7px!important;border-bottom:0!important;border-radius:9999px;background:#eff6ff!important}
+html[data-fh="3"] section[data-slot="form-section"] [data-slot="form-section-header"]>span:first-child{color:var(--chekin-color-brand-blue,#385bf8)!important}
+html[data-fh="3"] section[data-slot="form-section"] [data-slot="form-section-header"]>span:first-child svg{width:16px;height:16px}
+html[data-fh="3"] section[data-slot="form-section"] [data-slot="form-section-header"]>span:last-child{font-size:12.5px!important;font-weight:600!important;letter-spacing:0!important;text-transform:none!important;color:var(--chekin-color-brand-blue,#385bf8)!important}
+
+/* ===== opciones: sin escaneo ===== */
+html[data-af="0"] .auto-fill-card,html[data-af="0"] .auto-fill-divider{display:none!important}
+
+/* ===== firma y acuerdos: mismo lenguaje que el resto del formulario y de Registration (título fuera, tarjeta blanca con borde fino, recuadro punteado, chips) ===== */
+.fx-sec{width:100%;font-family:Poppins,system-ui,sans-serif;color:var(--chekin-color-brand-navy,#161643)}
+.fx-t{margin:0;padding:0 2px 8px;font-size:12px;line-height:16px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#4a5072}
+.fx-card{padding:16px;border:1px solid var(--card-border,#e5e6ee);border-radius:var(--card-radius,18px);background:#fff}
+.fx-pad{position:relative;height:150px;border:1.5px dashed #c9ccd9;border-radius:14px;background:#f5f6f9;overflow:hidden;touch-action:none}
+.fx-pad canvas{position:absolute;inset:0;width:100%;height:100%;cursor:crosshair}
+.fx-ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#7b7e98;pointer-events:none}
+.fx-ph b{font-size:14.5px;font-weight:600}.fx-ph span{font-size:12.5px;font-weight:400;color:var(--chekin-text-secondary,#6b6b95)}
+.fx-row{display:flex;justify-content:flex-end;margin-top:12px}
+.fx-clear{display:inline-flex;align-items:center;gap:6px;min-height:32px;padding:0 14px 0 10px;border:1px solid #dfe2f1;border-radius:9999px;background:#fff;color:var(--chekin-color-brand-navy,#161643);font:600 12.5px Poppins,system-ui,sans-serif;cursor:pointer;transition:background .15s,border-color .15s}
+.fx-clear svg{color:#7b7e98}
+.fx-clear:hover:not(:disabled){background:#f5f6f9;border-color:#c9ccd9}
+.fx-clear:disabled{opacity:.45;cursor:default}
+.fx-clear:focus-visible{outline:2px solid var(--chekin-color-brand-blue,#385bf8);outline-offset:2px}
+.fx-list{list-style:none;margin:0;padding:0}.fx-list li+li{border-top:1px solid var(--chekin-border-default,#e5e6ee)}
+.fx-ck{display:flex;align-items:flex-start;gap:12px;padding:12px 0;font-size:14.5px;line-height:22px;cursor:pointer}
+.fx-list li:first-child .fx-ck{padding-top:0}
+.fx-ck input{position:absolute;opacity:0;width:0;height:0}
+.fx-ck i{flex:none;display:block;width:24px;height:24px;margin-top:-1px;border:1.5px solid #b7bcd6;border-radius:8px;background:#fff;box-sizing:border-box;position:relative;transition:background .15s,border-color .15s}
+.fx-ck:hover i{border-color:var(--chekin-color-brand-blue,#385bf8)}
+.fx-ck input:checked+i{background:var(--chekin-color-brand-blue,#385bf8);border-color:var(--chekin-color-brand-blue,#385bf8)}
+.fx-ck input:checked+i::after{content:"";position:absolute;left:50%;top:46%;width:6px;height:11px;border:solid #fff;border-width:0 2.5px 2.5px 0;transform:translate(-50%,-58%) rotate(45deg)}
+.fx-ck input:focus-visible+i{outline:2px solid var(--chekin-color-brand-blue,#385bf8);outline-offset:2px}
+.fx-opt{display:inline-block;margin-right:6px;padding:1px 8px;border-radius:9999px;background:#e9ebf6;color:#4a5072;font-style:normal;font-size:10px;font-weight:800;letter-spacing:.08em;line-height:1.5;vertical-align:1px}
+.fx-legal{margin:0;padding-top:12px;font-size:13px;line-height:19px;color:var(--chekin-text-secondary,#6b6b95)}
+.fx-list+.fx-legal{border-top:1px solid var(--chekin-border-default,#e5e6ee)}
+.fx-card>.fx-legal:first-child{padding-top:0}
+.fx-legal a{color:var(--chekin-color-brand-blue,#385bf8);font-weight:600;text-decoration:underline;text-underline-offset:2px}
+
+/* ===== botón de envío al final del formulario + botón flotante "Go to submit to host" ===== */
+html[data-fdock] [data-slot="cta-dock"]{position:static!important;background:transparent!important;padding-top:8px!important}
+.fx-go{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:60;display:none;align-items:center;gap:6px;min-height:40px;padding:0 16px 0 12px;border:0;border-radius:9999px;background:var(--chekin-color-brand-navy,#161643);color:#fff;font:600 13px Poppins,system-ui,sans-serif;white-space:nowrap;box-shadow:0 6px 18px rgba(22,22,67,.3);cursor:pointer}
+.fx-go.on{display:inline-flex}
+.fx-go:focus-visible{outline:2px solid var(--chekin-color-brand-blue,#385bf8);outline-offset:2px}
+
+/* ===== chip OPT. en los campos opcionales ===== */
+.fx-optchip{display:inline-block!important;width:fit-content;margin-top:8px!important;padding:1px 9px!important;border-radius:9999px;background:#e9ebf6;color:#4a5072!important;font:800 10px/1.5 Poppins,system-ui,sans-serif!important;letter-spacing:.08em}
+
+/* ===== tipografía de firma y acuerdos igual que la del resto del formulario (Poppins 14 px / 500) ===== */
+.fx-sec,.fx-sec *{font-family:inherit}
+.fx-ck span{font-size:14px;font-weight:500;line-height:21px}
+.fx-ck span b{font-weight:700}
+.fx-legal{font-size:14px;font-weight:500;line-height:21px}
+.fx-ph b{font-size:15px;font-weight:600}
+.fx-ph span{font-size:14px;font-weight:500}
+
+/* ===== chip OPT.: 1 a la derecha dentro del campo · 2 superpuesto en la esquina inferior derecha (a caballo del borde) ===== */
+html[data-ob="1"] [data-field],html[data-ob="2"] [data-field]{position:relative}
+html[data-ob="1"] .fx-optchip,html[data-ob="2"] .fx-optchip{position:absolute!important;right:14px;margin:0!important;z-index:2;pointer-events:none}
+html[data-ob="1"] .fx-optchip{top:24px;transform:translateY(-50%)}
+html[data-ob="2"] .fx-optchip{top:49px;transform:translateY(-50%);box-shadow:0 0 0 2px #fff}
+
+/* "Clear" de la firma: superpuesto en la esquina inferior derecha del recuadro, a caballo del borde, como el chip OPT. */
+.fx-card:has(.fx-pad){position:relative;padding-bottom:26px}
+.fx-card:has(.fx-pad) .fx-row{position:absolute;right:30px;top:166px;margin:0;transform:translateY(-50%);z-index:2}
+.fx-card:has(.fx-pad) .fx-clear{box-shadow:0 0 0 2px #fff}
+
+/* ===== variantes del escaneo ===== */
+html:not([data-as="0"]) .auto-fill-card{display:none!important}
+.as{font-family:Poppins,system-ui,sans-serif;color:var(--chekin-color-brand-navy,#161643)}
+.as b{font-weight:600}
+/* 1: banner con degradado y botón blanco */
+.as1{position:relative;overflow:hidden;display:flex;flex-direction:column;gap:14px;padding:18px;border-radius:var(--card-radius,18px);color:#fff;background:var(--chekin-gradient-hero,linear-gradient(135deg,#15153f 0%,#23235d 44%,#2e46c8 100%))}
+.as1::before{content:"";position:absolute;right:50px;top:-110px;width:230px;height:230px;border-radius:50%;background:var(--chekin-hero-bloom-periwinkle,rgba(171,186,252,.18));pointer-events:none}
+.as1>*{position:relative}
+.as1 .as-t{display:flex;flex-direction:column;gap:4px}.as1 .as-t b{font-size:16px;line-height:22px;color:#fff}.as1 .as-t span{font-size:13.5px;line-height:19px;font-weight:400;color:rgba(255,255,255,.82)}
+.as1 .as-btn{display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;border:0;border-radius:9999px;background:#fff;color:var(--chekin-color-brand-navy,#161643);font:600 14.5px Poppins,system-ui,sans-serif;cursor:pointer}
+.as1 .as-btn svg{color:var(--chekin-color-brand-blue,#385bf8)}.as1 .as-btn:hover{background:#eff6ff}
+/* 2: fila punteada como los huecos de Registration */
+.as2 .as-row{display:flex;flex-direction:column;align-items:center;gap:2px;width:100%;padding:16px;border:1.5px dashed #aab9f5;border-radius:var(--card-radius,18px);background:#fafcff;color:var(--chekin-color-brand-blue,#385bf8);cursor:pointer;text-align:center;font-family:inherit}
+.as2 .as-row svg{margin-bottom:4px}
+.as2 .as-row b{font-size:14.5px}.as2 .as-row span{font-size:12.5px;font-weight:400;color:var(--chekin-text-secondary,#6b6b95)}
+.as2 .as-row:hover{background:#eff6ff;border-color:var(--chekin-color-brand-blue,#385bf8)}
+/* 3: fila como las de huésped, con recuadro de icono y botón azul */
+.as3{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--card-border,#e5e6ee);border-radius:var(--card-radius,18px);background:#fff;cursor:pointer}
+.as3 .as-ic{flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:#eff6ff;color:var(--chekin-color-brand-blue,#385bf8)}
+.as3 .as-t{flex:1;min-width:0;display:flex;flex-direction:column}.as3 .as-t b{font-size:14px;line-height:19px}.as3 .as-t span{font-size:12px;line-height:17px;font-weight:400;color:var(--chekin-text-secondary,#6b6b95)}
+.as3 .as-btn{flex:none;min-height:36px;padding:0 16px;border:0;border-radius:12px;background:var(--chekin-color-brand-blue,#385bf8);color:#fff;font:600 13px Poppins,system-ui,sans-serif;cursor:pointer}
+.as3:hover .as-btn{background:var(--chekin-color-brand-hover,#294df1)}
+.as button:focus-visible{outline:2px solid var(--chekin-color-brand-blue,#385bf8);outline-offset:2px}
+
+
+/* hoja de aviso al enviar con datos incompletos o erróneos (como la del producto) */
+.fx-vsheet{position:fixed;inset:0;z-index:100000;display:flex;align-items:flex-end;justify-content:center;font-family:Poppins,system-ui,sans-serif;color:#161643}
+.fx-vbd{position:absolute;inset:0;background:rgba(22,22,67,.48);opacity:0;transition:opacity .25s}
+.fx-vp{position:relative;display:flex;flex-direction:column;align-items:center;width:100%;max-width:520px;padding:8px 20px calc(20px + env(safe-area-inset-bottom,0px));border-radius:24px 24px 0 0;background:#fff;text-align:center;transform:translateY(40px);opacity:0;transition:transform .3s cubic-bezier(.22,.8,.2,1),opacity .2s}
+.fx-vsheet.in .fx-vbd{opacity:1}.fx-vsheet.in .fx-vp{transform:none;opacity:1}
+.fx-vg{display:block;width:40px;height:4px;margin:0 auto 14px;border-radius:4px;background:#d5d8e8}
+.fx-vic{color:#f0a05a;margin-bottom:6px}
+.fx-vp h2{margin:0 0 8px;font-size:17px;line-height:23px;font-weight:600}.fx-vp p{margin:0 0 18px;max-width:300px;font-size:14px;line-height:21px;font-weight:400;color:#4a5072}
+.fx-vp button{width:100%;min-height:48px;border:0;border-radius:14px;background:#385bf8;color:#fff;font:600 15px Poppins,system-ui,sans-serif;cursor:pointer}
+
+
+/* tooltip de campo: chip "INFO" arriba a la derecha (el OPT. va abajo a la derecha) y burbuja con la explicación */
+.fx-tip{position:absolute;top:0;right:14px;transform:translateY(-50%);z-index:3;display:inline-flex;align-items:center;gap:4px;padding:1px 8px 1px 6px;border:0;border-radius:9999px;background:#e9ebf6;color:#4a5072;font:800 10px/1.5 Poppins,system-ui,sans-serif;letter-spacing:.06em;box-shadow:0 0 0 2px #fff;cursor:pointer}
+.fx-tip svg{flex:none;color:#4a5072}
+.fx-tip:hover,.fx-tip.on{background:#385bf8;color:#fff}.fx-tip:hover svg,.fx-tip.on svg{color:#fff}
+.fx-tip:focus-visible{outline:2px solid #385bf8;outline-offset:2px}
+.fx-tipb{position:absolute;top:calc(100% - 4px);right:6px;z-index:20;width:min(270px,calc(100vw - 48px));padding:12px 14px;border-radius:14px;background:#161643;color:#fff;box-shadow:0 12px 28px rgba(22,22,67,.32);font-family:Poppins,system-ui,sans-serif;text-align:left}
+.fx-tipb::before{content:"";position:absolute;top:-6px;right:34px;width:12px;height:12px;background:#161643;transform:rotate(45deg);border-radius:2px}
+.fx-tipb b{display:block;margin-bottom:3px;font-size:13px;line-height:18px;font-weight:600}
+.fx-tipb span{display:block;font-size:12.5px;line-height:18px;font-weight:400;color:rgba(255,255,255,.86)}
+.fx-tipb[hidden]{display:none}
+
+
+/* tooltip ronda 132: abajo a la izquierda, con aspecto clicable (azul) · modal en móvil */
+.fx-tip{top:49px;left:14px;right:auto;transform:translateY(-50%);background:#eff6ff;color:#385bf8;box-shadow:0 0 0 2px #fff,inset 0 0 0 1px #c6d4ff;padding:2px 9px 2px 7px;font-weight:800}
+.fx-tip svg{color:#385bf8}
+.fx-tip:hover,.fx-tip.on{background:#385bf8;color:#fff;box-shadow:0 0 0 2px #fff}.fx-tip:hover svg,.fx-tip.on svg{color:#fff}
+.fx-tipb{top:calc(100% + 6px);left:6px;right:auto}
+.fx-tipb::before{top:-6px;left:26px;right:auto}
+.fx-isheet{position:fixed;inset:0;z-index:100000;display:flex;align-items:flex-end;justify-content:center;font-family:Poppins,system-ui,sans-serif;color:#161643;opacity:0;transition:opacity .2s}
+.fx-isheet.in{opacity:1}
+.fx-isheet .fx-vbd{opacity:1}.fx-isheet.in .fx-vp{transform:none;opacity:1}
+.fx-iic{display:grid;place-items:center;width:52px;height:52px;margin-bottom:8px;border-radius:50%;background:#eff6ff;color:#385bf8}
+
+.fx-isheet .fx-vp h2{margin-top:6px;font-size:18px;line-height:24px}
+.fx-isheet .fx-vp p{max-width:320px}
+
+/* sin autofill: fuera el banner de escaneo, su tarjeta de resultado y el separador */
+html[data-af="0"] .as,html[data-af="0"] .afl-okb:not(.ivfr),html[data-af="0"] .auto-fill-divider{display:none!important}
+/* tras la verificación de identidad el formulario llega rellenado: ya no hay "o rellenar a mano" */
+.ivfr~.auto-fill-divider{display:none!important}
+
+/* panel de Vela del formulario */
+.fx-gtk{margin:0 -8px;padding:0 8px}
+.fx-why{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(22,22,67,0);transition:background .2s ease}
+.fx-why.in{background:rgba(22,22,67,.45)}
+.fx-why-c{position:relative;box-sizing:border-box;width:440px;max-width:100%;max-height:calc(100vh - 48px);overflow:auto;padding:30px 28px 26px;border-radius:22px;background:#fff;font-family:Poppins,system-ui,sans-serif;color:#161643;box-shadow:0 30px 70px -20px rgba(22,22,67,.45);transform:translateY(14px);opacity:0;transition:transform .25s cubic-bezier(.22,.8,.2,1),opacity .2s ease}
+.fx-why.in .fx-why-c{transform:none;opacity:1}
+.fx-why-c h2{margin:0 36px 20px 0;font-size:21px;line-height:27px;font-weight:700;color:#161643}
+.fx-why-x{position:absolute;top:22px;right:20px;display:grid;place-items:center;width:32px;height:32px;border:0;border-radius:50%;background:none;color:#161643;cursor:pointer}
+.fx-why-x:hover{background:#f1f2fa}
+.fx-why-i{display:flex;gap:14px;align-items:flex-start;margin-bottom:16px}
+.fx-why-i>i{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#e6ecff;color:#385bf8}
+.fx-why-i p{margin:0;font-size:14px;line-height:21px;font-weight:500;color:#161643}
+.fx-why-l{display:inline-flex;align-items:center;gap:7px;margin:2px 0 20px;font-size:14px;font-weight:600;color:#385bf8;text-decoration:none}
+.fx-why-l:hover{text-decoration:underline}
+.fx-why-b{display:flex;align-items:center;justify-content:center;width:100%;min-height:48px;border:0;border-radius:9999px;background:#385bf8;color:#fff;font:600 14.5px Poppins,system-ui,sans-serif;cursor:pointer}
+@media (prefers-reduced-motion:reduce){.fx-why,.fx-why-c{transition:none}}
+
+/* progreso de Vela (mismo que en la verificación) */
+.iv-vs{display:flex;flex-direction:column;gap:8px;margin:0;padding:0;list-style:none;font-size:13.5px;color:#9a9db8}.iv-vs li{display:flex;align-items:center;gap:8px}.iv-vs li::before{content:"";width:10px;height:10px;border-radius:50%;background:#dfe2f1}.iv-vs li.d{color:var(--n)}.iv-vs li.d::before{background:#37e08f}.iv-vs li.a{color:var(--n)}.iv-vs li.a::before{background:var(--b);animation:iv-pu 1s ease-in-out infinite}
+.iv-vst{display:flex;align-items:center;margin:14px 0 4px -34px;width:calc(100% + 34px)}
+.iv-vc{flex:none;display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:#eef1ff;transition:background .3s}
+.iv-vc b{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#e7ecff;border:1.5px solid #b9c5ff;color:#385bf8}
+.iv-vc.now{background:#e1e7ff}.iv-vc.now b{background:#385bf8;border-color:#385bf8;color:#fff}
+.iv-vc.done b{background:#e6f9ef;border-color:#9fe3be;color:#17794b}
+.iv-vl{position:relative;overflow:hidden;flex:1;height:5px;margin:0 -2px;background:#e1e1ee}.iv-vl::after{content:"";position:absolute;inset:0;background:#7fd6a6;transform:scaleX(0);transform-origin:left;transition:transform .42s cubic-bezier(.4,0,.2,1)}.iv-vl.on::after{transform:scaleX(1)}
+.iv-vc,.iv-vc b{transition:background .3s,border-color .3s,color .3s,box-shadow .3s}
+.iv-vc.pop b{animation:ivVPop .5s cubic-bezier(.3,1.5,.5,1)}
+.iv-vc.pop b svg *{stroke-dasharray:1;stroke-dashoffset:1;animation:ivVDraw .4s .12s ease forwards}
+.iv-vc.pulse b{animation:ivVPop .5s cubic-bezier(.3,1.5,.5,1)}
+.iv-vc.pulse{animation:ivVRing .8s ease-out}
+@keyframes ivVPop{0%{transform:scale(.8)}55%{transform:scale(1.18)}100%{transform:scale(1)}}
+@keyframes ivVDraw{to{stroke-dashoffset:0}}
+@keyframes ivVRing{0%{box-shadow:0 0 0 0 rgba(56,91,248,.45)}100%{box-shadow:0 0 0 14px rgba(56,91,248,0)}}
+@media (prefers-reduced-motion:reduce){.iv-vc.pop b,.iv-vc.pulse b,.iv-vc.pulse,.iv-vl::after{animation:none;transition:none}.iv-vc.pop b svg *{animation:none;stroke-dashoffset:0}}
+.iv-vc.done{background:#e3f7ec}.iv-vc.done b{background:#e6f9ef;border-color:#8fdcb4;color:#17794b}
+aside.fx-c .fx-x strong+span{display:none}aside.fx-c .fx-x>div{padding-top:8px;padding-bottom:8px}
+
+.iv-rv0{margin-top:16px}.iv-rv0 .iv-vst{margin-left:0;width:100%}
+aside.fx-nointro>p{display:none!important}
+html[data-op="0"] .fx-optchip{display:none!important}
+
+/* pasos de la verificación saltados: en naranja, no parecen completados */
+.iv-vc.skip{background:#fff1dc}.iv-vc.skip b{background:#fff7ea;border-color:#f3b95f;color:#c46a00}
+.iv-vl.skip{background:repeating-linear-gradient(90deg,#f3b95f 0 5px,transparent 5px 9px)}
+
+/* progreso de Vela: al pasar el ratón (o con el teclado) cada paso dice qué es */
+.iv-vc{position:relative}
+.iv-vc[data-tip]::after{content:attr(data-tip);position:absolute;left:50%;top:calc(100% + 6px);transform:translate(-50%,-3px);z-index:20;padding:5px 10px;border-radius:8px;background:#161643;color:#fff;font:600 11.5px/16px Poppins,system-ui,sans-serif;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s,transform .15s}
+.iv-vst>.iv-vc:first-child::after{left:0;transform:translate(0,-3px)}
+.iv-vst>.iv-vc:last-child::after{left:auto;right:0;transform:translate(0,-3px)}
+.iv-vc[data-tip]:hover::after,.iv-vc[data-tip]:focus-visible::after{opacity:1;transform:translate(-50%,0)}
+.iv-vst>.iv-vc:first-child:hover::after,.iv-vst>.iv-vc:first-child:focus-visible::after,.iv-vst>.iv-vc:last-child:hover::after,.iv-vst>.iv-vc:last-child:focus-visible::after{transform:translate(0,0)}
+.iv-vc:focus-visible{outline:2px solid #385bf8;outline-offset:2px}
+
+.iv-vst{margin-bottom:11px}
+
+/* «Ask Vela» del formulario (estilo Q2 del resumen de huéspedes) */
+aside .fx-wsec .pq2{position:relative;display:flex;flex-direction:column;gap:8px}
+aside .fx-wsec .pq2-ex{display:flex;flex-direction:column;justify-content:flex-start}
+aside .fx-wsec .pq2-ex .pc-x{display:flex;flex-direction:column;gap:6px;animation:vxIn .25s ease}
+aside .fx-wsec .pq-ch{display:flex;flex-direction:column;flex-wrap:nowrap;align-items:flex-start;gap:6px;margin-top:6px}
+aside .fx-wsec .vc-a>div{flex:1;min-width:0}
+aside .fx-wsec .ty{position:relative}
+aside .fx-wsec .ty .pc-dots{display:none}
+aside .fx-wsec .ty.on .pc-dots{display:inline-flex;position:absolute;left:0;top:2px}
+aside .fx-wsec .ty.on .ty-t{visibility:hidden}
+aside .fx-wsec .pc-dots{gap:4px;padding:3px 0}
+aside .fx-wsec .pc-dots i{width:6px;height:6px;border-radius:50%;background:#9a9ab8;animation:pcDot 1s infinite}
+aside .fx-wsec .pc-dots i:nth-child(2){animation-delay:.15s}aside .fx-wsec .pc-dots i:nth-child(3){animation-delay:.3s}
+@keyframes pcDot{0%,80%,100%{opacity:.3;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
+aside .fx-wsec .fx-pp{display:block;margin-top:6px;color:#385bf8;font-weight:600;text-decoration:none}
+aside .fx-wsec .fx-pp:hover{text-decoration:underline}
+@media (prefers-reduced-motion:reduce){aside .fx-wsec .pc-dots i,aside .fx-wsec .pq2-ex .pc-x{animation:none}}
+aside .vx-noacc::before,aside .vx-noacc::after{display:none!important}
+aside .vx-noacc{margin:8px 0 8px!important;padding-bottom:0!important;font-size:10px!important;font-weight:800!important;letter-spacing:.13em!important;color:#9a9ab8!important}   /* «Vela answer»: como la etiqueta «Suggested» del chat: gris, pequeña y sin raya debajo */

@@ -1,0 +1,1 @@
+[{"from":"form-empty-bottom","text":"Scan document to autofill","to":"scan-1-country"},{"from":"scan-1b-country-open","text":"Spain","to":"scan-2-doctypes"},{"from":"scan-2-doctypes","text":"Continue","to":"scan-3-ready"},{"from":"scan-3-ready","text":"Start scanning","to":"scan-4-camera"}]

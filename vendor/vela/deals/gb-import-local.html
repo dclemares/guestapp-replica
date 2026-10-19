@@ -1,0 +1,62 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Villa Calipso · Villa Calipso · Local tips</title><style>:root{--c1:#ff5d8f;--c2:#ffb347;--c3:#c2410c;--b1:#3b0d2e;--b2:#22071a;--g1:#ffd89b;--g2:#ff9a6c;--g3:#ff5d8f}
+@font-face{font-family:P;font-weight:400;src:url("../../fonts/Poppins/poppins-v22-latin-regular.woff2")}
+@font-face{font-family:P;font-weight:500;src:url("../../fonts/Poppins/poppins-v22-latin-500.woff2")}
+@font-face{font-family:P;font-weight:600;src:url("../../fonts/Poppins/poppins-v22-latin-600.woff2")}
+@font-face{font-family:P;font-weight:700;src:url("../../fonts/Poppins/poppins-v22-latin-700.woff2")}
+@font-face{font-family:P;font-weight:800;src:url("../../fonts/Poppins/poppins-v22-latin-800.woff2")}
+*{box-sizing:border-box;margin:0}
+html{background:var(--b1)}
+body{position:relative;overflow-x:hidden;min-height:100vh;font-family:P,system-ui,sans-serif;color:#fff;-webkit-font-smoothing:antialiased;
+  background:radial-gradient(120% 70% at 85% -5%,var(--c1) 0%,transparent 55%),radial-gradient(90% 60% at -10% 25%,var(--c2) 0%,transparent 52%),radial-gradient(110% 70% at 100% 70%,var(--c3) 0%,transparent 58%),linear-gradient(180deg,var(--b1) 0%,var(--b2) 100%)}
+body::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+.rings{color:#fff;position:absolute;left:50%;top:-180px;width:760px;height:760px;transform:translateX(-50%);pointer-events:none;opacity:.35}
+.wrap{position:relative;max-width:720px;margin:0 auto;padding:clamp(28px,6vw,64px) clamp(18px,5vw,40px) 56px}
+.eye{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border-radius:99px;background:rgba(255,255,255,.14);backdrop-filter:blur(10px);font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
+.eye i{width:7px;height:7px;border-radius:50%;background:var(--c2);box-shadow:0 0 0 4px rgba(46,230,197,.25)}
+h1{margin:22px 0 14px;font-size:clamp(44px,12vw,84px);line-height:.98;font-weight:800;letter-spacing:-.045em}
+h1 span{background:linear-gradient(90deg,var(--g1),var(--g2) 55%,var(--g3));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{max-width:520px;font-size:clamp(15px,3.6vw,18px);line-height:1.65;color:rgba(255,255,255,.82)}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin:26px 0 46px}
+.chip{padding:12px 16px;border-radius:18px;background:rgba(255,255,255,.12);backdrop-filter:blur(14px)}
+.chip small{display:block;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.65)}
+.chip b{font-size:17px;font-weight:700}
+h2{margin:0 0 6px;font-size:clamp(24px,6vw,32px);font-weight:700;letter-spacing:-.02em}
+.sub{margin-bottom:18px;font-size:14px;color:rgba(255,255,255,.7)}
+section{margin-bottom:44px}
+.glass{padding:22px;border-radius:26px;background:linear-gradient(160deg,rgba(255,255,255,.2),rgba(255,255,255,.08));backdrop-filter:blur(22px);box-shadow:0 30px 60px -34px rgba(0,0,0,.55)}
+.kv{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-radius:16px;background:rgba(10,15,56,.45)}
+.kv+.kv{margin-top:10px}
+.kv small{display:block;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.6)}
+.kv code{display:block;margin-top:3px;font-family:ui-monospace,Menlo,monospace;font-size:17px;font-weight:700;letter-spacing:.02em}
+.kv button{flex:none;padding:9px 16px;border:0;border-radius:99px;background:#fff;color:var(--b1);font:600 13px P,sans-serif;cursor:pointer;transition:transform .15s}
+.kv button:hover{transform:scale(1.05)}.kv button.ok{background:var(--c2)}
+.tl{position:relative;padding-left:34px}
+.tl::before{content:"";position:absolute;left:11px;top:8px;bottom:8px;width:2px;border-radius:2px;background:linear-gradient(180deg,var(--c2),var(--c3),var(--c1))}
+.st{position:relative;padding:0 0 22px}
+.st:last-child{padding-bottom:0}
+.st::before{content:"";position:absolute;left:-30px;top:4px;width:14px;height:14px;border-radius:50%;background:var(--b1);box-shadow:0 0 0 3px #fff}
+.st b{display:block;font-size:16px;font-weight:700}
+.st span{display:block;margin-top:3px;font-size:14px;line-height:1.6;color:rgba(255,255,255,.75)}
+.st em{font-style:normal;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g1)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.rule{padding:18px 16px;border-radius:22px;background:rgba(255,255,255,.12);backdrop-filter:blur(14px)}
+.rule svg{display:block;margin-bottom:14px}
+.rule b{display:block;font-size:15px;font-weight:700}
+.rule span{display:block;margin-top:5px;font-size:13px;line-height:1.55;color:rgba(255,255,255,.75)}
+.spots{display:grid;gap:10px}
+.spot{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 18px;border-radius:20px;background:rgba(255,255,255,.12);backdrop-filter:blur(14px)}
+.spot b{display:block;font-size:15px}.spot span{font-size:13px;color:rgba(255,255,255,.72)}
+.spot i{flex:none;font-style:normal;padding:6px 12px;border-radius:99px;background:rgba(255,255,255,.18);font-size:12px;font-weight:600}
+.sign{margin-top:8px;padding:26px;border-radius:28px;text-align:center;background:linear-gradient(135deg,var(--c1),var(--g3) 60%,var(--c3))}
+.sign b{display:block;font-size:22px;font-weight:800;letter-spacing:-.02em}
+.sign span{display:block;margin-top:6px;font-size:14px;color:rgba(255,255,255,.9)}
+.rv{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}.rv.on{opacity:1;transform:none}
+@media (max-width:420px){.kv code{font-size:14px}}
+@media (max-width:560px){.grid{grid-template-columns:1fr}.rule{display:flex;gap:14px;align-items:flex-start}.rule svg{margin:0;flex:none}}
+.rv{opacity:1!important;transform:none!important;transition:none!important}.tl::before{display:none}.st:not(:last-child)::after{content:"";position:absolute;left:-24px;top:20px;bottom:-4px;width:2px;border-radius:2px;background:linear-gradient(180deg,var(--c2),var(--c3))}</style></head><body><svg class="rings" viewBox="0 0 760 760" fill="none" stroke="#fff" stroke-width="1"><circle cx="190" cy="220" r="150"/><circle cx="560" cy="170" r="110"/><circle cx="470" cy="520" r="210"/><circle cx="110" cy="560" r="90"/></svg><main class="wrap"><span class="eye rv"><i></i>Villa Calipso · Local tips</span><h1 class="rv">Our favourite <span>corners.</span></h1><p class="lead rv">We have lived in Albacete all our lives, and these are the places we take our own friends to. Good food, a few things worth seeing and who to call.</p><div class="chips rv"><div class="chip"><small>Tapa</small><b>free with a drink</b></div><div class="chip"><small>Plaza Mayor</small><b>5 min</b></div><div class="chip"><small>Emergencies</small><b>112</b></div></div><section class="rv"><h2>Eat like a local</h2><p class="sub">Order a drink and you get a free tapa.</p><div class="grid"><div class="rule"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#ffd89b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7a3 3 0 0 0 3 3v10M9 2v7M6 2v7M17 22V2c-2 1-4 4-4 8s2 5 4 5"/></svg><div><b>Atascaburras</b><span>Cod, potato and garlic</span></div></div><div class="rule"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#ff9a6c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7a3 3 0 0 0 3 3v10M9 2v7M6 2v7M17 22V2c-2 1-4 4-4 8s2 5 4 5"/></svg><div><b>Gazpachos manchegos</b><span>A hearty stew, best shared</span></div></div><div class="rule"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#ff5d8f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg><div><b>Miguelitos</b><span>Puff pastry with custard</span></div></div></div></section><section class="rv"><h2>Don’t miss</h2><p class="sub">All within a short walk.</p><div class="spots"><div class="spot"><div><b>Cathedral of San Juan Bautista</b><span>A calm walk through the old town</span></div><i>8 min</i></div><div class="spot"><div><b>Cutlery Museum</b><span>Knives have been made here since the Middle Ages</span></div><i>10 min</i></div><div class="spot"><div><b>Abelardo Sánchez Park</b><span>Shade, ponds and a great morning run</span></div><i>12 min</i></div></div></section><section class="rv"><h2>Handy to know</h2><p class="sub">Groceries, pharmacy and help.</p><div class="spots"><div class="spot"><div><b>Supermarket</b><span>Monday to Saturday, 09:00–21:30</span></div><i>4 min</i></div><div class="spot"><div><b>Pharmacy</b><span>Open until 22:00</span></div><i>3 min</i></div></div></section><section class="rv"><h2>In an emergency</h2><p class="sub">Free of charge, everywhere in Europe.</p><div class="glass"><div class="kv"><div><small>Emergencies</small><code>112</code></div><button data-c="112">Copy</button></div></div></section><div class="sign rv"><b>Ask us for our favourites.</b><span>We love recommending. — Marta &amp; Javier</span></div></main><script>
+document.querySelectorAll('.kv button').forEach(function(b){b.addEventListener('click',function(){try{navigator.clipboard.writeText(b.getAttribute('data-c'))}catch(e){}b.textContent='Copied';b.classList.add('ok');setTimeout(function(){b.textContent='Copy';b.classList.remove('ok')},1400)})});
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target)}})},{threshold:.08});
+document.querySelectorAll('.rv').forEach(function(e){io.observe(e)});
+setTimeout(function(){document.querySelectorAll('.rv').forEach(function(e){e.classList.add('on')})},2500);
+</script></body></html>

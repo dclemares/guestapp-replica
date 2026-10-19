@@ -1,0 +1,347 @@
+/* Identity verification (iv.js): documento → partes (anverso, reverso, selfie) → verificando → verificado */
+.iv-m,.iv-m *{box-sizing:border-box}
+.iv-m{--n:#161643;--b:#385bf8;--g:#6b6b95;--bd:#e5e6ee;flex:1;display:flex;flex-direction:column;width:100%;max-width:640px;margin:0 auto;font-family:Poppins,system-ui,sans-serif;font-size:14px;line-height:20px;font-weight:500;color:var(--n)}
+.iv-main{flex:1;min-height:0;display:flex;flex-direction:column;padding:30px 16px 10px}   /* el título (y «Skip for now») queda a la misma altura que en la intro */
+.iv-main>*{flex:none}
+.iv-eye{margin:0 0 6px;font-size:12px;line-height:16px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--b)}
+.iv-seg{display:flex;gap:6px;margin:0 0 12px}.iv-seg i{flex:1;height:5px;border-radius:5px;background:#e3e5ef}.iv-seg i.on{background:#37e08f}.iv-seg i.cur{background:var(--b)}
+.iv-h{margin:0;font-size:22px;line-height:29px;font-weight:600;letter-spacing:-.01em}
+.iv-sub{margin:4px 0 0;font-size:13.5px;line-height:19px;font-weight:400;color:var(--g)}
+.iv-lbl{display:block;margin:16px 0 8px;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#4a5072}
+.iv-selw{position:relative}.iv-selw::after{content:"";position:absolute;right:16px;top:50%;width:8px;height:8px;border-right:2px solid var(--g);border-bottom:2px solid var(--g);transform:translateY(-70%) rotate(45deg);pointer-events:none}
+.iv-sel{display:block;width:100%;height:48px;padding:0 40px 0 16px;border:1px solid #d5d8e8;border-radius:12px;background:#fff;color:var(--n);font:500 16px Poppins,system-ui,sans-serif;appearance:none;-webkit-appearance:none;outline:0}
+.iv-sel:focus{border-color:var(--b);box-shadow:0 0 0 3px rgba(56,91,248,.14)}
+.iv-types{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.iv-type{position:relative;display:flex;align-items:center;gap:10px;min-height:56px;padding:10px 12px;border:1.5px solid #dfe2f1;border-radius:14px;background:#fff;color:var(--n);font:600 13.5px Poppins,system-ui,sans-serif;text-align:left;cursor:pointer}
+.iv-type:hover{border-color:#b8c3f4}
+.iv-type .iv-tic{display:grid;place-items:center;flex:none;width:36px;height:36px;border-radius:10px;background:#f1f2f8;color:#6b6b95}
+.iv-type .iv-tl{flex:1;line-height:17px}
+.iv-type .iv-rd{flex:none;width:18px;height:18px;border-radius:50%;border:1.5px solid #c5c8dc}
+.iv-type.on{border-color:var(--b);background:#fff}.iv-type.on .iv-tic{background:#e5ebff;color:var(--b)}.iv-type.on .iv-rd{border:5px solid var(--b);background:#fff}
+/* vista previa como la del autofill: imagen(es) grandes en el hueco libre y pie con "You will photograph" */
+.iv-pv{flex:1 1 0;min-height:0;display:flex;flex-direction:column;margin-top:14px}
+.iv-pvi{position:relative;flex:1;min-height:60px;display:flex;align-items:center;justify-content:center;gap:10px}
+.iv-pvi img{max-width:100%;max-height:100%;min-width:0;object-fit:contain;filter:drop-shadow(0 8px 18px rgba(22,22,67,.18));border-radius:6px}
+.iv-pvi.two img{max-width:calc(50% - 5px)}
+.iv-pvc{flex:none;margin:10px 0 0;text-align:center}.iv-pvc b{display:block;font-size:13px;line-height:18px}.iv-pvc span{display:block;font-size:12.5px;line-height:17px;font-weight:400;color:var(--g)}
+.iv-plan{margin-top:16px;padding:12px 14px;border-radius:14px;background:#f1f2f8}
+.iv-plan b{display:block;font-size:13px;line-height:18px;margin-bottom:4px}.iv-plan ol{margin:0;padding-left:18px;font-size:13px;line-height:20px;font-weight:500;color:var(--g)}
+.iv-stage{position:relative;display:grid;place-items:center;flex:1 1 0;min-height:140px;margin:14px 0 10px;padding:16px;border-radius:18px;background:#fff;border:1px solid var(--bd);overflow:hidden}
+.iv-stage img{max-width:100%;max-height:100%;width:auto;height:auto;border-radius:10px;box-shadow:0 8px 20px rgba(22,22,67,.16)}
+.iv-stage.selfie{background:#f1f2f8;border:0}.iv-face{height:100%;max-height:200px;stroke:#8d93b4}
+.iv-tips{display:flex;flex-direction:column;gap:6px;margin:0;padding:0;list-style:none}
+.iv-tips li{display:flex;align-items:center;gap:12px;font-size:13.5px;font-weight:500}
+.iv-tips li span{display:grid;place-items:center;flex:none;width:30px;height:30px;border-radius:10px;background:#eff6ff;color:var(--b)}
+.iv-stage.cam{padding:0;border:0;background:radial-gradient(120% 90% at 50% 0%,#23245f 0%,#0e0f2e 70%);min-height:180px}
+.iv-vf{position:relative;display:grid;place-items:center;width:100%;height:100%;padding:34px 26px}
+.iv-vf img{width:min(100%,300px);box-shadow:none;border-radius:10px;opacity:.96}
+.iv-vf .c{position:absolute;width:26px;height:26px;border:3px solid #fff}.iv-vf .tl{left:16px;top:20px;border-right:0;border-bottom:0;border-radius:10px 0 0 0}.iv-vf .tr{right:16px;top:20px;border-left:0;border-bottom:0;border-radius:0 10px 0 0}.iv-vf .bl{left:16px;bottom:20px;border-right:0;border-top:0;border-radius:0 0 0 10px}.iv-vf .br{right:16px;bottom:20px;border-left:0;border-top:0;border-radius:0 0 10px 0}
+.iv-vf.selfie .iv-face{height:88%;stroke:#fff}
+.iv-scan{position:absolute;left:14%;right:14%;top:14%;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,#7d95ff,transparent);box-shadow:0 0 14px 3px rgba(125,149,255,.7);animation:iv-sc 2.2s ease-in-out infinite}
+@keyframes iv-sc{0%,100%{top:16%}50%{top:82%}}
+.iv-hint{position:absolute;left:0;right:0;bottom:10px;margin:0;text-align:center;font-size:12.5px;color:rgba(255,255,255,.78);font-weight:500}
+.iv-mid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center}
+.iv-mid p{margin:0;font-size:13.5px;color:var(--g);font-weight:400}
+.iv-spin{width:56px;height:56px;border-radius:50%;border:5px solid #e5e6ee;border-top-color:var(--b);animation:iv-sp .9s linear infinite}
+@keyframes iv-sp{to{transform:rotate(360deg)}}
+.iv-vs{display:flex;flex-direction:column;gap:8px;margin:0;padding:0;list-style:none;font-size:13.5px;color:#9a9db8}.iv-vs li{display:flex;align-items:center;gap:8px}.iv-vs li::before{content:"";width:10px;height:10px;border-radius:50%;background:#dfe2f1}.iv-vs li.d{color:var(--n)}.iv-vs li.d::before{background:#37e08f}.iv-vs li.a{color:var(--n)}.iv-vs li.a::before{background:var(--b);animation:iv-pu 1s ease-in-out infinite}
+@keyframes iv-pu{50%{transform:scale(1.5);opacity:.6}}
+.iv-okc{display:grid;place-items:center;width:84px;height:84px;border-radius:50%;background:rgba(55,224,143,.16);color:#1f9d63;box-shadow:inset 0 0 0 4px #37e08f;animation:iv-pop .5s cubic-bezier(.22,.8,.2,1)}.iv-okc svg{width:40px;height:40px;stroke-width:2.6}
+@keyframes iv-pop{from{transform:scale(.6);opacity:0}}
+.iv-note{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--g)}.iv-note svg{color:#37a974;flex:none}
+.iv-s-done .iv-main,.iv-s-verifying .iv-main,.iv-s-checking .iv-main{align-items:stretch}
+.iv-s-done .iv-h,.iv-s-done .iv-sub{text-align:center}.iv-s-verifying .iv-h,.iv-s-checking .iv-h{text-align:center}
+.iv-ft{display:flex;flex-direction:column;gap:8px;margin:0;padding:12px 20px calc(20px + env(safe-area-inset-bottom,0px));background:#fff;border-top:1px solid #eef0f7}
+.iv-b{display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 20px;border:0;border-radius:9999px;font:600 14.5px Poppins,system-ui,sans-serif;cursor:pointer;white-space:nowrap}
+.iv-b.pri{background:var(--b);color:#fff}.iv-b.pri:hover{background:var(--chekin-color-brand-hover,#294df1)}.iv-b.pri[disabled]{background:#c9cde6;cursor:default}
+.iv-b.txt{background:transparent;color:var(--g);min-height:38px}
+.iv-sh{width:18px;height:18px;border-radius:50%;border:3px solid #fff}
+.iv-m button:focus-visible,.iv-m select:focus-visible{outline:2px solid var(--b);outline-offset:2px}
+.iv-plan ol{list-style:decimal}
+
+/* vista previa del documento elegido (anverso y reverso del DNI / página de la foto del pasaporte) */
+.iv-prev{flex:1 1 0;min-height:0;display:grid;grid-template-columns:1fr;grid-auto-rows:minmax(0,1fr);gap:10px;margin-top:14px}
+.iv-fig{margin:0;min-height:0;display:flex;flex-direction:column;align-items:center;gap:4px}
+.iv-fi{position:relative;flex:1;min-height:0;width:100%}
+.iv-fi img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 6px 14px rgba(22,22,67,.18))}
+.iv-fig figcaption{flex:none;font-size:12px;line-height:16px;font-weight:600;color:var(--g)}
+
+/* anverso y reverso apilados: cada uno ocupa la mitad del hueco libre y se ve lo máximo posible según el alto del dispositivo */
+.iv-pvi.two{flex-direction:column;gap:10px}
+.iv-pvi.two img{flex:1 1 0;min-height:0;width:100%;max-width:100%;max-height:none;height:auto;object-fit:contain}
+
+/* 1, 2, 3 o 4 tipos de documento */
+.iv-types.n1{grid-template-columns:1fr}.iv-types.n3 .iv-type:last-child{grid-column:1/-1}
+
+/* tres tipos: los tres en una sola fila (icono arriba, nombre debajo y radio en la esquina) */
+.iv-types.n3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.iv-types.n3 .iv-type:last-child{grid-column:auto}
+.iv-types.n3 .iv-type{flex-direction:column;justify-content:center;gap:6px;min-height:84px;padding:10px 6px;text-align:center}
+.iv-types.n3 .iv-tl{flex:none;font-size:12.5px;line-height:15px}
+.iv-types.n3 .iv-rd{position:absolute;top:7px;right:7px;width:14px;height:14px}
+.iv-types.n3 .iv-type.on .iv-rd{border-width:4px}
+/* tres tipos sin icono */
+.iv-types.n3 .iv-tic{display:none}
+.iv-types.n3 .iv-type{min-height:56px;padding:10px 24px 10px 8px}
+.iv-types.n3 .iv-rd{top:50%;right:8px;transform:translateY(-50%)}
+
+/* marco de la animación del autofill (Get ready / cámara) dentro de la IV */
+.iv-prepw{position:relative;flex:1 1 0;min-height:0;margin-top:8px;overflow:hidden}
+.iv-prep{position:absolute;inset:0;width:100%;height:100%;border:0;background:transparent;outline:0}
+.iv-b.sec{background:#fff;color:var(--n);border:1.5px solid #dfe2f1}.iv-b.sec:hover{background:#f5f6f9}
+
+/* validación de cada foto (pasos en segundo plano) y error */
+.iv-s-error .iv-main{align-items:stretch}.iv-s-error .iv-h{text-align:left}
+.iv-ckb{display:grid;place-items:center;min-height:84px}
+.iv-ck{display:flex;flex-direction:column;gap:12px;margin:6px 0 0;padding:0;list-style:none;font-size:14px;color:#9a9db8;text-align:left}
+.iv-ck li{display:flex;align-items:center;gap:12px}
+.iv-ck li .iv-ci{display:grid;place-items:center;flex:none;width:24px;height:24px;border-radius:50%;background:#eceef7;color:#fff}
+.iv-ck li.run{color:var(--n)}.iv-ck li.run .iv-ci{background:#fff;border:3px solid #e5e6ee;border-top-color:var(--b);animation:iv-sp .8s linear infinite}
+.iv-ck li.ok{color:var(--n)}.iv-ck li.ok .iv-ci{background:#37e08f;color:#0e5a37}.iv-ck li.ko{color:var(--n)}.iv-ck li.ko .iv-ci{background:#e5484d}
+.iv-ck li svg{width:14px;height:14px;stroke-width:3}
+.iv-okc.ko{background:rgba(229,72,77,.12);color:#c93a3f;box-shadow:inset 0 0 0 4px #f08a8d}
+.iv-alert{display:flex;gap:12px;margin-top:16px;padding:12px 14px;border-radius:14px;background:#fff8e6;border:1px solid #ffe3a1;color:#6b4a00}
+.iv-alert svg{flex:none;margin-top:1px;color:#c98a00}
+.iv-alert b{display:block;font-size:13.5px;line-height:19px;font-weight:600;color:#4d3500}.iv-alert span{display:block;font-size:12.5px;line-height:17px;font-weight:400;margin-top:2px}
+.iv-etips{display:flex;flex-direction:column;gap:8px;margin:16px 0 0;padding:0;list-style:none}
+.iv-etips li{display:flex;align-items:center;gap:12px;font-size:13.5px;font-weight:500}
+.iv-etips li span{display:grid;place-items:center;flex:none;width:32px;height:32px;border-radius:10px;background:#eff6ff;color:var(--b)}
+
+/* progreso de la verificación */
+.iv-s-checking .iv-sub{text-align:center}
+.iv-pg{gap:22px}
+.iv-ring{position:relative;width:176px;height:176px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(closest-side,#fff 62%,#f2f5ff 100%);box-shadow:0 18px 40px -18px rgba(53,88,255,.45)}
+.iv-ring>svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg);overflow:visible}
+.iv-ring>svg circle{fill:none;stroke-width:7}
+.iv-ring>svg .tr{stroke:#e9ecf8}
+.iv-ring .pr{stroke:url(#ivg);stroke-linecap:round;transition:stroke-dashoffset .12s linear}
+.iv-pc{position:relative;display:grid;place-items:center}
+.iv-pc b{font:700 34px/1 Poppins,system-ui,sans-serif;color:var(--n);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.iv-ring.ok{box-shadow:0 18px 40px -18px rgba(55,224,143,.6)}.iv-ring.ok circle.pr{stroke:#37e08f}
+.iv-ring.ko circle.pr{stroke:#e5484d}.iv-ring.ko{box-shadow:0 18px 40px -18px rgba(229,72,77,.45)}
+.iv-ring.ok .iv-okc{width:96px;height:96px}
+.iv-msg{min-height:20px;margin:0;font-size:15px!important;font-weight:500!important;color:var(--n)!important;transition:opacity .18s ease,transform .18s ease}
+.iv-msg.out{opacity:0;transform:translateY(4px)}
+.iv-chips{display:flex;gap:8px;justify-content:center}
+.iv-chip{display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border-radius:99px;background:#f2f3fa;color:#8387a8;font:600 12.5px Poppins,system-ui,sans-serif;transition:background .25s,color .25s}
+.iv-chip i{display:grid;place-items:center;width:16px;height:16px;border-radius:50%;border:2.5px solid #d4d8ec;border-top-color:var(--b);animation:iv-sp .8s linear infinite;box-sizing:border-box}
+.iv-chip.ok{background:#e6f9ef;color:#17794b}.iv-chip.ko{background:#feecec;color:#b1343a}
+.iv-chip.ok i,.iv-chip.ko i{animation:none;border:0;color:#fff}.iv-chip.ok i{background:#37e08f;color:#0e5a37}.iv-chip.ko i{background:#e5484d}
+.iv-chip i svg{width:10px;height:10px;stroke-width:3.4}
+@media (prefers-reduced-motion:reduce){.iv-ring .pr{transition:none}}
+
+.iv-ring .pr{transition:none}
+
+.iv-ring.ok circle.pr{transition:stroke .35s ease}
+.iv-ckok{display:grid;place-items:center;color:#1f9d63;animation:iv-pop .45s cubic-bezier(.22,.8,.2,1)}.iv-ckok svg{width:64px;height:64px;stroke-width:2.6}
+.iv-ckok.ko{color:#c93a3f}
+
+.iv-note.go{font-size:13.5px;font-weight:500;color:var(--n)}
+.iv-spin.sm{width:16px;height:16px;border-width:2.5px}
+
+/* «Skip for now» fijo a la derecha del título (como en la intro) */
+.iv-hr{position:relative}
+.iv-hr.hs .iv-h{padding-right:92px}
+.iv-skipb{position:absolute;right:0;top:4px;padding:0 0 0 10px;border:0;background:transparent;color:#6b6b95;font:500 13px/20px Poppins,system-ui,sans-serif;white-space:nowrap;cursor:pointer}
+.iv-skipb:hover{color:#161643}
+.iv-nosk .iv-skipb{display:none}
+
+/* selfie: animación (se quita gorra y gafas) + dos pasos numerados */
+.iv-stage.selfie{padding:0;background:#fff;border:1px solid var(--bd)}.iv-selfie-anim{width:100%;height:100%;object-fit:cover;object-position:38% 30%;background:#fff;display:block}
+.iv-ssteps{display:flex;flex-direction:column;gap:6px;margin:0;padding:0;list-style:none}
+/* mismo estilo y misma transición que las instrucciones del anverso / reverso: sin fondo y con un puntito; al cumplirse pasan a verde con ✓ */
+.iv-ssteps li{display:flex;align-items:center;gap:12px;padding:9px 14px;border-radius:12px;background:#eef1ff;color:#4a5072;font-size:14px;line-height:20px;font-weight:650;transition:background .55s ease,color .55s ease}
+.iv-ssteps i{position:relative;flex:none;width:24px;height:24px;border-radius:50%;background:#385bf8;transition:background .55s ease}
+.iv-ssteps i .ic{position:absolute;inset:0;display:grid;place-items:center;color:#fff;transition:opacity .3s ease,transform .3s ease}.iv-ssteps i .ic svg{width:14px;height:14px}
+.iv-ssteps i::after{content:'\2713';position:absolute;inset:0;display:grid;place-content:center;color:#fff;font-size:14px;font-weight:800;line-height:1;opacity:0;transition:opacity .4s ease .1s}
+.iv-ssteps li.ok{background:#eaf4ee;color:#232044;animation:ivGlow .6s ease}
+.iv-ssteps li.ok i{background:#246b50}.iv-ssteps li.ok i .ic{opacity:0;transform:scale(.3)}.iv-ssteps li.ok i::after{opacity:1}
+@keyframes ivGlow{0%{box-shadow:0 0 0 0 #34c38f00}40%{box-shadow:0 0 0 4px #34c38f55,0 0 22px 2px #34c38f66}100%{box-shadow:0 0 0 0 #34c38f00}}
+@media(prefers-reduced-motion:reduce){.iv-ssteps li,.iv-ssteps i{transition:none}.iv-ssteps li.ok{animation:none}}
+/* el vídeo va sin marco ni fondo */
+.iv-stage.selfie,.iv-stage.selfie.ok{background:transparent;border:0;box-shadow:none;padding:0;border-radius:0}
+.iv-selfie-anim{border-radius:0;background:transparent}
+.iv-stage.selfie{position:relative}.iv-selfie-cv{width:100%;height:100%;display:block;background:transparent}.iv-selfie-anim{position:absolute;left:0;top:0;width:2px;height:2px;opacity:0;pointer-events:none}
+
+/* elegir de la galería: encuadre de la imagen contra el marco guía */
+.iv-adj{display:flex;flex-direction:column;gap:10px;flex:1 1 0;min-height:0;margin-top:12px}
+.iv-adj-st{position:relative;flex:1 1 0;min-height:240px;border-radius:18px;overflow:hidden;background:#10112b;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+.iv-adj-st.drag{cursor:grabbing}
+.iv-adj-img{position:absolute;left:50%;top:50%;max-width:none!important;max-height:none!important;transform-origin:center;pointer-events:none;will-change:transform}
+.iv-adj-fr{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border:2px dashed rgba(255,255,255,.9);border-radius:14px;box-shadow:0 0 0 999px rgba(12,13,36,.58);pointer-events:none}
+.iv-adj.selfie .iv-adj-fr{border-radius:50%}
+.iv-adj-z{display:flex;align-items:center;gap:10px}
+.iv-adj-z button{flex:none;display:grid;place-items:center;width:40px;height:40px;border:1.5px solid #d9dcec;border-radius:50%;background:#fff;color:#161643;cursor:pointer}
+.iv-adj-r{flex:1;accent-color:#385bf8;height:28px}
+.iv-adj-h{margin:0;text-align:center;font-size:12.5px;line-height:17px;color:#6b6b95}
+
+/* selfie: óvalo guía lo más grande posible, con silueta fantasma y pulso suave */
+.iv-vf.selfie{padding:0;overflow:hidden}
+.iv-oval{position:relative;border:3px solid #fff;border-radius:50%;box-shadow:0 0 0 999px rgba(9,10,32,.72),0 0 0 0 rgba(125,149,255,.6);animation:ivOvalPulse 2.4s ease-in-out infinite}
+.iv-ghost{position:absolute;inset:0;width:100%;height:100%;border-radius:50%;opacity:.42}
+.iv-vf>.iv-chip,.iv-adj-st>.iv-chip{position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:2;padding:6px 14px;border-radius:99px;background:rgba(255,255,255,.16);color:#fff;font-size:12.5px;line-height:17px;font-weight:600;white-space:nowrap;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+@keyframes ivOvalPulse{0%,100%{box-shadow:0 0 0 999px rgba(9,10,32,.72),0 0 0 0 rgba(125,149,255,.55)}60%{box-shadow:0 0 0 999px rgba(9,10,32,.72),0 0 0 14px rgba(125,149,255,0)}}
+@media(prefers-reduced-motion:reduce){.iv-oval{animation:none}}
+.iv-adj.selfie .iv-adj-fr{border-style:solid;border-width:3px}
+
+/* selfie: maniquí fantasma grande dentro del óvalo (cabeza y cuello), con el borde inferior difuminado */
+.iv-oval img.iv-ghost,.iv-adj-fr img.iv-ghost{position:absolute;right:auto;bottom:auto;left:-45%;top:-4%;width:190%;height:auto;max-width:none;max-height:none;border-radius:0;opacity:.5;pointer-events:none;-webkit-mask-image:linear-gradient(#000 62%,transparent 88%);mask-image:linear-gradient(#000 62%,transparent 88%);box-shadow:none!important}
+.iv-oval{overflow:hidden}
+/* galería: mismo visor que la cámara (fondo oscuro, marco azul con esquinas, óvalo con maniquí) */
+.iv-adj-st{background:radial-gradient(120% 90% at 50% 0%,#23245f 0%,#0e0f2e 70%)}
+.iv-adj-fr{border:1.5px solid rgba(111,151,255,.55);box-shadow:0 0 0 999px rgba(9,10,32,.72)}
+.iv-adj-fr .c{position:absolute;width:26px;height:26px;border:3px solid #6f97ff;filter:drop-shadow(0 0 6px rgba(78,123,255,.6))}
+.iv-adj-fr .tl{left:-3px;top:-3px;border-right:0;border-bottom:0;border-radius:10px 0 0 0}.iv-adj-fr .tr{right:-3px;top:-3px;border-left:0;border-bottom:0;border-radius:0 10px 0 0}.iv-adj-fr .bl{left:-3px;bottom:-3px;border-right:0;border-top:0;border-radius:0 0 0 10px}.iv-adj-fr .br{right:-3px;bottom:-3px;border-left:0;border-top:0;border-radius:0 0 10px 0}
+.iv-adj.selfie .iv-adj-fr{border:3px solid #fff;overflow:hidden;animation:ivOvalPulse 2.4s ease-in-out infinite}
+.iv-adj.selfie .iv-adj-fr img.iv-ghost{opacity:.32}
+.iv-adj-st>.iv-chip{top:auto;bottom:12px;z-index:2;background:rgba(0,0,0,.6)}
+
+/* cámara real */
+.iv-live{position:absolute;inset:0;width:100%;height:100%;max-width:none!important;max-height:none!important;object-fit:cover;transform:scaleX(-1);border-radius:0!important;box-shadow:none!important;opacity:1!important}
+
+
+.iv-oval img.iv-ghost.m-he,.iv-adj-fr img.iv-ghost.m-he,.iv-oval img.iv-ghost.m-she,.iv-adj-fr img.iv-ghost.m-she{left:-30%;top:-2%;width:160%;opacity:.85;-webkit-mask-image:linear-gradient(#000 70%,transparent 94%);mask-image:linear-gradient(#000 70%,transparent 94%)}
+.iv-adj.selfie .iv-adj-fr img.iv-ghost.m-he,.iv-adj.selfie .iv-adj-fr img.iv-ghost.m-she{opacity:.7}
+
+/* cámara del selfie: apagada → encendida (el visor se abre en círculo, enfoca y sube de brillo) */
+.iv-vf.selfie{background:#07070d}
+.iv-feed{position:absolute;inset:0;overflow:hidden;opacity:0;clip-path:circle(0 at 50% 46%)}
+.iv-vf .iv-feed img.iv-feedimg{position:absolute;left:50%;top:-15%;height:160%!important;width:auto!important;max-width:none!important;max-height:none!important;transform:translateX(-43.5%);border-radius:0!important;box-shadow:none!important;opacity:1!important}
+.iv-vf.selfie.on .iv-feed{opacity:1;animation:ivCamOn 1.15s cubic-bezier(.55,0,.2,1) forwards}
+@keyframes ivCamOn{0%{clip-path:circle(0 at 50% 46%);filter:brightness(.25) blur(12px)}55%{clip-path:circle(150% at 50% 46%);filter:brightness(.6) blur(7px)}100%{clip-path:circle(150% at 50% 46%);filter:none}}
+.iv-vf.selfie.off .iv-oval{border-color:rgba(255,255,255,.7);animation:none}
+.iv-vf.selfie.off img.iv-ghost{opacity:.7}
+.iv-vf.selfie.on img.iv-ghost{opacity:.26;transition:opacity .6s ease .6s}
+.iv-vf.selfie.off>.iv-chip{background:rgba(255,255,255,.1);color:rgba(255,255,255,.7)}
+.iv-vf.selfie.on>.iv-chip{animation:ivChipIn .5s ease .9s both}
+@keyframes ivChipIn{from{opacity:0;transform:translate(-50%,-6px)}to{opacity:1;transform:translate(-50%,0)}}
+.iv-vf.selfie .iv-live{z-index:0}
+
+.iv-cspin{display:inline-block;width:12px;height:12px;margin-right:7px;vertical-align:-1px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:iv-sp .8s linear infinite;box-sizing:border-box}
+.iv-vf.selfie.off>.iv-chip{background:rgba(255,255,255,.16);color:#fff}
+
+/* galería: el mockup del documento (anverso, reverso o página del pasaporte) se ve dentro del marco como guía */
+.iv-adj-fr img.iv-adj-doc{position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;object-fit:contain;opacity:.45;border-radius:12px;pointer-events:none;box-shadow:none}
+
+@media (min-width:1025px){.iv-dtop{margin:0 0 14px}.iv-main{padding:28px 0 10px}.iv-ft{padding:14px 0 24px;background:transparent;border-top:0}}
+@media (min-width:1025px){
+  .iv-m{min-height:calc(100dvh - 8px)}
+  .iv-prepw{min-height:min(520px,calc(100dvh - 330px))}
+  .iv-stage{min-height:min(520px,calc(100dvh - 380px))}
+  .iv-pv{min-height:360px}
+  .iv-adj-st{min-height:min(520px,calc(100dvh - 360px))}
+}
+@media (min-width:1025px){
+  .iv-stage.selfie,.iv-stage.cam{width:min(100%,400px);align-self:center;min-height:min(500px,calc(100dvh - 330px))}
+  .iv-adj{align-items:stretch}
+}
+
+@media (min-width:1025px){.iv-dtop{margin:0 0 10px!important}}
+/* escritorio: la verificación cabe siempre en la pantalla (sin scroll, también en portátiles pequeños) y el CTA nunca queda escondido */
+@media (min-width:1025px){
+  html[data-iv-flow],html[data-iv-flow] body{overflow:hidden}
+  .iv-m{height:100dvh;min-height:0;max-height:100dvh}
+  .iv-main{padding:20px 0 6px;min-height:0;overflow:hidden}
+  .iv-pv{min-height:90px!important}
+  .iv-pvi img{max-height:100%}
+  .iv-prepw{min-height:140px!important}
+  .iv-stage,.iv-stage.selfie,.iv-stage.cam,.iv-adj-st{min-height:140px!important}
+  .iv-ft{flex:none;align-items:center;padding:10px 0 18px}
+  .iv-ft .iv-b{width:280px;max-width:100%;min-height:48px;height:48px}
+}
+
+/* escritorio: mismos títulos y subtítulos que el resto de pantallas (27/32 600 · 14/21 500) y la misma columna (630 px) y altura del «Back» */
+@media (min-width:1025px){
+  .iv-m{max-width:820px;padding:0 32px;box-sizing:border-box}   /* la misma columna que el resto de pantallas: máx. 820 px con 32 px de margen (756 de contenido) */
+  .iv-main{padding-top:24px}
+  .iv-h{font-size:27px;line-height:32px;letter-spacing:-.015em;font-weight:600;color:#161643}
+  .iv-sub{margin-top:6px;font-size:14px;line-height:21px;font-weight:500;color:#6b6b95}
+  .iv-hr{margin-top:0}
+}
+
+/* vídeo del selfie ya recortado (fondo gris de los mockups): se ve directamente, sin recorte en vivo */
+.iv-stage.selfie:not(.cam){background:transparent;border-radius:0;overflow:visible;padding:0}
+.iv-stage.selfie>video.iv-selfie-anim{position:absolute;inset:0;width:100%;height:100%;opacity:1;pointer-events:none;object-fit:contain;object-position:50% 50%;background:transparent;border-radius:0}
+/* el vídeo está recortado sobre blanco puro y se «multiplica» con el fondo de la página: se funde con él sin caja ni diferencias de tono */
+.iv-stage.selfie>video.iv-selfie-anim{mix-blend-mode:multiply}
+
+/* documento(s): tamaño fijado por iv.js (pvFit); apilados por defecto, en paralelo si hay sitio de sobra */
+.iv-pvi{overflow:hidden}
+.iv-pvi.two{flex-direction:column;gap:14px}
+.iv-pvi.two.side{flex-direction:row;align-items:center;justify-content:center}
+.iv-pvi.two img,.iv-pvi.one img,.iv-pvi img{flex:none}
+.iv-pvi{padding:10px 0;box-sizing:border-box}
+
+/* galería: mockup del documento (el de la cámara) sobre la foto, centrado en el marco */
+.iv-adj-st .iv-adj-mock{position:absolute;border:0;background:transparent;pointer-events:none;z-index:1}
+.iv-adj-fr{z-index:2}
+.iv-adj:not(.selfie) .iv-adj-fr{border-color:transparent;box-shadow:0 0 0 999px rgba(9,10,32,.55)}
+.iv-adj-fr .c{display:none}
+.iv-adj-st .iv-chip{z-index:3}
+
+
+/* cámara del documento con encendido */
+@property --ivr{syntax:'<percentage>';inherits:false;initial-value:0%}
+.iv-prepw{position:relative}
+.iv-camoff{position:absolute;inset:0;z-index:6;background:radial-gradient(120% 90% at 50% 0%,#17183f 0%,#07070d 70%);border-radius:14px}
+.iv-camoff>.iv-chip{position:absolute;top:12px;left:50%;transform:translateX(-50%);padding:6px 14px;border-radius:99px;background:rgba(255,255,255,.16);color:#fff;font:600 12.5px/17px Poppins,system-ui,sans-serif;white-space:nowrap}
+.iv-camoff.lift{-webkit-mask-image:radial-gradient(circle at 50% 46%,transparent var(--ivr),#000 calc(var(--ivr) + .6%));mask-image:radial-gradient(circle at 50% 46%,transparent var(--ivr),#000 calc(var(--ivr) + .6%));animation:ivOffLift .95s cubic-bezier(.55,0,.2,1) forwards}
+.iv-camoff.lift>.iv-chip{opacity:0;transition:opacity .2s}
+@keyframes ivOffLift{from{--ivr:0%}to{--ivr:150%}}
+
+/* galería: la sombra (recorte claro) va por debajo del mockup, así las esquinas azules quedan por encima */
+.iv-adj-fr{z-index:1}
+.iv-adj-st .iv-adj-mock{z-index:2}
+.iv-adj-st .iv-chip{z-index:3}
+.iv-adj:not(.selfie) .iv-adj-fr{box-shadow:0 0 0 999px rgba(9,10,32,.72)}
+
+/* panel de Vela: progreso de la verificación (círculos con icono unidos por una línea) */
+.iv-vst{display:flex;align-items:center;margin:14px 0 4px -34px;width:calc(100% + 34px)}
+.iv-vc{flex:none;display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:#eef1ff;transition:background .3s}
+.iv-vc b{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#e7ecff;border:1.5px solid #b9c5ff;color:#385bf8}
+.iv-vc.now{background:#e1e7ff}.iv-vc.now b{background:#385bf8;border-color:#385bf8;color:#fff}
+.iv-vc.done b{background:#e6f9ef;border-color:#9fe3be;color:#17794b}
+.iv-vl{position:relative;overflow:hidden;flex:1;height:5px;margin:0 -2px;background:#e1e1ee}.iv-vl::after{content:"";position:absolute;inset:0;background:#7fd6a6;transform:scaleX(0);transform-origin:left;transition:transform .42s cubic-bezier(.4,0,.2,1)}.iv-vl.on::after{transform:scaleX(1)}
+
+
+/* progreso de Vela: animación de avance */
+.iv-vc,.iv-vc b{transition:background .3s,border-color .3s,color .3s,box-shadow .3s}
+.iv-vc.pop b{animation:ivVPop .5s cubic-bezier(.3,1.5,.5,1)}
+.iv-vc.pop b svg *{stroke-dasharray:1;stroke-dashoffset:1;animation:ivVDraw .4s .12s ease forwards}
+.iv-vc.pulse b{animation:ivVPop .5s cubic-bezier(.3,1.5,.5,1)}
+.iv-vc.pulse{animation:ivVRing .8s ease-out}
+@keyframes ivVPop{0%{transform:scale(.8)}55%{transform:scale(1.18)}100%{transform:scale(1)}}
+@keyframes ivVDraw{to{stroke-dashoffset:0}}
+@keyframes ivVRing{0%{box-shadow:0 0 0 0 rgba(56,91,248,.45)}100%{box-shadow:0 0 0 14px rgba(56,91,248,0)}}
+@media (prefers-reduced-motion:reduce){.iv-vc.pop b,.iv-vc.pulse b,.iv-vc.pulse,.iv-vl::after{animation:none;transition:none}.iv-vc.pop b svg *{animation:none;stroke-dashoffset:0}}
+
+/* panel de Vela: recomendaciones de la foto */
+.iv-rtips{display:flex;flex-direction:column;gap:9px;margin:0 0 11px}
+.iv-rtip{display:flex;gap:10px;align-items:flex-start;animation:ivRtIn .4s ease both}
+.iv-rtip:nth-child(2){animation-delay:.06s}.iv-rtip:nth-child(3){animation-delay:.12s}.iv-rtip:nth-child(4){animation-delay:.18s}
+.iv-rtip>i{flex:none;display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:#eef1ff;color:#385bf8;font-style:normal}
+.iv-rtip>i svg{width:16px;height:16px}
+.iv-rtip p{margin:0;display:flex;flex-direction:column;gap:1px;min-width:0}
+.iv-rtip b{font-size:12.5px;line-height:17px;font-weight:600;color:#161643}
+.iv-rtip span{font-size:11.5px;line-height:16px;font-weight:500;color:#6b6b95}
+@keyframes ivRtIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.iv-rtip{animation:none}}
+.iv-rtips.c{gap:6px}.iv-rtips.c .iv-rtip span{display:none}.iv-rtips.c .iv-rtip>i{width:26px;height:26px}.iv-rtips.c .iv-rtip{align-items:center}
+
+/* progreso de Vela: lo completado en verde (línea y halo del check) */
+.iv-vc.done{background:#e3f7ec}.iv-vc.done b{background:#e6f9ef;border-color:#8fdcb4;color:#17794b}
+
+/* progreso de Vela desde el paso 1: sin título de sección ni icono */
+.iv-rv0{margin-top:16px}.iv-rv0 .iv-vst{margin-left:0;width:100%}
+aside.fx-nointro>p{display:none!important}
+
+/* progreso de Vela: al pasar el ratón (o con el teclado) cada paso dice qué es */
+.iv-vc{position:relative}
+.iv-vc[data-tip]::after{content:attr(data-tip);position:absolute;left:50%;top:calc(100% + 6px);transform:translate(-50%,-3px);z-index:20;padding:5px 10px;border-radius:8px;background:#161643;color:#fff;font:600 11.5px/16px Poppins,system-ui,sans-serif;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s,transform .15s}
+.iv-vst>.iv-vc:first-child::after{left:0;transform:translate(0,-3px)}
+.iv-vst>.iv-vc:last-child::after{left:auto;right:0;transform:translate(0,-3px)}
+.iv-vc[data-tip]:hover::after,.iv-vc[data-tip]:focus-visible::after{opacity:1;transform:translate(-50%,0)}
+.iv-vst>.iv-vc:first-child:hover::after,.iv-vst>.iv-vc:first-child:focus-visible::after,.iv-vst>.iv-vc:last-child:hover::after,.iv-vst>.iv-vc:last-child:focus-visible::after{transform:translate(0,0)}
+.iv-vc:focus-visible{outline:2px solid #385bf8;outline-offset:2px}
+
+.iv-vst{margin-bottom:11px}

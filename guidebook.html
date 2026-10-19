@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>Guidebook · Villa Calipso</title>
+<link rel="stylesheet" href="../assets/__INDEXCSS__">
+<style>
+/* Guidebook del anfitrión: pantalla externa a la app (se abre desde la Home). Mismo lenguaje: gris claro, tarjetas blancas sin borde ni sombra, marino #161643, azul #385bf8, Poppins. */
+:root{--navy:#161643;--blue:#385bf8;--sec:#6b6b95;--soft:#f1f3fb;--line:#eceef6}
+*{box-sizing:border-box}
+html,body{margin:0;background:#f4f4f8;color:var(--navy);font-family:Poppins,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer}
+a{color:inherit}
+.top{position:sticky;top:0;z-index:5;background:rgba(255,255,255,.86);-webkit-backdrop-filter:blur(18px) saturate(1.6);backdrop-filter:blur(18px) saturate(1.6)}
+.top-in{display:flex;align-items:center;gap:12px;max-width:720px;margin:0 auto;padding:12px 16px}
+.bk{flex:none;display:grid;place-items:center;width:40px;height:40px;border:0;border-radius:12px;background:var(--soft);color:var(--navy)}
+.tt{min-width:0;line-height:1.25}.tt b{display:block;font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tt span{font-size:12px;color:var(--sec)}
+.wrap{max-width:720px;margin:0 auto;padding:16px 16px 56px;display:flex;flex-direction:column;gap:12px}
+.hero{display:flex;align-items:center;gap:16px;padding:20px 16px;border-radius:18px;background:#fff}
+.hi{flex:none;display:grid;place-items:center;width:56px;height:56px;border-radius:16px}
+.eye{display:block;margin-bottom:2px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--sec)}
+h1{margin:0;font-size:22px;line-height:28px;font-weight:700;letter-spacing:-.01em}
+.meta{margin:2px 0 0;font-size:13px;color:var(--sec)}
+.toc{display:flex;gap:8px;overflow-x:auto;margin:0 -16px;padding:0 16px;scrollbar-width:none}.toc::-webkit-scrollbar{display:none}
+.toc a{flex:none;display:inline-flex;align-items:center;height:36px;padding:0 16px;border-radius:9999px;background:#fff;font-size:13px;font-weight:600;text-decoration:none;white-space:nowrap}
+.toc a:hover{background:var(--soft)}
+.chap{margin:12px 0 0;display:flex;align-items:center;gap:12px}
+.chap .hi{width:40px;height:40px;border-radius:12px}
+.chap b{font-size:17px;font-weight:700;letter-spacing:-.01em}
+.card{padding:20px 16px;border-radius:18px;background:#fff;scroll-margin-top:72px}
+.card h2{display:flex;align-items:center;gap:12px;margin:0 0 12px;font-size:16px;line-height:22px;font-weight:700}
+.card h2 i{flex:none;display:grid;place-items:center;width:28px;height:28px;border-radius:9px;background:rgba(56,91,248,.16);color:var(--blue);font-style:normal;font-size:13px;font-weight:700}
+.card p{margin:0 0 12px;font-size:14.5px;line-height:23px}.card p:last-child{margin-bottom:0}
+.card ol,.card ul{margin:0 0 12px;padding-left:20px;font-size:14.5px;line-height:23px}.card li+li{margin-top:6px}
+.kv{display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:var(--soft)}.kv+.kv{margin-top:8px}
+.kv span{flex:1;min-width:0}.kv small{display:block;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--sec)}
+.kv code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:15px;font-weight:500;letter-spacing:.02em;overflow-wrap:anywhere}
+.cp{flex:none;height:32px;padding:0 16px;border:0;border-radius:9999px;background:rgba(56,91,248,.16);color:var(--blue);font-size:12.5px;font-weight:600}.cp.ok{background:rgba(55,224,143,.26);color:#0b5c37}
+.note{display:flex;gap:12px;align-items:flex-start;margin:12px 0 0;padding:12px;border-radius:14px;background:rgba(255,194,51,.22);font-size:13.5px;line-height:20px;color:#6b4700}
+.note svg{flex:none;margin-top:1px;color:#7a5200}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:44px;padding:0 20px;margin-top:4px;border:0;border-radius:12px;background:var(--blue);color:#fff;font-size:14px;font-weight:600;text-decoration:none}
+.btn.sec{background:var(--soft);color:var(--blue)}
+.foot{margin-top:8px;text-align:center;font-size:12px;color:var(--sec)}
+.fg{margin:12px 0 0}.fg img{display:block;width:100%;max-height:220px;object-fit:cover;border-radius:14px}.fg figcaption{margin-top:6px;font-size:12.5px;color:var(--sec)}
+.vid{display:flex;flex-direction:column;justify-content:flex-end;gap:2px;min-height:150px;margin:0 0 12px;padding:16px;border-radius:14px;color:#fff;background:linear-gradient(135deg,#15153f 0%,#23235d 45%,#2e4bd0 100%)}.vid span{display:none}.vid b{font-size:15px}.vid small{font-size:12px;opacity:.8}
+.map{display:grid;place-items:center;height:150px;margin-bottom:12px;border-radius:14px;color:var(--blue);background:linear-gradient(135deg,#dfe8ff,#eaf6ee)}
+.wx{display:flex;align-items:center;gap:12px;margin:12px 0 0;padding:12px;border-radius:14px;background:var(--soft)}.wx b{display:block;font-size:14.5px}.wx small{font-size:12.5px;color:var(--sec)}
+.fl{display:flex;align-items:center;gap:12px;margin:8px 0 0;padding:12px;border-radius:14px;background:var(--soft);text-decoration:none}.fl b{display:block;font-size:14px}.fl small{font-size:12px;color:var(--sec)}
+@media (min-width:1024px){.wrap{padding-top:24px}.hero{padding:24px}h1{font-size:26px;line-height:32px}}
+</style></head><body>
+<header class="top"><div class="top-in"><button class="bk" id="bk" aria-label="Back to your stay"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button><div class="tt"><b>Villa Calipso</b><span>Guidebook from your host</span></div></div></header>
+<main class="wrap" id="app"></main>
+<script>window.__SCREEN = { id: 'guidebook', v: innerWidth >= 1025 ? 'd' : 'm', has: ['m', 'd'] };</script><script src="../assets/panel.js"></script>
+<script>
+(function(){
+var P = {
+  wifi:'<path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><path d="M12 20h.01"/>',
+  doc:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
+  map:'<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/>',
+  car:'<path d="M5 17h14M6 17l1.5-6h9L18 17"/><circle cx="8" cy="17" r="1.5"/><circle cx="16" cy="17" r="1.5"/>',
+  star:'<path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/>',
+  book:'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>',
+  lock:'<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+  info:'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>', sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>', ext:'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>'
+};
+var ic = function(n, s){ return '<svg viewBox="0 0 24 24" width="' + (s || 18) + '" height="' + (s || 18) + '" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + P[n] + '</svg>'; };
+var kv = function(l, v){ return '<div class="kv"><span><small>' + l + '</small><code>' + v + '</code></span><button class="cp" data-c="' + v + '">Copy</button></div>'; };
+var MAPS = 'https://www.google.com/maps/search/?api=1&query=Villa+Calipso+Albacete';
+var BOOKS = [
+ { k:'wifi', t:'Wi-Fi & access', i:'wifi', c:['rgba(56,91,248,.16)','#385bf8'], min:2, s:[
+   { h:'Wi-Fi', b:'<p>Connect to the network below. The signal is strongest in the living room.</p>' + kv('Network','Calipso_Guest') + kv('Password','Villa-Calipso-26') + '<figure class="fg"><img src="../assets/vela/deals/room.jpg" alt=""><figcaption>The terrace and pool, where the signal reaches too</figcaption></figure>' },
+   { h:'Door code', b:'<p>The keypad is on the right of the front door. Your personal code unlocks it from your arrival time until check-out.</p><div class="vid"><span>' + ic('info',1) + '</span><b>How the keypad works</b><small>Video · 40 s</small></div><div class="note">' + ic('lock',18) + '<span>We’ll show your code in the app as soon as you finish check-in.</span></div><p style="margin-top:12px"><a class="btn" href="hub-after-1.__V__.html">Finish check-in</a></p><p style="margin-top:12px">If the keypad doesn’t respond, press <b>#</b> twice and enter the code again. The spare key is in the key box to the left of the gate.</p>' },
+   { h:'Around the villa', b:'<div class="map"><span>' + ic('map',26) + '</span></div><p><b>Calle Mayor 4</b>, Albacete</p><a class="btn sec" href="' + MAPS + '" target="_blank" rel="noopener noreferrer">Open in Maps ' + ic('ext',16) + '</a><div class="wx"><span>' + ic('sun',22) + '</span><span><b>22° · Sunny</b><small>Albacete · next 3 days</small></span></div><a class="fl" href="#">' + ic('doc',18) + '<span><b>House-manual.pdf</b><small>PDF · 1,2 MB</small></span></a>' }  ] },
+ { k:'rules', t:'House rules', i:'doc', c:['rgba(255,194,51,.3)','#7a5200'], min:3, s:[
+   { h:'Quiet hours', b:'<p>Please keep noise down between <b>22:00 and 08:00</b>. The villa is in a residential street and our neighbours appreciate it.</p>' },
+   { h:'Smoking', b:'<p>No smoking indoors. You can smoke on the terrace; please use the ashtray and don’t leave cigarette ends in the garden.</p>' },
+   { h:'Pets', b:'<p>Pets are welcome on request. Let us know before you arrive so we can prepare the house for them.</p>' },
+   { h:'Waste & recycling', b:'<ul><li>Yellow bin: plastic and cans</li><li>Blue bin: paper and cardboard</li><li>Green container (on the corner): glass</li></ul>' },
+   { h:'Check-out', b:'<ol><li>Check-out is by <b>11:00</b>.</li><li>Close all windows and switch off lights and air conditioning.</li><li>Leave the keys on the kitchen table.</li></ol>' } ] },
+ { k:'where', t:'Getting there', i:'map', c:['rgba(55,224,143,.26)','#0b5c37'], min:3, s:[
+   { h:'Address', b:'<p><b>Villa Calipso</b><br>Calle Mayor 4, Albacete, Spain</p><a class="btn" href="' + MAPS + '" target="_blank" rel="noopener noreferrer">Open in Maps ' + ic('ext',16) + '</a>' },
+   { h:'By car', b:'<p>Follow the signs to the city centre and turn into Calle Mayor. The villa is the white house with the green gate, on the left. See the Parking guidebook for where to leave the car.</p>' },
+   { h:'By train or bus', b:'<p>Albacete station is about 12 minutes from the villa by taxi. Taxis wait outside the main exit.</p>' },
+   { h:'Arriving late', b:'<p>You can arrive at any time after 15:00. If you get in after 22:00, please keep the noise down; the entrance is next to a bedroom of the neighbouring house.</p>' } ] },
+ { k:'parking', t:'Parking', i:'car', c:['rgba(56,91,248,.16)','#385bf8'], min:2, s:[
+   { h:'Street parking', b:'<p>Free street parking on Calle Mayor and the streets around it, about 200 m from the door. There is no time limit.</p>' },
+   { h:'Public garage', b:'<p>The nearest public underground garage is under Plaza Mayor, a 5-minute walk away. It’s paid and open 24 hours.</p>' },
+   { h:'Reserved spot', b:'<p>If you’d rather have a reserved spot in the villa’s own yard, you can add it to your stay from the offers on your home screen.</p><a class="btn sec" href="home.__V__.html">See offers</a>' } ] },
+ { k:'local', t:'Local tips', i:'star', c:['rgba(255,194,51,.3)','#7a5200'], min:2, s:[
+   { h:'Where to eat', b:'<p>The streets around Plaza Mayor are full of tapas bars, and most serve a free tapa with each drink. Ask us for our favourites if you’d like a recommendation.</p>' },
+   { h:'Groceries', b:'<p>There is a supermarket 4 minutes on foot, at the end of Calle Mayor. It opens from 09:00 to 21:30, Monday to Saturday.</p>' },
+   { h:'Emergencies', b:'<ul><li>European emergency number: <b>112</b></li><li>Pharmacy: two streets from the villa, open until 22:00</li></ul>' } ] }
+,
+ { k:'out', t:'Check-out', i:'lock', c:['rgba(255,194,51,.3)','#7a5200'], min:2, s:[
+   { h:'Before you leave', b:'<ol><li>Check-out is by <b>11:00</b>.</li><li>Close all windows and switch off lights and air conditioning.</li><li>Take your belongings; check the bathroom and the terrace.</li></ol>' },
+   { h:'Keys', b:'<p>Leave the keys on the kitchen table. If you used the key box, put the spare key back and close it.</p>' },
+   { h:'Rubbish', b:'<p>Please take the bags to the bins on the corner: yellow for plastic, blue for paper, green container for glass.</p>' } ] }
+];
+var q = function(n){ var m = location.search.match(new RegExp('[?&]' + n + '=([^&]+)')); return m ? decodeURIComponent(m[1]) : ''; };
+var V = q('b') === 'd' || (!q('b') && innerWidth >= 1025) ? 'd' : 'm';
+var nb = parseInt(q('n'), 10); if (nb >= 1 && nb < BOOKS.length) BOOKS = BOOKS.slice(0, nb);
+var g = q('g') || 'all', books = g === 'all' ? BOOKS : BOOKS.filter(function(b){ return b.k === g; });
+if (!books.length) { books = BOOKS; g = 'all'; }
+var n = 0, html = '', toc = '';
+var secCount = books.reduce(function(a, b){ return a + b.s.length; }, 0), mins = books.reduce(function(a, b){ return a + b.min; }, 0);
+var one = books.length === 1 ? books[0] : null;
+html += '<section class="hero"><span class="hi" style="background:' + (one ? one.c[0] : 'rgba(56,91,248,.16)') + ';color:' + (one ? one.c[1] : '#385bf8') + '">' + ic(one ? one.i : 'book', 28) + '</span><div><span class="eye">Guidebook · from your host</span><h1>' + (one ? one.t : 'Villa Calipso guide') + '</h1><p class="meta">' + (one ? '' : books.length + (books.length === 1 ? ' guidebook · ' : ' guidebooks · ')) + secCount + ' sections · ' + mins + ' min read</p></div></section>';
+books.forEach(function(b){ b.s.forEach(function(s, i){ s.id = b.k + '-' + i; }); });
+toc = one ? one.s.map(function(s){ return '<a href="#' + s.id + '">' + s.h + '</a>'; }).join('') : books.map(function(b){ return '<a href="#b-' + b.k + '">' + b.t + '</a>'; }).join('');
+html += '<nav class="toc" aria-label="Contents">' + toc + '</nav>';
+books.forEach(function(b){
+  if (!one) html += '<div class="chap" id="b-' + b.k + '"><span class="hi" style="background:' + b.c[0] + ';color:' + b.c[1] + '">' + ic(b.i, 20) + '</span><b>' + b.t + '</b></div>';
+  b.s.forEach(function(s, i){ html += '<section class="card" id="' + s.id + '"><h2><i>' + (i + 1) + '</i>' + s.h + '</h2>' + s.b.replace(/__V__/g, V) + '</section>'; });
+});
+html += '<p class="foot">Guidebook by your host · Powered by Chekin</p>';
+document.getElementById('app').innerHTML = html;
+var home = 'home.' + V + '.html' + (/[?&]embed=1/.test(location.search) ? '?embed=1' : '');
+document.getElementById('bk').addEventListener('click', function(){ location.href = home; });
+document.addEventListener('click', function(e){ var c = e.target.closest && e.target.closest('.cp'); if (!c) return; try { navigator.clipboard.writeText(c.getAttribute('data-c')); } catch (er) {} c.textContent = 'Copied'; c.classList.add('ok'); setTimeout(function(){ c.textContent = 'Copy'; c.classList.remove('ok'); }, 1500); });
+(function(){ var n = 0, t = setInterval(function(){ if (!window.__repPanel) { if (++n > 40) clearInterval(t); return; } clearInterval(t);
+  var d = document.createElement('div'); d.className = 'rail-switch';
+  var all = [['wifi', 'Wi-Fi'], ['rules', 'Rules'], ['where', 'Getting there'], ['parking', 'Parking'], ['local', 'Local tips'], ['out', 'Check-out'], ['all', 'Todos']];
+  d.innerHTML = all.map(function(o){ return '<button type="button" class="rs-chip' + (o[0] === g ? ' on' : '') + '" data-gk="' + o[0] + '">' + o[1] + '</button>'; }).join('');
+  d.addEventListener('click', function(ev){ var b = ev.target.closest('[data-gk]'); if (!b) return; ev.preventDefault(); ev.stopPropagation(); var u = new URL(location.href); u.searchParams.set('g', b.getAttribute('data-gk')); location.href = u.toString(); }, true);
+  window.__repPanel.add('Guidebook', d, 27.4);
+  var d2 = document.createElement('div'); d2.className = 'rail-switch';
+  d2.innerHTML = [['0', 'V0 · Clásica (anterior)'], ['1', 'V1 · Tarjetas'], ['2', 'V2 · Lectura'], ['3', 'V3 · Páginas']].map(function(o){ return '<button type="button" class="rs-chip' + (o[0] === '0' ? ' on' : '') + '" data-gv="' + o[0] + '">' + o[1] + '</button>'; }).join('');
+  d2.addEventListener('click', function(ev){ var b = ev.target.closest('[data-gv]'); if (!b || b.getAttribute('data-gv') === '0') return; ev.preventDefault(); ev.stopPropagation(); var k = b.getAttribute('data-gv'); try { localStorage.setItem('replica-gbs-v', k); } catch (er) {} location.href = 'guidebook.' + V + '.html?g=' + g + (q('n') ? '&n=' + q('n') : '') + '&gv=' + k; }, true);
+  window.__repPanel.add('Vista del guidebook', d2, 27.5);
+}, 150); })();
+var sec = q('s'); if (sec) { var el = document.getElementById(sec); if (el) setTimeout(function(){ el.scrollIntoView(); }, 50); }
+})();
+</script></body></html>

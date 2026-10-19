@@ -1,0 +1,163 @@
+/* Sección de depósito (pay-1-protection / pay-1e): 5 versiones nuevas. Mismo lenguaje que Pagos y Tasas: gris neutro, tarjetas blancas sin borde ni sombra, selección con aro azul, CTA cuadrado de 12 px */
+.dp-orig{display:none!important}
+.dp{--dp-navy:#161643;--dp-blue:#385bf8;--dp-sec:#6b6b95;--dp-soft:#f1f3fb;--dp-tint:#e4e9ff;--dp-green:#0d8a4f;display:flex;flex-direction:column;gap:16px;padding-bottom:150px;color:var(--dp-navy);font-family:inherit}
+.dp button{font-family:inherit;cursor:pointer}
+.dp-hd h1{margin:0;font-size:23px;line-height:28px;font-weight:600;letter-spacing:-.015em}
+.dp-hd h1 em{font-style:normal;color:var(--dp-blue)}
+.dp-hd p{margin:6px 0 0;max-width:480px;font-size:14px;line-height:21px;font-weight:500;color:var(--dp-sec)}
+.dp-body{display:flex;flex-direction:column;gap:12px}
+.dp-q{margin:2px 0 -2px;font-size:12px;line-height:16px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#4a5072}
+.dp-note{display:flex;align-items:flex-start;gap:8px;margin:2px 4px 0;font-size:12.5px;line-height:18px;color:var(--dp-sec)}
+.dp-note svg{flex:none;margin-top:1px;color:var(--dp-blue)}
+/* CTA: dock en móvil (sombra mínima), bloque en escritorio */
+.dp-cta{display:none}
+.dp-dock{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;flex-direction:column;gap:6px;padding:14px 16px calc(20px + env(safe-area-inset-bottom,0px));background:#fff;box-shadow:0 -4px 14px rgba(22,22,67,.06)}
+.dp-go{display:block;width:100%;height:48px;border:0;border-radius:12px;background:var(--dp-blue);color:#fff;font-size:14.5px;font-weight:600}
+.dp-go:hover{background:#294df1}.dp-go:disabled{opacity:.45;cursor:default}
+.dp-skip{height:34px;border:0;background:none;font-size:14px;font-weight:600;color:var(--dp-navy)}
+@media (min-width:1024px){
+  .dp{padding-bottom:32px}   /* todo el ancho del contenedor, como el resto de pantallas */
+  .dp-hd h1{font-size:27px;line-height:32px}
+  .dp-dock{display:none}
+  .dp-cta{display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin-top:4px}
+  .dp-cta .dp-go{width:280px}
+}
+/* piezas comunes */
+.dp-opt,.dp-pref,.dp-sw5,.dp-tab{position:relative;display:flex;border:0;border-radius:18px;background:#fff;text-align:left;color:var(--dp-navy)}
+.dp-opt{flex-direction:column;gap:10px;width:100%;padding:16px}
+.dp-opt.on,.dp-pref.on,.dp-tab.on,.dp-h.on{box-shadow:inset 0 0 0 2px var(--dp-blue)}
+.dp-rd{position:absolute;top:16px;right:16px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:inset 0 0 0 2px #c9cde0}
+.on>.dp-rd{background:radial-gradient(#fff 0 34%,var(--dp-blue) 36%);box-shadow:none}
+.dp-tt{display:flex;align-items:center;gap:10px;padding-right:28px}
+.dp-tt b{font-size:16px;line-height:21px;font-weight:700}
+.dp-ti{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:var(--dp-tint);color:var(--dp-blue)}
+.dp-bd{align-self:flex-start;padding:3px 10px;border-radius:99px;font-size:11px;line-height:16px;font-weight:700;white-space:nowrap}
+.dp-bd.premium{background:var(--dp-blue);color:#fff}
+.dp-bd.deposit{background:#e4f8ee;color:var(--dp-green)}
+.dp-fl{display:flex;flex-direction:column;gap:7px;margin:0;padding:0;list-style:none}
+.dp-fl li{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;line-height:18px;color:var(--dp-sec)}
+.dp-fl li svg{flex:none;margin-top:2px;color:var(--dp-blue)}
+.dp-big{display:flex;flex-direction:column;gap:0}
+.dp-big b{font-size:28px;line-height:34px;font-weight:700;letter-spacing:-.015em;font-variant-numeric:tabular-nums}
+.dp-big small{font-size:12px;line-height:16px;color:var(--dp-sec)}
+.dp-xs{display:flex;flex-direction:column;overflow:hidden;border-radius:18px;background:#fff}
+.dp-ex{display:flex;align-items:center;justify-content:space-between;width:100%;padding:14px 16px;border:0;background:none;font-size:14px;font-weight:600;color:var(--dp-navy)}
+.dp-ex+.dp-pn,.dp-pn+.dp-ex,.dp-ex+.dp-ex{box-shadow:inset 0 1px 0 #eceef6}
+.dp-ex svg{color:#9a9ab8;transition:transform .18s ease}.dp-ex.open svg{transform:rotate(180deg)}
+.dp-pn{display:flex;flex-direction:column;gap:3px;padding:0 16px 14px}
+.dp-pn p{margin:0 0 6px;font-size:12.5px;line-height:18px;color:var(--dp-sec)}
+.dp-pn b{margin-top:6px;font-size:13px;color:var(--dp-navy)}
+.dp-pn span{font-size:12.5px;line-height:18px;color:var(--dp-sec)}
+/* Vela (carril) */
+.dp-rb .t2-gr b{display:block}
+.dp-bl.maybe .dp-ba{font-size:12px}
+
+/* ===== V10 · Una caja (base del cuadro azul de V15 y V16) ===== */
+.dp-bx{--tx-navy:#161643;display:flex;flex-direction:column;gap:16px;padding:18px;border-radius:var(--card-radius,18px);color:#fff;background:var(--chekin-gradient-hero,linear-gradient(135deg,#15153f 0%,#23235d 44%,#2e4bd0 100%))}
+.dp-bseg{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:14px;background:rgba(255,255,255,.1)}
+.dp-bsb{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:48px;padding:8px;border:0;border-radius:11px;background:none;color:rgba(255,255,255,.82);font-size:13.5px;font-weight:600;line-height:17px}
+.dp-bsb em{padding:1px 7px;border-radius:99px;background:rgba(255,255,255,.16);font-size:10px;font-style:normal;font-weight:700;line-height:15px}
+.dp-bsb.on{background:#fff;color:var(--dp-navy)}
+.dp-bsb.on em{background:var(--dp-blue);color:#fff}
+.dp-bbig{display:flex;flex-direction:column;gap:2px}
+.dp-bbig small,.dp-bey{font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#abbafc}
+.dp-bbig b{font-size:38px;line-height:44px;font-weight:700;letter-spacing:-.015em;font-variant-numeric:tabular-nums}
+.dp-bbig span{font-size:13.5px;line-height:19px;color:rgba(255,255,255,.8)}
+.dp-bfl{display:flex;flex-direction:column;gap:8px;margin:0;padding:14px 0 0;list-style:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.14)}
+.dp-bfl li{display:flex;align-items:flex-start;gap:8px;font-size:13px;line-height:19px;color:rgba(255,255,255,.85)}
+.dp-bfl li svg{flex:none;margin-top:3px;color:#abbafc}
+.dp-bft{display:flex;flex-direction:column;gap:10px}
+.dp-bft p{margin:0;font-size:12.5px;line-height:18px;color:rgba(255,255,255,.72)}
+.dp-bft .tx-go-w{margin:0}
+@media (min-width:1024px){
+  .dp-v10 .dp-cta .dp-go{display:none}
+  .dp-bft{flex-direction:row-reverse;align-items:center;justify-content:space-between;gap:20px;padding-top:16px;box-shadow:inset 0 1px 0 rgba(255,255,255,.14)}
+  .dp-bft .tx-go-w{flex:none;width:280px}
+  .dp-bx10{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);column-gap:28px;row-gap:16px}
+  .dp-bx10 .dp-bseg,.dp-bx10 .dp-bft{grid-column:1 / -1}
+  .dp-bx10 .dp-bfl{padding:0;box-shadow:none;align-self:center}
+}
+
+/* V15 · cobrado vs retenido + barra de tiempo */
+.dp-cnt{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dp-cnt>div{display:flex;flex-direction:column;gap:2px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.08)}
+.dp-cnt small{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#abbafc}
+.dp-cnt b{font-size:26px;line-height:32px;font-weight:700;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.dp-cnt span{font-size:12px;line-height:16px;color:rgba(255,255,255,.72)}
+.dp-cnt>.held{background:rgba(255,194,51,.14)}.dp-cnt>.held b{color:#ffd77a}
+.dp-cnt>.none b{color:rgba(255,255,255,.45)}
+.dp-tb{position:relative;padding:4px 8px 0}
+.dp-tbl{position:relative;height:28px}
+.dp-tbl::before{content:"";position:absolute;left:0;right:0;top:13px;height:2px;border-radius:2px;background:rgba(255,255,255,.2)}
+.dp-tbs{position:absolute;top:10px;height:8px;border-radius:99px}
+.dp-tbs.hold{background:#ffc233}.dp-tbs.cov{background:#37e08f}
+.dp-tbs.saved{background:repeating-linear-gradient(90deg,#abbafc 0 6px,transparent 6px 10px)}
+.dp-tbn{position:absolute;top:8px;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px rgba(22,22,67,.55)}
+.dp-tbx{position:relative;height:18px;margin-top:2px}
+.dp-tbx span{position:absolute;transform:translateX(-50%);font-size:11px;font-weight:600;white-space:nowrap;color:rgba(255,255,255,.75)}
+.dp-tbx span:first-child{transform:translateX(-8px)}
+.dp-tbx span:last-child{transform:translateX(calc(-100% + 8px))}
+.dp-tbt{margin:10px 0 0;font-size:13px;line-height:18px;font-weight:600}
+.dp-tbt.hold{color:#ffd77a}.dp-tbt.cov{color:#7ff0b8}.dp-tbt.saved{color:#cdd6ff}
+@media (min-width:1024px){.dp-v15 .dp-cta .dp-go{display:none}}
+
+/* ===== V16 · Mix V15 + V4: línea de tiempo vertical dentro de la caja, coloreada mientras dura cada cosa ===== */
+.dp-mtl{display:flex;flex-direction:column;margin:-4px 0 0;padding:0;list-style:none}
+.dp-mtl li{position:relative;display:flex;gap:12px;padding-bottom:16px}
+.dp-mtl li:last-child{padding-bottom:0}
+.dp-mtl li:not(:last-child)::before{content:"";position:absolute;left:17px;top:38px;bottom:2px;width:2px;border-radius:2px;background:rgba(255,255,255,.18)}
+.dp-mtl li.ln.hold::before{width:4px;left:16px;background:#ffc233}
+.dp-mtl li.ln.cov::before{width:4px;left:16px;background:#37e08f}
+.dp-mtl li.ln.saved::before{width:2px;background:repeating-linear-gradient(180deg,#abbafc 0 6px,transparent 6px 10px)}
+.dp-mti{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.12);color:#cdd6ff}
+.dp-mtl li.in.hold .dp-mti{background:rgba(255,194,51,.2);color:#ffd77a;box-shadow:inset 0 0 0 2px #ffc233}
+.dp-mtl li.in.cov .dp-mti{background:rgba(55,224,143,.18);color:#7ff0b8;box-shadow:inset 0 0 0 2px #37e08f}
+.dp-mtl li.in.saved .dp-mti{box-shadow:inset 0 0 0 2px #abbafc}
+.dp-mtt{display:flex;flex-direction:column;gap:1px;min-width:0;padding-top:1px}
+.dp-mtt small{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#abbafc}
+.dp-mtt b{font-size:14.5px;line-height:19px}
+.dp-mtt span{font-size:12.5px;line-height:18px;color:rgba(255,255,255,.78)}
+.dp-bx16 .dp-tbt{margin:0}
+@media (min-width:1024px){
+  .dp-v16 .dp-cta .dp-go{display:none}
+  .dp-mtl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+  .dp-mtl li{flex-direction:column;gap:10px;padding-bottom:0}
+  .dp-mtl li:not(:last-child)::before{left:44px;right:-12px;top:17px;bottom:auto;width:auto;height:2px}
+  .dp-mtl li.ln.hold::before,.dp-mtl li.ln.cov::before{left:44px;width:auto;height:4px;top:16px}
+  .dp-mtl li.ln.saved::before{height:2px;background:repeating-linear-gradient(90deg,#abbafc 0 6px,transparent 6px 10px)}
+}
+/* V16 escritorio: pasos centrados; la línea une el centro de cada círculo con el siguiente (4 px de aire a cada lado), sin hueco al final */
+@media (min-width:1024px){
+  .dp-mtl li{align-items:center;text-align:center}
+  .dp-mtt{align-items:center;padding:0 4px}
+  .dp-mtl li:not(:last-child)::before{left:calc(50% + 22px);right:calc(-50% + 10px);top:17px;bottom:auto;width:auto;height:2px}
+  .dp-mtl li.ln.hold::before,.dp-mtl li.ln.cov::before{left:calc(50% + 22px);right:calc(-50% + 10px);width:auto;top:16px;height:4px}
+  .dp-mtl li.ln.saved::before{left:calc(50% + 22px);right:calc(-50% + 10px);width:auto;height:2px}
+}
+/* V16 escritorio: textos e iconos alineados a la izquierda; cada tramo va del borde del círculo (4 px) al siguiente círculo (4 px antes) */
+@media (min-width:1024px){
+  .dp-mtl li{align-items:flex-start;text-align:left}
+  .dp-mtt{align-items:flex-start;padding:0}
+  .dp-mtl li:not(:last-child)::before,.dp-mtl li.ln.saved::before{left:40px;right:-8px}
+  .dp-mtl li.ln.hold::before,.dp-mtl li.ln.cov::before{left:40px;right:-8px}
+}
+
+/* «Taking one replaces the other…» siempre junto al CTA de Confirm: móvil → bajo el «Confirm» del dock; escritorio → junto al botón (dentro de la caja, o bajo el botón en las versiones sin caja) */
+.dp-note{display:none}
+.dp-cn{margin:0;font-size:12px;line-height:16px;text-align:center;color:var(--dp-sec)}
+@media (max-width:1023.98px){.dp-bft p,.dp .tb-cart{display:none}}
+@media (min-width:1024px){
+  .dp-cta .dp-cn{text-align:left;max-width:280px}
+  .dp-v10 .dp-cta .dp-cn,.dp-v15 .dp-cta .dp-cn,.dp-v16 .dp-cta .dp-cn{display:none}   /* ahí el CTA y su texto van dentro de la caja */
+}
+
+/* «What’s covered» / «How the deposit works» dentro del cuadro azul */
+/* desplegable del detalle solo en móvil (en escritorio lo cuenta Vela) */
+.dp-mx{margin-top:12px}
+@media (min-width:1024px){.dp-mx{display:none}}
+/* Vela de depósito (modo tradicional): las 5 preguntas en desplegable */
+.dp-vfq{display:flex;flex-direction:column;padding-top:2px}
+.dp-vfi{box-shadow:inset 0 -1px 0 #eceef6}
+.dp-vfi button{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:11px 0;border:0;background:none;text-align:left;font:600 12.5px/17px Poppins,system-ui,sans-serif;color:#161643;cursor:pointer}
+.dp-vfi button svg{flex:none;color:#9a9ab8;transition:transform .18s ease}.dp-vfi.open button svg{transform:rotate(180deg)}
+.dp-vfi p{margin:-3px 0 0;padding:0 0 12px;font-size:12px;line-height:17px;color:#6b6b95}

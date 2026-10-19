@@ -1,0 +1,99 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Villa Calipso · Welcome guide</title>
+<style>
+@font-face{font-family:P;font-weight:400;src:url("../../fonts/Poppins/poppins-v22-latin-regular.woff2")}
+@font-face{font-family:P;font-weight:500;src:url("../../fonts/Poppins/poppins-v22-latin-500.woff2")}
+@font-face{font-family:P;font-weight:600;src:url("../../fonts/Poppins/poppins-v22-latin-600.woff2")}
+@font-face{font-family:P;font-weight:700;src:url("../../fonts/Poppins/poppins-v22-latin-700.woff2")}
+@font-face{font-family:P;font-weight:800;src:url("../../fonts/Poppins/poppins-v22-latin-800.woff2")}
+*{box-sizing:border-box;margin:0}
+html{background:#0c1240}
+body{position:relative;overflow-x:hidden;min-height:100vh;font-family:P,system-ui,sans-serif;color:#fff;-webkit-font-smoothing:antialiased;
+  background:radial-gradient(120% 70% at 85% -5%,#ff7a59 0%,rgba(255,122,89,0) 55%),radial-gradient(90% 60% at -10% 25%,#2ee6c5 0%,rgba(46,230,197,0) 52%),radial-gradient(110% 70% at 100% 70%,#7b5cff 0%,rgba(123,92,255,0) 58%),linear-gradient(180deg,#0e1650 0%,#0a0f38 100%)}
+body::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+.rings{position:absolute;left:50%;top:-180px;width:760px;height:760px;transform:translateX(-50%);pointer-events:none;opacity:.35}
+.wrap{position:relative;max-width:720px;margin:0 auto;padding:clamp(28px,6vw,64px) clamp(18px,5vw,40px) 56px}
+.eye{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border-radius:99px;background:rgba(255,255,255,.14);backdrop-filter:blur(10px);font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
+.eye i{width:7px;height:7px;border-radius:50%;background:#2ee6c5;box-shadow:0 0 0 4px rgba(46,230,197,.25)}
+h1{margin:22px 0 14px;font-size:clamp(44px,12vw,84px);line-height:.98;font-weight:800;letter-spacing:-.045em}
+h1 span{background:linear-gradient(90deg,#ffd166,#ff7a59 55%,#ff5d8f);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{max-width:520px;font-size:clamp(15px,3.6vw,18px);line-height:1.65;color:rgba(255,255,255,.82)}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin:26px 0 46px}
+.chip{padding:12px 16px;border-radius:18px;background:rgba(255,255,255,.12);backdrop-filter:blur(14px)}
+.chip small{display:block;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.65)}
+.chip b{font-size:17px;font-weight:700}
+h2{margin:0 0 6px;font-size:clamp(24px,6vw,32px);font-weight:700;letter-spacing:-.02em}
+.sub{margin-bottom:18px;font-size:14px;color:rgba(255,255,255,.7)}
+section{margin-bottom:44px}
+.glass{padding:22px;border-radius:26px;background:linear-gradient(160deg,rgba(255,255,255,.2),rgba(255,255,255,.08));backdrop-filter:blur(22px);box-shadow:0 30px 60px -34px rgba(0,0,0,.55)}
+.kv{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-radius:16px;background:rgba(10,15,56,.45)}
+.kv+.kv{margin-top:10px}
+.kv small{display:block;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.6)}
+.kv code{display:block;margin-top:3px;font-family:ui-monospace,Menlo,monospace;font-size:17px;font-weight:700;letter-spacing:.02em}
+.kv button{flex:none;padding:9px 16px;border:0;border-radius:99px;background:#fff;color:#0e1650;font:600 13px P,sans-serif;cursor:pointer;transition:transform .15s}
+.kv button:hover{transform:scale(1.05)}.kv button.ok{background:#2ee6c5}
+.tl{position:relative;padding-left:34px}
+.tl::before{content:"";position:absolute;left:11px;top:8px;bottom:8px;width:2px;border-radius:2px;background:linear-gradient(180deg,#2ee6c5,#7b5cff,#ff7a59)}
+.st{position:relative;padding:0 0 22px}
+.st:last-child{padding-bottom:0}
+.st::before{content:"";position:absolute;left:-30px;top:4px;width:14px;height:14px;border-radius:50%;background:#0e1650;box-shadow:0 0 0 3px #fff}
+.st b{display:block;font-size:16px;font-weight:700}
+.st span{display:block;margin-top:3px;font-size:14px;line-height:1.6;color:rgba(255,255,255,.75)}
+.st em{font-style:normal;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#ffd166}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.rule{padding:18px 16px;border-radius:22px;background:rgba(255,255,255,.12);backdrop-filter:blur(14px)}
+.rule svg{display:block;margin-bottom:14px}
+.rule b{display:block;font-size:15px;font-weight:700}
+.rule span{display:block;margin-top:5px;font-size:13px;line-height:1.55;color:rgba(255,255,255,.75)}
+.spots{display:grid;gap:10px}
+.spot{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 18px;border-radius:20px;background:rgba(255,255,255,.12);backdrop-filter:blur(14px)}
+.spot b{display:block;font-size:15px}.spot span{font-size:13px;color:rgba(255,255,255,.72)}
+.spot i{flex:none;font-style:normal;padding:6px 12px;border-radius:99px;background:rgba(255,255,255,.18);font-size:12px;font-weight:600}
+.sign{margin-top:8px;padding:26px;border-radius:28px;text-align:center;background:linear-gradient(135deg,#ff7a59,#ff5d8f 60%,#7b5cff)}
+.sign b{display:block;font-size:22px;font-weight:800;letter-spacing:-.02em}
+.sign span{display:block;margin-top:6px;font-size:14px;color:rgba(255,255,255,.9)}
+.rv{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}.rv.on{opacity:1;transform:none}
+@media (max-width:420px){.kv code{font-size:14px}}
+@media (max-width:560px){.grid{grid-template-columns:1fr}.rule{display:flex;gap:14px;align-items:flex-start}.rule svg{margin:0;flex:none}}
+.rv{opacity:1!important;transform:none!important;transition:none!important}.tl::before{display:none}.st:not(:last-child)::after{content:"";position:absolute;left:-24px;top:20px;bottom:-4px;width:2px;border-radius:2px;background:linear-gradient(180deg,#2ee6c5,#7b5cff)}</style></head><body>
+<svg class="rings" viewBox="0 0 760 760" fill="none" stroke="#fff" stroke-width="1"><circle cx="380" cy="380" r="120"/><circle cx="380" cy="380" r="200"/><circle cx="380" cy="380" r="280"/><circle cx="380" cy="380" r="360"/></svg>
+<main class="wrap">
+ <span class="eye rv"><i></i>Villa Calipso · Albacete</span>
+ <h1 class="rv">Welcome <span>home.</span></h1>
+ <p class="lead rv">Everything you need for a slow, easy stay: how to get online, how to get in and the little things we love about this corner of Albacete.</p>
+ <div class="chips rv"><div class="chip"><small>Check-in</small><b>from 15:00</b></div><div class="chip"><small>Check-out</small><b>by 11:00</b></div><div class="chip"><small>Quiet hours</small><b>22:00–08:00</b></div></div>
+
+ <section class="rv"><h2>Get connected</h2><p class="sub">The signal is strongest in the living room.</p>
+  <div class="glass"><div class="kv"><div><small>Network</small><code>Calipso_Guest</code></div><button data-c="Calipso_Guest">Copy</button></div><div class="kv"><div><small>Password</small><code>Villa-Calipso-26</code></div><button data-c="Villa-Calipso-26">Copy</button></div></div></section>
+
+ <section class="rv"><h2>Your first evening</h2><p class="sub">A gentle way to land.</p>
+  <div class="glass"><div class="tl">
+   <div class="st"><em>On arrival</em><b>Open the door</b><span>The keypad is on the right of the front door. Your personal code is in the app.</span></div>
+   <div class="st"><em>Right after</em><b>Open the windows</b><span>The house loves a bit of cross breeze. Close them again when the air conditioning is on.</span></div>
+   <div class="st"><em>Around 20:00</em><b>Walk to Plaza Mayor</b><span>Five minutes on foot. Order a drink: it comes with a free tapa.</span></div>
+   <div class="st"><em>Before bed</em><b>Keep it low after 22:00</b><span>Our neighbours sleep early; the terrace is yours until late.</span></div>
+  </div></div></section>
+
+ <section class="rv"><h2>Three things we love</h2><p class="sub">Small habits, big difference.</p>
+  <div class="grid">
+   <div class="rule"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#2ee6c5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg><div><b>Quiet nights</b><span>Low voices after 22:00.</span></div></div>
+   <div class="rule"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#ffd166" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg><div><b>Smoke-free</b><span>On the terrace, please.</span></div></div>
+   <div class="rule"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#ff7a8f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.4-9.3-9A5.2 5.2 0 0 1 12 6a5.2 5.2 0 0 1 9.3 6C19 16.6 12 21 12 21z"/></svg><div><b>Sort the bins</b><span>Yellow, blue, green, grey.</span></div></div>
+  </div></section>
+
+ <section class="rv"><h2>Around the villa</h2><p class="sub">Everything within a short walk.</p>
+  <div class="spots">
+   <div class="spot"><div><b>Plaza Mayor</b><span>Tapas bars and terraces</span></div><i>5 min</i></div>
+   <div class="spot"><div><b>Supermarket</b><span>Monday to Saturday, 09:00–21:30</span></div><i>4 min</i></div>
+   <div class="spot"><div><b>Pharmacy</b><span>Open until 22:00</span></div><i>3 min</i></div>
+   <div class="spot"><div><b>Cathedral of San Juan Bautista</b><span>A calm walk through the old town</span></div><i>8 min</i></div>
+  </div></section>
+
+ <div class="sign rv"><b>We’re a message away.</b><span>Write to us from the app, any time. — Marta &amp; Javier</span></div>
+</main>
+<script>
+document.querySelectorAll('.kv button').forEach(function(b){b.addEventListener('click',function(){try{navigator.clipboard.writeText(b.getAttribute('data-c'))}catch(e){}b.textContent='Copied';b.classList.add('ok');setTimeout(function(){b.textContent='Copy';b.classList.remove('ok')},1400)})});
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target)}})},{threshold:.08});
+document.querySelectorAll('.rv').forEach(function(e){io.observe(e)});
+setTimeout(function(){document.querySelectorAll('.rv').forEach(function(e){e.classList.add('on')})},2500);
+</script></body></html>

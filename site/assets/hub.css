@@ -1,0 +1,643 @@
+/* Registration (guest summary) con el estilo de la tarjeta de check-in de la home (N4 + P1 móvil / P5 escritorio) */
+.hub-orig{display:contents}
+html:not([data-reg="v3"]) .hub-wrap{display:none}
+html:not([data-reg="orig"]) .hub-orig{display:none}
+.hv{display:none}
+html[data-reg="v1"] .hv1,html[data-reg="v2"] .hv2,html[data-reg="v4"] .hv4,html[data-reg="v1b"] .hv1b,html[data-reg="v1c"] .hv1c,html[data-reg="v4b"] .hv4b,html[data-reg="v4c"] .hv4c,html[data-reg="v5"] .hv5,html[data-reg="v4n1"] .hv4n1,html[data-reg="v4n2"] .hv4n2,html[data-reg="v4n3"] .hv4n3,html[data-reg="v4n4"] .hv4n4,html[data-reg="v4m1"] .hv4m1,html[data-reg="v4m2"] .hv4m2,html[data-reg="v4m3"] .hv4m3,html[data-reg="v5a"] .hv5a,html[data-reg="v5b"] .hv5b,html[data-reg="v5c"] .hv5c{display:block}
+html:is([data-reg="v2"],[data-reg="v4"],[data-reg="v4b"],[data-reg="v4c"],[data-reg="v5"],[data-reg="v4n1"],[data-reg="v4n2"],[data-reg="v4n3"],[data-reg="v4n4"],[data-reg="v4m1"],[data-reg="v4m2"],[data-reg="v4m3"],[data-reg="v5a"],[data-reg="v5b"],[data-reg="v5c"]) .hub-share{display:none!important}
+.hub-wrap{width:100%;font-family:Poppins,system-ui,sans-serif;color:var(--chekin-color-brand-navy,#161643)}
+.hub-card{display:none;border:1px solid var(--card-border,#e5e6ee);border-radius:var(--card-radius,18px);background:var(--card-bg,#fff);overflow:hidden}
+.hub-wrap[data-hs="new"] .hub-card[data-hs="new"],.hub-wrap[data-hs="way"] .hub-card[data-hs="way"],.hub-wrap[data-hs="done"] .hub-card[data-hs="done"],.hub-wrap:not([data-hs]) .hub-card[data-hs="way"]{display:block}
+
+/* cabecera: degradado de la home */
+.hub-h{position:relative;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 16px;color:#fff;background:var(--chekin-gradient-hero,linear-gradient(135deg,#15153f 0%,#23235d 44%,#2e46c8 100%));overflow:hidden}
+.hub-h::before{content:"";position:absolute;right:90px;top:-110px;width:230px;height:230px;border-radius:50%;background:var(--chekin-hero-bloom-periwinkle,rgba(171,186,252,.18));pointer-events:none}
+.hub-h>*{position:relative}
+.hub-hl{display:flex;align-items:center;gap:8px;min-width:0}
+.hub-hl svg{flex:none;color:var(--chekin-blue-200,#abbafc)}
+.hub-ht{margin:0;font-size:14px;line-height:1.3;font-weight:600;letter-spacing:-.005em;color:inherit}
+.hub-hr{display:flex;align-items:center;gap:6px;flex:none}
+.hub-due,.hub-edit{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border:0;border-radius:9999px;background:rgba(255,255,255,.14);font:500 12px Poppins,system-ui,sans-serif;color:#fff;white-space:nowrap}
+.hub-due svg,.hub-edit svg{flex:none;color:var(--chekin-blue-200,#abbafc)}
+.hub-edit{cursor:pointer}
+.hub-edit:hover{background:rgba(255,255,255,.24)}
+.hub-edit:focus-visible{outline:2px solid #fff;outline-offset:2px}
+/* completado: tick verde centrado entre título y subtítulo */
+.hub-hdone{display:grid;grid-template-columns:auto 1fr;column-gap:8px;row-gap:2px;align-items:center;padding-top:6px;padding-bottom:6px;min-height:48px;box-sizing:border-box}
+.hub-tick{grid-column:1;grid-row:1 / span 2;display:flex;color:#37e08f}
+.hub-hdone .hub-ht{grid-column:2;grid-row:1}
+.hub-sub{grid-column:2;grid-row:2;margin:0;font-size:12px;font-weight:400;line-height:1.35;color:rgba(255,255,255,.82)}
+
+/* filas */
+.hub-item{position:relative;display:flex;align-items:center}
+.hub-item+.hub-item{border-top:1px solid var(--chekin-border-default,#e5e6ee)}
+.hub-row{position:relative;flex:1;min-width:0;display:flex;align-items:center;gap:12px;min-height:56px;padding:10px 16px;border:0;margin:0;text-align:left;font:inherit;color:inherit;cursor:pointer;background:linear-gradient(90deg,rgba(56,91,248,.05),transparent 60%)}
+.hub-row::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:4px;border-radius:0 4px 4px 0;background:var(--chekin-color-brand-blue,#385bf8)}
+.hub-row:hover{background-color:var(--task-row-hover-bg,#f6f7fc)}
+.hub-row:focus-visible{outline:2px solid var(--chekin-color-brand-blue,#385bf8);outline-offset:-3px}
+.hub-badge{position:relative;flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:var(--chekin-color-brand-blue,#385bf8);color:#fff}
+.hub-txt{display:flex;flex-direction:column;flex:1;min-width:0}
+.hub-t{font-size:15px;font-weight:600;line-height:20px;color:var(--chekin-color-brand-navy,#161643)}
+.hub-d{margin-top:2px;font-size:12.5px;line-height:17px;color:var(--chekin-text-secondary,#6b6b95)}
+.hub-cta{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:0 14px;border-radius:12px;background:var(--chekin-color-brand-blue,#385bf8);color:#fff;font-size:13px;font-weight:600;white-space:nowrap;margin-left:8px}
+.hub-row:hover .hub-cta{background:var(--chekin-color-brand-hover,#294df1)}
+.hub-chv{flex:none;display:flex;width:28px;justify-content:center;color:#7d86ad;margin-left:6px}
+.hub-chv svg{transition:transform .2s}
+.hub-row:hover .hub-chv svg{transform:translateX(3px);color:var(--chekin-color-brand-blue,#385bf8)}
+.hub-kebab{flex:none;display:flex;align-items:center;padding-right:8px}
+.hub-item:has(.hub-kebab) .hub-row{padding-right:6px}
+
+/* estado: P1 en móvil (círculo en la esquina de la insignia), P5 en escritorio (chip junto al nombre) */
+.hub-dot,.hub-chip{display:none}
+.hub-wrap[data-v="m"] .hub-dot{display:grid;place-items:center;position:absolute;right:-7px;bottom:-7px;width:20px;height:20px;border-radius:50%;background:#ffc233;border:2px solid #fff;color:#0b0b0f;box-sizing:border-box}
+.hub-dot svg{width:12px;height:12px}
+.hub-wrap[data-v="d"] .hub-chip{display:inline-block;margin-left:8px;padding:1px 8px;border-radius:9999px;background:#ffc233;color:#0b0b0f;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;vertical-align:1px;line-height:1.5}
+/* hecho: verde de "Show code" con tick verde oscuro */
+.hub-done .hub-dot,.hub-done .hub-chip{background:#37e08f!important;color:#04331f!important}
+.hub-done .hub-dot svg{width:11px;height:11px}
+.hub-done .hub-chip::before{content:"";display:inline-block;width:8px;height:5px;border-left:2px solid #04331f;border-bottom:2px solid #04331f;transform:rotate(-45deg) translateY(-1px);margin-right:5px;vertical-align:1px}
+
+/* tarjeta "Not together right now?" con el mismo radio */
+html[data-reg="v3"] .hub-share{border-radius:var(--card-radius,18px)!important}
+
+/* móvil */
+.hub-wrap[data-v="m"] .hub-h:not(.hub-hdone){flex-wrap:wrap;row-gap:6px;padding:10px 12px}
+.hub-wrap[data-v="m"] .hub-hdone{min-height:68px;padding:10px 12px}
+.hub-wrap[data-v="m"] .hub-due{font-size:12px;padding:3px 9px}
+.hub-wrap[data-v="m"] .hub-edit{padding:5px;width:26px;height:26px;justify-content:center;box-sizing:border-box}
+.hub-wrap[data-v="m"] .hub-edit span{display:none}
+.hub-wrap[data-v="m"] .hub-row{padding:10px 12px}
+.hub-wrap[data-v="m"] .hub-cta{min-height:32px;padding:0 12px;font-size:12px}
+.hub-wrap[data-v="m"] .hub-cta svg{display:none}
+.hub-wrap[data-v="m"] .hub-kebab{padding-right:4px}
+
+/* selector de la réplica */
+.hub-cs{display:flex;gap:3px;flex-wrap:wrap}
+.hub-cs button{border:0;border-radius:99px;padding:3px 8px;background:#f1f2f9;color:#6b6b95;font:600 11px system-ui,sans-serif;cursor:pointer;white-space:nowrap}
+.hub-cs button.on{background:#161643;color:#fff}
+
+.hub-sep{width:6px}
+/* ===== variantes comunes ===== */
+.hv{width:100%;font-family:Poppins,system-ui,sans-serif;color:var(--chekin-color-brand-navy,#161643)}
+.hv b{font-weight:600}
+.hv button{font-family:inherit;cursor:pointer}
+.hv-lnk{border:0;background:none;padding:4px 0;color:var(--chekin-color-brand-blue,#385bf8);font-size:13px;font-weight:600}
+.hv-lnk:hover{text-decoration:underline;text-underline-offset:3px}
+.hv button:focus-visible{outline:2px solid var(--chekin-color-brand-blue,#385bf8);outline-offset:2px}
+.hv-share{display:flex;align-items:center;gap:14px;margin-top:16px;padding:14px;border:1px solid var(--card-border,#e5e6ee);border-radius:var(--card-radius,18px);background:#fff;font-size:13px;line-height:18px;color:var(--chekin-text-secondary,#6b6b95)}
+.hv-share p{margin:0;flex:1}.hv-share b{color:var(--chekin-color-brand-navy,#161643)}
+
+/* ===== V1: original mejorada (misma estructura, acción clara, huésped 2 visible) ===== */
+.v1-sum{display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--card-border,#e5e6ee);border-radius:var(--card-radius,18px);background:#fff}
+.v1-ring{position:relative;flex:none;width:48px;height:48px;display:grid;place-items:center}
+.v1-ring svg{position:absolute;inset:0;width:100%;height:100%}
+.v1-ring b{position:relative;font-size:13px;color:var(--chekin-color-brand-blue,#385bf8)}.v1-ring small{font-size:10px;font-weight:600}
+.v1-st{flex:1;min-width:0;display:flex;flex-direction:column}.v1-st b{font-size:14px;line-height:18px}
+.v1-st span{margin-top:2px;font-size:12.5px;line-height:17px;color:var(--chekin-text-secondary,#6b6b95)}
+.v1-ico{flex:none;display:grid;place-items:center;width:36px;height:36px;border:1px solid var(--card-border,#e5e6ee);border-radius:12px;background:#fff;color:#4a5072}
+.v1-h{margin:20px 2px 8px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#4a5072}
+.v1-row{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--card-border,#e5e6ee);border-radius:var(--card-radius,18px);background:#fff}
+.v1-empty{border-style:dashed;background:transparent}
+.v1-av{flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:rgba(255,194,51,.3);color:#7a5200;font-size:13px;font-weight:700}   /* cajita de iniciales de un huésped pendiente: amarillo translúcido (el de IV PENDING), sin borde (#868) */
+.v1-dash{background:#fff;border:1.5px dashed #b7bcd6;color:#6b6b95}
+.v1-tx{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start}
+.v1-tx b{font-size:15px;line-height:20px}.v1-tx>span{font-size:12.5px;line-height:17px;color:var(--chekin-text-secondary,#6b6b95)}
+.v1-chip{margin-top:5px;padding:1px 8px;border-radius:9999px;background:#ffc233;color:#0b0b0f;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-style:normal;line-height:1.5}
+.v1-btn{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 14px;border:1.5px solid var(--chekin-color-brand-blue,#385bf8);border-radius:12px;background:var(--chekin-color-brand-blue,#385bf8);color:#fff;font-size:13px;font-weight:600;white-space:nowrap}
+.v1-btn:hover{background:var(--chekin-color-brand-hover,#294df1)}
+.v1-sec{background:#fff;color:var(--chekin-color-brand-blue,#385bf8)}.v1-sec:hover{background:#eff6ff}
+@media (max-width:700px){.v1-btn svg{display:none}.v1-row{align-items:flex-start}.v1-btn{align-self:center}}
+
+/* ===== V2: una sola lista con barra de progreso y pasos por huésped ===== */
+.v2-card{border:1px solid var(--card-border,#e5e6ee);border-radius:var(--card-radius,18px);background:#fff;overflow:hidden}
+.v2-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:14px 16px 8px}
+.v2-top b{font-size:14px}.v2-top span{font-size:12px;color:var(--chekin-text-secondary,#6b6b95);white-space:nowrap}
+.v2-bar{height:6px;margin:0 16px 12px;border-radius:9999px;background:#e9ebf6;overflow:hidden}.v2-bar i{display:block;width:50%;height:100%;border-radius:9999px;background:var(--chekin-color-brand-blue,#385bf8)}
+.v2-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid var(--chekin-border-default,#e5e6ee)}
+.v2-av{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:#e9ebf6;color:var(--chekin-color-brand-blue,#385bf8);font-size:12px;font-weight:700}
+.v2-dash{background:#fff;border:1.5px dashed #b7bcd6;color:#6b6b95}
+.v2-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}.v2-tx b{font-size:15px;line-height:20px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.v2-tx em{font-style:normal;font-size:10.5px;font-weight:600;padding:1px 8px;border-radius:9999px;background:#eff6ff;color:var(--chekin-color-brand-blue,#385bf8)}
+.v2-steps{display:flex;gap:12px;flex-wrap:wrap;font-size:12.5px}
+.v2-steps span{display:inline-flex;align-items:center;gap:4px}.v2-steps .ok{color:#0d7a46}.v2-steps .todo{color:var(--chekin-text-secondary,#6b6b95)}
+.v2-btn{flex:none;min-height:34px;padding:0 14px;border:1.5px solid var(--chekin-color-brand-blue,#385bf8);border-radius:12px;background:var(--chekin-color-brand-blue,#385bf8);color:#fff;font-size:13px;font-weight:600;white-space:nowrap}
+.v2-sec{background:#fff;color:var(--chekin-color-brand-blue,#385bf8)}
+.v2-foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:10px 16px;border-top:1px solid var(--chekin-border-default,#e5e6ee);background:#fafbff}
+
+/* ===== V4: siguiente paso destacado + lista de huéspedes sencilla ===== */
+.v4-hero{padding:18px 18px 20px;border-radius:var(--card-radius,18px);color:#fff;background:var(--chekin-gradient-hero,linear-gradient(135deg,#15153f 0%,#23235d 44%,#2e46c8 100%))}
+.v4-eye{display:inline-block;padding:2px 10px;border-radius:9999px;background:rgba(255,255,255,.16);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.v4-hero h2{margin:10px 0 4px;font-size:20px;line-height:26px;font-weight:600;color:#fff}
+.v4-hero p{margin:0 0 16px;font-size:13.5px;line-height:19px;color:rgba(255,255,255,.82)}
+.v4-go{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;border:0;border-radius:14px;background:#fff;color:#161643;font-size:15px;font-weight:700}
+.v4-go:hover{background:#eff6ff}
+.v4-hd{display:flex;justify-content:space-between;align-items:baseline;margin:22px 2px 8px}.v4-hd b{font-size:15px}.v4-hd span{font-size:12.5px;color:var(--chekin-text-secondary,#6b6b95)}
+.v4-list{border:1px solid var(--card-border,#e5e6ee);border-radius:var(--card-radius,18px);background:#fff;overflow:hidden}
+.v4-g{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;border:0;background:none;text-align:left;color:inherit}
+.v4-g+.v4-g{border-top:1px solid var(--chekin-border-default,#e5e6ee)}.v4-g:hover{background:#f6f7fc}
+.v4-g>svg{flex:none;color:#7d86ad}
+.v4-av{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:#e9ebf6;color:var(--chekin-color-brand-blue,#385bf8);font-size:12px;font-weight:700}
+.v4-dash{background:#fff;border:1.5px dashed #b7bcd6;color:#6b6b95}
+.v4-tx{flex:1;min-width:0;display:flex;flex-direction:column}.v4-tx b{font-size:15px;line-height:20px}.v4-tx span{font-size:12.5px;line-height:17px;color:var(--chekin-text-secondary,#6b6b95)}
+.v4-add .v4-tx b{color:var(--chekin-color-brand-blue,#385bf8)}
+.v4-links{display:flex;justify-content:center;gap:22px;margin-top:14px}
+
+/* ===== V1b: sin anillo, progreso en barra ===== */
+.v1b-prog{padding:14px;border:1px solid var(--card-border,#e5e6ee);border-radius:var(--card-radius,18px);background:#fff}
+.v1b-t{display:flex;justify-content:space-between;align-items:baseline;gap:10px}.v1b-t b{font-size:15px}
+.v1b-prog .v2-bar{margin:10px 0 8px}
+.v1b-n{font-size:12.5px;color:var(--chekin-text-secondary,#6b6b95)}
+/* ===== V1c: filas sin botón, CTA fijo abajo ===== */
+.v1-go{flex:none;display:grid;place-items:center;width:32px;height:36px;border:0;background:none;color:#7d86ad}
+.v1-row:hover .v1-go{color:var(--chekin-color-brand-blue,#385bf8)}
+.hv-dock{display:none;width:100%;padding:12px 0 4px}
+html[data-reg="v1c"] .hv-dock{display:block}
+.hv-dock button{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:50px;border:0;border-radius:14px;background:var(--chekin-color-brand-blue,#385bf8);color:#fff;font:700 15px Poppins,system-ui,sans-serif;cursor:pointer}
+.hv-dock button:hover{background:var(--chekin-color-brand-hover,#294df1)}
+/* ===== V4b: tarjeta clara con los pasos del huésped ===== */
+.v4b-hero{padding:18px;border:1px solid #cfdafd;border-radius:var(--card-radius,18px);background:linear-gradient(180deg,#eff6ff,#fff)}
+.v4b-eye{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--chekin-color-brand-blue,#385bf8)}
+.v4b-hero h2{margin:6px 0 10px;font-size:19px;line-height:25px;font-weight:600}
+.v4b-steps{list-style:none;margin:0 0 16px;padding:0;display:flex;gap:16px;flex-wrap:wrap;font-size:13px}
+.v4b-steps li{display:inline-flex;align-items:center;gap:5px}.v4b-steps .ok{color:#0d7a46}.v4b-steps .now{color:var(--chekin-color-brand-navy,#161643);font-weight:600}
+.v4b-go{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;border:0;border-radius:14px;background:var(--chekin-color-brand-blue,#385bf8);color:#fff;font-size:15px;font-weight:700}
+.v4b-go:hover{background:var(--chekin-color-brand-hover,#294df1)}
+/* ===== V4c: franja de siguiente paso ===== */
+.v4c-strip{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid #f1d98a;border-radius:var(--card-radius,18px);background:#fff8e6}
+.v4c-dot{flex:none;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#ffc233;color:#0b0b0f;font-weight:800;font-size:15px}
+.v4c-tx{flex:1;min-width:0;display:flex;flex-direction:column}.v4c-tx b{font-size:14.5px;line-height:19px}.v4c-tx span{font-size:12px;color:#6b4300}
+.hv4c .v4-hd{margin-top:20px}
+/* ===== V5: una tarjeta por huésped, con sus pasos ===== */
+.v5-prog{display:flex;align-items:center;gap:10px;margin:0 2px 12px}.v5-prog b{flex:1;font-size:14px}
+.v5-dots{display:flex;gap:4px}.v5-dots i{width:22px;height:6px;border-radius:9999px;background:#e9ebf6}.v5-dots i.half{background:linear-gradient(90deg,var(--chekin-color-brand-blue,#385bf8) 50%,#e9ebf6 50%)}
+.v5-card{margin-bottom:12px;border:1px solid var(--card-border,#e5e6ee);border-radius:var(--card-radius,18px);background:#fff;overflow:hidden}
+.v5-open{border-color:#b9c7fb;box-shadow:0 0 0 3px rgba(56,91,248,.08)}
+.v5-head{display:flex;align-items:center;gap:12px;padding:12px 14px}
+.v5-av{flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:rgba(255,194,51,.3);color:#7a5200;font-size:13px;font-weight:700}
+.v5-dash{background:#fff;border:1.5px dashed #b7bcd6;color:#6b6b95}
+.v5-tx{flex:1;min-width:0;display:flex;flex-direction:column}.v5-tx b{font-size:15px;line-height:20px}.v5-tx span{font-size:12.5px;color:var(--chekin-text-secondary,#6b6b95)}
+.v5-badge{flex:none;padding:2px 10px;border-radius:9999px;background:#ffc233;color:#0b0b0f;font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase}
+.v5-steps{list-style:none;margin:0;padding:0;border-top:1px solid var(--chekin-border-default,#e5e6ee)}
+.v5-steps li{display:flex;align-items:center;gap:12px;padding:12px 14px}.v5-steps li+li{border-top:1px solid var(--chekin-border-default,#e5e6ee)}
+.v5-n{flex:none;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#e9ebf6;color:#4a5072;font-size:12px;font-weight:700}
+.v5-steps .done .v5-n{background:#37e08f;color:#04331f}.v5-steps .cur .v5-n{background:var(--chekin-color-brand-blue,#385bf8);color:#fff}
+.v5-s{flex:1;min-width:0;display:flex;flex-direction:column}.v5-s b{font-size:14px}.v5-s span{font-size:12.5px;color:var(--chekin-text-secondary,#6b6b95)}
+@media (max-width:700px){.v1-btn svg{display:none}}
+html[data-reg="v1c"] [data-slot="cta-dock"]{display:flex!important;flex-direction:column;align-items:stretch}
+
+/* ===== 4 huéspedes: filas apiladas por sección ===== */
+.v1-stack{display:flex;flex-direction:column;gap:8px}
+.v1-ok{background:rgba(55,224,143,.26);color:#0b5c37}
+.v1-chip-ok{display:inline-flex;align-items:center;gap:4px;background:#37e08f;color:#04331f}
+.hv4 .v4-hero+.v1-h,.hv4n1 .v4-hero+.v1-h,.hv4n2 .v4-hero+.v1-h,.hv4n3 .v4-hero+.v1-h,.hv4n4 .v4-hero+.v1-h{margin-top:22px}
+.v1b-bar4 i{width:25%}
+.hv4n4 .v4-hero h2{margin-bottom:12px}
+.v4n4-seg{display:flex;gap:6px;margin:0 0 16px}
+.v4n4-seg i{flex:1;height:6px;border-radius:9999px;background:rgba(255,255,255,.22)}
+.v4n4-seg i.full{background:#37e08f}
+.v4n4-seg i.half{background:linear-gradient(90deg,#ffc233 50%,rgba(255,255,255,.22) 50%)}
+
+.v1-mini{padding:7px 12px}
+.v1-mini .v1-av{width:28px;height:28px;border-radius:9px}
+.v1-mini .v1-tx{flex-direction:row;align-items:baseline;gap:8px;flex-wrap:wrap}
+.v1-mini .v1-tx b{font-size:14px}
+.v1-mini .v1-go{height:28px}
+
+/* barra de 4 tramos (la de V4·4) sobre la tarjeta clara de V1b */
+.v1b-seg{display:flex;gap:6px;margin:12px 0 10px}
+.v1b-seg i{flex:1;height:6px;border-radius:9999px;background:#e9ebf6}
+.v1b-seg i.full{background:#37e08f}
+.v1b-seg i.half{background:linear-gradient(90deg,var(--chekin-color-brand-blue,#385bf8) 50%,#e9ebf6 50%)}
+/* huésped registrado: menú de tres puntos en lugar de la flecha */
+.v1-kebab{flex:none;display:grid;place-items:center;width:32px;height:36px;border:0;border-radius:10px;background:none;color:var(--chekin-color-gray-2,#7d86ad);cursor:pointer}
+.v1-kebab:hover{background:#eef0f8;color:var(--chekin-color-brand-navy,#161643)}
+.v1-kebab:focus-visible{outline:2px solid var(--chekin-color-brand-blue,#385bf8);outline-offset:1px}
+
+/* ===== V4·1a/b/c: filas sin añadir ===== */
+.hv4m1 .v1-tint,.hv5c .v1-tint{background:#eff6ff;color:var(--chekin-color-brand-blue,#385bf8)}
+.v1-grey{background:#e9ebf6;color:#4a5072}
+.v1-chip-na{background:#e9ebf6;color:#4a5072}
+.v4m-add{display:flex;align-items:center;gap:12px;width:100%;min-height:56px;padding:0 14px;border:1.5px solid var(--chekin-color-brand-blue,#385bf8);border-radius:var(--card-radius,18px);background:#eff6ff;color:var(--chekin-color-brand-blue,#385bf8);font-size:15px;font-weight:600;text-align:left}
+.v4m-add:hover{background:#e0eaff}
+.v4m-pl{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--chekin-color-brand-blue,#385bf8);color:#fff}
+.v4m-t{flex:1}
+
+/* ===== V5a/b/c: tarjeta degradada como resumen del registro ===== */
+.v5-hero+.v1-h{margin-top:22px}
+.v5h-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.v5h-pill,.v5h-due{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border:0;border-radius:9999px;background:rgba(255,255,255,.14);color:#fff;font:500 12px Poppins,system-ui,sans-serif;white-space:nowrap}
+.v5h-pill{cursor:pointer}.v5h-pill:hover{background:rgba(255,255,255,.24)}
+.v5h-pill svg,.v5h-due svg{flex:none;color:var(--chekin-blue-200,#abbafc)}
+.v5h-pill:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.v5h-big{margin:0 0 14px;font-size:20px;line-height:26px;font-weight:600;color:#fff}
+.v5h-big b{font-size:30px;font-weight:700;margin-right:2px}
+.v5-hero .v4n4-seg{margin:0 0 12px}
+.v5h-st{margin:0;font-size:13.5px;line-height:19px;color:rgba(255,255,255,.82)}
+.v5h-full{display:flex;justify-content:center;width:100%;min-height:44px;margin-top:16px;border-radius:14px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.1);font-size:14px;font-weight:600}
+.v5b-main{display:flex;align-items:center;gap:14px;margin:12px 0 16px}
+.v5b-ring{position:relative;flex:none;width:64px;height:64px;display:grid;place-items:center}
+.v5b-ring svg{position:absolute;inset:0;width:100%;height:100%}
+.v5b-ring b{position:relative;font-size:18px;color:#fff}.v5b-ring small{font-size:11px;font-weight:600;color:rgba(255,255,255,.7)}
+.v5b-tx{display:flex;flex-direction:column}.v5b-tx b{font-size:18px;line-height:24px;font-weight:600;color:#fff}.v5b-tx span{font-size:13px;color:rgba(255,255,255,.78)}
+.v5b-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.v5b-stats>div{position:relative;padding:10px 10px 9px;border-radius:12px;background:rgba(255,255,255,.1);display:flex;flex-direction:column}
+.v5b-stats i{position:absolute;top:12px;right:10px;width:8px;height:8px;border-radius:50%}
+.v5b-stats .g{background:#37e08f}.v5b-stats .y{background:#ffc233}.v5b-stats .n{background:rgba(255,255,255,.4)}
+.v5b-stats b{font-size:22px;line-height:26px;font-weight:700;color:#fff}.v5b-stats span{font-size:12px;color:rgba(255,255,255,.78)}
+.v5c-acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+
+/* ===== V5c: variantes de progreso y escala por nº de huéspedes ===== */
+.hub-lbl{padding:0 3px 0 6px;font:500 10px system-ui,sans-serif;color:#8b95bd}
+.v4n4-seg.v5-denseseg{gap:3px}
+.v5bar{display:flex;height:10px;margin:0 0 14px;border-radius:9999px;background:rgba(255,255,255,.22);overflow:hidden}
+.v5bar i{display:block;height:100%}.v5bar .g{background:#37e08f}.v5bar .y{background:#ffc233}
+.v5f{display:flex;align-items:flex-end;gap:10px;margin:2px 0 14px;min-height:40px}
+.v5f.v5f-dense{gap:4px}
+.v5f-p{display:block;min-width:0}.v5f-p>svg{display:block;width:100%;height:auto}
+.v5f-adult{flex:0 1 34px}.v5f-minor{flex:0 1 24px}
+.v5f-done{color:#37e08f}.v5f-pending{color:#ffc233}.v5f-new{color:rgba(255,255,255,.35)}
+.v5-hero .v5b-main{margin:6px 0 14px}
+.v5-compact .v1-stack{gap:6px}
+.v5-compact .v1-row{padding:8px 10px;gap:10px}
+.v5-compact .v1-av{width:32px;height:32px;border-radius:10px;font-size:12px}
+.v5-compact .v1-tx b{font-size:14px;line-height:18px}
+.v5-compact .v1-btn{min-height:30px;padding:0 10px;font-size:12px}
+.v5-compact .v1-h{margin-top:16px}
+.v5-compact .v5h-big{font-size:18px}
+.v5-dense .v1-row{padding:6px 10px}.v5-dense .v1-chip{margin-top:2px}.v5-dense .v1-kebab{height:30px}
+
+/* ===== indicador de scroll (móvil) ===== */
+.hub-sc{position:fixed;left:0;right:0;bottom:0;z-index:60;pointer-events:none;opacity:0;transition:opacity .2s ease}
+.hub-sc.on{opacity:1}
+.hub-sc button{pointer-events:auto;font-family:Poppins,system-ui,sans-serif;cursor:pointer}
+.hub-sc:not(.on) button{pointer-events:none}
+.hub-sc--fade{height:84px;background:linear-gradient(to top,var(--chekin-color-surface-page,#f6f7fc) 28%,rgba(246,247,252,0));display:flex;align-items:flex-end;justify-content:center;padding-bottom:6px}
+.hub-sc--fade button{width:40px;height:32px;border:0;background:none;color:var(--chekin-color-brand-blue,#385bf8);display:grid;place-items:center;animation:hubBob 1.6s ease-in-out infinite}
+.hub-sc--arrow{display:flex;justify-content:flex-end;padding:0 16px 20px}
+.hub-sc--arrow button{width:48px;height:48px;border:0;border-radius:50%;background:var(--chekin-color-brand-blue,#385bf8);color:#fff;box-shadow:0 6px 18px rgba(22,22,67,.28);display:grid;place-items:center}
+.hub-sc--arrow button:hover{background:var(--chekin-color-brand-hover,#294df1)}
+.hub-sc--pill{display:flex;justify-content:center;padding:0 16px 18px}
+.hub-sc--pill button{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 16px 0 12px;border:0;border-radius:9999px;background:var(--chekin-color-brand-navy,#161643);color:#fff;font-size:13px;font-weight:600;box-shadow:0 6px 18px rgba(22,22,67,.3)}
+.hub-sc--pill button span{white-space:nowrap}
+.hub-sc button:focus-visible{outline:2px solid var(--chekin-color-brand-blue,#385bf8);outline-offset:2px}
+@keyframes hubBob{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+@media (prefers-reduced-motion:reduce){.hub-sc--fade button{animation:none}.hub-sc{transition:none}}
+
+/* avatar, texto y botón siempre centrados en vertical, también con las filas compactas (anula el align-items:flex-start móvil de V1) */
+.hv .v1-row{align-items:center}
+.hv .v1-row .v1-av{align-self:center}
+
+/* ===== V5c-A/B/C: solo cambia cómo se ven la etiqueta, la fecha y los CTAs de la tarjeta ===== */
+.v5h-due2{display:flex;align-items:center;gap:6px;margin:8px 0 0;font-size:12.5px;color:rgba(255,255,255,.78)}
+.v5h-due2 svg{color:var(--chekin-blue-200,#abbafc)}
+.v5c1-acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}
+.v5c1-b{display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 6px;white-space:nowrap;border:1px solid rgba(255,255,255,.3);border-radius:14px;background:rgba(255,255,255,.1);color:#fff;font:600 12.5px Poppins,system-ui,sans-serif;cursor:pointer}
+.v5c1-b:hover{background:rgba(255,255,255,.2)}.v5c1-b svg{flex:none;color:var(--chekin-blue-200,#abbafc)}.v5c1-b:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.v5x-strip{display:flex;align-items:center;gap:6px;margin:-18px -18px 14px;padding:9px 18px;background:rgba(0,0,0,.2);font-size:12.5px;font-weight:500;color:rgba(255,255,255,.88)}
+.v5x-strip svg{color:var(--chekin-blue-200,#abbafc)}
+.v5c2-bar{display:grid;grid-template-columns:1fr 1fr;margin:18px -18px -20px;border-top:1px solid rgba(255,255,255,.18)}
+.v5c2-bar button{display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px;border:0;background:none;color:#fff;font:600 13px Poppins,system-ui,sans-serif;cursor:pointer}
+.v5c2-bar button+button{border-left:1px solid rgba(255,255,255,.18)}
+.v5c2-bar button:hover{background:rgba(255,255,255,.1)}.v5c2-bar svg{color:var(--chekin-blue-200,#abbafc)}
+.v5c2-bar button:focus-visible{outline:2px solid #fff;outline-offset:-3px}
+.v5x-due{color:#fff;font-weight:600}
+.v5c3-acts{display:flex;gap:8px;margin-top:16px}
+.v5c3-main{flex:1;width:auto;min-height:48px;font-size:14px}.v5c3-main svg{color:var(--chekin-color-brand-blue,#385bf8)}
+.v5c3-sq{flex:none;display:grid;place-items:center;width:48px;height:48px;border:1px solid rgba(255,255,255,.3);border-radius:14px;background:rgba(255,255,255,.1);color:#fff;cursor:pointer}
+.v5c3-sq:hover{background:rgba(255,255,255,.2)}.v5c3-sq:focus-visible{outline:2px solid #fff;outline-offset:2px}
+
+/* ===== V5c·1/2/3: huéspedes sin añadir como en el original (punteado + "Add guest" dentro) para no abrumar con CTAs ===== */
+.v5s-box{padding:10px;border:1.5px dashed #b7bcd6;border-radius:var(--card-radius,18px);background:transparent}
+.v5s-slots{display:flex;flex-direction:column;gap:2px;margin-bottom:10px}
+.v5s-slot{display:flex;align-items:center;gap:10px;padding:4px 4px}
+.v5s-av{flex:none;display:grid;place-items:center;width:32px;height:32px;border:1.5px dashed #b7bcd6;border-radius:10px;color:#8b95bd;font-size:16px;line-height:1}
+.v5s-tx{display:flex;flex-direction:column;min-width:0}.v5s-tx b{font-size:14px;line-height:18px;font-weight:600;color:#4a5072}.v5s-tx span{font-size:12px;line-height:16px;color:var(--chekin-text-secondary,#6b6b95)}
+.v5s-add,.v5s-row{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:46px;padding:0 14px;border:1.5px dashed #9fb0f5;border-radius:14px;background:#fff;color:var(--chekin-color-brand-blue,#385bf8);font:600 14px Poppins,system-ui,sans-serif;cursor:pointer}
+.v5s-add:hover,.v5s-row:hover{background:#eff6ff;border-color:var(--chekin-color-brand-blue,#385bf8)}
+.v5s-add:focus-visible,.v5s-row:focus-visible{outline:2px solid var(--chekin-color-brand-blue,#385bf8);outline-offset:2px}
+.v5s-row{background:transparent;min-height:48px;border-radius:var(--card-radius,18px);border-color:#b7bcd6;color:var(--chekin-color-brand-blue,#385bf8)}
+.v1-stack>.v5s-row+.v5s-row{margin-top:0}
+.v5s-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.v5s-chip{display:inline-flex;align-items:center;gap:6px;padding:3px 10px 3px 4px;border:1.5px dashed #b7bcd6;border-radius:9999px;font-size:12px;font-weight:500;color:#6b6b95;background:#fff}
+.v5s-chip i{display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#eef0f8;font-style:normal;font-size:13px;line-height:1;color:#8b95bd}
+.v5-compact .v5s-add,.v5-compact .v5s-row{min-height:42px;font-size:13px}
+
+/* V5c·1: una sola fila blanca "Add guest", del tamaño de cualquier otra fila de huésped */
+.v5s-one{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:66px;padding:0 14px;border:1.5px dashed #b7bcd6;border-radius:var(--card-radius,18px);background:#fff;color:var(--chekin-color-brand-blue,#385bf8);font:600 14.5px Poppins,system-ui,sans-serif;cursor:pointer}
+.v5s-one:hover{background:#eff6ff;border-color:var(--chekin-color-brand-blue,#385bf8)}
+.v5s-one:focus-visible,.v5s-tint:focus-visible{outline:2px solid var(--chekin-color-brand-blue,#385bf8);outline-offset:2px}
+.v5-compact .v5s-one{min-height:52px;font-size:13.5px}
+/* V5c·4: una fila blanca por hueco, solo "+ Add guest" con el avatar azul claro de V5c */
+.v5s-tint{display:flex;align-items:center;gap:12px;width:100%;min-height:66px;padding:12px;border:1px solid var(--card-border,#e5e6ee);border-radius:var(--card-radius,18px);background:#fff;text-align:left;color:var(--chekin-color-brand-blue,#385bf8);font:600 15px Poppins,system-ui,sans-serif;cursor:pointer}
+.v5s-tint:hover{background:#f6f9ff}
+.v5-compact .v5s-tint{min-height:52px;padding:8px 10px;gap:10px;font-size:14px}
+.v5-compact .v5s-tint .v1-av{width:32px;height:32px;border-radius:10px}
+.v5s-tint .v1-av{flex:none}
+
+/* V5c·4: la fila blanca conserva su tamaño y por dentro lleva el contenedor punteado "+ Add guest" */
+.v5s-tint{padding:8px}
+.v5s-tint .v5s-inner{flex:1;align-self:stretch;display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;border:1.5px dashed #aab9f5;border-radius:12px;background:#fafcff;color:var(--chekin-color-brand-blue,#385bf8);font:600 14.5px Poppins,system-ui,sans-serif}
+.v5s-tint:hover .v5s-inner{background:#eff6ff;border-color:var(--chekin-color-brand-blue,#385bf8)}
+.v5-compact .v5s-tint{padding:6px}.v5-compact .v5s-tint .v5s-inner{min-height:38px;font-size:13.5px}
+/* CTAs secundarios al 50 % cada uno */
+.v5c1-acts{grid-template-columns:repeat(2,minmax(0,1fr))}
+.v5c1-b{min-width:0;padding:0 4px;gap:5px;font-size:12.5px}
+
+/* CTAs de la tarjeta: píldoras (antes), píldoras blancas y solo texto */
+.v5h-pill.v5h-white{background:#fff;color:var(--chekin-color-brand-navy,#161643);font-weight:600}
+.v5h-pill.v5h-white svg{color:var(--chekin-color-brand-blue,#385bf8)}
+.v5h-pill.v5h-white:hover{background:#eff6ff}
+.v5h-pill.v5h-white:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.v5c-acts--text{gap:22px}
+.v5h-link{padding:6px 0;border:0;background:none;color:#fff;font:600 13px Poppins,system-ui,sans-serif;cursor:pointer;text-decoration:underline;text-decoration-color:rgba(255,255,255,.4);text-underline-offset:4px}
+.v5h-link:hover{text-decoration-color:#fff}
+.v5h-link:focus-visible{outline:2px solid #fff;outline-offset:3px;border-radius:4px}
+
+/* píldoras blancas: cada una ocupa la mitad del ancho de la tarjeta */
+.v5c-acts--half{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.v5c-acts--half .v5h-pill{justify-content:center;min-width:0;width:100%;min-height:38px;padding:0 4px;gap:6px}
+/* CTAs de la tarjeta: Share a link con el mismo largo que Change guest count (misma altura de siempre), texto centrado */
+.v5-hero .v5c-acts{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;width:max-content;max-width:100%;gap:8px}
+.v5-hero .v5c-acts .v5h-pill{justify-content:center}
+/* para que las dos píldoras (mismo largo) quepan en la tarjeta sin tocar su altura */
+.v5-hero .v5c-acts .v5h-pill{padding:5px 9px;gap:5px}
+.v5-hero .v5c-acts .v5h-pill{padding:5px 6px}
+
+/* estado completado: etiqueta verde de "Show code" en lugar de la fecha */
+.v5h-ok{display:inline-flex;align-items:center;padding:5px 12px;border-radius:9999px;background:#37e08f;color:#04331f;font:600 12px Poppins,system-ui,sans-serif;white-space:nowrap}
+
+/* ===== ajuste automático para que se vea "Other minor guests" ===== */
+.v5s-multi{margin:0}
+.v5fit-wrap{position:sticky;top:64px;z-index:5;display:flex;justify-content:flex-end;height:0;pointer-events:none;transition:opacity .2s ease}
+.v5fit-wrap.off{opacity:0}.v5fit-wrap.off .v5fit-chip{pointer-events:none}
+.v5fit-chip{pointer-events:auto;display:inline-flex;align-items:center;gap:4px;margin-top:8px;min-height:32px;padding:0 12px;border:0;border-radius:9999px;background:var(--chekin-color-brand-navy,#161643);color:#fff;font:600 12.5px Poppins,system-ui,sans-serif;box-shadow:0 4px 14px rgba(22,22,67,.3);cursor:pointer}
+.v5fit-chip:focus-visible{outline:2px solid var(--chekin-color-brand-blue,#385bf8);outline-offset:2px}
+.v5m-back{position:fixed;inset:0;z-index:200;display:flex;align-items:flex-end;justify-content:center;background:rgba(22,22,67,.45)}
+.v5m{width:100%;max-width:480px;padding:20px 20px 24px;border-radius:24px 24px 0 0;background:#fff;font-family:Poppins,system-ui,sans-serif;color:var(--chekin-color-brand-navy,#161643);display:flex;flex-direction:column;align-items:stretch}
+.v5m h3{margin:0;font-size:18px;line-height:24px;font-weight:600}
+.v5m-sub{margin:2px 0 16px;font-size:13px;color:var(--chekin-text-secondary,#6b6b95)}
+.v5m-step{display:flex;align-items:center;justify-content:center;gap:24px}
+.v5m-step b{min-width:48px;text-align:center;font-size:32px;line-height:40px;font-weight:700}
+.v5m-step button{width:44px;height:44px;border:1.5px solid var(--chekin-color-brand-blue,#385bf8);border-radius:50%;background:#fff;color:var(--chekin-color-brand-blue,#385bf8);font:600 22px Poppins,system-ui,sans-serif;cursor:pointer}
+.v5m-step button:disabled{opacity:.35;cursor:default}
+.v5m-note{margin:8px 0 18px;text-align:center;font-size:12.5px;color:var(--chekin-text-secondary,#6b6b95)}
+.v5m-go{min-height:48px;border:0;border-radius:14px;background:var(--chekin-color-brand-blue,#385bf8);color:#fff;font:600 15px Poppins,system-ui,sans-serif;cursor:pointer}
+.v5m-link{margin-top:6px;min-height:44px;border:0;background:none;color:var(--chekin-color-brand-blue,#385bf8);font:600 14px Poppins,system-ui,sans-serif;cursor:pointer}
+.v5m button:focus-visible{outline:2px solid var(--chekin-color-brand-blue,#385bf8);outline-offset:2px}
+
+/* escritorio: Change guest count junto a la fecha (más largo, con aire) y bloque "Not together right now?" abajo */
+.v5-hero--d .v5h-top{margin-bottom:14px}
+.v5-hero--d .v5h-chg{min-height:34px;padding:0 22px!important;gap:8px!important;font-size:13px}
+.v5-hero--d .v5h-share{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.16)}
+.v5-hero--d .v5h-share p{margin:0;flex:1;max-width:520px;font-size:13.5px;line-height:20px;color:rgba(255,255,255,.82)}
+.v5-hero--d .v5h-share b{color:#fff;font-weight:600}
+.v5-hero--d .v5h-shr{flex:none;min-height:36px;padding:0 20px!important;gap:8px!important;font-size:13px}
+/* escritorio (ajuste): botones con su altura de siempre y solo un poco más largos; "Not together right now?" en una caja semitransparente como la de "Unlock your keys" */
+.v5-hero--d .v5h-chg,.v5-hero--d .v5h-shr{min-height:0;padding:5px 14px!important;gap:6px!important;font-size:12px}
+.v5-hero--d .v5h-share{margin-top:16px;padding:14px 16px;border-top:0;border:1px solid rgba(255,255,255,.22);border-radius:14px;background:rgba(255,255,255,.1);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+
+/* ===== botón atrás: cuatro variantes ===== */
+html:not([data-bk="orig"]) .hub-bk-orig{display:none!important}
+.bk-x{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.bk-x:focus-visible,.bk-xa:focus-visible{outline:2px solid var(--chekin-color-brand-blue,#385bf8);outline-offset:2px;border-radius:6px}
+/* A: migas en lugar de la etiqueta "Guest summary" */
+.bk-xa{display:inline-flex;align-items:center;gap:2px;color:var(--chekin-color-brand-blue,#385bf8);font-weight:700;text-decoration:none;cursor:pointer}
+.bk-xa:hover{text-decoration:underline;text-underline-offset:3px}
+.bk-sep{margin:0 6px;font-style:normal;color:#b7bcd6;font-weight:500}
+/* B: flecha redonda a la izquierda del título */
+.bk-b{flex:none;display:grid;place-items:center;width:40px;height:40px;border:1px solid var(--card-border,#e5e6ee);border-radius:50%;background:#fff;color:var(--chekin-color-brand-navy,#161643);box-shadow:0 1px 2px rgba(22,22,67,.06);transition:background .15s,color .15s,border-color .15s}
+.bk-b:hover{background:var(--chekin-color-brand-blue,#385bf8);border-color:var(--chekin-color-brand-blue,#385bf8);color:#fff}
+/* C: pestañas hermanas en móvil, enlace discreto a la derecha en escritorio */
+.bk-c{display:flex;gap:3px;width:100%;padding:3px;margin:0 0 12px;border-radius:12px;background:#eceef8}
+.bk-c a{flex:1;text-align:center;padding:7px 8px;border-radius:9px;font:600 12.5px Poppins,system-ui,sans-serif;color:#4a5072;cursor:pointer;text-decoration:none}
+.bk-c a:hover{color:var(--chekin-color-brand-navy,#161643)}
+.bk-c a[aria-current]{background:#fff;color:var(--chekin-color-brand-navy,#161643);box-shadow:0 1px 3px rgba(22,22,67,.14);cursor:default}
+.bk-c-link{display:none;margin-left:auto;align-items:center;gap:2px;font:600 12.5px Poppins,system-ui,sans-serif;color:var(--chekin-color-brand-blue,#385bf8);text-transform:none;letter-spacing:0}
+.bk-c-link:hover{text-decoration:underline;text-underline-offset:3px}
+@media (min-width:1024px){.bk-c{display:none}.bk-c-link{display:inline-flex}}
+/* D: barra inferior fija con "Back to Home" */
+html[data-bk="d"] [data-slot="cta-dock"]{display:flex!important;flex-direction:column;align-items:stretch;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:linear-gradient(to top,var(--chekin-color-surface-page,#f6f7fc) 72%,rgba(246,247,252,0))}
+.bk-d{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:46px;border:1.5px solid #cfd5ea;border-radius:14px;background:#fff;color:var(--chekin-color-brand-navy,#161643);font:600 14px Poppins,system-ui,sans-serif}
+.bk-d:hover{border-color:var(--chekin-color-brand-blue,#385bf8);color:var(--chekin-color-brand-blue,#385bf8)}
+html[data-bk="d"] .hub-sc{bottom:72px}
+
+/* A: en móvil la etiqueta superior estaba oculta; con las migas se muestra */
+html[data-bk^="a"] .hub-eyebrow{display:inline-flex!important;align-items:center;margin-bottom:2px}
+/* D: deja sitio a la barra inferior */
+html[data-bk="d"] .guest-register-view{padding-bottom:88px}
+html[data-bk="d"] [data-slot="cta-dock"]{position:sticky!important;bottom:0;z-index:10}
+
+/* migas: "Guest summary" en el color del título (casi negro); el enlace conserva el azul */
+.hub-eyebrow>span[aria-current="page"]{color:var(--chekin-color-brand-navy,#161643)}
+
+/* chip como el de "Change guest count" (mismo tamaño, redondeado, blanco), con borde fino para que se vea sobre la página clara */
+.bk-chip{display:inline-flex!important;align-items:center;gap:6px;padding:5px 12px 5px 8px!important;border:1px solid #dfe2f1;border-radius:9999px;background:#fff;color:var(--chekin-color-brand-navy,#161643)!important;font:600 12px Poppins,system-ui,sans-serif!important;text-transform:none!important;letter-spacing:0!important;box-shadow:0 1px 2px rgba(22,22,67,.06);text-decoration:none!important;transition:background .15s,border-color .15s}
+.bk-chip svg{color:var(--chekin-color-brand-blue,#385bf8)}
+.bk-chip:hover{background:#eff6ff;border-color:var(--chekin-color-brand-blue,#385bf8)}
+.bk-xa.bk-chip{margin-right:2px}
+/* C2: "Guest summary" en el color del título */
+html[data-bk="c2"] .hub-eyebrow{color:var(--chekin-color-brand-navy,#161643)!important}
+
+/* ===== navegación móvil ===== */
+/* A: "‹ Home" de texto en la barra superior, título centrado */
+.mb-a{flex:none;display:inline-flex;align-items:center;gap:2px;min-height:36px;padding:0 8px 0 4px;margin-left:-4px;border-radius:10px;color:var(--chekin-color-brand-blue,#385bf8);font:600 15px Poppins,system-ui,sans-serif;cursor:pointer;text-decoration:none}
+.mb-a svg{width:20px;height:20px}
+.mb-a:active{background:#eef0f8}
+html[data-mb="a"] .sticky header>div.flex-1{align-items:center;text-align:center}
+html[data-mb="a"] .sticky header>div:last-child{min-width:36px}
+/* C: la barra inferior de pestañas de Home, con Registration activa; sin botón atrás */
+.mb-tabs{display:none}
+html[data-mb="c"] .mb-tabs{display:block}
+html[data-mb="c"] .guest-register-view{padding-bottom:84px}
+html[data-mb="c"] .hub-sc{bottom:76px}
+@media (min-width:1024px){.mb-tabs{display:none!important}}
+/* D: botón atrás flotante, en la zona del pulgar */
+.mb-d{position:fixed;left:16px;bottom:20px;z-index:60;display:grid;place-items:center;width:48px;height:48px;border:1px solid var(--card-border,#e5e6ee);border-radius:50%;background:#fff;color:var(--chekin-color-brand-navy,#161643);box-shadow:0 6px 18px rgba(22,22,67,.22);cursor:pointer;text-decoration:none}
+.mb-d:active{background:#eef0f8}
+.mb-d:focus-visible,.mb-a:focus-visible{outline:2px solid var(--chekin-color-brand-blue,#385bf8);outline-offset:2px}
+html[data-mb="d"] .guest-register-view{padding-bottom:84px}
+@media (min-width:1024px){.mb-d{display:none}}
+
+/* CTAs de la tarjeta (móvil): cada uno ocupa la mitad y el texto va centrado; sin icono en pantallas estrechas */
+.v5-hero .v5c-acts{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-flow:row;grid-auto-columns:auto;width:100%!important;max-width:none;gap:8px}
+.v5-hero .v5c-acts .v5h-pill{justify-content:center;width:100%;min-width:0;white-space:nowrap;padding:5px 6px}
+@media (max-width:379px){.v5-hero .v5c-acts .v5h-pill svg{display:none}}
+/* un chip nunca se parte en dos líneas; en pantallas estrechas se usa la versión corta */
+.v1-chip{white-space:nowrap}
+.v1-chip .sm{display:none}
+@media (max-width:389px){.v1-chip .lg{display:none}.v1-chip .sm{display:inline}}
+
+.v1-btn .sm{display:none}
+@media (max-width:389px){.v1-btn .lg{display:none}.v1-btn .sm{display:inline}}
+.v1-hs{margin:0 2px 10px;font-size:12.5px;line-height:17px;font-weight:500;color:#6b6b95}.v1-h:has(+ .v1-hs){margin-bottom:2px}
+
+/* panel de Vela (UI del producto): filas con icono, título, descripción y flecha; secciones con «See all» y subtítulo */
+aside[data-rgv] .rv-see{position:absolute;right:0;top:-3px;font:600 13px/16px Poppins,system-ui,sans-serif;letter-spacing:0;text-transform:none;color:#385bf8;cursor:pointer}
+aside[data-rgv] .rv-see:hover{text-decoration:underline}
+aside[data-rgv] .rv-sub{margin:-2px 0 4px;font-size:13px;line-height:19px;color:var(--assistant-intro-text,#6b6b95)}
+aside[data-rgv] .rv-list{display:flex;flex-direction:column}
+aside[data-rgv] .rv-tile,aside[data-rgv] .rv-row2{display:flex;align-items:center;gap:11px;width:calc(100% + 16px);margin:0 -8px;padding:11px 8px;border:0;border-radius:10px;background:none;text-align:left;font-family:Poppins,system-ui,sans-serif;cursor:pointer;color:inherit}
+aside[data-rgv] .rv-tile:hover{background:var(--assistant-tip-icon-bg,#eef1ff)}
+aside[data-rgv] .rv-tile:focus-visible{outline:2px solid #385bf8}
+aside[data-rgv] .rv-ti{display:grid;place-items:center;flex:none;width:30px;height:30px;border-radius:9px;background:var(--assistant-tip-icon-bg,#eef1ff);color:var(--assistant-tip-icon,#385bf8)}
+aside[data-rgv] .rv-tx{flex:1;min-width:0;display:flex;flex-direction:column}
+aside[data-rgv] .rv-tx strong{font-size:13px;line-height:18px;font-weight:700;color:var(--assistant-tip-title,#161643)}
+aside[data-rgv] .rv-tx span{margin-top:2px;font-size:12px;line-height:17px;color:var(--assistant-tip-description,#6b6b95)}
+aside[data-rgv] .rv-tile>svg{flex:none;color:var(--assistant-tip-description,#8b8eab);transition:transform .15s}
+aside[data-rgv] .rv-tile:hover>svg{transform:translateX(2px)}
+aside[data-rgv] .rv-pill{flex:none;height:32px;padding:0 14px;border:1.5px solid #dfe2f1;border-radius:9999px;background:#fff;color:#161643;font:600 12.5px/1 Poppins,system-ui,sans-serif;cursor:pointer}
+aside[data-rgv] .rv-pill:hover{background:#eff6ff;border-color:#385bf8}
+aside[data-rgv] .rv-pill.pri{background:#385bf8;border-color:#385bf8;color:#fff}aside[data-rgv] .rv-pill.pri:hover{background:#294df1}
+aside[data-rgv] .rv-card3{display:flex;flex-direction:column;gap:4px;padding:14px;border-radius:14px;background:#eef1ff}
+aside[data-rgv] .rv-card3 strong{font-size:13px;line-height:18px;font-weight:700;color:#161643}
+aside[data-rgv] .rv-card3>span{font-size:12px;line-height:17px;color:#6b6b95}
+aside[data-rgv] .rv-card3>div{display:flex;gap:8px;margin-top:8px}
+aside[data-rgv] .rv-first{}
+.rv-list>.rv-tile:first-child{}
+
+aside[data-rgv] .rv-list>.rv-tile:first-child{margin-top:-10px}
+aside[data-rgv] .rv-info{display:flex;flex-direction:column;padding:6px 0}aside[data-rgv] .rv-info strong{font-size:13px;line-height:18px;font-weight:700;color:var(--assistant-tip-title,#161643)}aside[data-rgv] .rv-info span{margin-top:2px;font-size:12px;line-height:17px;color:var(--assistant-tip-description,#6b6b95)}
+aside[data-rgv] .rv-prog{display:flex;flex-direction:column;gap:6px;padding:4px 0}aside[data-rgv] .rv-prog strong{font-size:15px;line-height:20px;font-weight:700;color:#161643}aside[data-rgv] .rv-prog span{font-size:12px;line-height:17px;color:#6b6b95}aside[data-rgv] .rv-bar{display:block;height:6px;border-radius:99px;background:#e1e1ee;overflow:hidden}aside[data-rgv] .rv-bar b{display:block;height:100%;border-radius:99px;background:#37e08f}
+.fx-why{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(22,22,67,0);transition:background .2s ease}
+.fx-why.in{background:rgba(22,22,67,.45)}
+.fx-why-c{position:relative;box-sizing:border-box;width:440px;max-width:100%;max-height:calc(100vh - 48px);overflow:auto;padding:30px 28px 26px;border-radius:22px;background:#fff;font-family:Poppins,system-ui,sans-serif;color:#161643;box-shadow:0 30px 70px -20px rgba(22,22,67,.45);transform:translateY(14px);opacity:0;transition:transform .25s cubic-bezier(.22,.8,.2,1),opacity .2s ease}
+.fx-why.in .fx-why-c{transform:none;opacity:1}
+.fx-why-c h2{margin:0 36px 20px 0;font-size:21px;line-height:27px;font-weight:700;color:#161643}
+.fx-why-x{position:absolute;top:22px;right:20px;display:grid;place-items:center;width:32px;height:32px;border:0;border-radius:50%;background:none;color:#161643;cursor:pointer}
+.fx-why-x:hover{background:#f1f2fa}
+.fx-why-i{display:flex;gap:14px;align-items:flex-start;margin-bottom:16px}
+.fx-why-i>i{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#e6ecff;color:#385bf8}
+.fx-why-i p{margin:0;font-size:14px;line-height:21px;font-weight:500;color:#161643}
+.fx-why-l{display:inline-flex;align-items:center;gap:7px;margin:2px 0 20px;font-size:14px;font-weight:600;color:#385bf8;text-decoration:none}
+.fx-why-l:hover{text-decoration:underline}
+.fx-why-b{display:flex;align-items:center;justify-content:center;width:100%;min-height:48px;border:0;border-radius:9999px;background:#385bf8;color:#fff;font:600 14.5px Poppins,system-ui,sans-serif;cursor:pointer}
+@media (prefers-reduced-motion:reduce){.fx-why,.fx-why-c{transition:none}}
+/* el primer elemento de una sección arranca a la misma distancia de la raya del título (la fila es una caja transparente: se compensa su relleno) */
+aside[data-rgv] .rv-list>.rv-tile:first-child,aside[data-rgv] .rv-list>.rv-row2:first-child{margin-top:-10px}
+
+.fx-why-btns{display:flex;gap:10px}
+.fx-why-btns .fx-why-b{flex:1;min-width:0;padding:0 12px}
+.fx-why-b.sec{background:#fff;color:#161643;border:1.5px solid #dfe2f1}
+.fx-why-b.sec:hover{background:#f5f6f9}
+
+/* ventanas de Vela en escritorio: algo más anchas y botones en una sola línea, todos en azul */
+@media (min-width:1025px){.fx-why-c{width:540px}}
+.fx-why-btns .fx-why-b{white-space:nowrap}
+
+/* ===== Resumen · Vela «Pregunta a Vela»: P1 · En su sitio, P2 · Conversación, P3 · Detalle ===== */
+/* P1: acordeón con la respuesta de Vela bajo la pregunta; la altura se anima (sin saltos bruscos) */
+aside[data-rgv] .pa{display:flex;flex-direction:column;gap:6px}
+aside[data-rgv] .pa-i{border:1.5px solid #e6e8f3;border-radius:14px;background:#fff;transition:border-color .2s,background .2s}
+aside[data-rgv] .pa-i.open{border-color:#c9d2fb;background:#f7f8ff}
+aside[data-rgv] .pa-q{display:flex;width:100%;align-items:center;gap:8px;padding:10px 12px;border:0;background:none;text-align:left;cursor:pointer;color:#161643;font:600 12.5px/17px Poppins,system-ui,sans-serif}
+aside[data-rgv] .pa-q span{flex:1}
+aside[data-rgv] .pa-q svg{flex:none;width:16px;height:16px;color:#9a9ab8;transition:transform .25s}
+aside[data-rgv] .pa-i.open .pa-q svg{transform:rotate(180deg);color:#385bf8}
+aside[data-rgv] .pa-q:focus-visible{outline:2px solid #385bf8;outline-offset:-2px;border-radius:12px}
+aside[data-rgv] .pa-w{display:grid;grid-template-rows:0fr;transition:grid-template-rows .28s ease}
+aside[data-rgv] .pa-i.open .pa-w{grid-template-rows:1fr}
+aside[data-rgv] .pa-a{overflow:hidden;padding:0 12px;opacity:0;transition:opacity .2s,padding .28s}
+aside[data-rgv] .pa-i.open .pa-a{opacity:1;padding:0 12px 12px}
+aside[data-rgv] .pa-a .vx-l,aside[data-rgv] .pd-c .vx-l,aside[data-rgv] .pc .vx-l{display:flex}
+/* P2: hilo de conversación */
+aside[data-rgv] .pc{display:flex;flex-direction:column;gap:8px}
+aside[data-rgv] .pc-th{display:flex;flex-direction:column;gap:10px}
+aside[data-rgv] .pc-x{display:flex;flex-direction:column;gap:6px}
+aside[data-rgv] .pc-x.fold{cursor:pointer}
+aside[data-rgv] .pc-x.fold .vc-q{opacity:.75;animation:none}
+aside[data-rgv] .pc-x.fold .vc-a{animation:none}
+aside[data-rgv] .pc-x.fold .vc-a>div{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;opacity:.7}
+aside[data-rgv] .pc-x.fold .vc-a .vx-act,aside[data-rgv] .pc-x.fold .vc-a .vx-l{display:none}
+aside[data-rgv] .pc-sg{display:flex;flex-wrap:wrap;gap:6px}
+aside[data-rgv] .pc-dots{display:inline-flex;gap:4px;padding:3px 0}
+aside[data-rgv] .pc-dots i{width:6px;height:6px;border-radius:50%;background:#9a9ab8;animation:pcDot 1s infinite}
+aside[data-rgv] .pc-dots i:nth-child(2){animation-delay:.15s}aside[data-rgv] .pc-dots i:nth-child(3){animation-delay:.3s}
+@keyframes pcDot{0%,80%,100%{opacity:.3;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
+aside[data-rgv] .pc-done{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;padding:10px 12px;border-radius:12px;background:#f2f4fb;font-size:12px;color:#6b6b95}
+aside[data-rgv] .pc-done .vx-l{margin:0}
+/* P3: lista estable y detalle que entra deslizando dentro del panel */
+aside[data-rgv] .pd{position:relative;overflow:hidden}
+aside[data-rgv] .pd-l{display:flex;flex-direction:column}
+aside[data-rgv] .pd-l.in{animation:pdBack .25s ease}
+aside[data-rgv] .pd-q{display:flex;align-items:center;gap:8px;width:100%;padding:11px 2px;border:0;border-bottom:1px solid #eceef7;background:none;text-align:left;color:#161643;font:600 12.5px/17px Poppins,system-ui,sans-serif;cursor:pointer}
+aside[data-rgv] .pd-q:last-child{border-bottom:0}
+aside[data-rgv] .pd-q span{flex:1}
+aside[data-rgv] .pd-q svg,aside[data-rgv] .pd-nx svg{flex:none;width:15px;height:15px;color:#9a9ab8;transition:transform .15s}
+aside[data-rgv] .pd-q:hover{color:#294df1}aside[data-rgv] .pd-q:hover svg{transform:translateX(2px);color:#385bf8}
+aside[data-rgv] .pd-d.in{animation:pdIn .28s ease}
+aside[data-rgv] .pd-bk{display:inline-flex;align-items:center;gap:2px;margin:0 0 10px -4px;padding:4px 8px 4px 2px;border:0;border-radius:9999px;background:none;color:#385bf8;font:600 12px/1 Poppins,system-ui,sans-serif;cursor:pointer}
+aside[data-rgv] .pd-bk:hover{background:#eef1ff}
+aside[data-rgv] .pd-bk svg{width:16px;height:16px}
+aside[data-rgv] .pd-c{padding:14px;border-radius:14px;background:#f7f8ff;border:1.5px solid #e6e8f3}
+aside[data-rgv] .pd-c>b{display:block;margin-bottom:10px;font-size:14px;line-height:19px;color:#161643}
+aside[data-rgv] .pd-c .vc-a{animation:none}
+aside[data-rgv] .pd-nx{display:flex;align-items:center;gap:8px;width:100%;margin-top:10px;padding:10px 12px;border:1.5px solid #e6e8f3;border-radius:12px;background:#fff;text-align:left;color:#161643;font:600 12.5px/17px Poppins,system-ui,sans-serif;cursor:pointer}
+aside[data-rgv] .pd-nx span{flex:1;display:flex;flex-direction:column}
+aside[data-rgv] .pd-nx small{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#9a9ab8}
+aside[data-rgv] .pd-nx:hover{border-color:#385bf8}aside[data-rgv] .pd-nx:hover svg{transform:translateX(2px);color:#385bf8}
+@keyframes pdIn{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+@keyframes pdBack{from{opacity:0;transform:translateX(-24px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){aside[data-rgv] .pa-w,aside[data-rgv] .pa-a,aside[data-rgv] .pa-q svg{transition:none}aside[data-rgv] .pd-d.in,aside[data-rgv] .pd-l.in,aside[data-rgv] .pc-dots i{animation:none}}
+aside[data-rgv] .pc-x.mini .vc-a{display:none}
+aside[data-rgv] .pc-x.mini .vc-q{padding:5px 10px;font-size:11.5px}
+aside[data-rgv] .pc-x[hidden]{display:none}
+aside[data-rgv] .pc-er{align-self:center;padding:3px 10px;border-radius:9999px;background:#f2f4fb;color:#8a8aab;font-size:10.5px;font-weight:600}
+aside[data-rgv] .pd-l[hidden],aside[data-rgv] .pd-d[hidden]{display:none}
+
+/* burbuja de Vela con «escribiendo…» que reserva el espacio del texto */
+aside[data-rgv] .ty{position:relative}
+aside[data-rgv] .ty .pc-dots{display:none}
+aside[data-rgv] .ty.on .pc-dots{display:inline-flex;position:absolute;left:0;top:2px}
+aside[data-rgv] .ty.on .ty-t{visibility:hidden}
+aside[data-rgv] .ty-t .vx-l{display:flex}
+aside[data-rgv] .pa-a .vc-a{animation:none}
+aside[data-rgv] .vc-a>div{flex:1;min-width:0}
+/* Q1 / Q4: hilo con scroll interno */
+aside[data-rgv] .pq{display:flex;flex-direction:column;gap:10px}
+aside[data-rgv] .pq-th{display:flex;flex-direction:column;gap:12px;overflow-y:auto;padding-right:4px;margin-right:-4px;scrollbar-width:thin;scrollbar-color:#d5d9ee transparent}
+aside[data-rgv] .pq-sg{flex:none}
+aside[data-rgv] .pq-ch{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+aside[data-rgv] .vc-chip.done{border-color:transparent;background:#f2f4fb;color:#8a8aab}
+aside[data-rgv] .vc-chip.done::before{content:'\2713\00a0';color:#385bf8;font-weight:700}
+aside[data-rgv] .pc-x.flash .vc-a>div{animation:pqFlash 1s ease}
+@keyframes pqFlash{0%,100%{background:#f2f4fb}30%{background:#dfe6ff}}
+aside[data-rgv] .pq4-n{display:flex;flex-direction:column;padding-top:2px;animation:vxIn .3s ease}
+aside[data-rgv] .pq4-n[hidden]{display:none}
+/* Q2: hueco fijo + lista estable */
+aside[data-rgv] .pq2{position:relative;display:flex;flex-direction:column;gap:8px}
+aside[data-rgv] .pq2-ex{display:flex;flex-direction:column;justify-content:flex-start}
+aside[data-rgv] .pq2-ex .pc-x{animation:vxIn .25s ease}
+aside[data-rgv] .pd-q.on{color:#294df1}
+aside[data-rgv] .pd-q.on span::before{content:'';display:inline-block;width:6px;height:6px;margin:0 7px 1px 0;border-radius:50%;background:#385bf8}
+/* Q3: preguntas como burbujas azules apiladas */
+aside[data-rgv] .pq3-l{display:flex;flex-direction:column;gap:8px;overflow-y:auto;padding-right:4px;margin-right:-4px;scrollbar-width:thin;scrollbar-color:#d5d9ee transparent}
+aside[data-rgv] .pq3-i{display:flex;flex-direction:column}
+aside[data-rgv] .pq3-q{display:flex;justify-content:flex-end;padding:0;border:0;background:none;cursor:pointer;text-align:right}
+aside[data-rgv] .pq3-q .vc-q{max-width:92%;animation:none;transition:box-shadow .15s,background .15s}
+aside[data-rgv] .pq3-q:hover .vc-q{background:#294df1}
+aside[data-rgv] .pq3-i:not(.open) .pq3-q .vc-q{background:#fff;color:#294df1;box-shadow:inset 0 0 0 1.5px #c9d2fb}
+aside[data-rgv] .pq3-i:not(.open) .pq3-q:hover .vc-q{background:#f5f7ff}
+aside[data-rgv] .pq3-q:focus-visible{outline:2px solid #385bf8;outline-offset:2px;border-radius:14px}
+aside[data-rgv] .pq3-i .pa-a{padding:0}
+aside[data-rgv] .pq3-i.open .pa-a{padding:8px 0 4px}
+aside[data-rgv] .pq3-i.open .pa-w{grid-template-rows:1fr}
+aside[data-rgv] .pq3-i.open .pa-a{opacity:1}
+aside[data-rgv] .pq2 .pq-ch{flex-direction:column;flex-wrap:nowrap;align-items:flex-start}
+aside .vx-noacc::before,aside .vx-noacc::after{display:none!important}
+aside .vx-noacc{margin:8px 0 8px!important;padding-bottom:0!important;font-size:10px!important;font-weight:800!important;letter-spacing:.13em!important;color:#9a9ab8!important}   /* «Vela answer»: como la etiqueta «Suggested» del chat: gris, pequeña y sin raya debajo */
+
+
+
+/* migas de escritorio: copia fija que aparece al hacer scroll (las originales no se mueven) */
+@media (min-width:1024px){.bk-bar{position:fixed;top:0;z-index:15;box-sizing:border-box;display:flex;align-items:center;padding:12px 0 10px;background:rgba(246,247,252,.68);-webkit-backdrop-filter:blur(18px) saturate(1.6);backdrop-filter:blur(18px) saturate(1.6);opacity:0;visibility:hidden;transform:translateY(-6px);transition:opacity .18s ease,transform .18s ease,visibility 0s linear .18s}.bk-bar.on{opacity:1;visibility:visible;transform:none;transition-delay:0s}
+/* la raya y la sombra de debajo nacen del menú lateral: se desvanecen poco a poco hacia la izquierda (y hacia Vela por la derecha) */
+.bk-bar::before,.bk-bar::after{content:"";position:absolute;left:0;right:0;pointer-events:none;-webkit-mask-image:linear-gradient(to right,transparent 0,#000 110px,#000 calc(100% - 40px),transparent 100%);mask-image:linear-gradient(to right,transparent 0,#000 110px,#000 calc(100% - 40px),transparent 100%)}
+.bk-bar::before{bottom:0;height:1px;background:rgba(22,22,67,.1)}
+.bk-bar::after{top:100%;height:22px;background:linear-gradient(to bottom,rgba(22,22,67,.16),rgba(22,22,67,.05) 45%,rgba(22,22,67,0))}}
+/* el menú lateral siempre queda por encima de la barra fija: nunca puede taparlo */
+@media (min-width:1024px){[class*="sidebar-wrapper"]{position:relative;z-index:16}.bk-bar{clip-path:inset(0 0 -30px 0)}}
+@media (max-width:1023.98px){.bk-bar{display:none}}
+
+/* Sombreados = No: la barra fija de migas no proyecta sombra; sin borde, tampoco la raya */
+html:not([data-bsh="1"]) .bk-bar::after{display:none}
+html[data-nobd] .bk-bar::before{display:none}

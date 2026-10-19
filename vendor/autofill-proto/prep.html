@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Get ready</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="scenarios.js"></script>
+  <script defer src="documents.js"></script>
+  <script defer src="layouts.js"></script>
+  <script defer src="prado.js"></script>
+  <script defer src="variants.js"></script>
+  <script defer src="app.js"></script>
+<style>
+html,body{background:transparent!important;margin:0;height:100%;overflow:hidden;-webkit-user-select:none;user-select:none}
+body>.demo-bar,body>.shell{position:fixed;left:-9999px;top:0;width:1px;height:1px;overflow:hidden;visibility:hidden}
+#scan-dialog,#scan-dialog.tall{position:static!important;display:flex!important;flex-direction:column;width:100%!important;max-width:none!important;height:100%!important;max-height:none!important;border:0!important;box-shadow:none!important;background:transparent!important;overflow:hidden!important;margin:0!important;padding:0!important;border-radius:0!important}
+#scan-dialog .dialog-top,#scan-dialog .step-label,#scan-dialog #dialog-title,#scan-dialog .dialog-actions,#scan-dialog .steps,#scan-dialog .dialog-body>.hint,#scan-dialog .cam-note{display:none!important}
+#scan-dialog .dialog-body{padding:0!important;gap:8px!important;animation:none!important}
+/* filas de consejos con el aspecto compacto propio (la animación y los tiempos son los de la maqueta) */
+#scan-dialog .tips.big{gap:8px!important}
+#scan-dialog .tips.big li{min-height:46px;padding:8px 12px!important;border-radius:14px!important;font-size:13.5px!important;font-weight:600!important;gap:12px!important}
+#scan-dialog .tips.big li .mk{width:30px;height:30px}
+
+@media(max-height:470px){#scan-dialog .tips.big{gap:5px!important}#scan-dialog .tips.big li{min-height:36px;padding:4px 10px!important;font-size:12.5px!important;gap:10px!important}#scan-dialog .tips.big li .mk{width:24px;height:24px}}
+#scan-dialog .dialog-body[data-front] .fx .mrz-glow{top:0!important;height:100%!important;left:0!important;right:0!important;border-radius:10px}
+*:focus,*:focus-visible,dialog:focus,dialog:focus-visible{outline:0!important}
+</style>
+<script>addEventListener('message',e=>{const m=e.data;if(!m)return;if(m.rep==='prep-go')window.__repPrep(m.c,m.k);else if(m.rep==='cam-go')window.__repCam(m.c,m.k);});</script>
+</head>
+<body>
+  <div class="demo-bar"><span><b>PROTOTYPE</b> · Auto-fill only · simulated reading · real camera if you allow it</span><button id="study-toggle" class="text-button">20-profile study ↗</button></div>
+  <div class="shell">
+    <aside class="sidebar" aria-label="Property navigation">
+      <div class="brand">asasa<span class="brand-dot">.</span></div>
+      <div class="nav-item"><span aria-hidden="true">⌂</span> Home</div>
+      <div class="nav-item active" aria-current="page"><span aria-hidden="true">♙</span> Guest registration</div>
+      <div class="nav-item"><span aria-hidden="true">▱</span> Your payments</div>
+      <div class="side-bottom">Your stay starts here.<br><small>Proposal based on your current form</small></div>
+    </aside>
+    <main id="main-content">
+      <div class="topline"><span>ONLINE CHECK-IN</span><span class="pill">Guest details</span></div>
+      <section id="prototype">
+        <div class="heading-row"><div><h1>Add your details</h1><p>Use your document to fill in these fields automatically.</p></div></div>
+        <div class="scan-card"><div class="camera-icon" aria-hidden="true">◎</div><div><h2>Auto-fill your details</h2><p>Take a photo of the reading lines of your document.<br>The details we read will appear in the form.</p><div class="scan-actions"><button id="start-scan" class="primary">Scan document <span aria-hidden="true">→</span></button><button id="manual" class="text-button">I prefer to type them</button></div></div><span class="optional">OPTIONAL</span></div>
+        <div id="form-notice" class="notice success" role="status" hidden></div>
+        <form id="guest-form" novalidate>
+          <fieldset><legend>Nationality</legend><div class="fields"><div class="field"><label for="nationality">Nationality</label><input id="nationality" name="nationality" autocomplete="country-name" placeholder="For example, Spanish" required></div></div></fieldset>
+          <fieldset><legend>Legal name</legend><div class="fields"><div class="field"><label for="firstName">First name(s)</label><input id="firstName" name="firstName" autocomplete="given-name"></div><div class="field"><label for="surname">Surname</label><input id="surname" name="surname" autocomplete="family-name"><small>As read from the document.</small></div><div class="field"><label for="secondSurname">Second surname <span>(optional)</span></label><input id="secondSurname" name="secondSurname"><small>The reading does not split surnames automatically.</small></div></div></fieldset>
+          <fieldset><legend>Personal information</legend><div class="fields"><div class="field"><label for="birthDate">Date of birth</label><input id="birthDate" name="birthDate" type="date" autocomplete="bday" required></div></div></fieldset>
+          <fieldset><legend>Identity document</legend><div class="fields"><div class="field"><label for="documentType">Document type</label><select id="documentType" name="documentType"><option value="id">ID card</option><option value="passport">Passport</option></select></div><div class="field"><label for="documentNumber">Document number</label><input id="documentNumber" name="documentNumber" spellcheck="false"></div><div class="field"><label for="expiryDate">Expiry date</label><input id="expiryDate" name="expiryDate" type="date"></div></div></fieldset>
+          <details class="privacy"><summary>What is the photo for?</summary><p>Scanning helps copy the details from your document into the form. You can type them in by hand instead.</p><p>In this demo the camera only shows the image on your screen: no photo is saved or sent. If you do not allow access, a simulation is used. In the real product, this section must show the data processing and retention information agreed with the property.</p></details>
+          <div class="form-footer"><span>End of the prototype: the details we read appear in the form.</span></div>
+        </form>
+      </section>
+      <section id="study" hidden><p class="eyebrow">PRODUCT EXPLORATION</p><h1>From photo to form.</h1><p class="study-intro">20 profiles, two rounds of synthetic simulation. Only from the click on auto-fill until the details appear in the fields. These are design hypotheses, not real interviews.</p><div class="flow-strip"><span>Click</span><b>→</b><span>Guide</span><b>→</b><span>Photo</span><b>→</b><span>Reading</span><b>→</b><span>Form filled</span></div><p><a href="DECISIONES.md" target="_blank" rel="noopener">Read the decisions and specification ↗</a></p><div id="profile-list"></div></section>
+    </main>
+    <aside class="lab" aria-label="Prototype controls"><p class="eyebrow">FLOW LAB</p><h2>Try another context</h2><p>Choose a profile to walk through their case. Changing it resets the sample data.</p><label for="profile-select">Simulated profile</label><select id="profile-select"></select><label for="property-country">Property country</label><select id="property-country"></select><small class="lab-note">Guests from another country can also use this country's residence permit.</small><div id="profile-detail"></div><div class="lab-rule"></div><p class="eyebrow">CORE DECISION</p><h3>Readable photo.<br>Form filled.</h3><p>A correct reading is applied directly. We only ask you to step in if some details are doubtful or differ from what you already typed.</p><button id="reset" class="secondary">Reset this case</button><small class="lab-note">No real OCR. Data lasts only while this page is open.</small></aside>
+  </div>
+  <dialog id="scan-dialog" aria-labelledby="dialog-title"><div class="dialog-top"><span id="dialog-context"></span><button id="close-dialog" class="close" aria-label="Close scan">×</button></div><div id="dialog-content"></div></dialog>
+  <div id="live-status" class="sr-only" aria-live="polite"></div>
+</body>
+</html>

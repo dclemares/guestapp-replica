@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>Guidebook editor · Chekin</title>
+<link rel="stylesheet" href="../assets/index-tZT78RVO.css">
+<style>
+/* Editor de un guidebook (lado anfitrión). Opciones de Chekin: bloques (texto, títulos, imágenes, vídeos, mapas, enlaces, archivos, tiempo, separadores), condiciones de visibilidad
+   (siempre · todos registrados · pagos al día · X horas antes del check-in · temporada), propiedades, idiomas, enlace público / QR / compartir y marca. Tres maneras de organizarlo. */
+:root{--navy:#161643;--blue:#385bf8;--sec:#6b6b95;--soft:#f1f3fb;--line:#eceef6;--green:#0b5c37;--amber:#7a5200}
+*{box-sizing:border-box}
+html,body{margin:0;background:#f4f4f8;color:var(--navy);font-family:Poppins,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font-family:inherit;color:inherit}
+button{cursor:pointer}
+svg{flex:none}
+.bar{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.9);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+.bar-in{display:flex;align-items:center;gap:12px;max-width:1360px;margin:0 auto;padding:12px 20px;flex-wrap:wrap}
+.back{display:grid;place-items:center;width:40px;height:40px;border:0;border-radius:12px;background:var(--soft)}
+.ttl{display:flex;flex-direction:column;min-width:0}.ttl small{font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--sec)}
+.ttl input{border:0;background:none;padding:0;font-size:18px;font-weight:700;letter-spacing:-.01em;width:min(320px,60vw);outline:none}
+.chip{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;border-radius:9999px;font-size:11.5px;font-weight:700}
+.chip.draft{background:rgba(255,194,51,.3);color:var(--amber)}.chip.pub{background:rgba(55,224,143,.26);color:var(--green)}
+.sp{flex:1}
+.vs{display:flex;gap:2px;padding:3px;border-radius:12px;background:var(--soft)}
+.vs a{padding:7px 12px;border-radius:9px;font-size:12px;font-weight:600;text-decoration:none;color:var(--sec)}.vs a.on{background:#fff;color:var(--navy)}
+.btn{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px;border:0;border-radius:12px;background:var(--soft);font-size:13.5px;font-weight:600}
+.btn.pri{background:var(--blue);color:#fff}.btn.sm{height:32px;padding:0 12px;font-size:12.5px}
+.wrap{max-width:1360px;margin:0 auto;padding:20px}
+.card{background:#fff;border-radius:18px;padding:16px}
+.card h3{margin:0 0 4px;font-size:15px;font-weight:700}.card .sub{margin:0 0 12px;font-size:12.5px;line-height:18px;color:var(--sec)}
+.lbl{display:block;margin:0 0 6px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--sec)}
+.stack{display:flex;flex-direction:column;gap:12px}
+/* bloques */
+.bl{position:relative;display:flex;gap:10px;align-items:flex-start;padding:12px;border-radius:14px;background:#fff;box-shadow:inset 0 0 0 1px var(--line)}
+.bl:hover{box-shadow:inset 0 0 0 1px #c9d3ff}
+.bl-h{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--soft);color:var(--blue)}
+.bl-b{flex:1;min-width:0}.bl-t{display:block;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--sec)}
+.bl-c{margin-top:2px;font-size:14px;line-height:20px;overflow-wrap:anywhere}.bl-c b{font-weight:700}
+.bl-c.h{font-size:17px;font-weight:700;letter-spacing:-.01em}
+.bl-c img{display:block;width:100%;max-width:360px;height:120px;object-fit:cover;border-radius:10px;margin-top:6px}
+.bl-c .pill{display:inline-flex;align-items:center;gap:6px;margin-top:4px;padding:4px 10px;border-radius:9999px;background:var(--soft);font-size:12.5px;font-weight:600}
+.bl-x{display:flex;gap:2px;flex:none}.bl-x button{display:grid;place-items:center;width:28px;height:28px;border:0;border-radius:8px;background:none;color:#8a8fb3}.bl-x button:hover{background:var(--soft);color:var(--navy)}
+.tb{display:inline-flex;align-items:center;gap:2px;margin:6px 0 4px;padding:4px;border-radius:10px;background:#fff;box-shadow:inset 0 0 0 1px var(--line)}.tb button{display:grid;place-items:center;width:28px;height:28px;border:0;border-radius:8px;background:none;color:var(--navy)}.tb button:hover{background:var(--soft)}.tb button.on{background:rgba(56,91,248,.16);color:var(--blue)}.tbs{width:1px;height:18px;margin:0 4px;background:var(--line)}
+.add{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;border:1.5px dashed #c9d3ff;border-radius:14px;background:none;color:var(--blue);font-size:13.5px;font-weight:600}
+.pal{margin-top:8px;padding:12px;border-radius:16px;background:#fff;box-shadow:inset 0 0 0 1px var(--line),0 12px 24px -16px rgba(22,22,67,.3)}.mg+.mg{margin-top:10px}.pal button{display:flex;align-items:center;gap:12px;width:100%;padding:8px;border:0;border-radius:12px;background:none;text-align:left}.pal button:hover{background:var(--soft)}.pal .mi{flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:11px;background:#fff;box-shadow:inset 0 0 0 1px var(--line);color:#8a8fb3}.pal b{display:block;font-size:14px}.pal small{display:block;font-size:12.5px;color:var(--sec)}
+.menu button{display:flex;align-items:center;gap:8px;padding:9px 10px;border:0;border-radius:10px;background:var(--soft);font-size:12.5px;font-weight:600;text-align:left}.menu button:hover{background:#e4e9ff}
+/* ajustes */
+.opt{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:12px;background:var(--soft);font-size:13.5px;line-height:19px;cursor:pointer}
+.opt+.opt{margin-top:6px}.opt.on{background:#e4e9ff;box-shadow:inset 0 0 0 1.5px var(--blue)}
+.opt i{flex:none;width:18px;height:18px;margin-top:1px;border-radius:50%;background:#fff;box-shadow:inset 0 0 0 1.5px #c3c8e0}.opt.on i{background:radial-gradient(#fff 0 32%,var(--blue) 36%);box-shadow:none}
+.opt.ck i{border-radius:6px}.opt.ck.on i{background:var(--blue);box-shadow:none;position:relative}.opt.ck.on i::after{content:"";position:absolute;left:5px;top:2px;width:5px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.opt small{display:block;font-size:12px;color:var(--sec)}
+.sel{display:inline-block;margin-left:6px;padding:2px 8px;border-radius:8px;border:1px solid #d7dcf0;background:#fff;font-size:12.5px}
+.lang{display:flex;align-items:center;gap:10px;padding:8px 0}.lang+.lang{border-top:1px solid var(--line)}
+.lang b{flex:1;font-size:13.5px}.lang .st{font-size:11.5px;font-weight:700;padding:2px 9px;border-radius:9999px}
+.st.ok{background:rgba(55,224,143,.26);color:var(--green)}.st.rv{background:rgba(255,194,51,.3);color:var(--amber)}.st.no{background:#e9ebf6;color:#4a5072}.st.or{background:rgba(56,91,248,.16);color:var(--blue)}
+.url{display:flex;align-items:center;gap:8px;padding:8px 8px 8px 12px;border-radius:12px;background:var(--soft);font-size:13px}.url code{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:ui-monospace,Menlo,monospace}
+.qr{display:grid;grid-template-columns:repeat(9,1fr);gap:2px;width:96px;height:96px;padding:8px;border-radius:12px;background:#fff;box-shadow:inset 0 0 0 1px var(--line)}.qr i{background:var(--navy);border-radius:1px}.qr i.o{background:none}
+.share{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.pr{display:flex;align-items:center;gap:10px;padding:8px 0}.pr+.pr{border-top:1px solid var(--line)}.pr b{flex:1;font-size:13.5px;font-weight:600}.pr small{display:block;font-size:12px;color:var(--sec);font-weight:400}
+.sw{display:flex;gap:8px}.sw i{width:28px;height:28px;border-radius:9px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}.sw i.on{outline:2px solid var(--navy);outline-offset:2px}
+.note{margin:10px 0 0;padding:10px 12px;border-radius:12px;background:rgba(56,91,248,.08);font-size:12.5px;line-height:18px;color:#2b3a8a}
+/* acordeón v1 */
+.acc>button{display:flex;align-items:center;gap:10px;width:100%;padding:14px 16px;border:0;background:none;text-align:left;font-size:14px;font-weight:700}
+.acc>button small{margin-left:auto;font-size:12px;font-weight:500;color:var(--sec)}
+.acc .in{padding:0 16px 16px}.acc+.acc{border-top:1px solid var(--line)}
+/* teléfono */
+.ph{width:300px;border-radius:34px;padding:10px;background:#15153f;box-shadow:0 20px 40px -24px rgba(22,22,67,.6)}
+.ph-s{height:560px;overflow:auto;border-radius:26px;background:#f4f4f8;scrollbar-width:none}.ph-s::-webkit-scrollbar{display:none}
+.ph-top{position:sticky;top:0;display:flex;align-items:center;gap:8px;padding:10px 12px;background:rgba(255,255,255,.92);font-size:12px;font-weight:600}
+.ph-top i{display:grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--soft);font-style:normal}
+.ph-b{display:flex;flex-direction:column;gap:8px;padding:10px}
+.pv{padding:12px;border-radius:14px;background:#fff;font-size:12.5px;line-height:18px}
+.pv.h{padding:2px 2px 0;background:none;font-size:15px;font-weight:700}.pv img{width:100%;height:96px;object-fit:cover;border-radius:10px;display:block}
+.pv.dv{height:1px;padding:0;background:#dfe3f1}.pv small{color:var(--sec)}
+.pv .vid{display:grid;place-items:center;height:96px;border-radius:10px;background:linear-gradient(135deg,#15153f,#2e4bd0);color:#fff}
+.pv .mp{height:80px;border-radius:10px;background:linear-gradient(135deg,#dfe8ff,#eaf6ee);display:grid;place-items:center;color:var(--blue)}
+.ph-cap{text-align:center;margin-top:10px;font-size:11.5px;color:var(--sec)}
+/* disposición */
+.g1{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:20px;align-items:start}
+.g1 .canvas{max-width:760px;width:100%;justify-self:center}
+.g3{display:grid;grid-template-columns:340px minmax(0,1fr) 320px;gap:20px;align-items:start}
+.g2{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:20px;align-items:start}
+.sticky{position:sticky;top:84px}
+.steps{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto}
+.steps button{flex:1;min-width:130px;display:flex;align-items:center;gap:10px;padding:10px 12px;border:0;border-radius:14px;background:#fff;text-align:left;font-size:13px;font-weight:600}
+.steps button span{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--soft);font-size:12px;font-weight:700}
+.steps button.on{box-shadow:inset 0 0 0 1.5px var(--blue)}.steps button.on span{background:var(--blue);color:#fff}.steps button.done span{background:rgba(55,224,143,.26);color:var(--green)}
+.foot{display:flex;justify-content:space-between;margin-top:12px}
+@media (max-width:1100px){.g1,.g2,.g3{grid-template-columns:minmax(0,1fr)}.sticky{position:static}.ph{margin:0 auto}}
+</style></head><body>
+<header class="bar"><div class="bar-in" id="bar"></div></header>
+<main class="wrap" id="app"></main>
+<script>window.__SCREEN = { id: 'guidebook-editor', v: innerWidth >= 1025 ? 'd' : 'm', has: ['m', 'd'] };</script><script src="../assets/panel.js"></script>
+<script>
+(function(){
+var P = {
+ back:'<path d="m15 18-6-6 6-6"/>', plus:'<path d="M12 5v14M5 12h14"/>', up:'<path d="m18 15-6-6-6 6"/>', down:'<path d="m6 9 6 6 6-6"/>', trash:'<path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>', copy:'<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+ h:'<path d="M6 4v16M18 4v16M6 12h12"/>', t:'<path d="M4 7V5h16v2M9 19h6M12 5v14"/>', img:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/>', vid:'<rect x="2" y="5" width="15" height="14" rx="2"/><path d="m22 8-5 4 5 4z"/>',
+ map:'<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/>', link:'<path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/>', file:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/>',
+ sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>', div:'<path d="M3 12h18"/>', grip:'<circle cx="9" cy="6" r="1"/><circle cx="15" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="18" r="1"/>',
+ eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>', globe:'<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/>', home:'<path d="m3 11 9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>', clock:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>', share:'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/>', pal:'<circle cx="13.5" cy="6.5" r="1.5"/><circle cx="17.5" cy="10.5" r="1.5"/><circle cx="8.5" cy="7.5" r="1.5"/><circle cx="6.5" cy="12.5" r="1.5"/><path d="M12 2a10 10 0 1 0 0 20c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.3-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.3A4.9 4.9 0 0 0 22 10.5C22 5.8 17.5 2 12 2z"/>', wifi:'<path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><path d="M12 20h.01"/>', chk:'<path d="M20 6 9 17l-5-5"/>', bold:'<path d="M6 4h8a4 4 0 0 1 0 8H6zM6 12h9a4 4 0 0 1 0 8H6z"/>', ital:'<path d="M19 4h-9M14 20H5M15 4 9 20"/>', und:'<path d="M6 3v7a6 6 0 0 0 12 0V3M4 21h16"/>', strike:'<path d="M16 4H9a3 3 0 0 0-2.8 4M14 12a4 4 0 0 1 0 8H6M4 12h16"/>', alL:'<path d="M21 6H3M15 12H3M17 18H3"/>', alC:'<path d="M21 6H3M17 12H7M19 18H5"/>', alR:'<path d="M21 6H3M21 12H9M21 18H7"/>', alJ:'<path d="M21 6H3M21 12H3M21 18H3"/>', cols:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 3v18"/>', amen:'<path d="M3 18h18M5 18a7 7 0 0 1 14 0M12 8V5"/>', dots:'<circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/>'
+};
+var ic = function(n, s){ return '<svg viewBox="0 0 24 24" width="' + (s || 18) + '" height="' + (s || 18) + '" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + P[n] + '</svg>'; };
+var esc = function(s){ return String(s).replace(/[&<>"]/g, function(c){ return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+var TYPES = { h1: ['h', 'Heading 1', 'Medium section heading.', 'Basic'], h2: ['h', 'Heading 2', 'Medium section heading.', 'Basic'], text: ['t', 'Text', 'Start writing with plain text.', 'Basic'], small: ['t', 'Secondary Text', 'Small text paragraph.', 'Basic'], cols: ['cols', '2 Columns', 'Create 2 columns of content.', 'Basic'], divider: ['div', 'Divider', 'Visually divide sections.', 'Basic'], image: ['img', 'Image', 'Upload or embed with a link.', 'Media'], video: ['vid', 'Video', 'Embed from Youtube, Vimeo and more.', 'Media'], amenity: ['amen', 'Amenity', 'Add custom amenities.', 'Media'], file: ['file', 'File', 'Upload or embed with a link.', 'Media'], map: ['map', 'Google Map', 'Embed a Google Map', 'Embed'] };
+var IMG = '../assets/vela/deals/';
+var S = {
+  name: 'Wi-Fi & access', status: 'draft', step: 0, menu: false, open: 'vis',
+  blocks: [
+    { t: 'h2', v: 'Wi-Fi' },
+    { t: 'text', v: 'Connect to the network below. The signal is strongest in the living room.' },
+    { t: 'cols', v: 'Network: Calipso_Guest · Password: Villa-Calipso-26' },
+    { t: 'image', v: 'The terrace and pool, where the signal reaches too', img: 'room', al: 'center' },
+    { t: 'h2', v: 'Door code' },
+    { t: 'text', v: 'The keypad is on the right of the front door. Your personal code unlocks it from your arrival time until check-out.' },
+    { t: 'small', v: 'Your code appears in the app as soon as you finish check-in.', f: { i: true } },
+    { t: 'video', v: 'How the keypad works (YouTube, 0:40)' },
+    { t: 'h2', v: 'Around the villa' },
+    { t: 'map', v: 'Calle Mayor 4, Albacete' },
+    { t: 'file', v: 'House-manual.pdf · 1,2 MB' }
+  ],
+  vis: { mode: 'cond', reg: true, pay: false, hrs: true, season: false },
+  props: [['Villa Calipso', 'Albacete · 1 unit', true], ['Villa Calipso Studio', 'Albacete · 1 unit', true], ['Casa Rural La Sierra', 'Alcalá del Júcar · 1 unit', false]],
+  langs: [['English', 'Original', 'or'], ['Español', 'Translated', 'ok'], ['Français', 'Translated', 'ok'], ['Deutsch', 'Needs review', 'rv'], ['Italiano', 'Missing', 'no']],
+  brand: 0
+};
+var V = (function(){ var m = location.search.match(/[?&]v=([123])/); try { if (m) { localStorage.setItem('replica-gbe-v', m[1]); return m[1]; } var s = localStorage.getItem('replica-gbe-v'); return s === '2' || s === '3' ? s : '1'; } catch (er) { return m ? m[1] : '1'; } })();
+var COL = ['#385bf8', '#0b8a5f', '#d9480f', '#15153f'];
+
+/* ---------- piezas ---------- */
+var blockEd = function(b, i){
+  var T = TYPES[b.t], body;
+  var st = function(){ return ' style="' + (b.al ? 'text-align:' + b.al + ';' : '') + (b.f && b.f.b ? 'font-weight:700;' : '') + (b.f && b.f.i ? 'font-style:italic;' : '') + (b.f && b.f.u ? 'text-decoration:underline;' : '') + (b.f && b.f.s ? 'text-decoration:line-through;' : '') + '"'; };
+  if (b.t === 'h1') body = '<div class="bl-c h" style="font-size:20px">' + esc(b.v) + '</div>';
+  else if (b.t === 'h2') body = '<div class="bl-c h"' + st() + '>' + esc(b.v) + '</div>';
+  else if (b.t === 'text') body = '<div class="bl-c"' + st() + '>' + esc(b.v) + '</div>';
+  else if (b.t === 'small') body = '<div class="bl-c" style="font-size:12.5px;color:var(--sec)' + (b.al ? ';text-align:' + b.al : '') + (b.f && b.f.i ? ';font-style:italic' : '') + '">' + esc(b.v) + '</div>';
+  else if (b.t === 'divider') body = '<div class="bl-c"><hr style="border:0;border-top:1px solid #dfe3f1;margin:10px 0"></div>';
+  else if (b.t === 'image') body = '<div class="bl-c" style="text-align:' + (b.al || 'left') + '"><img src="' + IMG + (b.img || 'parking') + '.jpg" alt=""><div style="margin-top:4px;font-size:12.5px;color:var(--sec)">' + esc(b.v) + '</div></div>';
+  else if (b.t === 'cols') body = '<div class="bl-c" style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><span class="pill" style="margin:0;display:block;border-radius:10px">Column 1</span><span class="pill" style="margin:0;display:block;border-radius:10px">Column 2</span></div><div style="margin-top:4px;font-size:12.5px;color:var(--sec)">' + esc(b.v) + '</div>';
+  else if (b.t === 'amenity') body = '<div class="bl-c">' + String(b.v).split(' · ').map(function(a){ return '<span class="pill" style="margin:2px 4px 2px 0">' + esc(a) + '</span>'; }).join('') + '</div>';
+  else body = '<div class="bl-c"><span class="pill">' + ic(T[0], 14) + esc(b.v) + '</span></div>';
+  var fmt = (['h1', 'h2', 'text', 'small'].indexOf(b.t) >= 0), alg = fmt || b.t === 'image';
+  var tool = alg ? '<div class="tb">' + (fmt ? [['b', 'bold'], ['i', 'ital'], ['u', 'und'], ['s', 'strike']].map(function(f){ return '<button data-a="fmt" data-i="' + i + '" data-k="' + f[0] + '" class="' + (b.f && b.f[f[0]] ? 'on' : '') + '" aria-label="' + f[1] + '">' + ic(f[1], 14) + '</button>'; }).join('') + '<button data-a="fmt" data-i="' + i + '" data-k="link" aria-label="Link">' + ic('link', 14) + '</button><span class="tbs"></span>' : '') + [['left', 'alL'], ['center', 'alC'], ['right', 'alR'], ['justify', 'alJ']].map(function(x){ return '<button data-a="al" data-i="' + i + '" data-k="' + x[0] + '" class="' + ((b.al || 'left') === x[0] ? 'on' : '') + '" aria-label="Align ' + x[0] + '">' + ic(x[1], 14) + '</button>'; }).join('') + '</div>' : '';
+  return '<div class="bl" data-i="' + i + '"><span class="bl-h">' + ic(T[0], 17) + '</span><div class="bl-b"><span class="bl-t">' + T[1] + '</span>' + tool + body + '</div><div class="bl-x"><button data-a="up" data-i="' + i + '" aria-label="Move up">' + ic('up', 15) + '</button><button data-a="down" data-i="' + i + '" aria-label="Move down">' + ic('down', 15) + '</button><button data-a="del" data-i="' + i + '" aria-label="Delete block">' + ic('trash', 15) + '</button></div></div>';
+};
+var menuHtml = function(){   /* la paleta de bloques de Chekin: Basic · Media · Embed */
+  return ['Basic', 'Media', 'Embed'].map(function(g){ return '<div class="mg"><span class="lbl">' + g + '</span>' + Object.keys(TYPES).filter(function(k){ return TYPES[k][3] === g; }).map(function(k){ return '<button data-a="new" data-k="' + k + '"><span class="mi">' + ic(TYPES[k][0], 18) + '</span><span><b>' + TYPES[k][1] + '</b><small>' + TYPES[k][2] + '</small></span></button>'; }).join('') + '</div>'; }).join('');
+};
+var blocksEd = function(){
+  return '<div class="stack">' + S.blocks.map(blockEd).join('') + '<button class="add" data-a="menu">' + ic('plus', 16) + 'Add block</button>' + (S.menu ? '<div class="pal">' + menuHtml() + '</div>' : '') + '</div>';
+};
+var amen = function(v){ return String(v).split(' · '); };
+var preview = function(){
+  var rows = S.blocks.map(function(b){
+    if (b.t === 'h1') return '<div class="pv h" style="font-size:18px">' + esc(b.v) + '</div>';
+    if (b.t === 'h2') return '<div class="pv h">' + esc(b.v) + '</div>';
+    if (b.t === 'text') return '<div class="pv">' + esc(b.v) + '</div>';
+    if (b.t === 'small') return '<div class="pv" style="background:none;padding:0 4px;color:var(--sec);font-size:11.5px">' + esc(b.v) + '</div>';
+    if (b.t === 'image') return '<div class="pv"><img src="' + IMG + (b.img || 'parking') + '.jpg" alt=""><small>' + esc(b.v) + '</small></div>';
+    if (b.t === 'video') return '<div class="pv"><div class="vid">' + ic('vid', 26) + '</div><small>' + esc(b.v) + '</small></div>';
+    if (b.t === 'map') return '<div class="pv"><div class="mp">' + ic('map', 26) + '</div><small>' + esc(b.v) + '</small></div>';
+    if (b.t === 'divider') return '<div class="pv dv"></div>';
+    if (b.t === 'cols') return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><div class="pv"><b>Wi-Fi</b><br>Calipso_Guest</div><div class="pv"><b>Good to know</b><br>Check-out 11:00</div></div>';
+    if (b.t === 'amenity') return '<div class="pv" style="display:flex;flex-wrap:wrap;gap:4px">' + amen(b.v).map(function(a){ return '<span style="padding:3px 8px;border-radius:8px;background:var(--soft);font-size:11px">' + esc(a) + '</span>'; }).join('') + '</div>';
+    return '<div class="pv" style="display:flex;gap:8px;align-items:center;color:var(--blue);font-weight:600">' + ic('file', 16) + esc(b.v) + '</div>';
+  }).join('');
+  return '<div class="ph"><div class="ph-s"><div class="ph-top"><i>' + ic('back', 14) + '</i>Villa Calipso<span style="margin-left:auto;color:var(--sec);font-weight:500">Guidebook</span></div><div class="ph-b">' + rows + '</div></div></div><div class="ph-cap">What your guest sees</div>';
+};
+var visBlock = function(){
+  var v = S.vis, cond = v.mode === 'cond';
+  var ck = function(k, t, sub, extra){ return '<div class="opt ck' + (v[k] ? ' on' : '') + '" data-a="cond" data-k="' + k + '"><i></i><span>' + t + (extra || '') + '<small>' + sub + '</small></span></div>'; };
+  return '<div class="opt' + (!cond ? ' on' : '') + '" data-a="mode" data-k="always"><i></i><span>Always visible<small>Guests can open it as soon as they get the link.</small></span></div>'
+    + '<div class="opt' + (cond ? ' on' : '') + '" data-a="mode" data-k="cond"><i></i><span>Only when…<small>Choose the conditions that must be met.</small></span></div>'
+    + (cond ? '<div style="margin:8px 0 0 12px">' + ck('reg', 'All guests are registered', 'The guide appears once everyone has completed their registration.') + ck('pay', 'Payments are settled', 'Once the reservation payments are paid.') + ck('hrs', '24 hours before check-in', 'Shows it the day before arrival.', '<span class="sel">24 h ▾</span>') + ck('season', 'Within a season', 'For example, a Christmas guide, from 20 Dec to 6 Jan.') + '</div>' : '');
+};
+var visSummary = function(){ var v = S.vis; if (v.mode === 'always') return 'Always visible'; var a = []; if (v.reg) a.push('All guests registered'); if (v.pay) a.push('Payments settled'); if (v.hrs) a.push('24 h before check-in'); if (v.season) a.push('Season'); return a.length ? a.join(' · ') : 'No condition chosen'; };
+var propsBlock = function(){ return S.props.map(function(p, i){ return '<div class="pr"><div class="opt ck' + (p[2] ? ' on' : '') + '" data-a="prop" data-i="' + i + '" style="padding:0;background:none;box-shadow:none"><i></i></div><b>' + esc(p[0]) + '<small>' + esc(p[1]) + '</small></b></div>'; }).join('') + '<div class="note">One guidebook, many properties: update it here once and every selected property shows the change.</div>'; };
+var langsBlock = function(){ return S.langs.map(function(l){ return '<div class="lang">' + ic('globe', 16) + '<b>' + l[0] + '</b><span class="st ' + l[2] + '">' + l[1] + '</span></div>'; }).join('') + '<div class="share"><button class="btn sm" data-a="tr">' + ic('globe', 14) + 'Translate automatically</button></div>'; };
+var shareBlock = function(){
+  var q = ''; for (var i = 0; i < 81; i++) { var r = Math.floor(i / 9), c = i % 9, f = (r < 3 && c < 3) || (r < 3 && c > 5) || (r > 5 && c < 3) || ((i * 7 + 3) % 5 < 2); q += '<i' + (f ? '' : ' class="o"') + '></i>'; }
+  return '<span class="lbl">Public link</span><div class="url"><code>guide.chekin.com/villa-calipso/wifi-access</code><button class="btn sm" data-a="copy">' + ic('copy', 14) + '<span>Copy</span></button></div>'
+    + '<div style="display:flex;gap:12px;align-items:center;margin-top:12px"><div class="qr">' + q + '</div><div><b style="font-size:13.5px">QR code per property</b><div class="share" style="margin-top:6px"><button class="btn sm">Download QR</button></div></div></div>'
+    + '<span class="lbl" style="margin-top:14px">Send it</span><div class="share" style="margin-top:0"><button class="btn sm">WhatsApp</button><button class="btn sm">Email</button><button class="btn sm">OTA message</button></div>'
+    + '<div class="note">Guests also find it in the “Guidebooks” section of the guest app. The public link never shows reservation data.</div>';
+};
+var brandBlock = function(){ return '<span class="lbl">Logo</span><div class="pr" style="padding-top:0"><span class="bl-h" style="width:44px;height:44px">' + ic('home', 20) + '</span><b>Villa Calipso<small>Shown at the top of the guide</small></b><button class="btn sm">Change</button></div><span class="lbl" style="margin-top:10px">Colour</span><div class="sw">' + COL.map(function(c, i){ return '<i data-a="col" data-i="' + i + '" class="' + (i === S.brand ? 'on' : '') + '" style="background:' + c + '"></i>'; }).join('') + '</div>'; };
+var card = function(ic_, t, sub, body){ return '<section class="card"><h3>' + t + '</h3>' + (sub ? '<p class="sub">' + sub + '</p>' : '') + body + '</section>'; };
+var accItem = function(k, icn, t, sum, body){ var o = S.open === k; return '<div class="acc"><button data-a="acc" data-k="' + k + '">' + ic(icn, 18) + t + '<small>' + sum + '</small>' + ic(o ? 'up' : 'down', 16) + '</button>' + (o ? '<div class="in">' + body + '</div>' : '') + '</div>'; };
+
+/* ---------- tres disposiciones ---------- */
+var v1 = function(){   /* Documento: lienzo de bloques en el centro y los ajustes en un panel plegable a la derecha */
+  return '<div class="g1"><div class="canvas"><div class="card"><h3>Content</h3><p class="sub">Build the guide with blocks: headings, text, images, videos, maps, links, files and weather.</p>' + blocksEd() + '</div></div>'
+    + '<aside class="card sticky" style="padding:0">' + accItem('vis', 'eye', 'When guests see it', visSummary(), visBlock()) + accItem('props', 'home', 'Properties', S.props.filter(function(p){ return p[2]; }).length + ' selected', propsBlock()) + accItem('lang', 'globe', 'Languages', '3 of 5 ready', langsBlock()) + accItem('share', 'share', 'Share', 'Link · QR', shareBlock()) + accItem('brand', 'pal', 'Branding', 'Logo · colour', brandBlock()) + '</aside></div>';
+};
+var STEPS = ['Content', 'When guests see it', 'Properties & languages', 'Share'];
+var v2 = function(){   /* Pasos: una cosa cada vez y la vista previa del huésped al lado */
+  var s = S.step, body = s === 0 ? card('', 'Content', 'Add the blocks of your guide. Reorder them with the arrows.', blocksEd()) : s === 1 ? card('', 'When do guests see it?', 'Choose when this guidebook becomes available to a guest.', visBlock()) : s === 2 ? card('', 'Properties', 'Where this guidebook is shown.', propsBlock()) + card('', 'Languages', 'Guests see the guide in their language.', langsBlock()) : card('', 'Share', 'Give guests the guide however you prefer.', shareBlock()) + card('', 'Branding', '', brandBlock());
+  return '<div class="steps">' + STEPS.map(function(t, i){ return '<button data-a="step" data-i="' + i + '" class="' + (i === s ? 'on' : i < s ? 'done' : '') + '"><span>' + (i < s ? '✓' : i + 1) + '</span>' + t + '</button>'; }).join('') + '</div>'
+    + '<div class="g2"><div class="stack">' + body + '<div class="foot"><button class="btn" data-a="prev"' + (s === 0 ? ' disabled style="opacity:.4"' : '') + '>Back</button><button class="btn pri" data-a="next">' + (s === 3 ? 'Publish guidebook' : 'Continue') + '</button></div></div><div class="sticky">' + preview() + '</div></div>';
+};
+var v3 = function(){   /* Panel: ajustes a la izquierda, bloques en el centro y vista previa a la derecha */
+  return '<div class="g3"><div class="stack">' + card('', 'When guests see it', '', visBlock()) + card('', 'Properties', '', propsBlock()) + card('', 'Languages', '', langsBlock()) + '</div>'
+    + '<div class="stack">' + card('', 'Content', 'Blocks of the guide.', blocksEd()) + card('', 'Share', '', shareBlock()) + card('', 'Branding', '', brandBlock()) + '</div><div class="sticky">' + preview() + '</div></div>';
+};
+var render = function(){
+  var st = S.status === 'pub';
+  document.getElementById('bar').innerHTML = '<a class="back" href="' + home() + '" aria-label="Back">' + ic('back', 20) + '</a><div class="ttl"><small>Guidebooks · Villa Calipso</small><input id="nm" value="' + esc(S.name) + '" aria-label="Guidebook name"></div><span class="chip ' + (st ? 'pub' : 'draft') + '">' + (st ? 'Published' : 'Draft') + '</span><span class="sp"></span>'
+    + '<nav class="vs">' + [['1', 'V1 · Document'], ['2', 'V2 · Steps'], ['3', 'V3 · Panels']].map(function(o){ return '<a href="?v=' + o[0] + '" data-a="ver" data-k="' + o[0] + '" class="' + (V === o[0] ? 'on' : '') + '">' + o[1] + '</a>'; }).join('') + '</nav>'
+    + '<a class="btn" href="guidebook.' + (innerWidth >= 1025 ? 'd' : 'm') + '.html?g=wifi" target="_blank" rel="noopener">' + ic('eye', 16) + 'Preview</a><button class="btn pri" data-a="pub">' + (st ? 'Unpublish' : 'Publish') + '</button>';
+  document.getElementById('app').innerHTML = V === '1' ? v1() : V === '2' ? v2() : v3();
+};
+var home = function(){ return 'home.' + (innerWidth >= 1025 ? 'd' : 'm') + '.html'; };
+var act = {
+  menu: function(){ S.menu = !S.menu; }, new: function(el){ var k = el.getAttribute('data-k'); var d = { h1: 'Big heading', h2: 'Section heading', text: 'Write something helpful for your guests…', small: 'A small note', cols: 'Two columns of content', divider: '', image: 'Photo caption', video: 'Video title', amenity: 'Wi-Fi · Kitchen', file: 'Document.pdf · 1 MB', map: 'Address' }; S.blocks.push({ t: k, v: d[k], img: 'parking' }); S.menu = false; },
+  del: function(el){ S.blocks.splice(+el.getAttribute('data-i'), 1); }, up: function(el){ var i = +el.getAttribute('data-i'); if (i > 0) S.blocks.splice(i - 1, 0, S.blocks.splice(i, 1)[0]); }, down: function(el){ var i = +el.getAttribute('data-i'); if (i < S.blocks.length - 1) S.blocks.splice(i + 1, 0, S.blocks.splice(i, 1)[0]); },
+  mode: function(el){ S.vis.mode = el.getAttribute('data-k'); }, cond: function(el){ var k = el.getAttribute('data-k'); S.vis[k] = !S.vis[k]; }, prop: function(el){ var p = S.props[+el.getAttribute('data-i')]; p[2] = !p[2]; },
+  acc: function(el){ var k = el.getAttribute('data-k'); S.open = S.open === k ? '' : k; }, step: function(el){ S.step = +el.getAttribute('data-i'); }, prev: function(){ S.step = Math.max(0, S.step - 1); }, next: function(){ if (S.step < 3) S.step++; else S.status = 'pub'; },
+  fmt: function(el){ var b = S.blocks[+el.getAttribute('data-i')], k = el.getAttribute('data-k'); if (k === 'link') return; b.f = b.f || {}; b.f[k] = !b.f[k]; },
+  al: function(el){ S.blocks[+el.getAttribute('data-i')].al = el.getAttribute('data-k'); },
+  ver: function(el){ V = el.getAttribute('data-k'); try { localStorage.setItem('replica-gbe-v', V); } catch (er) {} S.menu = false; },
+  pub: function(){ S.status = S.status === 'pub' ? 'draft' : 'pub'; }, col: function(el){ S.brand = +el.getAttribute('data-i'); },
+  tr: function(){ S.langs = S.langs.map(function(l){ return l[2] === 'no' || l[2] === 'rv' ? [l[0], 'Translated', 'ok'] : l; }); },
+  copy: function(el){ try { navigator.clipboard.writeText('https://guide.chekin.com/villa-calipso/wifi-access'); } catch (e) {} var sp = el.querySelector('span'); sp.textContent = 'Copied'; setTimeout(function(){ sp.textContent = 'Copy'; }, 1500); return 'keep'; }
+};
+document.addEventListener('click', function(e){ var el = e.target.closest && e.target.closest('[data-a]'); if (!el) return; var a = el.getAttribute('data-a'); if (!act[a]) return; e.preventDefault(); if (act[a](el) !== 'keep') render(); });
+document.addEventListener('input', function(e){ if (e.target.id === 'nm') { S.name = e.target.value; var p = document.querySelector('.ph-b .pv.h'); if (p) p.textContent = S.name; } });
+render();
+(function(){ var n = 0, t = setInterval(function(){ if (!window.__repPanel) { if (++n > 40) clearInterval(t); return; } clearInterval(t);
+  var d = document.createElement('div'); d.className = 'rail-switch';
+  d.innerHTML = [['1', 'V1 · Documento'], ['2', 'V2 · Pasos'], ['3', 'V3 · Paneles']].map(function(o){ return '<button type="button" class="rs-chip' + (o[0] === V ? ' on' : '') + '" data-pv="' + o[0] + '">' + o[1] + '</button>'; }).join('');
+  d.addEventListener('click', function(ev){ var b = ev.target.closest('[data-pv]'); if (!b) return; ev.preventDefault(); ev.stopPropagation(); V = b.getAttribute('data-pv'); try { localStorage.setItem('replica-gbe-v', V); } catch (er) {} [].forEach.call(d.querySelectorAll('[data-pv]'), function(c){ c.classList.toggle('on', c === b); }); render(); }, true);
+  window.__repPanel.add('Editor de guidebook', d, 27.4);
+}, 150); })();
+})();
+</script></body></html>

@@ -1,0 +1,118 @@
+/* Home · ofertas propias (O1–O3) y guidebooks (G1–G3). Mismo lenguaje que Pagos: tarjetas blancas sin borde ni sombra, marino #161643, azul #385bf8, cajitas translúcidas, esquinas de 18/14 px. */
+.own,.own-ov{--o-navy:#161643;--o-blue:#385bf8;--o-sec:#6b6b95;--o-soft:#f1f3fb;--o-line:#eceef6;font-family:Poppins,system-ui,sans-serif;color:var(--o-navy)}
+.own-ov{container-type:inline-size;margin:0 0 4px}
+.own button{font-family:inherit;cursor:pointer;color:inherit}
+.own b{font-weight:600}
+.own small{display:block}
+/* botón «+» / «Added» */
+.own-add{flex:none;display:grid;place-items:center;width:32px;height:32px;padding:0;border:0;border-radius:50%;background:rgba(56,91,248,.16);color:var(--o-blue);transition:background .15s,color .15s}
+.own-add .a2,.o2-add .a2{display:none}
+.own-add.on{background:#37e08f;color:#04331f}.own-add.on .a1{display:none}.own-add.on .a2{display:block}
+/* V1 · lista */
+.o1-card{background:#fff;border-radius:18px;padding:2px 14px 0}
+.o1-row{display:flex;align-items:center;gap:12px;padding:12px 0;cursor:pointer}
+.o1-row+.o1-row{border-top:1px solid var(--o-line)}
+.o1-im{flex:none;width:56px;height:56px;border-radius:14px;object-fit:cover}
+.o1-t{flex:1;min-width:0}.o1-t b{display:block;font-size:14.5px;line-height:20px}.o1-t small{font-size:12.5px;line-height:17px;color:var(--o-sec)}
+.o1-r{flex:none;display:flex;align-items:center;gap:10px}.o1-r>b{font-size:15px;font-variant-numeric:tabular-nums;font-weight:700}
+.o1-all{display:flex;align-items:center;justify-content:center;gap:4px;width:100%;height:46px;margin:0;padding:0;border:0;border-top:1px solid var(--o-line);background:none;color:var(--o-blue)!important;font-size:13.5px;font-weight:600}
+@container (max-width:330px){.o1-im{width:44px;height:44px;border-radius:12px}.o1-r{gap:8px}.o1-t b{font-size:13.5px}.o1-t small{font-size:12px}}
+/* V2 · destacada */
+.o2-feat{position:relative;overflow:hidden;border-radius:18px;aspect-ratio:16/10;background:#23235d;cursor:pointer}
+@container (min-width:520px){.o2-feat{aspect-ratio:21/9}}
+.o2-im{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.o2-sh{position:absolute;inset:0;background:linear-gradient(to top,rgba(14,14,50,.86) 0,rgba(14,14,50,.45) 42%,rgba(14,14,50,0) 72%)}
+.o2-chip{position:absolute;left:12px;top:12px;padding:3px 10px;border-radius:9999px;background:rgba(255,255,255,.9);color:var(--o-navy);font-size:11px;font-weight:700;letter-spacing:.02em}
+.o2-bt{position:absolute;left:14px;right:14px;bottom:14px;display:flex;align-items:flex-end;justify-content:space-between;gap:10px;color:#fff}
+.o2-tx b{display:block;font-size:17px;line-height:23px;font-weight:700}.o2-tx small{font-size:12.5px;line-height:17px;color:rgba(255,255,255,.82)}
+.o2-add{flex:none;display:inline-flex;align-items:center;gap:5px;height:40px;padding:0 16px;border:0;border-radius:9999px;background:var(--o-blue);color:#fff!important;font-size:13.5px;font-weight:600;white-space:nowrap}
+.o2-add.on{background:#37e08f;color:#04331f!important}.o2-add.on .a1{display:none}.o2-add.on .a2{display:inline-flex;align-items:center;gap:5px}
+.o2-row{display:flex;gap:8px;margin-top:8px;overflow-x:auto;scrollbar-width:none}.o2-row::-webkit-scrollbar{display:none}
+.o2-fc{flex:none;display:flex;align-items:center;gap:10px;padding:8px 10px 8px 8px;border-radius:14px;background:#fff;cursor:pointer}
+.o2-th{width:40px;height:40px;border-radius:10px;object-fit:cover}
+.o2-ft{min-width:0;padding-right:4px}.o2-ft b{display:block;font-size:13px;line-height:18px;white-space:nowrap}.o2-ft small{font-size:12px;line-height:16px;color:var(--o-sec);font-weight:600}
+.o2-fc .own-add{width:28px;height:28px}
+/* V3 · por momento */
+.o3-card{background:#fff;border-radius:18px;padding:12px}
+.o3-tabs{display:flex;gap:4px;padding:3px;border-radius:12px;background:var(--o-soft)}
+.o3-tab{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;height:34px;padding:0 6px;border:0;border-radius:10px;background:none;color:var(--o-sec)!important;font-size:12.5px;font-weight:600}
+.o3-tab i{display:inline-grid;place-items:center;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:rgba(22,22,67,.08);font-style:normal;font-size:10.5px;font-weight:700}
+.o3-tab.on{background:#fff;color:var(--o-navy)!important}.o3-tab.on i{background:rgba(56,91,248,.16);color:var(--o-blue)}
+.o3-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.o3-grid.one{grid-template-columns:1fr}
+.o3-c{display:flex;flex-direction:column;gap:2px;cursor:pointer}
+.o3-im{width:100%;height:96px;border-radius:14px;object-fit:cover;margin-bottom:6px}.o3-grid.one .o3-im{height:128px}
+.o3-b b{display:block;font-size:13.5px;line-height:19px}.o3-b small{font-size:12px;line-height:16px;color:var(--o-sec)}
+.o3-f{display:flex;align-items:center;justify-content:space-between;margin-top:6px}.o3-f>b{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}
+@container (min-width:520px){.o3-grid:not(.one){grid-template-columns:repeat(3,1fr)}.o3-im{height:110px}}
+/* Guidebooks · cabecera de sección */
+.gb-sec{margin:4px 0 8px}
+.gb-h{margin:0 0 12px}.gb-h b{display:block;font-family:Montserrat,-apple-system,system-ui,sans-serif;font-size:17px;line-height:20.4px;font-weight:600;letter-spacing:-.015em;color:#07154d}.gb-h p{margin:4px 0 0;font-size:12px;line-height:16.8px;color:#6b76a0}
+.gb-1,.gb-2,.gb-3{container-type:inline-size}
+/* Guidebooks · V4–V6: puertas a la pantalla externa del guidebook (sin fotos, sin precios, sin «+») */
+.own button:focus-visible{outline:2px solid var(--o-blue);outline-offset:2px}
+/* Guidebooks · V1–V3 (las primeras: solo títulos) */
+.g-ic{flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:rgba(56,91,248,.16);color:var(--o-blue)}
+/* G1 · índice */
+.g1-card{background:#fff;border-radius:18px;padding:2px 14px}
+.g1-row{display:flex;align-items:center;gap:12px;width:100%;padding:12px 0;border:0;background:none;text-align:left}
+.g1-row+.g1-row{border-top:1px solid var(--o-line)}
+.g1-t{flex:1;min-width:0}.g1-t b{display:block;font-size:14.5px;line-height:20px}.g1-t small{font-size:12.5px;line-height:17px;color:var(--o-sec)}
+.g1-ch{flex:none;color:#b7bcd6}
+/* G2 · teselas */
+.g-ic2{width:44px;height:44px;border-radius:14px;margin-bottom:10px}
+/* G3 · portada */
+
+
+/* ===== Guidebooks · V7–V9 (efecto wow) ===== */
+@keyframes gbUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+/* V7 · revista */
+/* V8 · coverflow */
+/* V9 · bento */
+@media (prefers-reduced-motion:reduce){.gb-sec.gb-in *{animation:none!important}.b9-t{transition:none}}
+
+/* píldora flotante «N more sections below» (mismo estilo que «N more guests» del resumen de huéspedes) */
+.own-sc{position:fixed;left:0;right:0;bottom:0;z-index:60;display:flex;justify-content:center;padding:0 16px 18px;pointer-events:none;opacity:0;transition:opacity .2s ease}
+.own-sc.on{opacity:1}
+.own-sc button{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 16px 0 12px;border:0;border-radius:9999px;background:#161643;color:#fff;font-family:Poppins,system-ui,sans-serif;font-size:13px;font-weight:600;box-shadow:0 6px 18px rgba(22,22,67,.3);cursor:pointer;pointer-events:none}
+.own-sc.on button{pointer-events:auto}
+.own-sc button span{white-space:nowrap}
+.own-sc button:focus-visible{outline:2px solid #385bf8;outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.own-sc{transition:none}}
+
+/* ===== Guidebooks · variantes V4.1–4.3, V5.1–5.3, V6.1–6.3 ===== */
+/* V4.1 · libros */
+/* V4.2 · librería */
+/* V4.3 · destacada */
+/* V5.x · tarjeta base y CTA */
+/* V5.1 · índice */
+/* V5.2 · cabecera de color */
+/* V5.3 · libro + estantería */
+/* V6.x */
+/* V6.1 · con portadas */
+/* V6.2 · tarjetas */
+/* V6.3 · por momento */
+@media (prefers-reduced-motion:reduce){.b41-c,.b42-cv{transition:none}}
+
+/* V3.1 · sin fondo: solo un delineado fino (con sombra interior de 1 px; el ajuste global «Bordes» quita los border) */
+
+/* V3.2 · portada con fondo blanco: misma tarjeta que V3, pero en blanco en vez de azul */
+
+/* ===== Guidebooks · V6.4–V6.7: una línea por guidebook, aspecto de cuaderno ===== */
+/* V6.4 · cuaderno */
+/* V6.5 · archivador */
+/* V6.6 · lomos */
+/* V6.7 · hojas */
+@media (prefers-reduced-motion:reduce){.b66-r{transition:none}}
+
+/* ===== Guidebooks · V6.7.1–V6.7.3: hojas mejoradas ===== */
+/* a · pulidas */
+/* b · pila */
+/* c · notas */
+@media (prefers-reduced-motion:reduce){.h7-r,.h7-fd,.h7-go{transition:none}.gb-sec.gb-in .h7-r,.gb-sec.gb-in .h7-bm{animation:none}}
+
+/* Títulos de sección de la Home: mismo estilo que «Who are we registering?» del resumen de huéspedes (Poppins 23/28 600, última palabra en azul; 27/32 en escritorio) */
+.sec-h{margin:4px 0 12px}
+.sec-h h2,.vela-heading>b{display:block;margin:0;font-family:Poppins,-apple-system,system-ui,sans-serif!important;font-size:18.4px!important;line-height:22.4px!important;font-weight:600!important;letter-spacing:-.015em!important;color:#161643!important}
+.sec-h h2 span{color:#385bf8}   /* el degradado lo pinta titles.js sobre el título entero */
+.sec-h p,.vela-heading>p{margin:4px 0 0!important;font-family:Poppins,system-ui,sans-serif!important;font-size:14px!important;line-height:21px!important;font-weight:500!important;color:#6b6b95!important}

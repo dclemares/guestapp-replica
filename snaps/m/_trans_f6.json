@@ -1,0 +1,1 @@
+[{"from":"pay-0-sheet","text":"Show me the two options","to":"pay-1-protection"},{"from":"pay-1b-scrolled","text":"What's covered","to":"pay-1c-covered-sheet"},{"from":"pay-1c-covered-sheet","text":"Security Deposit","to":"pay-1e-deposit-selected"},{"from":"pay-1f-bottom","text":"Confirm and continue","to":"pay-2-next"}]

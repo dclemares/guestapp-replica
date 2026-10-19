@@ -1,0 +1,247 @@
+/* Flujo de pago: V8 «Tarjeta viva» (única entrada de pago, #838) + cuatro interfaces de «Después de pagar» (#839).
+   Mismo lenguaje que Pagos, Tasas y Depósito: gris neutro, tarjetas blancas sin borde, CTA cuadrado de 12 px, dock blanco con mini sombra.
+   Ojo: el modo «sin contornos» de la réplica anula los border; los discontinuos y los anillos van con outline / box-shadow / máscaras. */
+.ck-form,.ck{--ck-navy:#161643;--ck-blue:#385bf8;--ck-sec:#6b6b95;--ck-line:#eceef6;--ck-tint:#e4e9ff;--ck-green:#0d8a4f;--ck-red:#d23b3b;--ck-amber:#b86e00;color:var(--ck-navy);font-family:inherit}
+.ck-form button,.ck button{font-family:inherit;cursor:pointer}
+.ck{display:flex;flex-direction:column;gap:14px;padding-bottom:170px}
+@keyframes ckSpin{to{transform:rotate(360deg)}}
+@keyframes ckFd{from{opacity:0}}@keyframes ckUp{from{transform:translateY(24px);opacity:0}}
+@keyframes ckPop{0%{transform:scale(.4)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+.ck [hidden],.ck-form [hidden]{display:none!important}
+
+/* ---------- piezas comunes ---------- */
+.ck-fn,.ck-fi{display:flex;gap:8px;align-items:flex-start;margin:0;padding:12px 14px;border-radius:14px;font-size:13px;line-height:18px;font-weight:500}
+.ck-fn{background:#fdecec;color:#8a1f1f}.ck-fn svg{flex:none;margin-top:1px;color:var(--ck-red)}
+.ck-fi{background:#eef1ff;color:#2a2f7a}.ck-fi svg{flex:none;margin-top:1px;color:var(--ck-blue)}
+.ck-go,.ck-ghost{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:48px;border:0;border-radius:12px;font-size:14.5px;font-weight:600}
+.ck-go{background:var(--ck-blue);color:#fff}.ck-go:hover{background:#294df1}.ck-go:disabled{opacity:.6}
+.ck-ghost{background:#fff;color:var(--ck-navy);box-shadow:inset 0 0 0 1.5px #dfe2f1}
+html body .ck button.ck-ghost.ck-ghost,html body .ck-form button.ck-ghost.ck-ghost{box-shadow:inset 0 0 0 1.5px #dfe2f1!important}   /* el CTA estándar quita la sombra: el secundario conserva su contorno */
+.ck-ghost:hover{background:#f6f7fb}
+.ck-lnk{display:inline-flex;align-items:center;justify-content:center;gap:6px;align-self:center;padding:8px 4px;border:0;background:none;color:var(--ck-blue);font-size:13.5px;font-weight:600}
+.ck-lnk svg:last-child:not(:first-child){margin-left:-2px}
+.ck-sec{display:flex;justify-content:center;margin:0;font-size:11.5px;line-height:16px;color:var(--ck-sec);text-align:center}
+.ck-pn,.ck-tip,.ck-hint{display:flex;gap:8px;align-items:flex-start;margin:0;font-size:12.5px;line-height:18px;color:var(--ck-sec)}
+.ck-pn svg,.ck-tip svg,.ck-hint svg{flex:none;margin-top:2px;color:var(--ck-blue)}.ck-hint b{color:var(--ck-navy)}.ck-hint.is-safe svg{color:var(--ck-green)}
+.ck-tip{margin:0 4px}
+.ck-hint2{display:block;margin-top:2px;font-size:12px;line-height:17px;color:var(--ck-sec)}
+.ck-safe{display:flex;flex-direction:column;gap:12px;padding:16px;border-radius:18px;background:#fff}
+.ck-safe{flex-direction:row;gap:10px;align-items:flex-start;padding:14px 16px;font-size:13px;line-height:19px;color:var(--ck-sec)}
+.ck-safe svg{flex:none;margin-top:1px;color:var(--ck-green)}.ck-safe b{color:var(--ck-navy)}
+/* campos de la tarjeta */
+.ck-wal{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ck-w{display:flex;align-items:center;justify-content:center;gap:4px;height:48px;border:0;border-radius:12px;background:#000;color:#fff;font-size:16px;font-weight:600;letter-spacing:-.01em}.ck-w:hover{background:#222}
+.ck-or{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:500;color:var(--ck-sec)}
+.ck-or::before,.ck-or::after{content:"";flex:1;height:1px;background:var(--ck-line)}
+.ck-fs{display:flex;flex-direction:column;gap:10px}
+.ck-r2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ck-f{display:flex;flex-direction:column;gap:5px}
+.ck-f label{font-size:12.5px;line-height:16px;font-weight:600}
+.ck-in{position:relative}
+.ck-in input{box-sizing:border-box;width:100%;height:48px;padding:0 14px;border:1.5px solid #dfe2f1;border-radius:12px;background:#fff;color:var(--ck-navy);font:500 15px/20px Poppins,system-ui,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:.02em;outline:none;transition:border-color .15s ease,box-shadow .15s ease}
+.ck-in input::placeholder{color:#a9adc6;letter-spacing:0}
+.ck-in input:focus{border-color:var(--ck-blue);box-shadow:0 0 0 3px rgba(56,91,248,.14)}
+.ck-f[data-f="num"] input{padding-right:64px}
+.ck-brand{position:absolute;top:50%;right:12px;transform:translateY(-50%);min-width:34px;padding:3px 6px;border-radius:6px;background:#f1f3fb;color:#9a9ab8;font:800 10px/14px Poppins,system-ui,sans-serif;font-style:normal;letter-spacing:.06em;text-align:center}
+.ck-brand:empty::before{content:"CARD"}
+.ck-brand.on{background:#1a1f71;color:#fff}
+.ck-er{min-height:0;font-size:12px;line-height:16px;font-weight:500;color:var(--ck-red)}.ck-er:empty{display:none}
+.ck-f.bad input{border-color:var(--ck-red);box-shadow:none}.ck-f.bad input:focus{box-shadow:0 0 0 3px rgba(210,59,59,.14)}
+.ck-oi{flex:none;display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:inset 0 0 0 2px #dfe2f1;color:#fff}
+.ck-oi svg{animation:ckPop .35s ease both}
+.is-on>.ck-oi{box-shadow:none;background:conic-gradient(var(--ck-blue) 0 28%,#e4e9ff 28% 100%);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 3.5px),#000 calc(100% - 3px));mask:radial-gradient(farthest-side,transparent calc(100% - 3.5px),#000 calc(100% - 3px));animation:ckSpin 1s linear infinite}
+.is-done>.ck-oi{background:var(--ck-green);box-shadow:none}
+.is-fail>.ck-oi{background:var(--ck-amber);box-shadow:none}
+.is-void>.ck-oi{background:#b7bbd2;box-shadow:none}
+.ck-cs-sp{display:inline-block;width:16px;height:16px;border-radius:50%;background:conic-gradient(var(--ck-blue) 0 28%,#e4e9ff 28% 100%);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2.5px));mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2.5px));animation:ckSpin 1s linear infinite}
+
+/* ---------- pay-card-sheet: dock y 3D Secure (P2) ---------- */
+.ck-ov{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;background:rgba(22,22,67,.42);animation:ckFd .18s ease both}
+.ck-sheet{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;padding:26px 20px calc(20px + env(safe-area-inset-bottom,0px));border-radius:22px 22px 0 0;background:#fff;text-align:center;animation:ckUp .24s ease both}
+.ck-sheet>b{font-size:19px;line-height:25px}
+.ck-sheet p{margin:0 0 10px;font-size:14px;line-height:20px;color:var(--ck-sec)}.ck-sheet p b{color:var(--ck-navy)}
+.ck-bi{flex:none;display:grid;place-items:center;width:56px;height:56px;margin-bottom:6px;border-radius:16px;background:var(--ck-tint);color:var(--ck-blue)}
+@media (prefers-reduced-motion:reduce){.ck-ov,.ck-sheet,.ck-oi svg{animation:none}.is-on>.ck-oi,.ck-cs-sp{animation-duration:3s}}
+@media (min-width:1024px){
+  .ck{padding-bottom:40px}
+  .ck-ov{align-items:center;justify-content:center}
+  .ck-sheet{width:400px;border-radius:22px;padding:28px 24px 22px}
+}
+
+/* ---------- V8 · tarjeta viva (pantalla completa en móvil, diálogo de ~860 px en escritorio) ---------- */
+html.ck-lock,html.ck-lock body{overflow:hidden}
+.ck-msheet{position:relative;align-items:stretch;gap:12px;max-height:92vh;overflow:auto;text-align:left}
+.ck-x{position:absolute;top:14px;right:14px;display:grid;place-items:center;width:36px;height:36px;border:0;border-radius:50%;background:#f1f3fb;color:var(--ck-navy)}
+.ck-x:hover{background:#e6e9f5}
+.ck-live{align-items:stretch}   /* móvil: pantalla completa; en escritorio se centra (abajo) */
+.ck-live .ck-lsheet{position:relative;display:flex;flex-direction:column;align-items:stretch;gap:0;width:100%;height:100%;max-height:none;padding:0;border-radius:0;overflow:hidden;text-align:left}
+.ck-live .ck-x{top:12px;right:12px;z-index:2}
+.ck-lz{flex:none;display:flex;flex-direction:column;gap:12px;padding:16px 16px 14px;background:#f3f4fa}
+.ck-live:is([data-v="2"],[data-v="3"]) .ck-lz{padding-top:12px}
+.ck-hd{flex:none;padding:16px 56px 0 16px;background:#f3f4fa}
+.ck-hd h2{margin:0;font-size:20px;line-height:26px;font-weight:600;color:var(--ck-navy)}
+.ck-rz,.ck-pz{flex:1;display:flex;flex-direction:column;min-height:0}
+.ck-rzb{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:12px;padding:16px}
+.ck-ft{flex:none;display:flex;flex-direction:column;gap:8px;padding:14px 16px calc(18px + env(safe-area-inset-bottom,0px));background:#fff;box-shadow:0 -4px 14px rgba(22,22,67,.06)}
+.ck-live .ck-ft .ck-go,.ck-live .ck-ft .ck-ghost{margin-top:0}
+.ck-live .ck-ft p.ck-sec{margin:0}
+/* la tarjeta dibujada: todo en em, así escala con el ancho */
+.ck-cd8{position:relative;width:100%;max-width:236px;margin:0 auto;aspect-ratio:1.586;perspective:900px;font-size:11px}
+.ck-cdi{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.3,.7,.2,1)}
+.ck-cd8.flip .ck-cdi{transform:rotateY(180deg)}
+.ck-cf{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;box-sizing:border-box;padding:1.5em 1.6em;border-radius:1.3em;background:linear-gradient(135deg,#15153f 0%,#23235d 44%,#385bf8 100%);color:#fff;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:0 .9em 2em rgba(22,22,67,.28);overflow:hidden;transition:filter .4s ease}
+.ck-cf::before{content:"";position:absolute;right:-20%;top:-45%;width:75%;aspect-ratio:1;border-radius:50%;background:rgba(171,186,252,.16);pointer-events:none}
+.ck-cfb{transform:rotateY(180deg);padding:1.6em 0 1.4em;justify-content:flex-start;gap:1.6em}
+.ck-mag{display:block;height:3em;background:#0b0b26}
+.ck-sg{position:relative;display:flex;align-items:center;justify-content:space-between;gap:.8em;margin:0 1.4em;padding:.7em .9em;border-radius:.4em;background:#fff;color:var(--ck-navy)}
+.ck-sg small{font-size:.9em;font-weight:600;color:#8a8cae}.ck-sg b{font-size:1.5em;letter-spacing:.2em;font-variant-numeric:tabular-nums}
+.ck-cr{display:flex;align-items:center;justify-content:space-between;position:relative}
+.ck-chip8{display:block;width:2.9em;height:2.2em;border-radius:.45em;background:linear-gradient(135deg,#f0d98a,#c9a64a)}
+.ck-cb8{min-width:3.4em;padding:.25em .6em;border-radius:.45em;background:rgba(255,255,255,.16);color:rgba(255,255,255,.78);font-size:.95em;font-weight:800;letter-spacing:.08em;text-align:center}
+.ck-cb8.on{background:#fff;color:#1a1f71}
+.ck-cn8{position:relative;align-self:flex-start;font-size:1.5em;line-height:1.3;font-weight:500;letter-spacing:.08em;font-variant-numeric:tabular-nums;white-space:nowrap;text-shadow:0 1px 2px rgba(0,0,0,.2)}
+.ck-cm8{position:relative;display:flex;flex-direction:column;align-self:flex-start}.ck-cm8 small{font-size:.8em;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.62)}
+.ck-cm8 b{font-size:1.25em;font-weight:600;letter-spacing:.08em;font-variant-numeric:tabular-nums}
+.ck-cd8[data-fo="num"] .ck-cn8::after,.ck-cd8[data-fo="exp"] .ck-cm8 b::after{content:"";position:absolute;left:0;right:0;bottom:-.1em;height:2px;border-radius:2px;background:rgba(255,255,255,.75)}
+.ck-cd8[data-fo="exp"] .ck-cm8 b{position:relative;align-self:flex-start}
+/* P1: la tarjeta es el escenario; su insignia dice en qué punto está el pago */
+.ck-cst{position:absolute;right:.7em;bottom:.7em;z-index:2;display:none;align-items:center;gap:.5em;min-height:2.6em;min-width:2.6em;padding:0 .8em;justify-content:center;border-radius:1.3em;background:#fff;color:var(--ck-navy);font-size:1.1em;font-weight:600;box-shadow:0 .3em 1em rgba(22,22,67,.25);animation:ckPop .35s ease both}
+.ck-cd8[data-st] .ck-cst{display:flex}
+.ck-cd8[data-st="ok"] .ck-cst{background:var(--ck-green);color:#fff}
+.ck-cd8[data-st="fail"] .ck-cst{background:var(--ck-red);color:#fff}
+.ck-cd8[data-st="part"] .ck-cst{background:var(--ck-amber);color:#fff}
+.ck-cd8[data-st="fail"] .ck-cf{filter:saturate(.25) brightness(.92)}
+.ck-cd8[data-st="verify"] .ck-cf::after,.ck-cd8[data-st="proc"] .ck-cf::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.16) 50%,transparent 70%);background-size:220% 100%;animation:ckShine 1.6s linear infinite}
+@keyframes ckShine{from{background-position:120% 0}to{background-position:-120% 0}}
+.ck-chips8{display:flex;gap:8px}
+.ck-ch8{flex:1;display:flex;flex-direction:column;gap:1px;min-width:0;padding:9px 12px;border-radius:12px;background:var(--ck-navy);color:#fff}
+.ck-ch8 small{font-size:11.5px;line-height:16px;color:rgba(255,255,255,.78)}.ck-ch8 b{font-size:16px;line-height:22px;font-weight:700;font-variant-numeric:tabular-nums}
+.ck-ch8.ck-hd8{background:#fff;color:var(--ck-navy);outline:1.5px dashed #8d9be6;outline-offset:-1.5px}
+.ck-ch8.ck-hd8 small{color:var(--ck-sec)}
+/* P1: el formulario se pliega y entra la zona de pago */
+.ck-lsheet[data-ph="pay"] .ck-rz,.ck-lsheet[data-ph="form"] .ck-pz{display:none}
+.ck-lsheet[data-ph="pay"] .ck-chips8{display:none}
+.ck-pzb{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:12px;padding:16px}
+.ck-pt{margin:0;font-size:20px;line-height:26px;font-weight:600;letter-spacing:-.01em;outline:none}
+.ck-ps{margin:4px 0 0;font-size:13.5px;line-height:20px;color:var(--ck-sec)}
+.ck-pzx{display:flex;flex-direction:column;gap:10px}
+.ck-pzf[hidden]{display:none}
+@media (max-height:700px) and (max-width:1023.98px){.ck-cd8{max-width:196px}.ck-lz{gap:8px;padding-bottom:10px}}
+@media (min-width:1024px){
+  /* diálogo centrado y compacto (#843) */
+  .ck-live:is([data-v="2"],[data-v="3"]){align-items:center;justify-content:center}
+  .ck-live:is([data-v="2"],[data-v="3"]) .ck-lsheet{display:grid;grid-template-columns:296px minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);width:760px;max-width:calc(100vw - 48px);height:auto;max-height:min(88vh,620px);border-radius:22px;background:#fff}
+  .ck-live:is([data-v="2"],[data-v="3"]) .ck-hd{grid-column:1 / 3;grid-row:1;padding:24px 72px 16px 28px;background:#fff}
+  .ck-live:is([data-v="2"],[data-v="3"]) .ck-hd h2{font-size:21px;line-height:27px}
+  .ck-live:is([data-v="2"],[data-v="3"]) .ck-lz{grid-column:1;grid-row:2;align-self:stretch;justify-content:center;gap:12px;margin:0 0 28px 28px;padding:14px;border-radius:18px}
+  .ck-live:is([data-v="2"],[data-v="3"]) .ck-rz,.ck-live:is([data-v="2"],[data-v="3"]) .ck-pz{grid-column:2;grid-row:2}
+  .ck-live:is([data-v="2"],[data-v="3"]) .ck-cd8{max-width:none;margin:0;font-size:11.2px}
+  .ck-live:is([data-v="2"],[data-v="3"]) .ck-chips8{flex-direction:column;gap:8px}
+  .ck-live:is([data-v="2"],[data-v="3"]) .ck-ch8{flex-direction:row;align-items:center;justify-content:space-between;padding:10px 14px}
+  .ck-live:is([data-v="2"],[data-v="3"]) .ck-rzb,.ck-live:is([data-v="2"],[data-v="3"]) .ck-pzb{padding:0 28px 14px}
+  .ck-live:is([data-v="2"],[data-v="3"]) .ck-ft{padding:8px 28px 26px;background:none;box-shadow:none}
+  .ck-live:is([data-v="2"],[data-v="3"]) .ck-x{top:20px;right:20px}
+}
+@media (prefers-reduced-motion:reduce){.ck-cdi{transition:none}.ck-cst{animation:none}.ck-cd8[data-st] .ck-cf::after{animation:none}}
+
+/* ---------- P2 · Tickets: el pago se «imprime»; el cobro y la retención son tickets distintos ---------- */
+.tk-wrap{--ck-navy:#161643;--ck-blue:#385bf8;--ck-sec:#6b6b95;--ck-green:#0d8a4f;--ck-red:#d23b3b;display:flex;flex-direction:column;align-items:center;gap:20px;padding:8px 0 4px;filter:drop-shadow(0 2px 5px rgba(22,22,67,.1))}
+.tk{position:relative;box-sizing:border-box;width:100%;max-width:380px;padding:18px 20px 30px;background:#fff;color:var(--ck-navy);font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:12.5px;line-height:18px;
+  -webkit-mask:conic-gradient(from -45deg at bottom,#0000,#000 1deg 89deg,#0000 90deg) 50%/14px 100%;mask:conic-gradient(from -45deg at bottom,#0000,#000 1deg 89deg,#0000 90deg) 50%/14px 100%;animation:tkIn .4s ease both}
+.tk-hold{padding-bottom:50px;background:#f7f8ff}
+.tk-paid,.tk-void{padding-bottom:42px}
+.tk-hold::before{content:"";position:absolute;inset:8px 8px 16px;border-radius:8px;outline:1.5px dashed #aab6ee;pointer-events:none}   /* borde discontinuo: la retención nunca se mezcla con el cobro */
+.tk header{display:flex;flex-direction:column;align-items:center;gap:2px;margin-bottom:10px;padding-bottom:12px;background:linear-gradient(90deg,#c5c9de 50%,transparent 0) bottom/8px 1px repeat-x;text-align:center}
+.tk header b{font-size:13px;letter-spacing:.14em;text-transform:uppercase}.tk header small{font-size:11px;color:var(--ck-sec)}
+.tk-l{display:flex;flex-direction:column;gap:6px;margin:0;padding:0;list-style:none}
+.tk-l li{display:flex;align-items:baseline;gap:6px;opacity:0;animation:tkIn .35s var(--d,0s) ease both}
+.tk-l li span{display:flex;flex-direction:column}.tk-l li small{font-size:10.5px;color:var(--ck-sec)}
+.tk-l li i{flex:1;height:4px;min-width:12px;background:radial-gradient(circle,#b9bdd6 1px,transparent 1.2px) 0 100%/6px 3px repeat-x}
+.tk-l li em{font-style:normal;font-variant-numeric:tabular-nums}
+.tk-t{display:flex;justify-content:space-between;margin-top:10px;padding-top:10px;background:linear-gradient(90deg,#c5c9de 50%,transparent 0) top/8px 1px repeat-x;font-size:14px;font-weight:700;opacity:0;animation:tkIn .35s var(--d,0s) ease both}
+.tk-still,.tk-still li,.tk-still .tk-t{animation:none;opacity:1}
+.tk-print .tk-t b{animation:tkBlink 1.1s ease-in-out infinite}
+.tk-m{margin:12px 0 0;font-size:11.5px;line-height:16px;color:var(--ck-sec);text-align:center}
+.tk-st{position:absolute;right:16px;bottom:20px;transform:rotate(-12deg);padding:5px 12px;border-radius:6px;outline:2.5px solid currentColor;color:var(--ck-green);font:800 15px/1 Poppins,system-ui,sans-serif;letter-spacing:.12em;text-align:center;opacity:.92;animation:tkStamp .4s .35s cubic-bezier(.2,.9,.3,1.2) both}
+.tk-hold .tk-st{color:var(--ck-blue)}
+.tk-void .tk-st,.tk-dec .tk-st{color:var(--ck-red)}
+.tk-void .tk-l li,.tk-void .tk-t,.tk-dec .tk-l li{color:#8a8cae;text-decoration:line-through}
+.tk-void .tk-t b,.tk-dec .tk-t b{text-decoration:none}
+@keyframes tkIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+@keyframes tkStamp{from{opacity:0;transform:rotate(-12deg) scale(2.2)}to{opacity:.92;transform:rotate(-12deg) scale(1)}}
+@keyframes tkBlink{50%{opacity:.35}}
+@media (prefers-reduced-motion:reduce){.tk,.tk-l li,.tk-t,.tk-st,.tk-print .tk-t b{animation:none;opacity:1}.tk-st{opacity:.92}}
+
+
+
+
+/* ---------- la tarjeta como escenario: entrada de la zona de pago y microanimaciones del resultado ---------- */
+.ck-lsheet[data-ph="pay"] .ck-pz{animation:pzIn .32s ease both}
+@keyframes pzIn{from{opacity:0;transform:translateY(10px)}}
+.ck-cd8{transition:max-width .35s ease}
+.ck-cd8[data-st="fail"] .ck-cdi{animation:ckShake .5s ease both}
+@keyframes ckShake{15%{transform:translateX(-9px)}35%{transform:translateX(8px)}55%{transform:translateX(-5px)}75%{transform:translateX(3px)}100%{transform:none}}
+.ck-cd8[data-st="ok"]::after{content:"";position:absolute;inset:-5px;border-radius:1.5em;box-shadow:0 0 0 3px rgba(13,138,79,.5);animation:ckRing 1.1s ease-out both;pointer-events:none}
+@keyframes ckRing{from{opacity:1;transform:scale(.97)}to{opacity:0;transform:scale(1.07)}}
+@media (max-width:1023.98px){.ck-lsheet[data-ph="pay"] .ck-cd8{max-width:168px;font-size:7.6px}.ck-lsheet[data-ph="pay"] .ck-cst{font-size:1.5em}}   /* en móvil, al pagar la tarjeta se recoge para dejar sitio a lo que pasa */
+@media (prefers-reduced-motion:reduce){.ck-lsheet[data-ph="pay"] .ck-pz,.ck-cd8[data-st] .ck-cdi,.ck-cd8[data-st="ok"]::after{animation:none}.ck-cd8{transition:none}}
+
+/* ---------- P1 · V2 libro mejorado (la única) ---------- */
+.v2-bar{height:4px;flex:none;border-radius:2px;background:#e4e9ff;overflow:hidden}
+.v2-bar i{display:block;width:0;height:100%;border-radius:2px;background:var(--ck-blue);transition:width 1s cubic-bezier(.2,.7,.2,1),background .4s ease}
+.v2-bar.is-ok i{background:var(--ck-green)}.v2-bar.is-fail i{background:var(--ck-red)}.v2-bar.is-part i{background:var(--ck-amber)}
+.v2-t{display:flex;flex-direction:column;margin:2px 0 0;padding:0;list-style:none}
+.v2-n{display:flex;align-items:flex-start;gap:12px}
+/* V2: filas uniformes sin rayas, hold en verde */
+.ck-live:is([data-v="2"],[data-v="3"]) .v2-t{gap:10px}
+.ck-live:is([data-v="2"],[data-v="3"]) .v2-n{padding:12px 14px;border-radius:14px;background:#f6f7fb;transition:opacity .25s ease}
+.ck-live:is([data-v="2"],[data-v="3"]) .v2-n>.ck-oi{margin-top:1px}
+.v2-n>div{flex:1;display:flex;flex-direction:column;min-width:0}
+.v2-n b{font-size:14px;line-height:20px;font-weight:600}.v2-n small{font-size:12.5px;line-height:18px;color:var(--ck-sec)}.v2-n small b{font-size:inherit;font-weight:700;color:var(--ck-navy);font-variant-numeric:tabular-nums}
+.v2-n>em{flex:none;font-style:normal;font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
+.v2-n.is-wait{opacity:.5}
+.ck-live:is([data-v="2"],[data-v="3"]) .v2-n.op-dep{background:#f7f8ff;outline:1.5px dashed #aab6ee;outline-offset:-1.5px}   /* la retención, siempre aparte y discontinua */
+.v2-no{margin-top:3px;font:700 11.5px/16px ui-monospace,"SF Mono",Menlo,Consolas,monospace;letter-spacing:.05em;color:var(--ck-blue)}
+
+/* V3: las cajitas de V2 unidas por una raya (verde cuando el paso anterior está hecho) */
+.ck-live[data-v="3"] .v2-t{gap:18px}
+.ck-live[data-v="3"] .v2-n{position:relative}
+.ck-live[data-v="3"] .v2-n:not(:last-child)::before,.ck-live[data-v="3"] .v2-n:not(:last-child)::after{content:"";position:absolute;left:25px;top:100%;width:2px;height:18px;border-radius:2px;background:#d5daf0}
+.ck-live[data-v="3"] .v2-n:not(:last-child)::after{background:var(--ck-green);transform:scaleY(0);transform-origin:top;transition:transform .5s cubic-bezier(.3,.7,.2,1)}
+.ck-live[data-v="3"] .v2-n.is-done:not(:last-child)::after{transform:scaleY(1)}
+/* título de la operación + número de orden en la misma línea (el importe va solo, a la derecha) */
+.v2-tl{display:flex;align-items:baseline;flex-wrap:wrap;gap:2px 10px}
+.v2-tl .v2-no{margin-top:0}
+
+/* animación entre pasos: cada uno entra, se activa, se completa y cambia de texto con su transición */
+.v2-n{transition:opacity .45s ease,background .45s ease,box-shadow .45s ease}
+.ck-oi{transition:background .35s ease,box-shadow .35s ease}
+.v2-in{animation:v2in .5s cubic-bezier(.2,.8,.2,1) both}
+@keyframes v2in{from{opacity:0;transform:translateY(10px)}}
+.v2-sw{animation:v2sw .38s ease both}
+@keyframes v2sw{from{opacity:0;transform:translateY(5px)}}
+.ck-live:is([data-v="2"],[data-v="3"]) .v2-n.is-on{background:#eef1ff}
+.ck-live:is([data-v="2"],[data-v="3"]) .v2-n.op-dep.is-on{background:#f1f3ff}
+.ck-live:is([data-v="2"],[data-v="3"]) .v2-n.is-done{animation:v2done .9s ease-out}
+@keyframes v2done{from{box-shadow:0 0 0 0 rgba(13,138,79,.35)}to{box-shadow:0 0 0 12px rgba(13,138,79,0)}}
+@media (prefers-reduced-motion:reduce){.v2-in,.v2-sw,.v2-n.is-done{animation:none!important}.v2-bar i,.v2-n,.ck-oi{transition-duration:.01s!important}}
+.v2-zn{display:block;margin-top:8px;font-style:italic;font-size:12.5px;line-height:18px;color:var(--ck-sec)}.v2-zn b{font-weight:600;color:var(--ck-navy)}   /* el aviso del 0,00€ va dentro de la caja «Confirm with your bank» */
+/* tras el pago: «Generating your receipts…» y la vista de recibos generados (mismos tickets que Order history) */
+/* pendiente: ya no parece un selector (círculo hueco); es un icono de espera relleno. Hecho: la cajita entera se tiñe de verde */
+.is-wait>.ck-oi{background:#e6e8f3;box-shadow:none;color:#9a9ab8}
+.is-wait>.ck-oi svg{animation:none}
+.ck-live:is([data-v="2"],[data-v="3"]) .v2-n.is-done{background:#e6f5ec}
+.ck-live:is([data-v="2"],[data-v="3"]) .v2-n.op-dep.is-done{background:#e9f7ef;outline-color:#8fd3ae}
+
+
+/* Order history llegando desde el pago: «Go to home» y, debajo, lo que queda pendiente (el texto informativo va siempre debajo del CTA) */
+.pv-hdk{display:flex;flex-direction:column;align-items:stretch;gap:8px;text-align:center}
+.pv-hdk p{margin:0;font-size:12.5px;line-height:18px;color:#6b6b95}.pv-hdk p b{font-weight:600;color:#161643}
+#pv-hist.has-hdk{padding-bottom:160px}
+@media (max-width:1023.98px){.pv-hdk{position:fixed;left:0;right:0;bottom:0;z-index:30;padding:14px 16px calc(18px + env(safe-area-inset-bottom,0px));background:#fff;box-shadow:0 -4px 14px rgba(22,22,67,.06)}}
+@media (min-width:1024px){.pv-hdk{width:100%;max-width:280px;margin-top:6px}#pv-hist.has-hdk{padding-bottom:40px}}
+
+/* ===== Modal de escritorio (solo ≥1024 px; el móvil no cambia): «Escenario» de tamaño fijo, siempre 760 × 620 px: no se encoge ni se estira entre pasos; lo que sobre, con scroll dentro de la columna derecha ===== */
+@media (min-width:1024px){
+  .ck-live:is([data-v="2"],[data-v="3"]) .ck-lsheet{height:min(90vh,620px);max-height:none}
+}

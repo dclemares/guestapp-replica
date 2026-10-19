@@ -1,0 +1,40 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Selfie · gorra y gafas</title>
+<style>
+html,body{margin:0;height:100%;background:#f5f6fb;font-family:Poppins,system-ui,sans-serif;color:#161643}
+.wrap{min-height:100%;display:grid;place-items:center;padding:24px}
+.card{width:min(380px,100%);background:#fff;border-radius:24px;padding:20px 16px 24px;box-shadow:0 20px 50px -24px rgba(53,88,255,.35);text-align:center}
+.stage{position:relative;width:100%;aspect-ratio:1;border-radius:18px;overflow:hidden;background:#fff}
+.scene{position:absolute;inset:0;animation:scene 7.4s linear infinite}
+.scene img{position:absolute;display:block}
+#base{inset:0;width:100%;height:100%;object-fit:contain}
+#cpp{left:27.6715%;top:4.7049%;width:44.2584%;height:33.1738%;animation:cpp 7.4s linear infinite}
+#gpp{left:31.8182%;top:29.9043%;width:35.8852%;height:15.7097%;animation:gpp 7.4s linear infinite}
+#gl{left:33.5726%;top:31.7384%;width:32.4561%;height:11.8820%;transform-origin:50% 50%;animation:gl 7.4s linear infinite;will-change:transform,opacity,filter}
+#cap{left:28.4689%;top:5.5024%;width:42.6635%;height:27.8309%;transform-origin:50% 88%;animation:cap 7.4s linear infinite;will-change:transform,opacity}
+/* tiempos (7,4 s): gorra 1,0–2,3 s · gafas 2,3–3,6 s · chip 3,9–6,9 s */
+@keyframes scene{0%{opacity:0}4%,95%{opacity:1}100%{opacity:0}}
+@keyframes cpp{0%,13.5%{opacity:1}14.2%,100%{opacity:0}}
+@keyframes gpp{0%,31.5%{opacity:1}32.3%,100%{opacity:0}}
+@keyframes cap{
+ 0%,13.5%{transform:none;opacity:1;animation-timing-function:cubic-bezier(.3,0,.3,1)}
+ 18%{transform:translate(0,-3.5%) rotate(-3deg) scale(1.01);opacity:1;animation-timing-function:cubic-bezier(.5,0,.9,.4)}
+ 31%{transform:translate(22%,-58%) rotate(26deg) scale(1.12);opacity:1}
+ 31.1%,100%{transform:translate(22%,-58%) rotate(26deg) scale(1.12);opacity:0}}
+@keyframes gl{
+ 0%,31%{transform:none;opacity:1;filter:blur(0);animation-timing-function:cubic-bezier(.3,0,.3,1)}
+ 35%{transform:translate(0,2.5%) scale(1.03) rotate(1deg);opacity:1;filter:blur(0);animation-timing-function:cubic-bezier(.45,0,.85,.5)}
+ 44%{transform:translate(-17%,22%) scale(1.42) rotate(-14deg);opacity:1;filter:blur(1.5px);animation-timing-function:ease-out}
+ 47%{transform:translate(-20%,26%) scale(1.5) rotate(-16deg);opacity:0;filter:blur(4px)}
+ 47.1%,100%{transform:translate(-20%,26%) scale(1.5) rotate(-16deg);opacity:0}}
+.ok{position:absolute;left:50%;bottom:12px;display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:99px;background:#e6f9ef;color:#17794b;font:600 13px Poppins,system-ui,sans-serif;white-space:nowrap;opacity:0;transform:translateX(-50%) translateY(6px) scale(.9);animation:ok 7.4s ease infinite}
+.ok i{display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#37e08f;color:#0e5a37}
+@keyframes ok{0%,50%{opacity:0;transform:translateX(-50%) translateY(6px) scale(.9)}56%,92%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}96%,100%{opacity:0;transform:translateX(-50%) translateY(0) scale(1)}}
+h1{font-size:20px;margin:16px 0 4px}p{margin:0;color:#6b6b95;font-size:14px}
+@media (prefers-reduced-motion:reduce){.scene,.scene img,.ok{animation:none}#cap,#gl,#cpp,#gpp{display:none}.ok{opacity:1}}
+html.embed .wrap{padding:0;min-height:100%}html.embed .card{width:100%;height:100%;padding:0;border-radius:0;box-shadow:none;display:flex;flex-direction:column;justify-content:center}html.embed .stage{border-radius:0;max-height:100%}html.embed h1,html.embed p{display:none}
+</style><script>if(/embed=1/.test(location.search))document.documentElement.classList.add('embed')</script></head><body><div class="wrap"><div class="card">
+<div class="stage"><div class="scene"><img id="base" src="face-clean.webp" alt="Man without cap or sunglasses"><img id="cpp" src="cap-patch.png" alt=""><img id="gpp" src="glasses-patch.png" alt=""><img id="gl" src="glasses.png" alt=""><img id="cap" src="cap.png" alt=""></div>
+<div class="ok"><i><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></i>Ready for your selfie</div></div>
+<h1>Take off your cap and sunglasses</h1><p>We need to see your whole face clearly.</p></div></div>
+<script>window.__seek=t=>{document.getAnimations().forEach(a=>{a.pause();a.currentTime=t})}</script>
+</body></html>

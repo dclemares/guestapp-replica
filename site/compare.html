@@ -1,0 +1,26 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>Comparar Registration</title>
+<style>
+body{margin:0;padding:16px;background:#1b1b4a;font-family:system-ui,sans-serif;color:#fff}
+h1{font-size:15px;margin:0 0 14px;font-weight:600;text-align:center}
+.row{display:flex;justify-content:center;gap:28px;flex-wrap:wrap}
+.col{display:flex;flex-direction:column;align-items:center;gap:8px}
+.col b{font-size:13px}
+.wr{position:relative}
+.ph{position:absolute;left:0;top:0;width:390px;height:844px;border:10px solid #0b0b25;border-radius:44px;overflow:hidden;background:#fff;box-sizing:content-box;transform-origin:top left}
+iframe{width:390px;height:844px;border:0;display:block}
+a{color:#abbafc;font-size:12px}
+</style></head><body>
+<h1>Registration · comparar (la pantalla es la misma, cambia solo la versión)</h1>
+<div class="row" id="r"></div>
+<script>
+var q = new URLSearchParams(location.search), A = q.get('a') || 'orig', B = q.get('b') || 'v4', S = q.get('s') || 'hub-after-1';
+var NAMES = { orig: 'Original', v1: 'V1 Mejorada', v1b: 'V1b Barra', v1c: 'V1c CTA abajo', v2: 'V2 Lista única', v3: 'V3 Estilo home', v4: 'V4 Siguiente paso', v4b: 'V4b Clara', v4c: 'V4c Franja', v5: 'V5 Por huésped', v4n1: 'V4·1 Con botones', v4n2: 'V4·2 Compacto', v4n3: 'V4·3 Agrupado', v4n4: 'V4·4 Con progreso', v4m1: 'V4·1a Fila sólida', v4m2: 'V4·1b Fila botón', v4m3: 'V4·1c Con chip', v5a: 'V5a Resumen', v5b: 'V5b Contadores', v5c: 'V5c Segmentos', v5d1: 'V5c·1 Contenedor punteado', v5d2: 'V5c·2 Filas punteadas', v5d3: 'V5c·3 Chips + un CTA', v5d4: 'V5c·4 Un Add guest por hueco', v5ca: 'V5c-A Texto + botones', v5cb: 'V5c-B Franja + barra', v5cc: 'V5c-C En la frase + CTA único', v5c1: 'V5c·1 Redondo', v5c2: 'V5c·2 Barra continua', v5c3: 'V5c·3 Personitas' };
+var k = Math.min(1, (innerHeight - 90) / 884); 
+[A, B].forEach(function(v){
+  var col = document.createElement('div'); col.className = 'col';
+  var src = 'screens/' + S + '.m.html' + (v === 'orig' ? '' : '?reg=' + v);
+  col.innerHTML = '<b>' + (NAMES[v] || v) + '</b><div class="wr" style="width:' + (410 * k) + 'px;height:' + (864 * k) + 'px"><div class="ph" style="transform:scale(' + k + ')"><iframe src="' + src + '" title="' + (NAMES[v] || v) + '"></iframe></div></div><a href="' + src + '" target="_blank">Abrir sola</a>';
+  document.getElementById('r').appendChild(col);
+});
+</script></body></html>

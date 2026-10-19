@@ -1,0 +1,86 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>House manual · Villa Calipso</title>
+<style>
+@font-face{font-family:P;font-weight:400;src:url("../site/assets/fonts/Poppins/poppins-v22-latin-regular.woff2")}
+@font-face{font-family:P;font-weight:500;src:url("../site/assets/fonts/Poppins/poppins-v22-latin-500.woff2")}
+@font-face{font-family:P;font-weight:600;src:url("../site/assets/fonts/Poppins/poppins-v22-latin-600.woff2")}
+@font-face{font-family:P;font-weight:700;src:url("../site/assets/fonts/Poppins/poppins-v22-latin-700.woff2")}
+@page{size:210mm 297mm;margin:0}
+:root{--navy:#161643;--blue:#385bf8;--sec:#6b6b95;--soft:#f1f3fb}
+*{box-sizing:border-box;margin:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{font-family:P,sans-serif;color:var(--navy)}
+.page{position:relative;width:210mm;height:297mm;overflow:hidden;page-break-after:always;background:#fff;padding:22mm 20mm}
+.page:last-child{page-break-after:auto}
+.ft{position:absolute;left:20mm;right:20mm;bottom:12mm;display:flex;justify-content:space-between;font-size:8.5pt;color:var(--sec)}
+h2{font-size:27pt;line-height:1.1;font-weight:700;letter-spacing:-.02em}
+h2 em{font-style:normal;color:var(--blue)}
+.eye{font-size:8.5pt;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);margin-bottom:6mm}
+p{font-size:10.5pt;line-height:1.65}
+.lead{font-size:12pt;line-height:1.7;margin:7mm 0 10mm;color:#34345f}
+/* portada */
+.cover{padding:0;background:#15153f;color:#fff}
+.cover .ph{position:absolute;inset:0 0 88mm 0;background:url("../vendor/vela/deals/gb-alley.jpg") center 30%/cover}
+.cover .ph::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(21,21,63,.25),rgba(21,21,63,0) 40%,rgba(21,21,63,.9))}
+.cover .tag{position:absolute;left:20mm;top:20mm;font-size:8.5pt;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:2.2mm 4mm;border-radius:99px;background:rgba(255,255,255,.2)}
+.cover .tx{position:absolute;left:20mm;right:20mm;bottom:20mm}
+.cover h1{font-size:52pt;line-height:1;font-weight:700;letter-spacing:-.03em}
+.cover h1 em{font-style:normal;color:#aebcff}
+.cover p{margin-top:6mm;font-size:13pt;color:rgba(255,255,255,.78)}
+.cover .meta{margin-top:12mm;display:flex;gap:14mm;font-size:9pt;color:rgba(255,255,255,.7)}
+.cover .meta b{display:block;font-size:11pt;color:#fff;margin-top:1mm}
+/* tarjetas */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:5mm;margin-bottom:9mm}
+.card{padding:6mm;border-radius:6mm;background:var(--soft)}
+.card small{display:block;font-size:8pt;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--sec)}
+.card b{display:block;margin-top:2mm;font-size:14.5pt;font-weight:700;white-space:nowrap}
+.card span{display:block;margin-top:1mm;font-size:8.5pt;color:var(--sec)}
+.wifi{display:grid;grid-template-columns:1fr 1fr;gap:5mm;margin:5mm 0 10mm}
+.wifi div{padding:5mm 6mm;border-radius:5mm;background:var(--soft)}
+.wifi small{font-size:8pt;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--sec)}
+.wifi code{display:block;margin-top:1.5mm;font-family:ui-monospace,Menlo,monospace;font-size:12pt;font-weight:700}
+h3{font-size:14pt;font-weight:700;margin:0 0 3mm}
+ol.st{list-style:none;padding:0;counter-reset:s}
+ol.st li{counter-increment:s;display:flex;gap:4mm;margin-bottom:4mm;font-size:10.5pt;line-height:1.55}
+ol.st li::before{content:counter(s);flex:none;width:7mm;height:7mm;border-radius:50%;background:var(--blue);color:#fff;font-weight:700;font-size:9pt;display:grid;place-items:center;margin-top:.3mm}
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:6mm;margin-bottom:9mm}
+.rule{padding:6mm;border-radius:6mm;background:var(--soft)}
+.rule b{display:block;font-size:12pt;margin-bottom:2mm}
+.rule p{font-size:9.8pt;line-height:1.6;color:#34345f}
+.bins{display:grid;grid-template-columns:repeat(4,1fr);gap:4mm}
+.bin{padding:5mm;border-radius:5mm;background:var(--soft)}
+.bin i{display:block;width:6mm;height:6mm;border-radius:2mm;margin-bottom:3mm}
+.bin b{display:block;font-size:10pt}.bin small{display:block;margin-top:1mm;font-size:8pt;color:var(--sec);line-height:1.4}
+.map{height:78mm;border-radius:6mm;background:#e9edf8;overflow:hidden;position:relative;margin:7mm 0 9mm}
+.list{display:grid;grid-template-columns:1fr 1fr;gap:5mm 8mm}
+.list div b{display:block;font-size:10.5pt}.list div span{font-size:9.5pt;color:var(--sec);line-height:1.5}
+.sos{margin-top:9mm;padding:6mm 7mm;border-radius:6mm;background:#15153f;color:#fff;display:flex;justify-content:space-between;align-items:center}
+.sos b{font-size:22pt}.sos span{font-size:9.5pt;color:rgba(255,255,255,.75);max-width:95mm;line-height:1.5}
+.page:not(.cover)>*:not(.ft){zoom:1.1}
+.page:not(.cover) .map{height:70mm}
+</style></head><body>
+
+<section class="page cover"><div class="ph"></div><span class="tag">Villa Calipso · Albacete</span>
+<div class="tx"><h1>House <em>manual</em></h1><p>Everything you need to feel at home, in a few pages.</p>
+<div class="meta"><span>Edition<b>2026</b></span><span>Your hosts<b>Marta &amp; Javier</b></span><span>Reach us<b>In the app, any time</b></span></div></div></section>
+
+<section class="page"><div class="eye">01 · Arrival</div><h2>Welcome <em>home</em></h2>
+<p class="lead">We are so happy to host you. This little manual explains how to get in, how the house works and a few habits that keep the villa pleasant for you, for us and for our neighbours.</p>
+<div class="cards"><div class="card"><small>Check-in</small><b>from 15:00</b><span>Any time after that</span></div><div class="card"><small>Check-out</small><b>by 11:00</b><span>Ask us for a later one</span></div><div class="card"><small>Quiet hours</small><b>22:00–08:00</b><span>Every day</span></div></div>
+<h3>Wi-Fi</h3><p>The signal is strongest in the living room.</p>
+<div class="wifi"><div><small>Network</small><code>Calipso_Guest</code></div><div><small>Password</small><code>Villa-Calipso-26</code></div></div>
+<h3>Getting in</h3>
+<ol class="st"><li><span>The keypad is on the right of the front door.</span></li><li><span>Your personal code appears in the app as soon as you finish check-in.</span></li><li><span>If the keypad doesn’t respond, press <b>#</b> twice and enter the code again.</span></li><li><span>The spare key is in the key box to the left of the gate.</span></li></ol>
+<div class="ft"><span>Villa Calipso · House manual</span><span>2 / 4</span></div></section>
+
+<section class="page"><div class="eye">02 · Living together</div><h2>House <em>rules</em></h2>
+<p class="lead">Nothing strict: just the small things that make everybody’s stay easier.</p>
+<div class="rules"><div class="rule"><b>Quiet hours</b><p>Please keep noise down between 22:00 and 08:00. On the terrace you can stay as late as you like, with low voices.</p></div><div class="rule"><b>Smoking</b><p>The house is smoke-free. You can smoke on the terrace; there is an ashtray on the table.</p></div><div class="rule"><b>Pets</b><p>Well-behaved pets are welcome. Just let us know before you arrive so we can get the house ready.</p></div><div class="rule"><b>Water &amp; energy</b><p>Keep windows closed while the air conditioning is on, and switch it off when you go out.</p></div></div>
+<h3>Recycling</h3><p style="margin-bottom:5mm">The bins are on the corner, to the right of the green gate.</p>
+<div class="bins"><div class="bin"><i style="background:#f2c230"></i><b>Yellow</b><small>Plastic, cans and cartons</small></div><div class="bin"><i style="background:#385bf8"></i><b>Blue</b><small>Paper and cardboard</small></div><div class="bin"><i style="background:#37b36d"></i><b>Green</b><small>Glass, without lids</small></div><div class="bin"><i style="background:#7b8099"></i><b>Grey</b><small>Everything else</small></div></div>
+<div class="ft"><span>Villa Calipso · House manual</span><span>3 / 4</span></div></section>
+
+<section class="page"><div class="eye">03 · The neighbourhood</div><h2>Around the <em>villa</em></h2>
+<div class="map"><svg viewBox="0 0 640 280" width="100%" height="100%" preserveAspectRatio="xMidYMid slice"><rect width="640" height="280" fill="#e9edf8"/><path d="M0 200 L640 120" stroke="#fff" stroke-width="22"/><path d="M180 0 L260 280" stroke="#fff" stroke-width="16"/><path d="M430 0 L380 280" stroke="#fff" stroke-width="12"/><path d="M0 60 L640 90" stroke="#fff" stroke-width="9"/><rect x="40" y="215" width="120" height="50" rx="10" fill="#cfe6d4"/><rect x="470" y="140" width="130" height="90" rx="12" fill="#bcd9f5"/><circle cx="300" cy="140" r="26" fill="rgba(56,91,248,.18)"/><circle cx="300" cy="140" r="11" fill="#385bf8"/><circle cx="300" cy="140" r="4.5" fill="#fff"/><text x="318" y="124" font-family="P,sans-serif" font-size="14" font-weight="700" fill="#161643">Villa Calipso</text><text x="468" y="128" font-family="P,sans-serif" font-size="11" font-weight="600" fill="#6b6b95">Plaza Mayor</text></svg></div>
+<div class="list"><div><b>Supermarket</b><span>4 minutes on foot. Open Monday to Saturday, 09:00–21:30.</span></div><div><b>Pharmacy</b><span>Two streets from the villa, open until 22:00.</span></div><div><b>Where to eat</b><span>The streets around Plaza Mayor: every drink comes with a free tapa.</span></div><div><b>Parking</b><span>Free on Calle Mayor, or a covered space in our yard on request.</span></div></div>
+<div class="sos"><span>In an emergency, call the European emergency number. It works everywhere, free of charge.</span><b>112</b></div>
+<div class="ft"><span>Villa Calipso · House manual</span><span>4 / 4</span></div></section>
+</body></html>

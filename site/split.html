@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Móvil + escritorio</title>
+<script>window.__phoneHost = true; window.__phoneSplit = true;</script>
+<style>
+
+html,body{height:100%;margin:0}
+body{background:linear-gradient(180deg,#e9ecf9 0%,#dde1f3 100%);font:600 12px system-ui,sans-serif;color:#161643;display:flex;flex-direction:column;align-items:center;overflow:hidden}
+.bar{display:flex;align-items:center;flex-wrap:wrap;justify-content:center;gap:4px;margin:12px 8px;padding:4px;border-radius:20px;background:#fff;border:1px solid #e5e6ee;box-shadow:0 6px 20px rgba(60,72,140,.18)}
+.bar span{padding:0 6px 0 8px;font-weight:500;color:#6b6b95}
+.bar a{padding:6px 12px;border-radius:99px;color:#161643;text-decoration:none}
+.bar a.on{background:#385bf8;color:#fff}
+.bar a.idx{background:#161643;color:#fff}
+.bar i{width:1px;height:18px;background:#e5e6ee;margin:0 4px}
+.bar select,.bar button{font:inherit;color:#161643;border:1px solid #d9dcec;background:#f6f7fb;border-radius:99px;padding:5px 10px;cursor:pointer}
+.bar button:hover,.bar select:hover{background:#eef0f8}
+.bar .dim{font-variant-numeric:tabular-nums;padding:0 8px 0 4px}
+.stage{flex:1;min-height:0;width:100%;position:relative}
+.phone{position:absolute;left:0;top:0;transform-origin:top left;background:linear-gradient(145deg,#34365c 0%,#12132b 38%,#1c1d3b 100%);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.16),inset 0 0 0 5px #08091a,0 34px 60px -26px rgba(38,48,118,.5),0 10px 22px rgba(38,48,118,.2)}
+.phone::before{content:"";position:absolute;left:-3px;top:23%;width:3px;height:11%;border-radius:2px 0 0 2px;background:#1d1e3c;box-shadow:0 52px 0 #1d1e3c}
+.phone::after{content:"";position:absolute;right:-3px;top:29%;width:3px;height:13%;border-radius:0 2px 2px 0;background:#1d1e3c}
+.scr{position:relative;width:100%;height:100%;overflow:hidden;background:#fff}
+.sb{position:absolute;left:0;right:0;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;background:#fff;color:#161643;font:600 16px/1 system-ui,-apple-system,"SF Pro Text","Segoe UI",sans-serif;letter-spacing:-.01em}
+.sb .ic{display:flex;align-items:center;gap:6px}
+.phone iframe{position:absolute;left:0;width:100%;border:0;background:#fff;display:block}
+.phone.desk::before{left:50%;right:auto;top:100%;width:15%;height:44px;transform:translateX(-50%);border-radius:0;background:linear-gradient(90deg,#aeb2c9,#d4d7e6 50%,#aeb2c9);box-shadow:none}
+.phone.desk::after{left:50%;right:auto;top:calc(100% + 44px);width:30%;height:9px;transform:translateX(-50%);border-radius:0 0 12px 12px;background:linear-gradient(90deg,#9ea3bd,#c7cadc 50%,#9ea3bd)}
+.phone.desk .sb,.phone.desk .hi{display:none}
+.di{position:absolute;left:50%;transform:translateX(-50%);z-index:3;background:#000;border-radius:99px;pointer-events:none}
+.hi{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);z-index:3;width:36%;max-width:146px;height:5px;border-radius:99px;background:#161643;opacity:.88;pointer-events:none}
+
+.stage{flex:1;min-height:0;width:100%;position:relative}
+.phone.desk{background:linear-gradient(145deg,#34365c 0%,#12132b 38%,#1c1d3b 100%)}
+.phone.desk .scr{border-radius:8px}
+</style></head><body>
+<div class="bar"><span>Vista</span><a href="#" id="lm">Mockup móvil</a><a href="#" id="lt">Mockup tablet</a><a href="#" id="ld">Mockup escritorio</a><a href="#" class="on" id="ls">Móvil + escritorio</a><a id="d" href="#">Sin mockup</a><a class="idx" href="index.html">Índice</a><i></i><span class="dim" id="dim"></span></div>
+<div class="stage" id="stage">
+  <div class="phone desk" id="pd"><div class="scr"><iframe id="frD" data-role="desk" name="desk" title="Réplica en escritorio"></iframe></div></div>
+  <div class="phone" id="ph"><div class="scr" id="scr"><div class="sb" id="sb"><span class="tm">9:41</span><span class="ic" aria-hidden="true"><svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg width="17" height="12" viewBox="0 0 17 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1.5 4.2a10 10 0 0 1 14 0"/><path d="M4.2 7a6 6 0 0 1 8.6 0"/><circle cx="8.5" cy="10" r="1.3" fill="currentColor" stroke="none"/></svg><svg width="27" height="13" viewBox="0 0 27 13"><rect x=".5" y=".5" width="22" height="12" rx="3.8" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="19" height="9" rx="2.5" fill="currentColor"/><path d="M24 4.5v4c1-.3 1.8-1.1 1.8-2s-.8-1.7-1.8-2z" fill="currentColor" opacity=".45"/></svg></span></div><iframe id="fr" data-role="mob" name="phone" title="Réplica en móvil"></iframe><div class="di" id="di"></div><div class="hi"></div></div></div>
+</div>
+<script>
+/* Vista «Móvil + escritorio»: la mitad izquierda es el escritorio (1440×900), el cuarto siguiente el móvil (iPhone 15) y el último cuarto los ajustes (panel con tres pestañas: Controles · Ajustes de la reserva · Componentes, que monta el marco del móvil). Las dos pantallas navegan juntas. */
+var q = new URLSearchParams(location.search), id = q.get('s') || 'home', extra = q.get('q') || '';
+var frD = document.getElementById('frD'), fr = document.getElementById('fr'), pd = document.getElementById('pd'), ph = document.getElementById('ph');
+var DW = 1440, DH = 900, DP = 14, MW = 390, MH = 844, MP = 12, SB = 54;
+/* pantallas que solo existen en una versión: el escritorio pide su equivalente (como hace la réplica con «g2-form-empty» → «form-empty») */
+var MAPD = { 'g2-form-empty': 'form-empty', 'g2-form-filled': 'form-filled-mid', 'g2-iv-intro': 'iv-intro-f', 'g2-submit-a': 'hub-after-1', 'g2-submit-b': 'hub-after-1', 'g2-submit-c': 'hub-after-1', 'submit-1': 'hub-after-1', 'submit-2': 'hub-after-1', 'form-birth-open': 'form-birth-picker', 'form-errors': 'form-errors-inline', 'pay-1b-protection-scrolled': 'pay-1b-scrolled', 'pay-1d-deposit-sheet': 'pay-1-protection' };
+var REVD = { 'form-empty': 'g2-form-empty' };   /* y al revés: si el escritorio llega a «form-empty» desde el flujo nuevo, el móvil está en «g2-form-empty» */
+function didFor(m){ return MAPD[m] || m; }
+function url(v){ return new URL('screens/' + (v === 'd' ? didFor(id) : id) + '.' + v + '.html' + (extra ? '?' + extra : ''), location.href).href; }
+function layout(){
+  var W = window.innerWidth, H = window.innerHeight, st = document.getElementById('stage').getBoundingClientRect(), sh = H - st.top;
+  var c1 = W / 2, c2 = W / 4;
+  /* escritorio: marco con pantalla de 1440×900, reducido para caber en su mitad */
+  pd.style.width = DW + 'px'; pd.style.height = DH + 'px'; pd.style.padding = DP + 'px'; pd.style.borderRadius = (8 + DP) + 'px';
+  frD.style.cssText = 'top:0;left:0;width:' + DW + 'px;height:' + DH + 'px';
+  var Wd = DW + 2 * DP, Hd = DH + 2 * DP + 54, kd = Math.max(.2, Math.min(1, (c1 - 32) / Wd, (sh - 24) / Hd));
+  pd.style.transform = 'scale(' + kd + ')'; pd.style.left = Math.max(8, Math.round(c1 / 2 - Wd * kd / 2)) + 'px'; pd.style.top = '8px';
+  /* móvil: iPhone 15 (390×844) */
+  ph.style.width = MW + 'px'; ph.style.height = MH + 'px'; ph.style.padding = MP + 'px'; ph.style.borderRadius = (50 + MP) + 'px';
+  var scr = document.getElementById('scr'), sb = document.getElementById('sb'), di = document.getElementById('di');
+  scr.style.borderRadius = '50px'; sb.style.height = SB + 'px'; sb.style.padding = '0 34px'; sb.style.paddingTop = '8px'; sb.style.boxSizing = 'border-box';
+  fr.style.top = SB + 'px'; fr.style.left = '0'; fr.style.width = MW + 'px'; fr.style.height = (MH - SB) + 'px';
+  di.style.display = 'block'; di.style.width = '122px'; di.style.height = '35px'; di.style.top = '11px';
+  var Wm = MW + 2 * MP, Hm = MH + 2 * MP, km = Math.max(.2, Math.min(1, (c2 - 24) / Wm, (sh - 24) / Hm));
+  ph.style.transform = 'scale(' + km + ')'; ph.style.left = Math.round(c1 + c2 / 2 - Wm * km / 2) + 'px'; ph.style.top = '8px';
+  document.getElementById('dim').textContent = DW + '×' + DH + ' · ' + MW + '×' + MH;
+}
+var loadedAt = 0;
+function go(f, href){ try { f.contentWindow.__allowNav = true; } catch (e) {} f.src = href; }   /* __allowNav: la página no debe interceptar esta navegación (la pide el marco padre) */
+function loadBoth(){ loadedAt = Date.now(); go(frD, url('d')); go(fr, url('m')); links(); }
+function links(){
+  var e = extra ? '&q=' + encodeURIComponent(extra) : '';
+  document.getElementById('lm').href = 'phone.html?s=' + id + '&dev=i15' + e;
+  document.getElementById('lt').href = 'phone.html?s=' + id + '&dev=ip' + e;
+  document.getElementById('ld').href = 'phone.html?s=' + id + '&dev=mbp14' + e;
+  document.getElementById('d').href = 'screens/' + id + '.d.html' + (extra ? '?' + extra : '');
+  var u = new URL(location.href); u.searchParams.set('s', id); if (extra) u.searchParams.set('q', extra); else u.searchParams.delete('q'); history.replaceState(null, '', u.pathname + u.search);
+}
+var trail = [];
+function nav(href, noPush, from){
+  var u; try { u = new URL(href, location.href); } catch (e) { return; } if (u.origin !== location.origin) return;
+  var m = /\/screens\/([^/]+)\.[md]\.html$/.exec(u.pathname); if (!m) return;
+  var nid = m[1], nx = u.search ? u.search.slice(1) : '';
+  if (from === 'd') { if (didFor(id) === nid && nx === extra) return; if (REVD[nid] && id.indexOf('g2-') === 0) nid = REVD[nid]; }   /* el escritorio ya está en lo que le toca: no se mueve el móvil */
+  if (nid === id && nx === extra) return;
+  if (!noPush) trail.push({ id: id, extra: extra }); if (trail.length > 40) trail.shift();
+  id = nid; extra = nx; loadBoth();
+}
+function within(win, frame){ try { for (var w = win, n = 0; w && n < 5; w = w.parent, n++) { if (w === frame.contentWindow) return true; if (w === w.parent) break; } } catch (e) {} return false; }
+window.addEventListener('message', function(ev){
+  var m = ev.data;
+  if (m && (m.rep === 'ui-click' || m.rep === 'ui-input' || m.rep === 'iv-gallery')) {   /* lo que se hace en un marco se replica en el otro (pulsaciones, escritura y la imagen elegida de la galería) */
+    var other = within(ev.source, fr) ? frD : (within(ev.source, frD) ? fr : null);   /* el origen puede ser el marco o un modal en un iframe dentro de él */
+    try { if (other) other.contentWindow.postMessage(m, '*'); } catch (e) {}
+    return;
+  }
+  if (!m || (m.rep !== 'phone-nav' && m.rep !== 'phone-back')) return;
+  if (!within(ev.source, fr) && !within(ev.source, frD)) return;
+  if (m.rep === 'phone-nav') nav(m.url, false, within(ev.source, frD) ? 'd' : 'm');
+  else { var t = trail.pop(); if (t) { id = t.id; extra = t.extra; loadBoth(); } else { id = 'home'; extra = ''; loadBoth(); } }
+});
+/* los ajustes los cambia el panel (que vive en esta página pero lo gobierna el móvil) y se guardan en localStorage: el escritorio los lee al cargar, así que se recarga cuando se toca un control del panel (no por cualquier cambio de almacenamiento: el flujo de verificación también escribe claves y no debe reiniciar el escritorio) */
+var tmr = 0, reloads = [];
+document.addEventListener('click', function(e){
+  if (!e.target.closest || !e.target.closest('#rep-panel') || e.target.closest('.rp-tab') || e.target.closest('.rp-s[data-t="Vela sombreado"]') || e.target.closest('.rp-s[data-t="Bordes"]') || e.target.closest('.rp-s[data-t="Modal huéspedes"]') || e.target.closest('.rp-s[data-t="Tarjeta de prueba"]') || e.target.closest('.rp-s[data-t="Ver paso (sin pagar)"]')) return;   /* «Modal huéspedes», «Tarjeta de prueba» y «Ver paso» no cambian ajustes (solo abren o rellenan el modal, y se replican en el otro marco): recargar el escritorio lo cerraría */   /* las pestañas del panel no cambian ajustes */
+  var now = Date.now(); reloads = reloads.filter(function(t){ return now - t < 8000; }); if (reloads.length >= 4) return;
+  clearTimeout(tmr); tmr = setTimeout(function(){ reloads.push(Date.now()); try { go(frD, frD.contentWindow.location.href); } catch (x) { go(frD, url('d')); } }, 450);
+}, true);
+/* si el móvil acaba en otra pantalla distinta de la pedida (p. ej. una redirección de la réplica), el escritorio la sigue; solo se mira cuando el móvil ha terminado de cargar */
+fr.addEventListener('load', function(){ try { var m = /screens\/([^/]+)\.m\.html/.exec(fr.contentWindow.location.pathname); if (!m) return; var ex = (fr.contentWindow.location.search || '').slice(1); if (m[1] !== id || ex !== extra) { id = m[1]; extra = ex; go(frD, url('d')); links(); } } catch (e) {} });
+window.addEventListener('resize', layout);
+layout(); loadBoth();
+</script></body></html>

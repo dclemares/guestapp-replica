@@ -1,0 +1,2 @@
+<!doctype html><meta charset="utf-8"><body style="margin:0;background:#f0f"><div id="s" style="position:relative;width:700px;height:700px"></div>
+<script>fetch('meta.json').then(r=>r.json()).then(m=>{const s=document.getElementById('s'),k=700/m.W;['cap','glasses'].forEach(n=>{const i=new Image();i.src=n+'.png?'+Date.now();const r=m[n];i.style.cssText=`position:absolute;left:${r.x*k}px;top:${r.y*k}px;width:${r.w*k}px;height:${r.h*k}px`;s.appendChild(i)})})</script>

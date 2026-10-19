@@ -1,0 +1,253 @@
+/* Edición de tasas (cart-exemptions) · V3 «Noches». Mismo lenguaje que Pagos: gris neutro de fondo, tarjetas blancas sin borde ni sombra,
+   marino #161643, azul #385bf8, CTA cuadrado de 12 px. La caja oscura tiene 4 versiones (.tb-a … .tb-d). */
+.tx-orig{display:none!important}
+.tx{--tx-navy:#161643;--tx-blue:#385bf8;--tx-sec:#6b6b95;--tx-line:#eceef6;--tx-soft:#f1f3fb;--tx-tint:#e4e9ff;display:flex;flex-direction:column;gap:16px;padding-bottom:96px;font-family:inherit;color:var(--tx-navy)}
+.tx button{font-family:inherit;cursor:pointer}
+.tx-main{display:flex;flex-direction:column;min-width:0}
+.tx-aside{min-width:0;order:-1}
+@media (min-width:1024px){
+  .tx{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:22px;align-items:start;padding-bottom:24px}
+  .tx-aside{order:0;position:sticky;top:24px}
+  .tx-dock{display:none!important}
+}
+@media (max-width:1023.98px){.tx-go-w{display:none!important}}
+.tx-lbl{display:flex;align-items:center;gap:7px;margin:0;font-size:12px;line-height:16px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#4a5072}
+.tx-lbl svg{color:var(--tx-blue)}
+.t2-hd{margin:2px 0 10px}
+.tx-a{display:flex;flex-direction:column;align-items:flex-end;flex:none}
+.tx-a b{font-size:16px;line-height:20px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--tx-navy)}
+.tx-a s{font-size:12px;line-height:14px;color:#9a9ab8}
+.tx-go{display:block;width:100%;height:48px;padding:0 16px;border:0;border-radius:12px;background:var(--tx-blue);color:#fff;font-size:14.5px;font-weight:600}
+.tx-go:hover{background:#294df1}
+.tx-go:disabled{opacity:.45;cursor:default}
+/* dock inferior (móvil): solo «Confirm», margen inferior para el indicador de inicio */
+.tx-dock{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;padding:14px 16px calc(22px + env(safe-area-inset-bottom,0px));background:#fff;box-shadow:inset 0 1px 0 var(--tx-line)}
+.t2-rule{display:flex;align-items:flex-start;gap:8px;margin:14px 4px 0;font-size:12.5px;line-height:18px;color:var(--tx-sec)}
+.t2-rule svg{flex:none;margin-top:1px;color:var(--tx-blue)}
+.t2-rule b{color:var(--tx-navy)}
+
+/* ===== huéspedes (como en el resumen) ===== */
+.t3-list{display:flex;flex-direction:column;gap:8px}
+.t3-row{position:relative;display:flex;align-items:center;gap:12px;padding:12px 6px 12px 14px;border-radius:6px 6px 18px 18px;background:#fff}
+.t3-row.open{z-index:20}
+.t3-av{flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:12px;font-size:13px;font-weight:700}
+.t3-av.ok{background:rgba(56,91,248,.16);color:#385bf8}   /* huéspedes en Tasas: azul translúcido sin borde (#868) */
+.t3-av.un{background:#eceef6;color:#7d86ad}
+.t3-tx{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start}
+.t3-tx b{font-size:15px;line-height:20px;color:var(--tx-navy)}
+.t3-s{font-size:12.5px;line-height:17px;color:var(--tx-sec)}
+.t3-cs{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+.t3-chip{padding:1px 8px;border-radius:9999px;font-size:10px;font-style:normal;font-weight:800;letter-spacing:.06em;text-transform:uppercase;line-height:1.5;white-space:nowrap}
+.t3-chip.ex{background:#ffc233;color:#0b0b0f}   /* como los chips de pendiente del resumen («IV PENDING») */
+.t3-kw{position:relative;flex:none}
+.t3-kb{display:grid;place-items:center;width:32px;height:40px;padding:0;border:0;border-radius:10px;background:none;color:#7d86ad}
+.t3-kb:hover,.t3-kb[aria-expanded="true"]{background:#eef0f8;color:var(--tx-navy)}
+.t3-dd{position:absolute;right:0;top:calc(100% + 4px);z-index:30;display:flex;flex-direction:column;min-width:190px;padding:6px;border-radius:12px;background:#fff;box-shadow:0 12px 32px rgba(22,22,67,.22)}
+.t3-di{padding:10px 12px;border:0;border-radius:8px;background:none;text-align:left;font-size:13.5px;font-weight:600;color:var(--tx-navy)}
+.t3-di:hover{background:#f3f4fa}
+
+/* ===== hojas (móvil: inferior · escritorio: modal centrado) ===== */
+.t2-bd{position:fixed;inset:0;z-index:100000;background:rgba(22,22,67,.45)}
+.t2-sheet{position:fixed;left:0;right:0;bottom:0;z-index:100001;display:flex;flex-direction:column;max-height:88vh;background:#fff;color:var(--tx-navy);border-radius:22px 22px 0 0}
+.t2-sheet.t2-in{animation:t2Up .22s cubic-bezier(.2,.8,.2,1)}
+@keyframes t2Up{from{transform:translateY(100%)}to{transform:none}}
+@keyframes t2Fd{from{opacity:0;transform:translateY(-46%)}to{opacity:1;transform:translateY(-50%)}}
+@media (min-width:1024px){.t2-sheet{left:50%;right:auto;top:50%;bottom:auto;width:440px;margin-left:-220px;transform:translateY(-50%);border-radius:18px;max-height:80vh}.t2-sheet.t2-in{animation:t2Fd .18s ease both}.t2-grab{display:none}}
+.t2-grab{position:absolute;top:8px;left:50%;width:38px;height:4px;margin-left:-19px;border-radius:99px;background:#d9dcee}
+.t2-sht{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:22px 20px 10px}
+.t2-sht b{font-size:17px;font-weight:700}
+.t2-x{display:grid;place-items:center;width:32px;height:32px;padding:0;border:0;border-radius:50%;background:var(--tx-soft);color:var(--tx-navy)}
+.t2-shb{overflow:auto;padding:0 20px 8px}
+.t2-shf{display:flex;flex-direction:column;gap:6px;padding:12px 20px calc(16px + env(safe-area-inset-bottom,0px));box-shadow:inset 0 1px 0 var(--tx-line)}
+.t2-sh{margin:6px 0 8px;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:#4a5072}
+.t2-rs{display:flex;flex-direction:column;gap:8px}
+.t2-rd{display:flex;align-items:center;gap:12px;width:100%;padding:11px 12px;border:0;border-radius:14px;background:var(--tx-soft);text-align:left}
+.t2-rd.on{background:#eef2ff;box-shadow:inset 0 0 0 2px var(--tx-blue)}
+.t2-rt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.t2-rt b{font-size:14px;line-height:19px;font-weight:700;color:var(--tx-navy)}
+.t2-rt span{font-size:12px;line-height:16px;color:var(--tx-sec)}
+.t2-dot{flex:none;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:inset 0 0 0 2px #c9cde0}
+.t2-rd.on .t2-dot{background:radial-gradient(#fff 0 34%,var(--tx-blue) 36%);box-shadow:none}
+.t2-proof{display:flex;align-items:flex-start;gap:8px;margin:14px 0 4px;font-size:12.5px;line-height:18px;color:var(--tx-sec)}
+.t2-proof svg{flex:none;margin-top:1px;color:var(--tx-blue)}
+.t2-proof b{color:var(--tx-navy)}
+.t2-ghost{height:44px;border:0;border-radius:12px;background:none;color:var(--tx-blue);font-size:14px;font-weight:600}
+.t3-ci{margin:2px 0 8px;font-size:13px;line-height:19px;color:var(--tx-sec)}
+.t3-pf{display:flex;gap:10px;padding:6px 0}
+.t3-pi{flex:none;display:grid;place-items:center;width:28px;height:28px;border-radius:9px;background:#fff3e0;color:#9a5b00}
+.t3-pf b{display:block;font-size:13px;line-height:18px;color:var(--tx-navy)}
+.t3-pf span span{display:block;font-size:12.5px;line-height:18px;color:var(--tx-sec)}
+.t3-pn2{margin:8px 0 0;font-size:12.5px;line-height:18px;color:var(--tx-sec)}
+.t3-mamt{font-size:15px;font-weight:700;color:var(--tx-navy)}.t3-mamt s{font-size:12px;font-weight:500;color:#9a9ab8}
+.t3-ml{display:flex;flex-direction:column;gap:2px;padding-bottom:16px}
+.t3-opt{padding:15px 8px;border:0;border-radius:12px;background:none;text-align:left;font-size:15px;font-weight:600;color:var(--tx-navy)}
+.t3-opt:hover{background:var(--tx-soft)}
+
+/* ===== Vela en el carril de escritorio ===== */
+.t2-rb .vc-chips{display:flex;flex-wrap:wrap;gap:6px}
+.t2-rb .vc-chip{padding:6px 10px;border:1.5px solid #dfe2f1;border-radius:9999px;background:#fff;color:#161643;font:600 11.5px/15px Poppins,system-ui,sans-serif;text-align:left;cursor:pointer}
+.t2-rb .vc-chip.on{border-color:#385bf8;background:#eef1ff;color:#294df1}
+.t2-rb .vc-a>div b{color:#161643}
+.t2-gk{display:flex;flex-direction:column}
+.t2-gr{display:flex;gap:11px;padding:8px 0}
+.t2-gi{flex:none;display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:#eef2ff;color:#385bf8}
+.t2-gr b{display:block;font-size:13px;color:#161643}.t2-gr span span{display:block;margin-top:2px;font-size:12px;line-height:17px;color:#6b6b95}
+
+/* ===== caja oscura · base común ===== */
+.tx-hero{position:relative;overflow:hidden;padding:18px;border-radius:var(--card-radius,18px);color:#fff;background:var(--chekin-gradient-hero,linear-gradient(135deg,#15153f 0%,#23235d 44%,#2e4bd0 100%))}
+.tx-go-w{margin-top:16px;background:#fff;color:var(--tx-navy)}
+.tx-go-w:hover{background:#f1f3fb}
+.tb-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+.tb-h{font-size:18px;line-height:24px;font-weight:600}
+.tb-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;background:rgba(255,255,255,.14);font-size:11.5px;white-space:nowrap}
+.tb-pill svg{color:#abbafc}
+.tb-tot{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-top:14px;padding-top:12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.16)}
+.tb-tot span{font-size:13px;color:rgba(255,255,255,.78)}
+.tb-tot b{font-size:30px;line-height:36px;font-weight:700;letter-spacing:-.015em;font-variant-numeric:tabular-nums}
+.tb-ex,.tb-why,.tb-cart{display:flex;align-items:flex-start;gap:8px;margin:10px 0 0;font-size:12.5px;line-height:18px;color:rgba(255,255,255,.78)}
+.tb-ex svg,.tb-why svg,.tb-cart svg{flex:none;margin-top:2px;color:#abbafc}
+.tb-ex{color:#ffd77a}.tb-ex svg{color:#ffc233}
+.tb-cart{margin-top:12px}
+@media (max-width:1023.98px){.tb .tb-cart{margin-top:12px}}
+/* C · Por qué */
+.tb-eye{display:block;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#abbafc}
+.tb-big{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 10px;margin:4px 0 14px}
+.tb-big b{font-size:34px;line-height:40px;font-weight:700;letter-spacing:-.015em;font-variant-numeric:tabular-nums}
+.tb-big span{font-size:13px;color:rgba(255,255,255,.78)}
+.tb-rs{display:flex;flex-direction:column;gap:10px}
+.tb-r{display:flex;gap:10px;align-items:flex-start}
+.tb-ri{flex:none;display:grid;place-items:center;width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,.12);color:#cdd6ff}
+.tb-r b{display:block;font-size:13.5px;line-height:18px;font-weight:600}
+.tb-r small{display:block;margin-top:2px;font-size:12px;line-height:17px;color:rgba(255,255,255,.72)}
+.tb-ft{display:flex;flex-direction:column}
+/* escritorio: la caja va arriba, a todo el ancho, en horizontal */
+@media (min-width:1024px){
+  .tp-2.tx{display:flex;flex-direction:column;align-items:stretch;gap:18px}
+  .tp-2 .tx-aside{order:-1;position:static}
+  .tp-2 .tb-c{display:grid;grid-template-columns:minmax(150px,190px) minmax(0,1fr);column-gap:28px;padding:22px 24px}
+  .tp-2 .tb-big{flex-direction:column;align-items:flex-start;gap:2px;margin:6px 0 0}
+  .tp-2 .tb-rs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+  .tp-2 .tb-r{flex-direction:column;gap:8px}
+  .tp-2 .tb-ft{grid-column:1 / -1;flex-direction:row-reverse;align-items:center;justify-content:space-between;gap:20px;margin-top:18px;padding-top:16px;box-shadow:inset 0 1px 0 rgba(255,255,255,.16)}
+  .tp-2 .tb-ft .tx-go-w{flex:none;width:280px;margin:0}
+  .tp-2 .tb-ft .tb-cart{margin:0}
+}
+
+/* huésped con la tasa ya pagada */
+.t3-chip.pd{display:inline-flex;align-items:center;gap:4px;background:#37e08f;color:#04331f}   /* como «REGISTERED» del resumen */
+.t3-pd b{color:#9a9ab8}
+.t3-pd small{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:600;color:#0d8a4f}
+
+/* V2 de «ya pagados»: el desglose ocupa el lugar de la razón de huéspedes */
+.tb-paid{display:flex;flex-direction:column;gap:6px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.08)}
+.tb-paid div{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12.5px;color:rgba(255,255,255,.75)}
+.tb-paid span{display:inline-flex;align-items:center;gap:5px}
+.tb-paid b{font-weight:600;color:#fff;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tb-paid .ok span svg{color:#37e08f}
+.tb-paid .due{margin-top:2px;padding-top:7px;box-shadow:inset 0 1px 0 rgba(255,255,255,.14);color:#fff;font-weight:600}
+.tb-paid .due b{font-weight:700}
+/* desglose de «ya pagados»: arriba con una raya que lo separa de «It’s a city tax»; en escritorio «Arriba» va a la derecha (última columna) */
+.tb-rs > .tb-paid + .tb-r{padding-top:12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.16)}
+@media (min-width:1024px){
+  .tp-2 .tb-rs > .tb-paid{order:3;align-self:start}
+  .tp-2 .tb-rs > .tb-paid + .tb-r{padding-top:0;box-shadow:none}
+}
+/* menos aire entre el total grande y el desglose (antes 14 px) */
+.tb-c:has(.tb-rs > .tb-paid:first-child) .tb-big{margin-bottom:6px}
+/* «Arriba»: columna del desglose algo más ancha y etiquetas en una línea */
+@media (min-width:1024px){
+  .tp-2 .tb-c:has(.tb-paid) .tb-rs{grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.3fr)}
+  .tp-2 .tb-paid span{white-space:nowrap}
+}
+@media (min-width:1024px){
+  .tp-2 .tb-c:has(.tb-paid) .tb-rs{grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.6fr);gap:14px}
+  .tp-2 .tb-paid{padding:8px 10px}
+  .tp-2 .tb-paid div{font-size:12px;gap:8px}
+}
+
+/* móvil: «Nothing is charged here…» bajo el «Confirm» del dock (y fuera de la caja) */
+.tx-dock{flex-direction:column;gap:8px;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px))}
+.tx-dn{display:flex;align-items:flex-start;justify-content:center;gap:6px;margin:0;font-size:12px;line-height:16px;text-align:center;color:var(--tx-sec)}
+.tx-dn svg{flex:none;margin-top:1px;color:var(--tx-blue)}
+@media (max-width:1023.98px){.tx-hero .tb-cart{display:none}.tx{padding-bottom:128px}}
+/* «Arriba»: las tres columnas vuelven a tener el mismo ancho; la tabla se compacta por dentro para caber */
+@media (min-width:1024px){
+  .tp-2 .tb-c:has(.tb-paid) .tb-rs{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+  .tp-2 .tb-paid{padding:8px 9px;gap:5px}
+  .tp-2 .tb-paid div{font-size:11.5px;gap:6px}
+}
+/* «Arriba» con columnas iguales: en cada fila del desglose, la etiqueta encima y el importe debajo */
+@media (min-width:1024px){
+  .tp-2 .tb-paid{padding:10px 12px;gap:7px}
+  .tp-2 .tb-paid div{flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:1px;font-size:11.5px;line-height:15px}
+  .tp-2 .tb-paid b{font-size:13.5px;line-height:18px}
+  .tp-2 .tb-paid .due{padding-top:7px}
+}
+/* dock de móvil sin la raya superior */
+.tx-dock{box-shadow:none}
+/* dock de móvil: en vez de raya, una sombra mínima hacia arriba */
+.tx-dock{box-shadow:0 -4px 14px rgba(22,22,67,.06)}
+/* «Arriba»: la tabla con el mismo alto que las otras dos columnas; filas en una línea cuando el ancho lo permite */
+@media (min-width:1024px){
+  .tp-2 .tb-rs > .tb-paid{align-self:stretch;justify-content:center;gap:5px;padding:8px 10px;container-type:inline-size}
+  .tp-2 .tb-paid div{line-height:15px}
+  .tp-2 .tb-paid b{font-size:12.5px;line-height:16px}
+  .tp-2 .tb-paid .due{padding-top:6px}
+}
+@container (min-width:124px){
+  .tp-2 .tb-paid div{flex-direction:row!important;align-items:center!important;justify-content:space-between!important;gap:8px!important}
+}
+/* «Arriba»: la tabla de ya pagados SIEMPRE en filas de una línea (etiqueta a la izquierda, importe a la derecha), al mismo alto que los textos, sea cual sea el ancho de pantalla. Para que quepa en anchos menores, el bloque del 6.00€ y los huecos se compactan */
+@media (min-width:1024px){
+  .tp-2 .tb-c{grid-template-columns:minmax(118px,170px) minmax(0,1fr);column-gap:20px}
+  .tp-2 .tb-rs{gap:12px}
+  .tp-2 .tb-paid{padding:8px 9px;gap:5px}
+  .tp-2 .tb-paid div{flex-direction:row!important;align-items:center!important;justify-content:space-between!important;gap:6px!important;white-space:nowrap;font-size:11.5px;line-height:15px}
+  .tp-2 .tb-paid b{font-size:12px;line-height:16px}
+}
+/* la tabla nunca baja de 140 px (cabe en una línea por fila); en pantallas anchas las tres columnas siguen siendo iguales */
+@media (min-width:1024px){
+  .tp-2 .tb-c:has(.tb-paid) .tb-rs{grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(140px,1fr)}
+}
+/* «Arriba» en pantallas muy ajustadas (caja < 580 px): una sola columna, como en móvil; la tabla va primero y sigue en filas de una línea */
+@media (min-width:1024px){ .tp-2 .tx-aside{container-type:inline-size} }
+@container (max-width:579px){
+  .tp-2 .tb-c{grid-template-columns:1fr!important;row-gap:0}
+  .tp-2 .tb-c .tb-rs{display:flex!important;flex-direction:column;gap:12px;margin-top:14px}
+  .tp-2 .tb-c .tb-r{flex-direction:row!important;gap:10px!important}
+  .tp-2 .tb-c .tb-paid{order:-1}
+  .tp-2 .tb-c .tb-paid + .tb-r{padding-top:12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.16)}
+  .tp-2 .tb-c .tb-ft{flex-direction:column-reverse!important;align-items:stretch!important;gap:12px!important}
+  .tp-2 .tb-c .tb-ft .tx-go-w{width:100%!important}
+}
+/* «Arriba» con la caja ajustada (580–700 px): el bloque del 6.00€ cede ancho (118–170 → 100–120 px; «tourist tax left to pay» pasa a dos líneas) y los huecos se reducen, para dar más ancho a las tres columnas y bajar el alto de la caja */
+@container (min-width:580px) and (max-width:699px){
+  .tp-2 .tb-c{grid-template-columns:minmax(100px,120px) minmax(0,1fr)!important;column-gap:14px!important}
+  .tp-2 .tb-c .tb-rs{gap:10px!important}
+  .tp-2 .tb-c .tb-big{margin-bottom:0}
+  .tp-2 .tb-c .tb-big span{max-width:100px}
+}
+
+/* ===== Aviso «Exemptions to verify at check-in»: 4 versiones (.cf1 … .cf4) · mismo lenguaje que Pagos: marino, azul #385bf8, ámbar de «pendiente», cajitas translúcidas, CTA de 12 px ===== */
+.t2-sheet.cf .t2-sht b{font-size:19px;line-height:25px;letter-spacing:-.01em}
+.t2-sheet.cf .t2-shb{padding:2px 20px 14px}
+.t2-sheet.cf .t2-shf{gap:2px}
+.cf-lead{margin:0 0 14px;font-size:14px;line-height:20px;color:var(--tx-sec)}
+.cf-nt{margin:6px 4px 0;text-align:center;font-size:12.5px;line-height:18px;color:var(--tx-sec)}
+.cf-gb{flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:rgba(56,91,248,.16);color:#385bf8;font-size:13px;font-weight:700}
+.cf-tx{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:3px}
+.cf-tx>b{font-size:15px;line-height:20px;font-weight:700;color:var(--tx-navy)}
+.cf-card{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-radius:14px;background:var(--tx-soft)}
+.cf-card+.cf-card{margin-top:8px}
+.cf-card .tx-a{display:flex;flex-direction:column;align-items:flex-end;gap:0;text-align:right;white-space:nowrap}
+.cf-card .tx-a s{font-size:12px;line-height:16px;color:#8b8fb0}
+.cf-card .tx-a b{font-size:15px;line-height:20px;font-weight:700;color:var(--tx-navy);font-variant-numeric:tabular-nums}
+.cf-bring{display:flex;align-items:flex-start;gap:6px;margin-top:3px;font-size:13px;line-height:18px;color:var(--tx-sec)}
+.cf-bring svg{flex:none;margin-top:2px;color:var(--tx-blue)}
+.cf-c1{flex-direction:column;align-items:stretch;gap:0;padding:12px 14px}
+.cf-r1{display:flex;align-items:center;gap:12px}
+.cf-r1 .tx-a{display:flex;flex-direction:column;align-items:flex-end;text-align:right;white-space:nowrap}
+.cf-r1 .tx-a s{font-size:12px;line-height:16px;color:#8b8fb0}
+.cf-r1 .tx-a b{font-size:15px;line-height:20px;font-weight:700;color:var(--tx-navy);font-variant-numeric:tabular-nums}
+.cf-bring2{display:flex;align-items:flex-start;gap:8px;margin:0 0 10px;padding-bottom:10px;border-bottom:1px solid #e1e5f2;font-weight:600;font-size:13.5px;line-height:19px;color:var(--tx-navy)}
+.cf-bring2 svg{flex:none;margin-top:2px;color:var(--tx-blue)}

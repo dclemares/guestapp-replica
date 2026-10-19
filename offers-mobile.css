@@ -1,0 +1,129 @@
+/* Ofertas en móvil (módulo "Offers for your stay": Actual y B). Mismo contenido que el panel derecho de escritorio, apilado en la columna. */
+.mob-offers{display:block;margin-top:2px}
+.mob-offers .rail-vela{display:block;min-height:0}
+.mob-offers .rail-multi .rv{gap:12px}
+.mob-offers chekin-vela{display:block!important;width:auto!important}
+.mob-offers chekin-vela .vela-inner{display:block}
+.mob-offers .vela-scroll{overflow:visible!important}
+.mob-offers .vela-heading{margin:0 0 8px;padding-right:0}
+.mob-offers .vela-heading b{font-size:17px}
+/* sin sangrado lateral del panel de escritorio: el banner de eSIM es una tarjeta más */
+.mob-offers .rp-esim{margin:14px 0 0!important;border-radius:16px;overflow:hidden}
+.mob-offers chekin-vela .vela-banner{margin:14px 0 0!important;border-radius:16px;overflow:hidden}
+.mob-offers .vela-ride,.mob-offers .vela-tour{margin-left:0;margin-right:0}
+/* carrusel de deals con scroll horizontal hasta el borde de la pantalla */
+.mob-offers .vela-carwrap{margin:0 -16px}
+.mob-offers .vela-car{padding-left:16px;padding-right:16px;scroll-padding-left:16px}
+.mob-offers .vela-carwrap::after{display:block;width:44px;background:linear-gradient(90deg,rgba(246,247,252,0),rgba(246,247,252,.97) 78%);border-radius:0}
+/* variante B */
+.mob-offers .rv-b{gap:12px}
+.mob-offers .rpB-sec{margin:0}
+/* combinaciones en móvil: se oculta la sección quitada; las demás conservan el aspecto de "Todo" */
+/* solo eSIM: sin el margen superior del banner ni el del módulo, para que la separación con el check-in sea la normal (22 px) */
+.mob-offers:has(.rail-multi[data-mset="e"]){margin-top:0}
+.mob-offers .rail-multi[data-mset="e"] .rv-actual .rp-esim{margin-top:0!important}
+.mob-offers .rail-multi[data-mset="e"] .rv-actual chekin-vela{display:none!important}
+
+/* ===== variante: Transfer y Tours en dos tarjetas en paralelo (solo móvil; ?par=1 o botón del cuadro) ===== */
+.mob-offers .rail-multi[data-par] .rv-actual .vela-scroll{display:grid!important;grid-template-columns:1fr 1fr;column-gap:10px;row-gap:0;align-items:stretch}
+.mob-offers .rail-multi[data-par] .rv-actual .vela-scroll>*{grid-column:1/-1}
+.mob-offers .rail-multi[data-par] .rv-actual .vela-scroll>.vela-ride,.mob-offers .rail-multi[data-par] .rv-actual .vela-scroll>.vela-tour{grid-column:auto;min-height:250px;height:100%;margin:8px 0 4px;padding:14px 12px;display:flex;flex-direction:column;min-width:0}
+/* tarjetas estrechas: titular más pequeño, sin párrafo, ruta y estrella reducidas */
+.mob-offers .rail-multi[data-par] .vela-ride h4,.mob-offers .rail-multi[data-par] .vela-tour h4{font-size:16px;line-height:1.18;max-width:none;padding-right:0}
+.mob-offers .rail-multi[data-par] .vela-ride p,.mob-offers .rail-multi[data-par] .vela-tour p{display:none}
+.mob-offers .rail-multi[data-par] .vela-ride .rd-kik,.mob-offers .rail-multi[data-par] .vela-tour .tr-kik{font-size:8.5px;letter-spacing:.08em;padding:4px 8px;white-space:normal;line-height:1.2}
+.mob-offers .rail-multi[data-par] .vela-ride .rd-route{display:none}
+.mob-offers .rail-multi[data-par] .vela-ride .rd-star{width:46px;height:46px;font-size:7.5px;top:-14px;right:8px}
+.mob-offers .rail-multi[data-par] .vela-ride .rd-cta,.mob-offers .rail-multi[data-par] .vela-tour .tr-cta{height:40px;font-size:12px;padding:0 8px;margin-top:auto;width:100%;justify-content:center;gap:5px}
+.mob-offers .rail-multi[data-par] .vela-ride .rd-cta svg,.mob-offers .rail-multi[data-par] .vela-tour .tr-cta svg{width:12px;height:12px}
+.mob-offers .rail-multi[data-par] .vela-ride{background-position:78% 50%}
+.mob-offers .rail-multi[data-par] .vela-ride .rd-star{top:auto;bottom:58px;right:8px;width:44px;height:44px}
+
+/* ===== tarjetas en paralelo v3: cartel con foto a sangre y panel de cristal abajo (toda la tarjeta se toca) ===== */
+.mob-offers .rail-multi[data-par] .rv-actual .vela-scroll>.vela-ride,.mob-offers .rail-multi[data-par] .rv-actual .vela-scroll>.vela-tour{min-height:340px;padding:10px;border-radius:24px;-webkit-tap-highlight-color:transparent;transition:transform .15s ease;overflow:hidden;position:relative}
+.mob-offers .rail-multi[data-par] .vela-ride:active,.mob-offers .rail-multi[data-par] .vela-tour:active{transform:scale(.97)}
+.mob-offers .rail-multi[data-par] .vela-ride::before{background:linear-gradient(180deg,rgba(8,8,10,.5) 0%,rgba(8,8,10,0) 26%,rgba(8,8,10,0) 55%,rgba(8,8,10,.35) 100%)}
+.mob-offers .rail-multi[data-par] .vela-tour::before{background:linear-gradient(180deg,rgba(26,8,28,.5) 0%,rgba(26,8,28,0) 26%,rgba(26,8,28,0) 55%,rgba(26,8,28,.35) 100%)}
+.mob-offers .rail-multi[data-par] .vela-ride{background-position:56% 50%}
+.mob-offers .rail-multi[data-par] .vela-tour{background-position:46% 40%}
+/* etiqueta arriba a la izquierda y sello arriba a la derecha */
+.mob-offers .rail-multi[data-par] .vela-ride .rd-kik,.mob-offers .rail-multi[data-par] .vela-tour .tr-kik{font-size:9px;letter-spacing:.07em;padding:5px 9px;background:rgba(11,11,15,.82)}
+.mob-offers .rail-multi[data-par] .vela-ride .rd-star{top:50px;right:6px;bottom:auto;width:50px;height:50px;font-size:8px}
+/* panel de cristal con titular, datos y botón */
+.mob-offers .rail-multi[data-par] .pc-panel{margin-top:auto;position:relative;z-index:3;display:flex;flex-direction:column;gap:8px;padding:10px;border-radius:18px;background:rgba(12,12,18,.46);-webkit-backdrop-filter:blur(16px) saturate(1.4);backdrop-filter:blur(16px) saturate(1.4);border:1px solid rgba(255,255,255,.2)}
+.mob-offers .rail-multi[data-par] .pc-panel h4{margin:0;font-size:17px;line-height:1.16;letter-spacing:-.01em;color:#fff;text-shadow:none;max-width:none;padding:0}
+.mob-offers .rail-multi[data-par] .pc-chips{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:4px}
+.mob-offers .rail-multi[data-par] .pc-chips li{font-size:10px;font-weight:700;color:#fff;padding:3px 8px;border-radius:99px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.25);line-height:1.3}
+.mob-offers .rail-multi[data-par] .pc-panel .rd-cta,.mob-offers .rail-multi[data-par] .pc-panel .tr-cta{height:46px;margin:0;width:100%;font-size:13px;font-weight:800;border-radius:13px;gap:6px;justify-content:center;padding:0 8px}
+.mob-offers .rail-multi[data-par] .pc-panel .rd-cta{background:#fff;color:#0b0b0f}
+.mob-offers .rail-multi[data-par] .pc-panel .rd-cta svg,.mob-offers .rail-multi[data-par] .pc-panel .tr-cta svg{width:22px;height:22px;padding:5px;border-radius:50%;background:#0b0b0f;color:#fff;stroke-width:3;flex:none}
+.mob-offers .rail-multi[data-par] .pc-panel .tr-cta svg{background:#2a1600;color:#ffc233}
+.mob-offers .rail-multi[data-par] .vela-ride p,.mob-offers .rail-multi[data-par] .vela-tour p,.mob-offers .rail-multi[data-par] .vela-ride .rd-route{display:none}
+.mob-offers .rail-multi[data-par] .vela-ride:focus-visible,.mob-offers .rail-multi[data-par] .vela-tour:focus-visible{outline:3px solid #fff;outline-offset:2px}
+/* retoques: botón en una línea, etiqueta de tours en una línea, panel más bajo */
+.mob-offers .rail-multi[data-par] .pc-panel .rd-cta,.mob-offers .rail-multi[data-par] .pc-panel .tr-cta{white-space:nowrap;font-size:12.5px;gap:5px}
+.mob-offers .rail-multi[data-par] .pc-panel .rd-cta span,.mob-offers .rail-multi[data-par] .pc-panel .tr-cta span{white-space:nowrap}
+.mob-offers .rail-multi[data-par] .vela-tour .tr-kik{white-space:nowrap;font-size:8.5px;letter-spacing:.05em;padding:5px 8px}
+.mob-offers .rail-multi[data-par] .vela-tour .tr-kik .kk-free{font-size:1.25em;margin-right:5px}
+.mob-offers .rail-multi[data-par] .pc-panel{gap:7px;padding:9px}
+.mob-offers .rail-multi[data-par] .pc-panel h4{font-size:16px}
+.mob-offers .rail-multi[data-par] .pc-chips li{font-size:9.5px;padding:2px 7px}
+.mob-offers .rail-multi[data-par] .rv-actual .vela-scroll>.vela-ride,.mob-offers .rail-multi[data-par] .rv-actual .vela-scroll>.vela-tour{min-height:330px}
+/* la van queda detrás del panel; en este formato alto se usa la foto del chófer y la viajera, que se ve por encima del panel */
+.mob-offers .rail-multi[data-par] .vela-ride{background-image:url(../assets/vela/deals/private-transfer.jpg)!important;background-position:62% 22%}
+.mob-offers .rail-multi[data-par] .vela-ride{background-position:44% 22%}
+/* sin sello PRE-BOOK y tarjetas más bajas: el panel de cristal ocupa casi toda la tarjeta y deja asomar la foto arriba */
+.mob-offers .rail-multi[data-par] .vela-ride .rd-star{display:none!important}
+.mob-offers .rail-multi[data-par] .rv-actual .vela-scroll>.vela-ride,.mob-offers .rail-multi[data-par] .rv-actual .vela-scroll>.vela-tour{min-height:262px}
+.mob-offers .rail-multi[data-par] .vela-ride{background-position:44% 8%}
+.mob-offers .rail-multi[data-par] .vela-tour{background-position:46% 30%}
+.mob-offers .rail-multi[data-par] .vela-ride{background-size:cover;background-position:46% 14%}
+/* espaciado del panel: arriba (hasta el titular) = entre titular y descripción = 10 px */
+.mob-offers .rail-multi[data-par] .pc-panel{padding:10px;gap:10px}
+.mob-offers .rail-multi[data-par] .pc-panel h4{margin:0}
+/* vuelve la van: la foto se amplía y se ancla abajo para que el techo y los faros asomen por encima del panel */
+.mob-offers .rail-multi[data-par] .vela-ride{background-image:url(../assets/vela/deals/transfer-van.jpg)!important;background-size:auto 128%;background-position:58% 100%}
+.mob-offers .rail-multi[data-par] .vela-ride{background-size:auto 112%;background-position:60% 100%}
+.mob-offers .rail-multi[data-par] .vela-ride .pc-panel{background:rgba(12,12,18,.3)}
+.mob-offers .rail-multi[data-par] .vela-ride::before{background:linear-gradient(180deg,rgba(8,8,10,.45) 0%,rgba(8,8,10,0) 24%,rgba(8,8,10,0) 50%,rgba(8,8,10,.25) 100%)}
+/* el hueco entre la etiqueta de arriba y el panel/titular es el mismo que el de dentro del panel: 10 px (la altura la marca el contenido) */
+.mob-offers .rail-multi[data-par] .rv-actual .vela-scroll>.vela-ride,.mob-offers .rail-multi[data-par] .rv-actual .vela-scroll>.vela-tour{min-height:0;justify-content:flex-start}
+.mob-offers .rail-multi[data-par] .vela-ride .rd-kik,.mob-offers .rail-multi[data-par] .vela-tour .tr-kik{align-self:flex-start;margin:0 0 10px;position:relative;z-index:3}
+.mob-offers .rail-multi[data-par] .pc-panel{margin-top:0}
+
+/* pulido: mismo hueco abajo que a los lados (10 px), etiquetas con la misma forma y contenido centrado */
+.mob-offers .rail-multi[data-par] .rv-actual .vela-scroll>.vela-ride,.mob-offers .rail-multi[data-par] .rv-actual .vela-scroll>.vela-tour{padding:10px!important;margin-bottom:0!important}
+.mob-offers .rail-multi[data-par] .pc-panel{margin-bottom:0}
+.mob-offers .rail-multi[data-par] .vela-ride .rd-kik,.mob-offers .rail-multi[data-par] .vela-tour .tr-kik{display:inline-flex!important;align-items:center;justify-content:flex-start;height:24px;padding:0 10px!important;border-radius:99px!important;gap:6px;line-height:1;box-sizing:border-box}
+.mob-offers .rail-multi[data-par] .vela-ride .rd-kik svg{width:12px;height:12px;flex:none}
+.mob-offers .rail-multi[data-par] .vela-tour .tr-kik .kk-free,.mob-offers .rail-multi[data-par] .vela-tour .tr-kik .kk-txt{line-height:1;display:block;margin:0}
+.mob-offers .rail-multi[data-par] .vela-tour .tr-kik .kk-free{font-size:10.5px}
+.mob-offers .rail-multi[data-par] .rv-actual .vela-scroll>.vela-ride,.mob-offers .rail-multi[data-par] .rv-actual .vela-scroll>.vela-tour{height:auto!important;align-self:stretch}
+/* sin elevación al pasar el ratón en esta variante (la del transfer subía 3 px y las tarjetas dejaban de estar alineadas) */
+.mob-offers .rail-multi[data-par] .vela-ride:hover,.mob-offers .rail-multi[data-par] .vela-tour:hover{transform:none!important}
+.mob-offers .rail-multi[data-par] .vela-ride:hover .rd-cta svg,.mob-offers .rail-multi[data-par] .vela-tour:hover .tr-cta svg{transform:none}
+/* etiquetas: contenido centrado en la píldora, mismo relleno y misma altura de letra */
+.mob-offers .rail-multi[data-par] .vela-ride .rd-kik,.mob-offers .rail-multi[data-par] .vela-tour .tr-kik{justify-content:center;padding:0 12px!important;font-size:9px;letter-spacing:.07em}
+.mob-offers .rail-multi[data-par] .vela-tour .tr-kik .kk-free{font-size:9px;letter-spacing:.07em;margin:0}
+.mob-offers .rail-multi[data-par] .vela-tour .tr-kik .kk-txt{font-size:9px;letter-spacing:.07em}
+.mob-offers .rail-multi[data-par] .vela-ride .rd-kik{white-space:nowrap}
+.mob-offers .vela-carwrap::after{width:76px;background:linear-gradient(90deg,rgba(246,247,252,0) 0%,rgba(246,247,252,.7) 45%,rgba(246,247,252,.98) 85%)}
+/* las dos etiquetas de título: mismo tamaño y posición (todo el ancho útil de la tarjeta) con el contenido centrado */
+.mob-offers .rail-multi[data-par] .vela-ride .rd-kik,.mob-offers .rail-multi[data-par] .vela-tour .tr-kik{width:100%!important;align-self:stretch!important;justify-content:center!important;text-align:center;padding:0 8px!important;gap:6px}
+.mob-offers .rail-multi[data-par] .vela-tour .tr-kik .kk-free{margin:0}
+@media (max-width:340px){
+  .mob-offers .rail-multi[data-par] .vela-ride .rd-kik,.mob-offers .rail-multi[data-par] .vela-tour .tr-kik{font-size:7.5px!important;letter-spacing:.03em;padding:0 5px!important;gap:4px}
+  .mob-offers .rail-multi[data-par] .vela-tour .tr-kik .kk-free,.mob-offers .rail-multi[data-par] .vela-tour .tr-kik .kk-txt{font-size:7.5px;letter-spacing:.03em}
+  .mob-offers .rail-multi[data-par] .vela-ride .rd-kik svg{width:10px;height:10px}
+  .mob-offers .rail-multi[data-par] .pc-panel{padding:8px;gap:8px}
+  .mob-offers .rail-multi[data-par] .pc-panel h4{font-size:14.5px}
+  .mob-offers .rail-multi[data-par] .pc-panel .rd-cta,.mob-offers .rail-multi[data-par] .pc-panel .tr-cta{font-size:11px;padding:0 6px;gap:4px}
+  .mob-offers .rail-multi[data-par] .pc-panel .rd-cta svg,.mob-offers .rail-multi[data-par] .pc-panel .tr-cta svg{width:18px;height:18px;padding:4px}
+}
+/* el fundido también cubre la moneda del precio (€20) de la tarjeta cortada */
+.mob-offers .vela-carwrap::after{z-index:10;pointer-events:none}
+
+/* fundidos del carrusel en móvil: más estrechos (30 px) y en los dos lados, solo si hay deals ocultos en ese lado */
+.mob-offers .vela-carwrap::after{width:30px;background:linear-gradient(90deg,rgba(246,247,252,0),rgba(246,247,252,.96))}
+.mob-offers .vela-carwrap::before{content:"";position:absolute;top:0;bottom:14px;left:0;width:30px;z-index:10;pointer-events:none;background:linear-gradient(270deg,rgba(246,247,252,0),rgba(246,247,252,.96));transition:opacity .2s}
+.mob-offers .vela-carwrap.atStart::before{opacity:0}

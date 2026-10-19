@@ -1,0 +1,52 @@
+<!doctype html><meta charset="utf-8"><title>gen</title><body style="font:14px system-ui"><pre id="o">generando…</pre>
+<script>
+const L=s=>new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.src=s});
+const log=t=>{document.getElementById('o').textContent+='\n'+t};
+function box(src,W,H,r,mode){const mn=mode==='erode';const t=new Uint8Array(W*H),o=new Uint8Array(W*H);
+ for(let y=0;y<H;y++){let run=0;/* ventana deslizante con cuentas */ const row=y*W;let cnt=0;for(let x=-r;x<=r;x++)if(x>=0&&x<W&&src[row+x])cnt++;
+  for(let x=0;x<W;x++){const n=Math.min(W-1,x+r)-Math.max(0,x-r)+1;const full=(x-r>=0&&x+r<W);t[row+x]=mn?(cnt===(2*r+1)&&full?1:0):(cnt>0?1:0);
+   const add=x+r+1,rem=x-r;if(add<W&&src[row+add])cnt++;if(rem>=0&&src[row+rem])cnt--;}}
+ for(let x=0;x<W;x++){let cnt=0;for(let y=-r;y<=r;y++)if(y>=0&&y<H&&t[y*W+x])cnt++;
+  for(let y=0;y<H;y++){const full=(y-r>=0&&y+r<H);o[y*W+x]=mn?(cnt===(2*r+1)&&full?1:0):(cnt>0?1:0);
+   const add=y+r+1,rem=y-r;if(add<H&&t[add*W+x])cnt++;if(rem>=0&&t[rem*W+x])cnt--;}}
+ return o}
+function blurF(f,W,H,r){const t=new Float32Array(W*H),o=new Float32Array(W*H),k=2*r+1;
+ for(let y=0;y<H;y++){let s=0;for(let x=-r;x<=r;x++)s+=f[y*W+Math.min(W-1,Math.max(0,x))];for(let x=0;x<W;x++){t[y*W+x]=s/k;s+=f[y*W+Math.min(W-1,x+r+1)]-f[y*W+Math.max(0,x-r)]}}
+ for(let x=0;x<W;x++){let s=0;for(let y=-r;y<=r;y++)s+=t[Math.min(H-1,Math.max(0,y))*W+x];for(let y=0;y<H;y++){o[y*W+x]=s/k;s+=t[Math.min(H-1,y+r+1)*W+x]-t[Math.max(0,y-r)*W+x]}}
+ return o}
+const sm=(x,a,b)=>{const t=Math.min(1,Math.max(0,(x-a)/(b-a)));return t*t*(3-2*t)};
+const post=(name,data)=>fetch('http://127.0.0.1:7798/',{method:'POST',body:JSON.stringify({name,data})});
+(async()=>{
+ const [a,b]=await Promise.all([L('face-clean.webp'),L('face-acc.webp')]);const W=a.naturalWidth,H=a.naturalHeight;
+ const g=i=>{const c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');x.drawImage(i,0,0);const d=x.getImageData(0,0,W,H);const p=d.data;for(let i=0;i<p.length;i+=4){const al=p[i+3]/255;for(let k=0;k<3;k++)p[i+k]=Math.round(p[i+k]*al+255*(1-al));p[i+3]=255}return d};
+ const A=g(a),B=g(b);const D=new Float32Array(W*H);let m=new Uint8Array(W*H);
+ for(let i=0;i<W*H;i++){const d=Math.abs(A.data[i*4]-B.data[i*4])+Math.abs(A.data[i*4+1]-B.data[i*4+1])+Math.abs(A.data[i*4+2]-B.data[i*4+2]);D[i]=d;m[i]=d>45&&Math.floor(i/W)<H*.5?1:0}
+ let o=box(box(m,W,H,4,'erode'),W,H,4,'dilate');log('opened');
+ const lab=new Int32Array(W*H),comps=[];let n=0;
+ for(let i=0;i<W*H;i++){if(!o[i]||lab[i])continue;n++;const q=[i];lab[i]=n;let sz=0,sy=0;while(q.length){const p=q.pop();sz++;const x=p%W,y=(p-x)/W;sy+=y;for(let k=0;k<4;k++){const xx=x+(k==0?1:k==1?-1:0),yy=y+(k==2?1:k==3?-1:0);if(xx<0||yy<0||xx>=W||yy>=H)continue;const j=yy*W+xx;if(o[j]&&!lab[j]){lab[j]=n;q.push(j)}}}comps.push({id:n,sz,cy:sy/sz})}
+ const big=comps.filter(c=>c.sz>6000).sort((p,q)=>p.cy-q.cy);log('comps '+JSON.stringify(big));
+ const meta={W,H};
+ const make=(key,cid,wfn,fill)=>{
+  let c=new Uint8Array(W*H);for(let i=0;i<W*H;i++)c[i]=lab[i]===cid?1:0;
+  const near=box(c,W,H,24,'dilate');const core=box(c,W,H,8,'dilate');
+  const R0=new Float32Array(W*H);for(let i=0;i<W*H;i++)R0[i]=(core[i]||(near[i]&&D[i]>30))?1:0;
+  const R=blurF(R0,W,H,2);
+  const mov=new Float32Array(W*H),pat=new Float32Array(W*H);
+  for(let i=0;i<W*H;i++){const w=wfn(B.data[i*4],B.data[i*4+1],B.data[i*4+2],D[i]);mov[i]=R[i]*w;pat[i]=R[i]*(1-w)}
+  if(fill){const bin=new Uint8Array(W*H);for(let i=0;i<W*H;i++)bin[i]=mov[i]>.5?1:0;const op=box(box(bin,W,H,fill,'erode'),W,H,fill,'dilate');
+   const lb=new Int32Array(W*H);let best=0,bestSz=0,id=0;for(let i=0;i<W*H;i++){if(!op[i]||lb[i])continue;id++;const q=[i];lb[i]=id;let sz=0;while(q.length){const p=q.pop();sz++;const x=p%W,y=(p-x)/W;for(let k=0;k<4;k++){const xx=x+(k==0?1:k==1?-1:0),yy=y+(k==2?1:k==3?-1:0);if(xx<0||yy<0||xx>=W||yy>=H)continue;const j=yy*W+xx;if(op[j]&&!lb[j]){lb[j]=id;q.push(j)}}}if(sz>bestSz){bestSz=sz;best=id}}
+   const keep=new Uint8Array(W*H);for(let i=0;i<W*H;i++)keep[i]=lb[i]===best?1:0;const gate=blurF(Float32Array.from(box(keep,W,H,3,'dilate')),W,H,2);
+   const cl=blurF(Float32Array.from(box(box(keep,W,H,22,'dilate'),W,H,22,'erode')),W,H,2);   /* rellena los huecos de los reflejos en las lentes */
+   for(let i=0;i<W*H;i++){mov[i]=Math.max(mov[i]*gate[i],R[i]*cl[i]);pat[i]=Math.max(0,R[i]-mov[i])}}
+  const out=(arr,name)=>{let x0=W,y0=H,x1=0,y1=0;for(let i=0;i<W*H;i++)if(arr[i]>.02){const x=i%W,y=(i-x)/W;if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y}
+   x0=Math.max(0,x0-3);y0=Math.max(0,y0-3);x1=Math.min(W-1,x1+3);y1=Math.min(H-1,y1+3);const w=x1-x0+1,h=y1-y0+1;
+   const cv=document.createElement('canvas');cv.width=w;cv.height=h;const cx=cv.getContext('2d');const id=cx.createImageData(w,h);
+   for(let y=0;y<h;y++)for(let x=0;x<w;x++){const i=(y+y0)*W+(x+x0),j=(y*w+x)*4;id.data[j]=B.data[i*4];id.data[j+1]=B.data[i*4+1];id.data[j+2]=B.data[i*4+2];id.data[j+3]=Math.round(255*Math.min(1,arr[i]))}
+   cx.putImageData(id,0,0);meta[name]={x:x0,y:y0,w,h};return post(name+'.png',cv.toDataURL('image/png'))};
+  return Promise.all([out(mov,key),out(pat,key+'-patch')])};
+ const cap=big[0],gl=big[1];
+ await make('cap',cap.id,(r,g,b,d)=>sm(b-r,6,26)*sm(d,25,70),0);
+ await make('glasses',gl.id,(r,g,b,d)=>(1-sm(r*.3+g*.59+b*.11,95,150))*sm(d,35,90),6);
+ await post('meta.json',JSON.stringify(meta));log('saved '+JSON.stringify(meta));document.title='done';
+})();
+</script>
