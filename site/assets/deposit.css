@@ -176,12 +176,10 @@
   .dp-bft .dp-bact .tx-go-w{width:240px}
 }
 
-/* la línea del recorrido llega hasta el centro de cada círculo y un semicírculo transparente (radio del círculo + 4 px) la corta, así acaba siguiendo su circunferencia */
-.dp-mtl li:not(:last-child)::before{top:18px;bottom:-18px;
-  -webkit-mask-image:radial-gradient(circle 22px at 50% 0,transparent 21.5px,#000 22px),radial-gradient(circle 22px at 50% 100%,transparent 21.5px,#000 22px);-webkit-mask-composite:source-in;
-  mask-image:radial-gradient(circle 22px at 50% 0,transparent 21.5px,#000 22px),radial-gradient(circle 22px at 50% 100%,transparent 21.5px,#000 22px);mask-composite:intersect}
+/* recorrido «What happens to your money»: la línea se detiene a 6 px de la circunferencia de cada círculo (sin llegar a entrar en él) */
 @media (min-width:1024px){
-  .dp-mtl li:not(:last-child)::before,.dp-mtl li.ln.hold::before,.dp-mtl li.ln.cov::before,.dp-mtl li.ln.saved::before{left:50%;right:calc(-50% - 12px);bottom:auto;
-    -webkit-mask-image:radial-gradient(circle 22px at 0 50%,transparent 21.5px,#000 22px),radial-gradient(circle 22px at 100% 50%,transparent 21.5px,#000 22px);-webkit-mask-composite:source-in;
-    mask-image:radial-gradient(circle 22px at 0 50%,transparent 21.5px,#000 22px),radial-gradient(circle 22px at 100% 50%,transparent 21.5px,#000 22px);mask-composite:intersect}
+  .dp-mtl li:not(:last-child)::before{left:calc(50% + 24px);right:calc(-50% + 8px)}
+}
+@media (max-width:1023.98px){
+  .dp-mtl li:not(:last-child)::before{top:42px;bottom:0}
 }
