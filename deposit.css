@@ -171,9 +171,12 @@
   .dp-bft .dp-bact .tx-go-w{width:220px}
 }
 @media (min-width:1024px){
-  .dp-bft{flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:12px}
-  .dp-bft p{order:0;max-width:none}.dp-bft .dp-bact{order:1}
-  .dp-bft .dp-bact .tx-go-w{width:240px}
+  /* nota a la izquierda; a la derecha el botón principal y, a su derecha, el CTA de texto */
+  .dp-bft{flex-direction:row;align-items:center;justify-content:space-between;gap:20px}
+  .dp-bft p{order:0;flex:1 1 0;min-width:0}
+  .dp-bft .dp-bact{order:1;flex:none;justify-content:flex-end}
+  .dp-bft .dp-bact .tx-go-w{width:220px}
+}
 }
 
 /* recorrido «What happens to your money»: la línea se detiene a 6 px de la circunferencia de cada círculo (sin llegar a entrar en él) */
