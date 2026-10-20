@@ -939,3 +939,25 @@ if (document.readyState !== 'loading' && !barDone) { barDone = true; addBar(); }
   [400, 1100, 2200].forEach(function(ms){ setTimeout(run, ms); });
   var tm = null; try { new MutationObserver(function(){ clearTimeout(tm); tm = setTimeout(run, 200); }).observe(document.body, { childList: true, subtree: true }); } catch (e) {}
 })();
+
+/* móvil: con un modal / hoja inferior abierto, el fondo de la página (la franja del borde inferior, zona de gestos) pasa a blanco como el modal; al cerrarlo vuelve al gris. Solo se pinta html/body: el contenido sigue sobre su fondo gris */
+(function(){
+  if (!window.matchMedia || !matchMedia('(max-width:1023.98px)').matches) return;
+  var st = document.createElement('style'); st.id = 'rep-modal-bg'; st.textContent = 'html.rep-modal,html.rep-modal body{background-color:#fff!important}'; document.head.appendChild(st);
+  var isOpen = function(){
+    var found = false;
+    [].forEach.call(document.querySelectorAll('div,section,aside,dialog'), function(e){
+      if (found) return; var s = getComputedStyle(e); if (s.position !== 'fixed' || s.display === 'none' || s.visibility === 'hidden' || parseFloat(s.opacity) < .05) return;
+      var r = e.getBoundingClientRect(); if (r.width < innerWidth - 2 || r.height < 120) return;
+      if (e.closest('#rep-panel,#rep-panel-set,.bk-bar,[data-rep-bar]')) return;
+      var dim = /bg-black|rgba\(0, 0, 0/.test((e.className || '') + ' ' + s.backgroundColor) && r.height >= innerHeight - 2;   /* velo oscuro a pantalla completa */
+      var sheet = s.backgroundColor === 'rgb(255, 255, 255)' && Math.abs(r.bottom - innerHeight) < 2 && r.height > 160 && r.height < innerHeight - 4 && e.getAttribute('data-slot') !== 'cta-dock' && !/dock/.test(e.className + '');
+      if (dim || sheet || e.getAttribute('role') === 'dialog' || e.getAttribute('aria-modal') === 'true') found = true;
+    });
+    return found;
+  };
+  var run = function(){ document.documentElement.classList.toggle('rep-modal', isOpen()); };
+  var tm = null; var sched = function(){ clearTimeout(tm); tm = setTimeout(run, 80); };
+  try { new MutationObserver(sched).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style', 'data-state', 'hidden'] }); } catch (e) {}
+  window.addEventListener('resize', sched); [300, 1000, 2500].forEach(function(ms){ setTimeout(run, ms); });
+})();
