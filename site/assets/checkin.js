@@ -131,3 +131,39 @@ window.addEventListener('replica-pay-change', apply); window.addEventListener('r
 function init(){ if (window.__repPanel) window.__repPanel.add('Check-in', csw, 35); else document.body.appendChild(csw);   enhance(); [].forEach.call(sw.querySelectorAll('button'), function(b){ if (b.getAttribute('data-k') === DEFAULT) { b.classList.add('rec'); b.textContent += ' \u2605 Final'; } }); set(v); apply();   /* el selector de Check-in ya no se muestra: siempre sale la versión final (P5 escritorio, P1 móvil); el resto, por URL */ }
 if (document.readyState !== 'loading') init(); else document.addEventListener('DOMContentLoaded', init);
 })();
+
+
+/* ===== Componentes → Pendientes (V1 actual · V2 pasos numerados · V3 punto + estado · V4 siguiente paso destacado) ===== */
+(function(){
+  if (!document.querySelector('[data-testid="checkin-checklist"]')) return;
+  var KEY = 'replica-pend', h = document.documentElement;
+  var ver = function(){ var v = ''; try { v = localStorage.getItem(KEY) || ''; } catch (e) {} return /^[234]$/.test(v) ? v : '1'; };
+  var apply = function(){ if (ver() !== '1') h.setAttribute('data-pend', ver()); else h.removeAttribute('data-pend'); prog(); };
+  /* V2: barra de progreso por pasos (un tramo por paso visible; los completados en azul) */
+  var prog = function(){
+    var hd = document.querySelector('.chk-vn4 .chk-k4h'); if (!hd) return;
+    var rows = [].filter.call(document.querySelectorAll('.chk-vn4 .chk-list>div'), function(d){ return d.style.display !== 'none'; });
+    var done = rows.filter(function(d){ var r = d.querySelector('[data-slot="task-row"]'); return r && r.getAttribute('data-state') === 'done'; }).length;
+    var p = hd.querySelector('.pd-prog'); if (!p) { p = document.createElement('div'); p.className = 'pd-prog'; p.setAttribute('aria-hidden', 'true'); hd.appendChild(p); }
+    var html = ''; for (var i = 0; i < rows.length; i++) html += '<i' + (i < done ? ' class="on"' : '') + '></i>'; if (p.innerHTML !== html) p.innerHTML = html;
+  };
+  var t = null, sched = function(){ clearTimeout(t); t = setTimeout(prog, 60); };
+  var start = function(){
+    apply(); window.addEventListener('storage', function(e){ if (e.key === KEY) apply(); });
+    var list = document.querySelector('.chk-vn4'); if (list) try { new MutationObserver(sched).observe(list, { subtree: true, attributes: true, attributeFilter: ['data-state', 'style'] }); } catch (e) {}
+    var tries = 0, iv = setInterval(function(){
+      if (window.__repPanel && window.__repPanel.add) {
+        clearInterval(iv);
+        var el = document.createElement('div'); el.className = 'rail-switch';
+        el.innerHTML = [['1', 'V1 · actual'], ['2', 'V2 · pasos numerados'], ['3', 'V3 · punto + estado'], ['4', 'V4 · siguiente paso']].map(function(o){ return '<button type="button" class="rs-chip' + (o[0] === ver() ? ' on' : '') + '" data-pdv="' + o[0] + '">' + o[1] + '</button>'; }).join('');
+        el.addEventListener('click', function(e){
+          var b = e.target.closest('[data-pdv]'); if (!b) return; e.preventDefault(); e.stopPropagation();
+          try { localStorage.setItem(KEY, b.getAttribute('data-pdv')); } catch (_) {}
+          apply(); [].forEach.call(el.querySelectorAll('[data-pdv]'), function(c){ c.classList.toggle('on', c === b); });
+        }, true);
+        window.__repPanel.add('Pendientes', el, 27);
+      } else if (++tries > 40) clearInterval(iv);
+    }, 250);
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+})();

@@ -196,3 +196,48 @@
 .chk-vn4[data-cs="3"] .chk-k4l svg{grid-column:1;grid-row:1 / span 2;align-self:center}
 .chk-vn4[data-cs="3"] .chk-k4l .chk-ht{grid-column:2;grid-row:1}
 .chk-vn4[data-cs="3"] .chk-k4h .chk-sub{grid-column:2;grid-row:2;margin:0;order:0}
+
+
+/* ===== Componentes → Pendientes: cómo se señalan los pasos pendientes en la home =====
+   V1 actual (amarillo) · V2 pasos numerados · V3 punto + estado · V4 siguiente paso destacado.
+   En V2-V4 el amarillo desaparece: lo pendiente se marca con el color de marca y con texto (no solo color). Sin sombras ni delineados. */
+:root{--pd-blue:#385bf8;--pd-tint:#eef1ff;--pd-tint2:#f4f6ff;--pd-navy:#161643;--pd-sec:#6b6b95}
+/* común V2-V4: fuera los distintivos amarillos y la etiqueta «Pending» */
+html[data-pend="2"] :is(.chk-pclock,.chk-ptag,.chk-pt),html[data-pend="3"] :is(.chk-pclock,.chk-ptag,.chk-pt),html[data-pend="4"] :is(.chk-pclock,.chk-ptag,.chk-pt),
+html[data-pend="2"] .chk-vn4 [data-slot="tag"][data-tone="warning"],html[data-pend="3"] .chk-vn4 [data-slot="tag"][data-tone="warning"],html[data-pend="4"] .chk-vn4 [data-slot="tag"][data-tone="warning"]{display:none!important}
+/* común V2-V4: cabecera de la tarjeta en claro (sin la banda azul oscura que repetía el hero) */
+html:is([data-pend="2"],[data-pend="3"],[data-pend="4"]) .chk-k4h{background:#fff!important;color:var(--pd-navy)!important;padding:16px 16px 4px!important;flex-wrap:wrap!important;row-gap:8px}
+html:is([data-pend="2"],[data-pend="3"],[data-pend="4"]) .chk-k4l{flex:1 1 auto}
+html:is([data-pend="2"],[data-pend="3"],[data-pend="4"]) .chk-k4h::before{display:none!important}
+html:is([data-pend="2"],[data-pend="3"],[data-pend="4"]) .chk-k4l{font-weight:600}
+html:is([data-pend="2"],[data-pend="3"],[data-pend="4"]) .chk-k4l svg{color:var(--pd-blue)!important}
+html:is([data-pend="2"],[data-pend="3"],[data-pend="4"]) .chk-k4d{background:var(--pd-tint)!important;color:var(--pd-navy)!important}
+html:is([data-pend="2"],[data-pend="3"],[data-pend="4"]) .chk-k4d svg{color:var(--pd-blue)!important}
+html:is([data-pend="2"],[data-pend="3"],[data-pend="4"]) .chk-vn4 .chk-list>div:first-child [data-slot="task-row"]{border-top-color:transparent!important}
+/* común V2-V4: en la caja de llaves, el contador y la barra pasan de amarillo a blanco */
+html:is([data-pend="2"],[data-pend="4"]) .acc-tile[data-s="locked"] .acc-chip{background:rgba(255,255,255,.18)!important;color:#fff!important}
+html:is([data-pend="2"],[data-pend="3"],[data-pend="4"]) .acc-tile[data-s="locked"] .acc-bar b{background:#fff!important}
+html[data-pend="3"] .acc-tile[data-s="locked"] .acc-chip{background:#fff!important;color:var(--pd-navy)!important}
+
+/* V2 · pasos numerados: cada paso pendiente muestra su número; el siguiente, en azul sólido. Barra de progreso por pasos en la cabecera */
+.pd-prog{display:none}
+html[data-pend="2"] .pd-prog{display:flex;flex-basis:100%;gap:6px;margin:10px 0 6px}
+.pd-prog i{flex:1;height:5px;border-radius:99px;background:#e6e9f7}
+.pd-prog i.on{background:var(--pd-blue)}
+html[data-pend="2"] .chk-vn4 .chk-list{counter-reset:pd}
+html[data-pend="2"] .chk-vn4 .chk-list>div{counter-increment:pd}
+html[data-pend="2"] .chk-vn4 [data-state="pending"]>span:first-child>svg{display:none}
+html[data-pend="2"] .chk-vn4 [data-state="pending"]>span:first-child{background:var(--pd-tint)!important;border-radius:50%!important}
+html[data-pend="2"] .chk-vn4 [data-state="pending"]>span:first-child::before{content:counter(pd);font:700 15px/1 Poppins,system-ui,sans-serif;color:var(--pd-blue)}
+html[data-pend="2"] .chk-vn4 .chk-list>div:has(>[data-state="pending"]):not(.chk-list>div:has(>[data-state="pending"]) ~ div) [data-state="pending"]>span:first-child{background:var(--pd-blue)!important}
+html[data-pend="2"] .chk-vn4 .chk-list>div:has(>[data-state="pending"]):not(.chk-list>div:has(>[data-state="pending"]) ~ div) [data-state="pending"]>span:first-child::before{color:#fff}
+
+/* V3 · punto + estado: el icono se queda; un punto azul de notificación en su esquina y la etiqueta «To do» junto al título */
+html[data-pend="3"] .chk-vn4 [data-state="pending"]>span:first-child::before{content:"";position:absolute;top:-3px;right:-3px;width:10px;height:10px;border-radius:50%;background:var(--pd-blue);z-index:2}
+html[data-pend="3"] .chk-vn4 [data-state="pending"] .flex-col>span:first-child::after{content:"To do";display:inline-block;margin-left:8px;padding:2px 8px;border-radius:99px;background:var(--pd-tint);color:var(--pd-blue);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;vertical-align:2px;line-height:1.4}
+
+/* V4 · siguiente paso destacado: solo el siguiente paso lleva fondo tinte, la etiqueta «Next step» y el CTA azul; el resto, secundario */
+html[data-pend="4"] .chk-vn4 .chk-list>div:has(>[data-state="pending"]):not(.chk-list>div:has(>[data-state="pending"]) ~ div) [data-slot="task-row"]{background:var(--pd-tint2)!important}
+html[data-pend="4"] .chk-vn4 .chk-list>div:has(>[data-state="pending"]):not(.chk-list>div:has(>[data-state="pending"]) ~ div) .flex-col::before{content:"Next step";display:block;margin-bottom:2px;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--pd-blue)}
+html[data-pend="4"] .chk-vn4 .chk-list>div:has(>[data-state="pending"]):not(.chk-list>div:has(>[data-state="pending"]) ~ div) .chk-cta{background:var(--pd-blue)!important;border-color:var(--pd-blue)!important;color:#fff!important}
+html[data-pend="4"] .chk-vn4 .chk-list>div:has(>[data-state="pending"]) ~ div [data-state="pending"] .chk-cta{background:var(--pd-tint)!important;border-color:transparent!important;color:var(--pd-blue)!important}
