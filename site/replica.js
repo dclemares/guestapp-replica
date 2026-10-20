@@ -877,3 +877,29 @@ if (document.readyState !== 'loading' && !barDone) { barDone = true; addBar(); }
   [400, 1200, 2500].forEach(function(ms){ setTimeout(run, ms); });
   window.addEventListener('resize', function(){ setTimeout(run, 150); });
 })();
+
+/* móvil: todos los docks de CTA comparten el mismo espaciado inferior que «Continue» (12 px bajo el botón; bajo un enlace de texto, 12 px bajo el texto) */
+(function(){
+  if (!window.matchMedia || !matchMedia('(max-width:1023.98px)').matches) return;
+  var T = 12, alpha = function(c){ var m = /rgba?\(([^)]+)\)/.exec(c); if (!m) return 0; var p = m[1].split(','); return p.length > 3 ? parseFloat(p[3]) : 1; };
+  var run = function(){
+    var H = innerHeight, DH = Math.max(document.documentElement.scrollHeight, innerHeight);
+    [].forEach.call(document.querySelectorAll('div,footer,section'), function(d){
+      var s = getComputedStyle(d); if (s.backgroundColor !== 'rgb(255, 255, 255)' || s.position === 'absolute') return;
+      var r = d.getBoundingClientRect(); if (r.width < innerWidth - 2 || r.height < 40 || r.height > 420) return;
+      if (Math.abs(r.bottom - H) > 1.5 && Math.abs(r.bottom + window.scrollY - DH) > 1.5) return;
+      var ctr = [].slice.call(d.querySelectorAll('button,a')).filter(function(b){ var q = b.getBoundingClientRect(); return q.width > 20 && q.height > 20 && getComputedStyle(b).visibility !== 'hidden'; });
+      if (!ctr.length) return;
+      var last = ctr.reduce(function(a, b){ return b.getBoundingClientRect().bottom > a.getBoundingClientRect().bottom ? b : a; });
+      var ls = getComputedStyle(last), q = last.getBoundingClientRect(), boxed = (alpha(ls.backgroundColor) > .05 && ls.backgroundColor !== s.backgroundColor) || /\d/.test(ls.boxShadow.replace(/rgba?\([^)]*\)/g, '')) || (parseFloat(ls.borderBottomWidth) > 0 && alpha(ls.borderBottomColor) > .05);
+      var bottom = q.bottom;
+      if (!boxed) { var rg = document.createRange(); rg.selectNodeContents(last); var tb = rg.getBoundingClientRect(); if (tb.height) bottom = tb.bottom; }
+      var gap = r.bottom - bottom, delta = T - gap; if (Math.abs(delta) < 0.5) return;
+      var pb = Math.max(0, (parseFloat(s.paddingBottom) || 0) + delta);
+      d.style.setProperty('padding-bottom', 'max(' + pb + 'px, env(safe-area-inset-bottom,0px))', 'important');
+    });
+  };
+  [500, 1400, 2800].forEach(function(ms){ setTimeout(run, ms); });
+  window.addEventListener('resize', function(){ setTimeout(run, 200); });
+  var tm = null; try { new MutationObserver(function(){ clearTimeout(tm); tm = setTimeout(run, 160); }).observe(document.body, { childList: true, subtree: true }); } catch (e) {}
+})();
