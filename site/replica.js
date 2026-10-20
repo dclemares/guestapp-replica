@@ -925,12 +925,16 @@ if (document.readyState !== 'loading' && !barDone) { barDone = true; addBar(); }
       var vis = own || alpha(s.backgroundColor) > .05 || (s.backgroundImage && s.backgroundImage !== 'none') || (s.boxShadow && s.boxShadow !== 'none') || /^(IMG|SVG)$/i.test(e.tagName) || (e.tagName === 'BUTTON');
       if (!vis) return; if (!best || r.top < best.top - .5) best = { e: e, top: r.top };
     });
-    return best ? { bar: bar, e: best.e, top: best.top, gap: best.top - bar } : null;
+    if (!best) return null;
+    /* en un texto, el borde de la caja de línea queda por encima de las mayúsculas: se mide la distancia visual (borde de la tinta) para que cajas y títulos queden igual */
+    var bs = getComputedStyle(best.e), own2 = [].some.call(best.e.childNodes, function(n){ return n.nodeType === 3 && n.textContent.trim(); }), boxed = alpha(bs.backgroundColor) > .05 || (bs.backgroundImage && bs.backgroundImage !== 'none') || /^(IMG|SVG)$/i.test(best.e.tagName), off = 0;
+    if (own2 && !boxed) { var fs = parseFloat(bs.fontSize) || 16, lh = parseFloat(bs.lineHeight); if (!lh) lh = 1.2 * fs; off = Math.max(0, (lh - 1.4 * fs) / 2 + 0.35 * fs); }
+    return { bar: bar, e: best.e, top: best.top, gap: best.top - bar, off: off };
   };
   window.__firstGap = find;
   var run = function(){
     if (window.scrollY > 4) return; var f = find(); if (!f) return;
-    var delta = f.gap - TARGET; if (delta < 1) return;
+    var delta = f.gap + f.off - TARGET; if (delta < 1) return;
     var el = f.e;
     for (var a = f.e.parentElement; a && a !== document.body; a = a.parentElement) { var t = a.getBoundingClientRect().top; if (t < f.bar - 1 || f.top - t > 10) break; el = a; }
     var mt = parseFloat(getComputedStyle(el).marginTop) || 0;
