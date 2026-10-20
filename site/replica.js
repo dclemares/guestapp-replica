@@ -1041,14 +1041,15 @@ if (document.readyState !== 'loading' && !barDone) { barDone = true; addBar(); }
 })();
 
 
-/* ===== Componentes → CTAs: V1 azul actual (#385bf8) · V2 azul del título (#3850cc). Se aplica con html[data-cta="2"] a todos los botones grandes de fondo azul ===== */
+/* ===== Componentes → CTAs: V1 azul actual (#385bf8) · V2 azul del título (#3850cc) · V3 negro (#111114). Se aplica con html[data-cta="2"] a todos los botones grandes de fondo azul ===== */
 (function(){
-  var KEY = 'replica-cta', CTA2 = '#3850cc', CTA2H = '#2f45b8', h = document.documentElement;
-  var ver = function(){ var v = ''; try { v = localStorage.getItem(KEY) || ''; } catch (e) {} return v === '2' ? '2' : '1'; };
+  var KEY = 'replica-cta', CTA2 = '#3850cc', CTA2H = '#2f45b8', CTA3 = '#111114', CTA3H = '#2b2b33', h = document.documentElement;
+  var ver = function(){ var v = ''; try { v = localStorage.getItem(KEY) || ''; } catch (e) {} return v === '2' || v === '3' ? v : '1'; };
   var st = document.createElement('style'); st.id = 'rep-cta2';
-  st.textContent = 'html[data-cta="2"] body .cta2.cta2{background-color:' + CTA2 + '!important;border-color:' + CTA2 + '!important}html[data-cta="2"] body .cta2.cta2:hover:not(:disabled){background-color:' + CTA2H + '!important}';
+  st.textContent = 'html[data-cta="2"] body .cta2.cta2{background-color:' + CTA2 + '!important;border-color:' + CTA2 + '!important}html[data-cta="2"] body .cta2.cta2:hover:not(:disabled){background-color:' + CTA2H + '!important}'
+    + 'html[data-cta="3"] body .cta2.cta2{background-color:' + CTA3 + '!important;border-color:' + CTA3 + '!important;color:#fff!important}html[data-cta="3"] body .cta2.cta2:hover:not(:disabled){background-color:' + CTA3H + '!important}';
   (document.head || document.documentElement).appendChild(st);
-  var apply = function(){ if (ver() === '2') h.setAttribute('data-cta', '2'); else h.removeAttribute('data-cta'); };
+  var apply = function(){ if (ver() !== '1') h.setAttribute('data-cta', ver()); else h.removeAttribute('data-cta'); };
   var scan = function(){
     [].forEach.call(document.querySelectorAll('button,a[role="button"],a.button,[class*="button"]'), function(b){
       if (b.classList.contains('cta2') || b.closest('#rep-panel,#rep-panel-set,.rail-switch')) return;
@@ -1065,7 +1066,7 @@ if (document.readyState !== 'loading' && !barDone) { barDone = true; addBar(); }
       if (window.__repPanel && window.__repPanel.add) {
         clearInterval(iv);
         var el = document.createElement('div'); el.className = 'rail-switch';
-        el.innerHTML = [['1', 'V1 · azul actual'], ['2', 'V2 · azul título']].map(function(o){ return '<button type="button" class="rs-chip' + (o[0] === ver() ? ' on' : '') + '" data-ctac="' + o[0] + '">' + o[1] + '</button>'; }).join('');
+        el.innerHTML = [['1', 'V1 · azul actual'], ['2', 'V2 · azul título'], ['3', 'V3 · negro']].map(function(o){ return '<button type="button" class="rs-chip' + (o[0] === ver() ? ' on' : '') + '" data-ctac="' + o[0] + '">' + o[1] + '</button>'; }).join('');
         el.addEventListener('click', function(e){
           var b = e.target.closest('[data-ctac]'); if (!b) return; e.preventDefault(); e.stopPropagation();
           try { localStorage.setItem(KEY, b.getAttribute('data-ctac')); } catch (_) {}
