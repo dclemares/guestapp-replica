@@ -948,7 +948,7 @@ if (document.readyState !== 'loading' && !barDone) { barDone = true; addBar(); }
 (function(){
   if (!window.matchMedia || !matchMedia('(max-width:1023.98px)').matches) return;
   if (new URLSearchParams(location.search).get('embed') === '1') return;   /* dentro del iframe del modal el fondo debe seguir transparente para ver la pantalla de detrás */
-  var st = document.createElement('style'); st.id = 'rep-modal-bg'; st.textContent = 'html.rep-modal,html.rep-modal body{background-color:#fff!important}'; document.head.appendChild(st);
+  var st = document.createElement('style'); st.id = 'rep-modal-bg'; st.textContent = 'html.rep-modal{background-color:#fff!important}html.rep-modal body{background-color:#f5f5f7!important;min-height:100vh;min-height:100dvh}'; document.head.appendChild(st);
   var isOpen = function(){
     var found = false;
     [].forEach.call(document.querySelectorAll('div,section,aside,dialog'), function(e){
