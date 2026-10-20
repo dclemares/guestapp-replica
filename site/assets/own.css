@@ -132,3 +132,8 @@ aside:has(.rail-vela){overflow:clip!important}
 
 /* la barra de navegación fija con efecto cristal real: el clip-path que usaba para dejar ver su sombra anulaba el desenfoque del fondo */
 html body .bk-bar{clip-path:none!important}
+
+/* docks de CTA en móvil: pegados al borde inferior (se tapa el relleno de 20 px que dejaba una franja gris bajo el dock) y con poco aire debajo */
+@media (max-width:1023.98px){
+  div.sticky.bottom-0.z-10.mt-auto{margin-bottom:-20px!important;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))!important}
+}

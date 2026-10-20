@@ -17,7 +17,7 @@
 .rg-b.sec{background:#fff;color:var(--n);border:1.5px solid #dfe2f1}.rg-b.sec:hover{background:#f5f6f9}
 .rg-b.wh{background:#fff;color:var(--n)}.rg-b.wh:hover{background:#eff6ff}
 .rg-b.sm{min-height:36px;padding:0 18px;font-size:13px;align-self:flex-start}
-.rg-dock{position:sticky;bottom:0;display:flex;flex-direction:column;gap:8px;margin:auto -16px 0;padding:14px 16px calc(18px + env(safe-area-inset-bottom,0px));background:linear-gradient(180deg,rgba(246,247,252,0),var(--rg-bg,#f6f7fc) 28%)}
+.rg-dock{position:sticky;bottom:0;display:flex;flex-direction:column;gap:8px;margin:auto -16px 0;padding:14px 16px calc(12px + env(safe-area-inset-bottom,0px));background:linear-gradient(180deg,rgba(246,247,252,0),var(--rg-bg,#f6f7fc) 28%)}
 .rg-dock.two{flex-direction:row}.rg-dock.two .rg-b{flex:1;padding:0 12px}
 /* deals */
 .rg-deal{border-radius:var(--card-radius,18px)}
@@ -54,7 +54,7 @@
 
 /* pasillo "registrando" */
 html[data-rg="p"] header button[aria-label="Back"]{visibility:hidden}
-.rg-p{justify-content:space-between;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px))}
+.rg-p{justify-content:space-between;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
 .rg-pw{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center}
 .rg-pring{position:relative;display:grid;place-items:center;width:148px;height:148px;margin-bottom:12px}
 .rg-pring>svg{position:absolute;inset:0}
@@ -149,7 +149,7 @@ html[data-rg="pd"] header button[aria-label="Back"]{visibility:visible}
 /* hoja Register Guest 2 */
 .rg-sheet{position:fixed;inset:0;z-index:100000;display:flex;align-items:flex-end;justify-content:center;font-family:Poppins,system-ui,sans-serif;color:#161643}
 .rg-sbd{position:absolute;inset:0;background:rgba(22,22,67,.48);opacity:0;transition:opacity .25s}
-.rg-sp{position:relative;width:100%;max-width:520px;padding:8px 16px calc(20px + env(safe-area-inset-bottom,0px));border-radius:24px 24px 0 0;background:#fff;box-shadow:0 -12px 40px rgba(22,22,67,.25);transform:translateY(40px);opacity:0;transition:transform .3s cubic-bezier(.22,.8,.2,1),opacity .2s}
+.rg-sp{position:relative;width:100%;max-width:520px;padding:8px 16px calc(12px + env(safe-area-inset-bottom,0px));border-radius:24px 24px 0 0;background:#fff;box-shadow:0 -12px 40px rgba(22,22,67,.25);transform:translateY(40px);opacity:0;transition:transform .3s cubic-bezier(.22,.8,.2,1),opacity .2s}
 .rg-sheet.in .rg-sbd{opacity:1}.rg-sheet.in .rg-sp{transform:none;opacity:1}
 .rg-sg{display:block;width:40px;height:4px;margin:0 auto 14px;border-radius:4px;background:#d5d8e8}
 .rg-sp h2{margin:0;font-size:20px;line-height:27px;font-weight:600}.rg-sp p{margin:2px 0 14px;font-size:13.5px;line-height:19px;color:#6b6b95;font-weight:400}
@@ -185,7 +185,7 @@ html[data-hv="a"] .rg-done .rg-pring .arc{stroke:#37e08f}html[data-hv="a"] .rg-d
 html[data-hv="a"] .rg-done .rg-pi.k{color:#37e08f}html[data-hv="a"] .rg-done .rg-pi.k svg{width:22px;height:22px}
 /* filas más juntas y CTAs apilados (siempre visibles) */
 .rg-row+.rg-row{margin-top:5px}
-.rg-dock{padding-top:10px;padding-bottom:calc(14px + env(safe-area-inset-bottom,0px))}
+.rg-dock{padding-top:10px;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
 
 
 /* ===== ronda 118: tarjeta con la estructura de antes y el fondo de la del resumen (azul / verde) ===== */
@@ -229,7 +229,7 @@ html[data-cc="green"] .rg-bg::after,html[data-cc="green"] .rg-hero::after{backgr
 .rg-dl .rg-k{color:#161643;font-weight:600}
 .rg-okr .rg-ri.ok{background:#e6f9ef;color:#1f9d63}
 /* dock con la raya que separa los CTA del contenido (como en el formulario) */
-.rg-dock{margin:auto -16px 0;padding:12px 16px calc(16px + env(safe-area-inset-bottom,0px));background:#fff;border-top:1px solid #e3e5ef;gap:8px}
+.rg-dock{margin:auto -16px 0;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:#fff;border-top:1px solid #e3e5ef;gap:8px}
 
 
 /* ===== ronda 120 ===== */
@@ -273,8 +273,8 @@ html.rg-tight .rg-hcb{padding-top:0}
 
 /* ===== ronda 125: dock igual que el pie del flujo de escaneo (blanco hasta el borde inferior) ===== */
 .rg-p.rg-done{padding-bottom:0}
-.rg-dock{margin:auto -16px 0;padding:12px 20px calc(20px + env(safe-area-inset-bottom,0px));background:#fff;border-top:1px solid #eef0f7;gap:8px}
-html.rg-tight .rg-dock{padding:12px 20px calc(20px + env(safe-area-inset-bottom,0px))}
+.rg-dock{margin:auto -16px 0;padding:12px 20px calc(12px + env(safe-area-inset-bottom,0px));background:#fff;border-top:1px solid #eef0f7;gap:8px}
+html.rg-tight .rg-dock{padding:12px 20px calc(12px + env(safe-area-inset-bottom,0px))}
 
 /* los CTA de las filas de What's next miden siempre lo mismo (Add guest / Add minor / Pay now) */
 .rg-cta{width:92px;padding:0 8px}

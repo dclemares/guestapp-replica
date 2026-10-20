@@ -114,7 +114,7 @@ html:not([data-as="0"]) .auto-fill-card{display:none!important}
 /* hoja de aviso al enviar con datos incompletos o erróneos (como la del producto) */
 .fx-vsheet{position:fixed;inset:0;z-index:100000;display:flex;align-items:flex-end;justify-content:center;font-family:Poppins,system-ui,sans-serif;color:#161643}
 .fx-vbd{position:absolute;inset:0;background:rgba(22,22,67,.48);opacity:0;transition:opacity .25s}
-.fx-vp{position:relative;display:flex;flex-direction:column;align-items:center;width:100%;max-width:520px;padding:8px 20px calc(20px + env(safe-area-inset-bottom,0px));border-radius:24px 24px 0 0;background:#fff;text-align:center;transform:translateY(40px);opacity:0;transition:transform .3s cubic-bezier(.22,.8,.2,1),opacity .2s}
+.fx-vp{position:relative;display:flex;flex-direction:column;align-items:center;width:100%;max-width:520px;padding:8px 20px calc(12px + env(safe-area-inset-bottom,0px));border-radius:24px 24px 0 0;background:#fff;text-align:center;transform:translateY(40px);opacity:0;transition:transform .3s cubic-bezier(.22,.8,.2,1),opacity .2s}
 .fx-vsheet.in .fx-vbd{opacity:1}.fx-vsheet.in .fx-vp{transform:none;opacity:1}
 .fx-vg{display:block;width:40px;height:4px;margin:0 auto 14px;border-radius:4px;background:#d5d8e8}
 .fx-vic{color:#f0a05a;margin-bottom:6px}

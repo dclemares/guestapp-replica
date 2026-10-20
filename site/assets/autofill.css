@@ -107,7 +107,7 @@ html.afl-open{overflow:hidden}
 .afl-v2 .afl-x{order:3}
 .afl-v2 .afl-ctx{font-size:15px;color:var(--n)}
 .afl-v2 .afl-main{padding-top:20px}
-.afl-v2 .afl-ft{padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));border-top:1px solid #eef0f7;background:#fff}
+.afl-v2 .afl-ft{padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));border-top:1px solid #eef0f7;background:#fff}
 .afl-v2.dark{background:#0e0f2e}.afl-v2.dark .afl-panel{background:#0e0f2e;color:#fff}
 .afl-v2.dark .afl-ctx,.afl-v2.dark .afl-ib,.afl-v2.dark .afl-h{color:#fff}.afl-v2.dark .afl-ft{background:#0e0f2e;border-top-color:rgba(255,255,255,.12)}.afl-v2.dark .afl-prog{background:rgba(255,255,255,.14)}
 .afl-v2.dark .afl-steps li{color:rgba(255,255,255,.6)}.afl-v2.dark .afl-steps li.on{color:#fff}.afl-v2.dark .afl-steps b{background:rgba(255,255,255,.14);color:#fff}.afl-v2.dark .afl-steps li.on b{background:var(--b)}

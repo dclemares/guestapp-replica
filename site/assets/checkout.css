@@ -57,7 +57,7 @@ html body .ck button.ck-ghost.ck-ghost,html body .ck-form button.ck-ghost.ck-gho
 
 /* ---------- pay-card-sheet: dock y 3D Secure (P2) ---------- */
 .ck-ov{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;background:rgba(22,22,67,.42);animation:ckFd .18s ease both}
-.ck-sheet{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;padding:26px 20px calc(20px + env(safe-area-inset-bottom,0px));border-radius:22px 22px 0 0;background:#fff;text-align:center;animation:ckUp .24s ease both}
+.ck-sheet{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;padding:26px 20px calc(12px + env(safe-area-inset-bottom,0px));border-radius:22px 22px 0 0;background:#fff;text-align:center;animation:ckUp .24s ease both}
 .ck-sheet>b{font-size:19px;line-height:25px}
 .ck-sheet p{margin:0 0 10px;font-size:14px;line-height:20px;color:var(--ck-sec)}.ck-sheet p b{color:var(--ck-navy)}
 .ck-bi{flex:none;display:grid;place-items:center;width:56px;height:56px;margin-bottom:6px;border-radius:16px;background:var(--ck-tint);color:var(--ck-blue)}
@@ -82,7 +82,7 @@ html.ck-lock,html.ck-lock body{overflow:hidden}
 .ck-hd h2{margin:0;font-size:20px;line-height:26px;font-weight:600;color:var(--ck-navy)}
 .ck-rz,.ck-pz{flex:1;display:flex;flex-direction:column;min-height:0}
 .ck-rzb{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:12px;padding:16px}
-.ck-ft{flex:none;display:flex;flex-direction:column;gap:8px;padding:14px 16px calc(18px + env(safe-area-inset-bottom,0px));background:#fff;box-shadow:0 -4px 14px rgba(22,22,67,.06)}
+.ck-ft{flex:none;display:flex;flex-direction:column;gap:8px;padding:14px 16px calc(12px + env(safe-area-inset-bottom,0px));background:#fff;box-shadow:0 -4px 14px rgba(22,22,67,.06)}
 .ck-live .ck-ft .ck-go,.ck-live .ck-ft .ck-ghost{margin-top:0}
 .ck-live .ck-ft p.ck-sec{margin:0}
 /* la tarjeta dibujada: todo en em, así escala con el ancho */
@@ -238,7 +238,7 @@ html.ck-lock,html.ck-lock body{overflow:hidden}
 .pv-hdk{display:flex;flex-direction:column;align-items:stretch;gap:8px;text-align:center}
 .pv-hdk p{margin:0;font-size:12.5px;line-height:18px;color:#6b6b95}.pv-hdk p b{font-weight:600;color:#161643}
 #pv-hist.has-hdk{padding-bottom:160px}
-@media (max-width:1023.98px){.pv-hdk{position:fixed;left:0;right:0;bottom:0;z-index:30;padding:14px 16px calc(18px + env(safe-area-inset-bottom,0px));background:#fff;box-shadow:0 -4px 14px rgba(22,22,67,.06)}}
+@media (max-width:1023.98px){.pv-hdk{position:fixed;left:0;right:0;bottom:0;z-index:30;padding:14px 16px calc(12px + env(safe-area-inset-bottom,0px));background:#fff;box-shadow:0 -4px 14px rgba(22,22,67,.06)}}
 @media (min-width:1024px){.pv-hdk{width:100%;max-width:280px;margin-top:6px}#pv-hist.has-hdk{padding-bottom:40px}}
 
 /* ===== Modal de escritorio (solo ≥1024 px; el móvil no cambia): «Escenario» de tamaño fijo, siempre 760 × 620 px: no se encoge ni se estira entre pasos; lo que sobre, con scroll dentro de la columna derecha ===== */
