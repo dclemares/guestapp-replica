@@ -903,3 +903,22 @@ if (document.readyState !== 'loading' && !barDone) { barDone = true; addBar(); }
   window.addEventListener('resize', function(){ setTimeout(run, 200); });
   var tm = null; try { new MutationObserver(function(){ clearTimeout(tm); tm = setTimeout(run, 160); }).observe(document.body, { childList: true, subtree: true }); } catch (e) {}
 })();
+
+/* móvil: el título de la pantalla queda a unos 14 px de la barra de navegación superior (antes ~30 px). Se recorta el margen del bloque que empieza donde el título */
+(function(){
+  if (!window.matchMedia || !matchMedia('(max-width:1023.98px)').matches) return;
+  var TARGET = 14, run = function(){
+    if (window.scrollY > 4) return;
+    var bar = 0; [].forEach.call(document.querySelectorAll('*'), function(e){ var s = getComputedStyle(e); if (s.position !== 'fixed' && s.position !== 'sticky') return; var r = e.getBoundingClientRect(); if (r.top <= 1 && r.top > -2 && r.height >= 40 && r.height <= 120 && r.width >= innerWidth - 2) bar = Math.max(bar, r.bottom); });
+    if (!bar) return;
+    var h = [].filter.call(document.querySelectorAll('h1'), function(x){ var r = x.getBoundingClientRect(); return r.height > 10 && r.top >= bar - 2 && r.top < bar + 90 && getComputedStyle(x).visibility !== 'hidden'; })[0];
+    if (!h) return;
+    var gap = h.getBoundingClientRect().top - bar, delta = gap - TARGET; if (delta < 1) return;
+    var top = h.getBoundingClientRect().top, el = h;
+    for (var a = h.parentElement; a && a !== document.body; a = a.parentElement) { var t = a.getBoundingClientRect().top; if (t < bar - 1 || top - t > 10) break; el = a; }
+    var mt = parseFloat(getComputedStyle(el).marginTop) || 0;
+    el.style.setProperty('margin-top', (mt - delta) + 'px', 'important');
+  };
+  [400, 1100, 2200].forEach(function(ms){ setTimeout(run, ms); });
+  var tm = null; try { new MutationObserver(function(){ clearTimeout(tm); tm = setTimeout(run, 200); }).observe(document.body, { childList: true, subtree: true }); } catch (e) {}
+})();
