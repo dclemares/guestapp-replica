@@ -487,11 +487,11 @@ plc.addEventListener('click', function(e){
   [].forEach.call(plc.querySelectorAll('[data-plc]'), function(c){ c.classList.toggle('on', c === b); });
   window.dispatchEvent(new Event('replica-past-change'));
 }, true);
-/* Componentes → Order summary: V1 azul oscuro (original) · V2 blanca con CTA azul (se aplica con html[data-os]) */
-var osVer = function(){ return LSget('replica-os', '1') === '2' ? '2' : '1'; };
-var osApply = function(){ var h = document.documentElement; if (osVer() === '2') h.setAttribute('data-os', '2'); else h.removeAttribute('data-os'); };
+/* Componentes → Order summary: V1 azul oscuro (original) · V2 glass · V3 blanca pura con CTA azul (se aplica con html[data-os]) */
+var osVer = function(){ var v = LSget('replica-os', '1'); return v === '2' || v === '3' ? v : '1'; };
+var osApply = function(){ var h = document.documentElement; if (osVer() !== '1') h.setAttribute('data-os', osVer()); else h.removeAttribute('data-os'); };
 osApply(); window.addEventListener('storage', function(e){ if (e.key === 'replica-os') osApply(); });
-var osc = seg([['1', 'V1 · azul oscuro'], ['2', 'V2 · blanca']].map(function(o){ return '<button type="button" class="rs-chip' + (o[0] === osVer() ? ' on' : '') + '" data-osc="' + o[0] + '">' + o[1] + '</button>'; }).join(''));
+var osc = seg([['1', 'V1 · azul oscuro'], ['2', 'V2 · glass'], ['3', 'V3 · blanca pura']].map(function(o){ return '<button type="button" class="rs-chip' + (o[0] === osVer() ? ' on' : '') + '" data-osc="' + o[0] + '">' + o[1] + '</button>'; }).join(''));
 osc.addEventListener('click', function(e){
   var b = e.target.closest('[data-osc]'); if (!b) return; e.preventDefault(); e.stopPropagation();
   LSset('replica-os', b.getAttribute('data-osc')); osApply();
