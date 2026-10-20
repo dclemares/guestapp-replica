@@ -932,7 +932,13 @@ if (document.readyState !== 'loading' && !barDone) { barDone = true; addBar(); }
       var b = r.bottom + sy; if (b > lb) { lb = b; last = e; }
     });
     if (!last) return;
-    var extra = DH - lb - T; if (extra < 1) return;
+    var fixedH = 0;   /* un dock fijo abajo tapa el final: el hueco debe ser su altura + 12 px */
+    [].forEach.call(document.querySelectorAll('div,footer,section,nav,aside'), function(e){
+      if (e.closest('#rep-panel,#rep-panel-set,.rep-gc-frame,.hub-sc,.bk-bar,.rep-switch,.lv-ov,.ivs-ov,.rep-sh-back')) return;
+      var s = getComputedStyle(e); if (s.position !== 'fixed' || s.display === 'none' || s.visibility === 'hidden' || parseFloat(s.opacity) < .05) return;
+      var q = e.getBoundingClientRect(); if (q.width >= innerWidth - 2 && q.height > 20 && q.height < innerHeight * .6 && Math.abs(q.bottom - innerHeight) < 3) fixedH = Math.max(fixedH, q.height);
+    });
+    var extra = DH - lb - T - fixedH; if (extra < 1) return;
     for (var a = last; a && a !== document.documentElement && extra > .5; a = a.parentElement) {
       var ab = a.getBoundingClientRect().bottom + sy; if (Math.abs(ab - DH) > 24 && a !== last) { if (ab < DH - 40) continue; }
       var cs = getComputedStyle(a), pb = parseFloat(cs.paddingBottom) || 0, mb = parseFloat(cs.marginBottom) || 0;
@@ -986,7 +992,7 @@ if (document.readyState !== 'loading' && !barDone) { barDone = true; addBar(); }
 (function(){
   if (!window.matchMedia || !matchMedia('(max-width:1023.98px)').matches) return;
   if (new URLSearchParams(location.search).get('embed') === '1') return;   /* dentro del iframe del modal el fondo debe seguir transparente para ver la pantalla de detrás */
-  var st = document.createElement('style'); st.id = 'rep-modal-bg'; st.textContent = 'html.rep-modal{background-color:#fff!important}html.rep-modal body{background-color:#f5f5f7!important;min-height:100vh;min-height:100dvh}'; document.head.appendChild(st);
+  var st = document.createElement('style'); st.id = 'rep-modal-bg'; st.textContent = 'html.rep-modal{background-color:#fff!important}html.rep-modal::before{content:"";position:fixed;left:0;right:0;top:0;bottom:0;background:var(--rep-bg,#f5f5f7);z-index:-1;pointer-events:none}html.rep-modal body{background-color:var(--rep-bg,#f5f5f7)!important}';   /* el blanco queda solo fuera del viewport (zona de gestos); dentro, una capa fija con el gris de la página aunque el documento haga scroll */ document.head.appendChild(st);
   var isOpen = function(){
     var found = false;
     [].forEach.call(document.querySelectorAll('div,section,aside,dialog'), function(e){
@@ -1011,7 +1017,11 @@ if (document.readyState !== 'loading' && !barDone) { barDone = true; addBar(); }
     }
     return false;
   };
-  var run = function(){ document.documentElement.classList.toggle('rep-modal', isOpen() || bottomWhite()); };
+  var run = function(){
+    var on = isOpen() || bottomWhite(), h = document.documentElement;
+    if (on) { var bg = getComputedStyle(document.body).backgroundColor, m = bg.match(/rgba?\(([^)]+)\)/), al = m ? (m[1].split(',').length > 3 ? parseFloat(m[1].split(',')[3]) : 1) : 0; if (m && al > .5) h.style.setProperty('--rep-bg', bg); }
+    h.classList.toggle('rep-modal', on);
+  };
   var tm = null; var sched = function(){ clearTimeout(tm); tm = setTimeout(run, 80); };
   try { new MutationObserver(sched).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style', 'data-state', 'hidden'] }); } catch (e) {}
   window.addEventListener('resize', sched); [300, 1000, 2500].forEach(function(ms){ setTimeout(run, ms); });
