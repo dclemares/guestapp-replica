@@ -353,7 +353,7 @@ var EMBED = new URLSearchParams(location.search).get('embed') === '1';
     window.addEventListener('message', function(ev){ if (ev.data && ev.data.rep === 'gc-go') document.documentElement.classList.remove('rep-wait'); });
     var gcTell = function(){ try { parent.postMessage({ rep: 'gc-ready' }, '*'); } catch (_) {} };
     if (document.readyState === 'complete') setTimeout(gcTell, 120); else window.addEventListener('load', function(){ setTimeout(gcTell, 120); });
-    var es = document.createElement('style'); es.textContent = 'html,body{background:transparent!important}#root{visibility:hidden!important}.nv2>span>b{display:none!important}[data-rep-bar],.rep-switch,.rail-switch,#rep-panel{display:none!important}';   /* sin la nota "Taken from your booking" ni controles de la réplica */
+    var es = document.createElement('style'); es.textContent = 'html:root,html:root body{background:transparent!important}#root{visibility:hidden!important}.nv2>span>b{display:none!important}[data-rep-bar],.rep-switch,.rail-switch,#rep-panel{display:none!important}';   /* sin la nota "Taken from your booking" ni controles de la réplica */
     document.head.appendChild(es);
     var closing = false;
     var closeMe = function(){ if (closing) return; closing = true; document.documentElement.classList.add('rep-closing'); setTimeout(function(){ try { parent.postMessage({ rep: 'gc-close' }, '*'); } catch (_) {} }, 440); };   /* sale con animación y luego se quita el marco */
@@ -947,16 +947,22 @@ if (document.readyState !== 'loading' && !barDone) { barDone = true; addBar(); }
 /* móvil: con un modal / hoja inferior abierto, el fondo de la página (la franja del borde inferior, zona de gestos) pasa a blanco como el modal; al cerrarlo vuelve al gris. Solo se pinta html/body: el contenido sigue sobre su fondo gris */
 (function(){
   if (!window.matchMedia || !matchMedia('(max-width:1023.98px)').matches) return;
+  if (new URLSearchParams(location.search).get('embed') === '1') return;   /* dentro del iframe del modal el fondo debe seguir transparente para ver la pantalla de detrás */
   var st = document.createElement('style'); st.id = 'rep-modal-bg'; st.textContent = 'html.rep-modal,html.rep-modal body{background-color:#fff!important}'; document.head.appendChild(st);
   var isOpen = function(){
     var found = false;
     [].forEach.call(document.querySelectorAll('div,section,aside,dialog'), function(e){
-      if (found) return; var s = getComputedStyle(e); if (s.position !== 'fixed' || s.display === 'none' || s.visibility === 'hidden' || parseFloat(s.opacity) < .05) return;
+      if (found) return; var s = getComputedStyle(e);
+      /* dock de CTA blanco (fijo o pegado) en el borde inferior: la zona de gestos debajo también pasa a blanco */
+      if ((s.position === 'fixed' || s.position === 'sticky') && s.display !== 'none' && s.visibility !== 'hidden' && s.backgroundColor === 'rgb(255, 255, 255)' && !e.closest('#rep-panel,#rep-panel-set,.bk-bar,[data-rep-bar],.rep-gc-frame')) {
+        var q = e.getBoundingClientRect(); if (q.width >= innerWidth - 2 && q.height >= 40 && q.height <= 260 && Math.abs(q.bottom - innerHeight) < 3 && q.top > innerHeight / 3 && (e.getAttribute('data-slot') === 'cta-dock' || /dock|ft|cta|bar/i.test(e.className + '') || e.querySelector('button,a'))) { found = true; return; }
+      }
+      if (s.position !== 'fixed' || s.display === 'none' || s.visibility === 'hidden' || parseFloat(s.opacity) < .05) return;
       var r = e.getBoundingClientRect(); if (r.width < innerWidth - 2 || r.height < 120) return;
       if (e.closest('#rep-panel,#rep-panel-set,.bk-bar,[data-rep-bar]')) return;
       var dim = /bg-black|rgba\(0, 0, 0/.test((e.className || '') + ' ' + s.backgroundColor) && r.height >= innerHeight - 2;   /* velo oscuro a pantalla completa */
       var sheet = s.backgroundColor === 'rgb(255, 255, 255)' && Math.abs(r.bottom - innerHeight) < 2 && r.height > 160 && r.height < innerHeight - 4 && e.getAttribute('data-slot') !== 'cta-dock' && !/dock/.test(e.className + '');
-      if (dim || sheet || e.getAttribute('role') === 'dialog' || e.getAttribute('aria-modal') === 'true') found = true;
+      if (dim || sheet || e.classList.contains('rep-gc-frame') || e.getAttribute('role') === 'dialog' || e.getAttribute('aria-modal') === 'true') found = true;
     });
     return found;
   };
