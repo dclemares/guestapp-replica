@@ -234,7 +234,7 @@ var openLive = function(opts){
     + '<div class="ck-ft"><button type="button" class="ck-go" data-ckc="pay">' + ic('lock', 16) + payLbl(o) + '</button><p class="ck-sec">' + SECURE + '</p></div></div>'
     + '<div class="ck-pz" id="ck-pz" hidden></div></div>';
   document.body.appendChild(m); document.documentElement.classList.add('ck-lock'); restoreVals(); paint8();
-  setTimeout(function(){ var el = document.getElementById('ck-num'); if (el && !st.pay) try { el.focus({ preventScroll: true }); } catch (e) {} }, 60);
+  /* sin foco automático: el campo del número de tarjeta no se selecciona al abrir */
 };
 var closeModal = function(silent){ clearInterval(tick); tick = null; var m = document.querySelector('.ck-modal'); if (!m) return; m.parentNode.removeChild(m); document.documentElement.classList.remove('ck-lock'); st.pay = false; if (!silent && lastFocus && lastFocus.focus) try { lastFocus.focus(); } catch (e) {} };
 

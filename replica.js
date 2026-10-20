@@ -1026,3 +1026,14 @@ if (document.readyState !== 'loading' && !barDone) { barDone = true; addBar(); }
   try { new MutationObserver(sched).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style', 'data-state', 'hidden'] }); } catch (e) {}
   window.addEventListener('resize', sched); [300, 1000, 2500].forEach(function(ms){ setTimeout(run, ms); });
 })();
+
+
+/* ningún campo de formulario se selecciona solo al cargar la pantalla: si recibe el foco sin que haya habido un gesto del usuario, se quita */
+(function(){
+  var gesture = false, mark = function(){ gesture = true; };
+  ['pointerdown', 'keydown', 'touchstart'].forEach(function(t){ window.addEventListener(t, mark, { capture: true, passive: true, once: true }); });
+  document.addEventListener('focusin', function(e){
+    var t = e.target; if (gesture || !t || !/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)) return;
+    setTimeout(function(){ if (!gesture && document.activeElement === t) try { t.blur(); } catch (_) {} }, 0);
+  }, true);
+})();
