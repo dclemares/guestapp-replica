@@ -157,7 +157,7 @@ setTimeout(validate, 60);
 function vSheet(wrong){
   if (document.querySelector('.fx-vsheet')) return;
   var el = document.createElement('div'); el.className = 'fx-vsheet';
-  el.innerHTML = '<div class="fx-vbd" data-vclose></div><div class="fx-vp" role="alertdialog" aria-modal="true"><i class="fx-vg"></i><span class="fx-vic">' + ic('<path d="M12 3 2 20h20L12 3z"/><path d="M12 10v4"/><path d="M12 17.5v.01"/>', 34) + '</span><h2>' + (wrong ? 'Please check your details' : 'Incomplete Personal Data') + '</h2><p>' + (wrong ? 'Some of the information you entered doesn\'t look right. Correct the highlighted fields to continue.' : 'Please complete all the required data before continuing.') + '</p><button type="button" data-vclose>OK</button></div>';
+  el.innerHTML = '<div class="fx-vbd" data-vclose></div><div class="fx-vp" role="alertdialog" aria-modal="true"><i class="fx-vg"></i><h2>' + (wrong ? 'Please check your details' : 'Incomplete Personal Data') + '</h2><p>' + (wrong ? 'Some of the information you entered doesn\'t look right. Correct the highlighted fields to continue.' : 'Please complete all the required data before continuing.') + '</p><button type="button" data-vclose>OK</button></div>';
   document.body.appendChild(el); requestAnimationFrame(function(){ el.classList.add('in'); });
   el.addEventListener('click', function(e){ if (e.target.closest('[data-vclose]')) { e.preventDefault(); e.stopPropagation(); el.parentNode.removeChild(el); var first = document.querySelector('[data-severity]'); if (first) first.scrollIntoView({ block: 'center', behavior: 'smooth' }); } }, true);
 }

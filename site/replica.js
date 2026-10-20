@@ -589,19 +589,19 @@ if (document.readyState !== 'loading' && !barDone) { barDone = true; addBar(); }
   var HOME = function(){ location.href = 'home.' + want + '.html'; };
   var ST = document.createElement('style');
   ST.textContent = '.lv-ov{position:fixed;inset:0;z-index:2147483200;display:flex;align-items:flex-end;justify-content:center;background:rgba(22,22,67,.46);animation:lvf .2s ease both}'
-    + '.lv-sh{width:100%;max-width:480px;box-sizing:border-box;background:#fff;border-radius:24px 24px 0 0;padding:22px 20px calc(20px + env(safe-area-inset-bottom,0px));text-align:center;font-family:Poppins,system-ui,sans-serif;color:#161643;animation:lvu .26s cubic-bezier(.2,.8,.2,1) both}'
+    + '.lv-sh{width:100%;max-width:480px;box-sizing:border-box;background:#fff;border-radius:24px 24px 0 0;padding:22px 20px max(0px,env(safe-area-inset-bottom,0px));text-align:center;font-family:Poppins,system-ui,sans-serif;color:#161643;animation:lvu .26s cubic-bezier(.2,.8,.2,1) both}'
     + '@media(min-width:600px){.lv-ov{align-items:center}.lv-sh{border-radius:24px;max-width:420px}}'
     + '.lv-ic{display:grid;place-items:center;width:52px;height:52px;margin:0 auto 12px;border-radius:50%;background:#eef1ff;color:#385bf8}'
     + '.lv-sh h2{margin:0;font-size:19px;line-height:26px;font-weight:700}.lv-sh p{margin:8px 4px 18px;font-size:14.5px;line-height:21px;color:#6b6b95}'
     + '.lv-sh button{display:block;width:100%;height:48px;border-radius:99px;font:600 14.5px/20px Poppins,system-ui,sans-serif;letter-spacing:0;cursor:pointer;border:0}'
-    + '.lv-stay{background:#385bf8;color:#fff}.lv-go{margin-top:8px;background:#fff;color:#161643;border:1.5px solid #dfe2f1!important}.lv-go:hover{background:#f6f7fb}'
+    + '.lv-stay{background:#385bf8;color:#fff}.lv-go{height:44px!important;margin-top:8px;background:#fff;color:#161643;border:1.5px solid #dfe2f1!important}.lv-go:hover{background:#f6f7fb}'
     + '@keyframes lvf{from{opacity:0}}@keyframes lvu{from{transform:translateY(40px);opacity:0}}';
   function ask(onLeave, o){
     o = o || {};
     if (document.querySelector('.lv-ov')) return;
     document.head.appendChild(ST);
     var ov = document.createElement('div'); ov.className = 'lv-ov';
-    ov.innerHTML = '<div class="lv-sh" role="alertdialog" aria-modal="true" aria-labelledby="lv-t" aria-describedby="lv-d"><div class="lv-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (o.icon === 'back' ? '<path d="M19 12H5"/><path d="m12 19-7-7 7-7"/>' : '<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/>') + '</svg></div>'
+    ov.innerHTML = '<div class="lv-sh" role="alertdialog" aria-modal="true" aria-labelledby="lv-t" aria-describedby="lv-d">'
       + '<h2 id="lv-t">' + (o.title || 'Leave this process?') + '</h2><p id="lv-d">' + (o.text || 'You\'re in the middle of registering a guest. If you go to Home now, the information you\'ve entered so far will be lost.') + '</p>'
       + '<button type="button" class="lv-stay">' + (o.stay || 'Stay and continue') + '</button><button type="button" class="lv-go">' + (o.go || 'Go to Home') + '</button></div>';
     var close = function(){ if (ov.parentNode) ov.parentNode.removeChild(ov); document.removeEventListener('keydown', key, true); };
@@ -891,9 +891,10 @@ if (document.readyState !== 'loading' && !barDone) { barDone = true; addBar(); }
     var H = innerHeight, DH = Math.max(document.documentElement.scrollHeight, innerHeight);
     [].forEach.call(document.querySelectorAll('div,footer,section'), function(d){
       var s = getComputedStyle(d); if (s.backgroundColor !== 'rgb(255, 255, 255)' || s.position === 'absolute') return;
-      var r = d.getBoundingClientRect(); if (r.width < innerWidth - 2 || r.height < 40 || r.height > 420) return;
+      var r = d.getBoundingClientRect(); if (r.width < innerWidth - 2 || r.height < 40) return;
+      if (r.height > 420) { var fx = false; for (var z = d; z && z !== document.body; z = z.parentElement) if (getComputedStyle(z).position === 'fixed') { fx = true; break; } if (!fx || r.height > H * .95) return; }   /* hojas / modales altos: solo si están fijos */
       if (Math.abs(r.bottom - H) > 1.5 && Math.abs(r.bottom + window.scrollY - DH) > 1.5) return;
-      var ctr = [].slice.call(d.querySelectorAll('button,a')).filter(function(b){ var q = b.getBoundingClientRect(); return q.width > 20 && q.height > 20 && getComputedStyle(b).visibility !== 'hidden'; });
+      var ctr = [].slice.call(d.querySelectorAll('button,a,p,span,small,li,label,h1,h2,h3,h4')).filter(function(b){ var q = b.getBoundingClientRect(); if (q.width <= 20 || q.height <= 8 || getComputedStyle(b).visibility === 'hidden') return false; return /^(BUTTON|A)$/.test(b.tagName) ? q.height > 20 : [].some.call(b.childNodes, function(n){ return n.nodeType === 3 && n.textContent.trim(); }); });   /* último control o texto del pie (p. ej. la nota bajo «Begin verification») */
       if (!ctr.length) return;
       var last = ctr.reduce(function(a, b){ return b.getBoundingClientRect().bottom > a.getBoundingClientRect().bottom ? b : a; });
       var ls = getComputedStyle(last), q = last.getBoundingClientRect(), boxed = (alpha(ls.backgroundColor) > .05 && ls.backgroundColor !== s.backgroundColor) || /\d/.test(ls.boxShadow.replace(/rgba?\([^)]*\)/g, '')) || (parseFloat(ls.borderBottomWidth) > 0 && alpha(ls.borderBottomColor) > .05);
@@ -906,7 +907,44 @@ if (document.readyState !== 'loading' && !barDone) { barDone = true; addBar(); }
   };
   [500, 1400, 2800].forEach(function(ms){ setTimeout(run, ms); });
   window.addEventListener('resize', function(){ setTimeout(run, 200); });
-  var tm = null; try { new MutationObserver(function(){ clearTimeout(tm); tm = setTimeout(run, 160); }).observe(document.body, { childList: true, subtree: true }); } catch (e) {}
+  var tm = null, ta = null, tb = null;
+  var later = function(){ clearTimeout(tm); tm = setTimeout(run, 160); clearTimeout(ta); ta = setTimeout(run, 480); clearTimeout(tb); tb = setTimeout(run, 900); };   /* los modales entran con animación: se vuelve a medir cuando terminan */
+  try { new MutationObserver(later).observe(document.body, { childList: true, subtree: true }); } catch (e) {}
+  document.addEventListener('animationend', later, true); document.addEventListener('transitionend', later, true);
+})();
+
+/* móvil: al final de una página con scroll, el último contenido queda a 12 px del borde inferior (se recorta el relleno sobrante del contenedor) */
+(function(){
+  if (!window.matchMedia || !matchMedia('(max-width:1023.98px)').matches) return;
+  if (new URLSearchParams(location.search).get('embed') === '1') return;
+  var T = 12, alpha = function(c){ var m = /rgba?\(([^)]+)\)/.exec(c); if (!m) return 0; var p = m[1].split(','); return p.length > 3 ? parseFloat(p[3]) : 1; };
+  var run = function(){
+    var DH = document.documentElement.scrollHeight; if (DH <= innerHeight + 1) return;
+    var bodyBg = getComputedStyle(document.body).backgroundColor, last = null, lb = 0, sy = window.scrollY;
+    [].forEach.call(document.querySelectorAll('body *'), function(e){
+      if (e.closest('#rep-panel,#rep-panel-set,.rep-gc-frame,.hub-sc,.bk-bar,.rep-switch,.lv-ov,.ivs-ov,.rep-sh-back')) return;
+      var s = getComputedStyle(e); if (s.display === 'none' || s.visibility === 'hidden' || s.position === 'fixed' || s.position === 'sticky' || s.position === 'absolute' || parseFloat(s.opacity) < .05) return;
+      for (var z = e.parentElement; z && z !== document.body; z = z.parentElement) { var zp = getComputedStyle(z).position; if (zp === 'fixed' || zp === 'sticky') return; }
+      var r = e.getBoundingClientRect(); if (r.width < 8 || r.height < 6) return;
+      var own = [].some.call(e.childNodes, function(n){ return n.nodeType === 3 && n.textContent.trim(); });
+      var paint = own || /^(IMG|SVG|BUTTON|INPUT|VIDEO|CANVAS)$/i.test(e.tagName) || (alpha(s.backgroundColor) > .05 && s.backgroundColor !== bodyBg) || (s.backgroundImage && s.backgroundImage !== 'none');
+      if (!paint) return;
+      var b = r.bottom + sy; if (b > lb) { lb = b; last = e; }
+    });
+    if (!last) return;
+    var extra = DH - lb - T; if (extra < 1) return;
+    for (var a = last; a && a !== document.documentElement && extra > .5; a = a.parentElement) {
+      var ab = a.getBoundingClientRect().bottom + sy; if (Math.abs(ab - DH) > 24 && a !== last) { if (ab < DH - 40) continue; }
+      var cs = getComputedStyle(a), pb = parseFloat(cs.paddingBottom) || 0, mb = parseFloat(cs.marginBottom) || 0;
+      if (a === last) continue;
+      var cut = Math.min(extra, pb); if (cut > .5) { a.style.setProperty('padding-bottom', (pb - cut) + 'px', 'important'); extra -= cut; }
+      cut = Math.min(extra, Math.max(0, mb)); if (cut > .5 && extra > .5) { a.style.setProperty('margin-bottom', (mb - cut) + 'px', 'important'); extra -= cut; }
+    }
+  };
+  var tm = null, sched = function(){ clearTimeout(tm); tm = setTimeout(run, 220); };
+  [700, 1600, 3000].forEach(function(ms){ setTimeout(run, ms); });
+  window.addEventListener('resize', sched);
+  try { new MutationObserver(sched).observe(document.body, { childList: true, subtree: true }); } catch (e) {}
 })();
 
 /* móvil: el primer contenido de la pantalla (título, caja, tarjeta…) queda a unos 14 px de la barra de navegación superior. Se recorta el margen del bloque que empieza donde ese contenido */
