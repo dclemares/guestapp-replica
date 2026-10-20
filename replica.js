@@ -868,6 +868,11 @@ if (document.readyState !== 'loading' && !barDone) { barDone = true; addBar(); }
       var b = e.getBoundingClientRect(); if (b.width < innerWidth - 2 || b.height < 40 || b.height > 400) return;
       var gap = H - (b.bottom + window.scrollY); if (gap < 8 || gap > 26) return; if (!best || gap < best.gap) best = { e: e, gap: gap };
     });
+    /* docks sticky pegados abajo (p. ej. «Back to home»): en páginas con scroll, al llegar al final el contenedor deja su relleno debajo; se quita igual */
+    [].forEach.call(document.querySelectorAll('div,footer,section'), function(d){
+      var s = getComputedStyle(d); if (s.position !== 'sticky' || s.bottom !== '0px' || s.backgroundColor !== 'rgb(255, 255, 255)') return;
+      for (var a = d.parentElement; a && a !== document.body; a = a.parentElement) { var pb = parseFloat(getComputedStyle(a).paddingBottom) || 0; if (pb >= 8 && pb <= 26) { a.style.setProperty('padding-bottom', '0', 'important'); break; } }
+    });
     if (!best) return;
     for (var a = best.e.parentElement; a && a !== document.body; a = a.parentElement) {
       var pb = parseFloat(getComputedStyle(a).paddingBottom) || 0;
