@@ -853,7 +853,7 @@ if (document.readyState !== 'loading' && !barDone) { barDone = true; addBar(); }
     for (var n = 0; n <= 3; n++) { if (n) a.classList.add('vt' + n); if (a.scrollHeight <= a.clientHeight + 1) break; }
   };
   var t = null, sched = function(){ clearTimeout(t); t = setTimeout(run, 120); };
-  window.addEventListener('resize', sched);
+  window.addEventListener('resize', sched); window.addEventListener('scroll', sched, { passive: true, capture: true });
   [300, 900, 2000].forEach(function(ms){ setTimeout(run, ms); });
   try { new MutationObserver(sched).observe(document.body, { childList: true, subtree: true }); } catch (e) {}
 })();
@@ -953,10 +953,6 @@ if (document.readyState !== 'loading' && !barDone) { barDone = true; addBar(); }
     var found = false;
     [].forEach.call(document.querySelectorAll('div,section,aside,dialog'), function(e){
       if (found) return; var s = getComputedStyle(e);
-      /* dock de CTA blanco (fijo o pegado) en el borde inferior: la zona de gestos debajo también pasa a blanco */
-      if ((s.position === 'fixed' || s.position === 'sticky') && s.display !== 'none' && s.visibility !== 'hidden' && s.backgroundColor === 'rgb(255, 255, 255)' && !e.closest('#rep-panel,#rep-panel-set,.bk-bar,[data-rep-bar],.rep-gc-frame')) {
-        var q = e.getBoundingClientRect(); if (q.width >= innerWidth - 2 && q.height >= 40 && q.height <= 260 && Math.abs(q.bottom - innerHeight) < 3 && q.top > innerHeight / 3 && (e.getAttribute('data-slot') === 'cta-dock' || /dock|ft|cta|bar/i.test(e.className + '') || e.querySelector('button,a'))) { found = true; return; }
-      }
       if (s.position !== 'fixed' || s.display === 'none' || s.visibility === 'hidden' || parseFloat(s.opacity) < .05) return;
       var r = e.getBoundingClientRect(); if (r.width < innerWidth - 2 || r.height < 120) return;
       if (e.closest('#rep-panel,#rep-panel-set,.bk-bar,[data-rep-bar]')) return;
@@ -966,7 +962,18 @@ if (document.readyState !== 'loading' && !barDone) { barDone = true; addBar(); }
     });
     return found;
   };
-  var run = function(){ document.documentElement.classList.toggle('rep-modal', isOpen()); };
+  /* qué hay realmente en el borde inferior de la pantalla: si es blanco (dock, pie de página, hoja…) la franja de gestos también lo es; si es el gris de la página, se queda gris */
+  var bottomWhite = function(){
+    var els = document.elementsFromPoint ? document.elementsFromPoint(3, innerHeight - 2) : [];
+    for (var k = 0; k < els.length; k++) {
+      var e = els[k]; if (e === document.documentElement || e === document.body || e.closest('#rep-panel,#rep-panel-set,.rep-gc-frame')) continue;
+      var m = getComputedStyle(e).backgroundColor.match(/rgba?\(([^)]+)\)/); if (!m) continue;
+      var p = m[1].split(',').map(parseFloat); var al = p.length > 3 ? p[3] : 1; if (al < .5) continue;
+      return p[0] > 250 && p[1] > 250 && p[2] > 250;
+    }
+    return false;
+  };
+  var run = function(){ document.documentElement.classList.toggle('rep-modal', isOpen() || bottomWhite()); };
   var tm = null; var sched = function(){ clearTimeout(tm); tm = setTimeout(run, 80); };
   try { new MutationObserver(sched).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style', 'data-state', 'hidden'] }); } catch (e) {}
   window.addEventListener('resize', sched); [300, 1000, 2500].forEach(function(ms){ setTimeout(run, ms); });
