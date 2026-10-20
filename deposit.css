@@ -184,7 +184,8 @@
   .dp-mtl li:not(:last-child)::before{left:calc(50% + 24px);right:calc(-50% + 8px)}
 }
 @media (max-width:1023.98px){
-  .dp-mtl li:not(:last-child)::before{top:42px;bottom:0}
+  .dp-mtl li:not(:last-child)::before{top:42px;bottom:6px}   /* 6 px de aire tanto arriba (bajo su círculo) como abajo (sobre el siguiente) */
+  .dp-cn{display:none!important}   /* móvil: sin la nota «This property requires one of the two…» */
 }
 
 /* «Continue without protection» va dentro del cuadro azul en escritorio (a la derecha del botón principal); debajo de la caja solo en móvil */
