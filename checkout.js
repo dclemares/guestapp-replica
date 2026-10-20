@@ -234,7 +234,14 @@ var openLive = function(opts){
     + '<div class="ck-ft"><button type="button" class="ck-go" data-ckc="pay">' + ic('lock', 16) + payLbl(o) + '</button><p class="ck-sec">' + SECURE + '</p></div></div>'
     + '<div class="ck-pz" id="ck-pz" hidden></div></div>';
   document.body.appendChild(m); document.documentElement.classList.add('ck-lock'); restoreVals(); paint8();
-  /* sin foco automático: el campo del número de tarjeta no se selecciona al abrir */
+  /* sin foco automático: el campo del número de tarjeta no se selecciona al abrir (ni por el navegador): si recibe el foco sin que el usuario lo haya tocado, se quita */
+  (function(){
+    var t0 = Date.now(), touched = false, mark = function(e){ if (e.target && e.target.closest && e.target.closest('input')) touched = true; };
+    m.addEventListener('pointerdown', mark, true); m.addEventListener('touchstart', mark, true); m.addEventListener('keydown', function(){ touched = true; }, true);
+    var off = function(){ var a = document.activeElement; if (!touched && a && a.tagName === 'INPUT' && m.contains(a)) try { a.blur(); } catch (e) {} };
+    m.addEventListener('focusin', function(){ if (Date.now() - t0 < 1500) setTimeout(off, 0); }, true);
+    [0, 120, 400, 900].forEach(function(ms){ setTimeout(off, ms); });
+  })();
 };
 var closeModal = function(silent){ clearInterval(tick); tick = null; var m = document.querySelector('.ck-modal'); if (!m) return; m.parentNode.removeChild(m); document.documentElement.classList.remove('ck-lock'); st.pay = false; if (!silent && lastFocus && lastFocus.focus) try { lastFocus.focus(); } catch (e) {} };
 
