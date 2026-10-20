@@ -909,18 +909,30 @@ if (document.readyState !== 'loading' && !barDone) { barDone = true; addBar(); }
   var tm = null; try { new MutationObserver(function(){ clearTimeout(tm); tm = setTimeout(run, 160); }).observe(document.body, { childList: true, subtree: true }); } catch (e) {}
 })();
 
-/* móvil: el título de la pantalla queda a unos 14 px de la barra de navegación superior (antes ~30 px). Se recorta el margen del bloque que empieza donde el título */
+/* móvil: el primer contenido de la pantalla (título, caja, tarjeta…) queda a unos 14 px de la barra de navegación superior. Se recorta el margen del bloque que empieza donde ese contenido */
 (function(){
   if (!window.matchMedia || !matchMedia('(max-width:1023.98px)').matches) return;
-  var TARGET = 14, run = function(){
-    if (window.scrollY > 4) return;
-    var bar = 0; [].forEach.call(document.querySelectorAll('*'), function(e){ var s = getComputedStyle(e); if (s.position !== 'fixed' && s.position !== 'sticky') return; var r = e.getBoundingClientRect(); if (r.top <= 1 && r.top > -2 && r.height >= 40 && r.height <= 120 && r.width >= innerWidth - 2) bar = Math.max(bar, r.bottom); });
-    if (!bar) return;
-    var h = [].filter.call(document.querySelectorAll('h1'), function(x){ var r = x.getBoundingClientRect(); return r.height > 10 && r.top >= bar - 2 && r.top < bar + 90 && getComputedStyle(x).visibility !== 'hidden'; })[0];
-    if (!h) return;
-    var gap = h.getBoundingClientRect().top - bar, delta = gap - TARGET; if (delta < 1) return;
-    var top = h.getBoundingClientRect().top, el = h;
-    for (var a = h.parentElement; a && a !== document.body; a = a.parentElement) { var t = a.getBoundingClientRect().top; if (t < bar - 1 || top - t > 10) break; el = a; }
+  var TARGET = 14, alpha = function(c){ var m = /rgba?\(([^)]+)\)/.exec(c); if (!m) return 0; var p = m[1].split(','); return p.length > 3 ? parseFloat(p[3]) : 1; };
+  var find = function(){
+    var bar = 0, barEl = null; [].forEach.call(document.querySelectorAll('*'), function(e){ var s = getComputedStyle(e); if (s.position !== 'fixed' && s.position !== 'sticky') return; var r = e.getBoundingClientRect(); if (r.top <= 1 && r.top > -2 && r.height >= 40 && r.height <= 120 && r.width >= innerWidth - 2 && r.bottom > bar) { bar = r.bottom; barEl = e; } });
+    if (!bar) return null;
+    var best = null;
+    [].forEach.call(document.querySelectorAll('div,section,header,main,article,h1,h2,h3,p,ul,img,svg,button,a,form,nav,span'), function(e){
+      if ((barEl && barEl.contains(e)) || e.closest('#rep-panel,#rep-panel-set,[data-rep-bar],.rep-switch,.bk-bar,[data-slot="cta-dock"]')) return;
+      var r = e.getBoundingClientRect(); if (r.width < 8 || r.height < 8 || r.top < bar - 2 || r.top > bar + 110) return;
+      var s = getComputedStyle(e); if (s.position === 'fixed' || s.position === 'sticky' || s.visibility === 'hidden' || s.display === 'none' || parseFloat(s.opacity) < .05) return;
+      var own = [].some.call(e.childNodes, function(n){ return n.nodeType === 3 && n.textContent.trim(); });
+      var vis = own || alpha(s.backgroundColor) > .05 || (s.backgroundImage && s.backgroundImage !== 'none') || (s.boxShadow && s.boxShadow !== 'none') || /^(IMG|SVG)$/i.test(e.tagName) || (e.tagName === 'BUTTON');
+      if (!vis) return; if (!best || r.top < best.top - .5) best = { e: e, top: r.top };
+    });
+    return best ? { bar: bar, e: best.e, top: best.top, gap: best.top - bar } : null;
+  };
+  window.__firstGap = find;
+  var run = function(){
+    if (window.scrollY > 4) return; var f = find(); if (!f) return;
+    var delta = f.gap - TARGET; if (delta < 1) return;
+    var el = f.e;
+    for (var a = f.e.parentElement; a && a !== document.body; a = a.parentElement) { var t = a.getBoundingClientRect().top; if (t < f.bar - 1 || f.top - t > 10) break; el = a; }
     var mt = parseFloat(getComputedStyle(el).marginTop) || 0;
     el.style.setProperty('margin-top', (mt - delta) + 'px', 'important');
   };
