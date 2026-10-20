@@ -381,9 +381,12 @@ if (RETRY || VIEW || RUN) { var nn = 0, tt = setInterval(function(){ if (documen
   var fit = function(){
     var z = document.querySelector('.v2-zn'); if (!z) return;
     var sc = z.closest('.ck-pzb,.ck-rzb'); if (!sc) return;
-    z.style.fontSize = ''; z.style.lineHeight = '';
+    z.style.fontSize = ''; z.style.lineHeight = ''; z.style.marginTop = ''; sc.style.overflowY = '';
+    var over = function(){ return sc.scrollHeight - sc.clientHeight; };
     var fs = 12.5;
-    while (sc.scrollHeight > sc.clientHeight + 1 && fs > 10) { fs -= .5; z.style.fontSize = fs + 'px'; z.style.lineHeight = Math.round(fs * 1.35 * 10) / 10 + 'px'; }
+    while (over() > 0 && fs > 10) { fs -= .5; z.style.fontSize = fs + 'px'; z.style.lineHeight = Math.round(fs * 1.35 * 10) / 10 + 'px'; }
+    if (over() > 0) { z.style.marginTop = '4px'; z.style.lineHeight = Math.round(fs * 1.25 * 10) / 10 + 'px'; }   /* aún sobra: se aprieta el hueco y el interlineado */
+    if (over() > 0 && over() <= 8) sc.style.overflowY = 'hidden';   /* un resto de unos px no debe dejar un mini scroll */
   };
   var tm = null, sched = function(){ clearTimeout(tm); tm = setTimeout(fit, 60); };
   window.addEventListener('resize', sched);
