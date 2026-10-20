@@ -487,10 +487,20 @@ plc.addEventListener('click', function(e){
   [].forEach.call(plc.querySelectorAll('[data-plc]'), function(c){ c.classList.toggle('on', c === b); });
   window.dispatchEvent(new Event('replica-past-change'));
 }, true);
+/* Componentes → Order summary: V1 azul oscuro (original) · V2 blanca con CTA azul (se aplica con html[data-os]) */
+var osVer = function(){ return LSget('replica-os', '1') === '2' ? '2' : '1'; };
+var osApply = function(){ var h = document.documentElement; if (osVer() === '2') h.setAttribute('data-os', '2'); else h.removeAttribute('data-os'); };
+osApply(); window.addEventListener('storage', function(e){ if (e.key === 'replica-os') osApply(); });
+var osc = seg([['1', 'V1 · azul oscuro'], ['2', 'V2 · blanca']].map(function(o){ return '<button type="button" class="rs-chip' + (o[0] === osVer() ? ' on' : '') + '" data-osc="' + o[0] + '">' + o[1] + '</button>'; }).join(''));
+osc.addEventListener('click', function(e){
+  var b = e.target.closest('[data-osc]'); if (!b) return; e.preventDefault(); e.stopPropagation();
+  LSset('replica-os', b.getAttribute('data-osc')); osApply();
+  [].forEach.call(osc.querySelectorAll('[data-osc]'), function(c){ c.classList.toggle('on', c === b); });
+}, true);
 var addFee = function(){ if (window.__repPanel) window.__repPanel.add('Comisiones externas', ef, 2.6); };
 /* «Pagos existentes» es un control de la página (order ≥ 10), no un ajuste de la reserva */
 var addPast = function(){ if (window.__repPanel) window.__repPanel.add('Pagos existentes', pe, 25); };
-var addCtl = function(){ if (isCart && window.__repPanel) { window.__repPanel.add('Pagos pospuestos', ppc, 24);  } };
+var addCtl = function(){ if (isCart && window.__repPanel) { window.__repPanel.add('Pagos pospuestos', ppc, 24); window.__repPanel.add('Order summary', osc, 26); } };
 
 /* ---------- Página «Order history»: recibos de papel (T8). La pantalla `order-history` de la réplica era una captura de «Edit tourist taxes»; aquí se sustituye su contenido ---------- */
 var isHist = S.id === 'order-history';
