@@ -304,4 +304,11 @@ for _p in glob.glob(os.path.join(SITE, '*.html')) + glob.glob(os.path.join(SITE,
     _rel = '../assets/' if os.sep + 'screens' + os.sep in _p else 'assets/'
     if 'i18n-en.js' not in _t and '</body>' in _t:
         open(_p, 'w', encoding='utf-8').write(_t.replace('</body>', '<script src="%si18n-en.js"></script></body>' % _rel, 1))
+# versión en las URLs de scripts y estilos: GitHub Pages cachea 10 min, así una recarga trae siempre lo último
+import time as _time
+_ver = str(int(_time.time()))
+for _p in glob.glob(os.path.join(SITE, '*.html')) + glob.glob(os.path.join(SITE, 'screens', '*.html')):
+    _t = open(_p, encoding='utf-8').read()
+    _n = re.sub(r'((?:src|href)=")((?:\.\./)?(?:assets/[^"?#]+|replica|guestcount)\.(?:js|css))(")', lambda m: m.group(1) + m.group(2) + '?v=' + _ver + m.group(3), _t)
+    if _n != _t: open(_p, 'w', encoding='utf-8').write(_n)
 print('done', sum(len(v) for v in screens.values()), 'pages')
