@@ -138,7 +138,3 @@ html body .bk-bar{clip-path:none!important}
   div.sticky.bottom-0.z-10.mt-auto{margin-bottom:-20px!important;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))!important}
 }
 
-/* móvil: el fondo de la página bajo el contenido es blanco, igual que los docks de CTA; así la franja del borde inferior (zona de gestos / barra de navegación del móvil) no se ve gris */
-@media (max-width:1023.98px){
-  html:root,html:root body{background-color:#fff!important}
-}
