@@ -369,3 +369,16 @@ if (RETRY || VIEW || RUN) { var nn = 0, tt = setInterval(function(){ if (documen
   else if (VIEW && /^(bank|proc|ok|fail|part)$/.test(VIEW)) preview(VIEW);
   else if (RETRY) openLive({ note: RETRY }); } }, 150); }
 })();
+/* paso «Confirm with your bank»: si la hoja fuese a hacer scroll, el aviso «Seeing 0,00€…» baja de tamaño (hasta 10 px) para que todo quepa sin scroll */
+(function(){
+  var fit = function(){
+    var z = document.querySelector('.v2-zn'); if (!z) return;
+    var sc = z.closest('.ck-pzb,.ck-rzb'); if (!sc) return;
+    z.style.fontSize = ''; z.style.lineHeight = '';
+    var fs = 12.5;
+    while (sc.scrollHeight > sc.clientHeight + 1 && fs > 10) { fs -= .5; z.style.fontSize = fs + 'px'; z.style.lineHeight = Math.round(fs * 1.35 * 10) / 10 + 'px'; }
+  };
+  var tm = null, sched = function(){ clearTimeout(tm); tm = setTimeout(fit, 60); };
+  window.addEventListener('resize', sched);
+  try { new MutationObserver(sched).observe(document.body, { childList: true, subtree: true }); } catch (e) {}
+})();
