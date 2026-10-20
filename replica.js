@@ -857,3 +857,23 @@ if (document.readyState !== 'loading' && !barDone) { barDone = true; addBar(); }
   [300, 900, 2000].forEach(function(ms){ setTimeout(run, ms); });
   try { new MutationObserver(sched).observe(document.body, { childList: true, subtree: true }); } catch (e) {}
 })();
+
+/* móvil: si un pie blanco (dock de CTA en flujo, p. ej. «Continue» de verificación) acaba a unos px del final de la página porque el contenedor deja relleno inferior, ese relleno se quita para que el dock llegue al borde */
+(function(){
+  if (!window.matchMedia || !matchMedia('(max-width:1023.98px)').matches) return;
+  var done = false, run = function(){
+    var H = Math.max(document.documentElement.scrollHeight, innerHeight), best = null;
+    [].forEach.call(document.querySelectorAll('footer,div,section,main,form'), function(e){
+      var s = getComputedStyle(e); if ((s.position !== 'static' && s.position !== 'sticky') || s.backgroundColor !== 'rgb(255, 255, 255)') return;
+      var b = e.getBoundingClientRect(); if (b.width < innerWidth - 2 || b.height < 40 || b.height > 400) return;
+      var gap = H - (b.bottom + window.scrollY); if (gap < 8 || gap > 26) return; if (!best || gap < best.gap) best = { e: e, gap: gap };
+    });
+    if (!best) return;
+    for (var a = best.e.parentElement; a && a !== document.body; a = a.parentElement) {
+      var pb = parseFloat(getComputedStyle(a).paddingBottom) || 0;
+      if (Math.abs(pb - best.gap) < 1.5) { a.style.setProperty('padding-bottom', '0', 'important'); break; }
+    }
+  };
+  [400, 1200, 2500].forEach(function(ms){ setTimeout(run, ms); });
+  window.addEventListener('resize', function(){ setTimeout(run, 150); });
+})();
