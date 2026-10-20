@@ -120,10 +120,11 @@ var EMBED = new URLSearchParams(location.search).get('embed') === '1';
   var root = document.documentElement;
   if (NB === '1' || NB === '2' || NB === '3') root.setAttribute('data-nobd', '3');   /* las antiguas «Sin borde» y «cristal» se pasaron a «total» */
   var N3 = 'html[data-nobd] ', B = 'html[data-nobd][data-bsh="1"] ', sh = '0 1px 2px rgba(22,22,67,.05),0 8px 22px rgba(22,22,67,.07)';
-  var KEEP3 = ':not(.t3-add):not(.pv-mh):not(.pv7-now):not(.chk-pclock):not([class*="spin"]):not([class*="-inset-"]):not(.rg-sd .sp):not(.iv-chip i):not(.v5s-row):not(.vc-chip):not(.iv-rd):not(aside span.absolute.bottom-0.right-0):not(div.mt-5[class*="border-t"]):not(input):not(select):not(textarea):not(fieldset):not(legend):not([data-slot="form-section-body"] *):not(#rep-panel):not(#rep-panel *):not(#rep-panel-set):not(#rep-panel-set *):not([data-rep-bar] *)';
+  var KEEP3 = ':not(.counter__decrease-button):not(.t3-add):not(.pv-mh):not(.pv7-now):not(.chk-pclock):not([class*="spin"]):not([class*="-inset-"]):not(.rg-sd .sp):not(.iv-chip i):not(.v5s-row):not(.vc-chip):not(.iv-rd):not(aside span.absolute.bottom-0.right-0):not(div.mt-5[class*="border-t"]):not(input):not(select):not(textarea):not(fieldset):not(legend):not([data-slot="form-section-body"] *):not(#rep-panel):not(#rep-panel *):not(#rep-panel-set):not(#rep-panel-set *):not([data-rep-bar] *)';
   var nb = document.createElement('style'); nb.id = 'rep-nobd';
   nb.textContent = N3.replace(/ $/, '') + '{--card-border:transparent;--top-bar-border:transparent;--bottom-nav-border:transparent;--dialog-content-border:transparent;--assistant-divider:transparent;--rail-border:transparent}'
     + N3 + KEEP3 + '{border-color:transparent!important}'
+    + 'html .counter__decrease-button.counter__button{border:1px solid #d3d7ea!important;background:#fff!important}'   /* el «−» del modal de huéspedes lleva un delineado fino, también con «Sin borde total» */
     + B + '[data-slot="card"],' + B + '[data-slot="form-section"],' + B + '.chk-card,' + B + 'a.group.overflow-hidden.no-underline{box-shadow:' + sh + '!important}'
     /* selectores (radio): el indicador circular se conserva y la opción elegida lleva un anillo azul separado 3 px de la caja (no la toca) */
     + N3 + '[role="radio"][aria-checked="true"]:not(input),' + N3 + '.iv-type.on{outline:2px solid #385bf8!important;outline-offset:3px!important}'
