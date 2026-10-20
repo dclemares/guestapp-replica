@@ -124,6 +124,7 @@ var EMBED = new URLSearchParams(location.search).get('embed') === '1';
   var nb = document.createElement('style'); nb.id = 'rep-nobd';
   nb.textContent = N3.replace(/ $/, '') + '{--card-border:transparent;--top-bar-border:transparent;--bottom-nav-border:transparent;--dialog-content-border:transparent;--assistant-divider:transparent;--rail-border:transparent}'
     + N3 + KEEP3 + '{border-color:transparent!important}'
+    + 'html .counter__increase-button.counter__button,html .counter__decrease-button.counter__button{box-shadow:none!important}'   /* sin sombra en el «+» ni en el «−» */
     + 'html .counter__decrease-button.counter__button{border:1px solid #d3d7ea!important;background:#fff!important}'   /* el «−» del modal de huéspedes lleva un delineado fino, también con «Sin borde total» */
     + B + '[data-slot="card"],' + B + '[data-slot="form-section"],' + B + '.chk-card,' + B + 'a.group.overflow-hidden.no-underline{box-shadow:' + sh + '!important}'
     /* selectores (radio): el indicador circular se conserva y la opción elegida lleva un anillo azul separado 3 px de la caja (no la toca) */
