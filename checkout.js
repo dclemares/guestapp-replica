@@ -83,7 +83,7 @@ var field = function(k, label, id, ph, mode, ac){ return '<div class="ck-f" data
 var payForm = function(o){ return ''
     + '<div class="ck-wal"><button type="button" class="ck-w" data-ck="wallet" data-v="apple" aria-label="Pay with Apple Pay">Apple Pay</button><button type="button" class="ck-w" data-ck="wallet" data-v="google" aria-label="Pay with Google Pay">Google Pay</button></div><div class="ck-or"><span>or pay with card</span></div>'
     + '<div class="ck-fs">' + field('num', 'Card number', 'ck-num', '1234 1234 1234 1234', 'numeric', 'cc-number') + '<div class="ck-r2">' + field('exp', 'Expiry date', 'ck-exp', 'MM / YY', 'numeric', 'cc-exp') + field('cvc', 'CVC', 'ck-cvc', '123', 'numeric', 'cc-csc') + '</div></div>'
-    + (o.dep ? '<p class="ck-pn">' + ic('card', 15) + '<span>' + (o.hold ? 'The same card is used for the ' + money(o.auth) + ' hold, in a separate operation.' : 'Your card is saved for the deposit. Nothing is blocked.') + '</span></p>' : '');
+    + (o.dep ? '<p class="ck-pn' + (o.hold ? ' ck-pn--hold' : '') + '">' + ic('card', 15) + '<span>' + (o.hold ? 'The same card is used for the ' + money(o.auth) + ' hold, in a separate operation.' : 'Your card is saved for the deposit. Nothing is blocked.') + '</span></p>' : '');
 };
 var SECURE = 'Secured by Stripe with 3D Secure. Your card details never touch our servers.';
 

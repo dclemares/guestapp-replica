@@ -245,3 +245,5 @@ html.ck-lock,html.ck-lock body{overflow:hidden}
 @media (min-width:1024px){
   .ck-live:is([data-v="2"],[data-v="3"]) .ck-lsheet{height:min(90vh,620px);max-height:none}
 }
+
+@media (max-width:1023.98px){.ck-pn--hold{display:none!important}}
