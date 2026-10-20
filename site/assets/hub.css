@@ -641,3 +641,9 @@ aside .vx-noacc{margin:8px 0 8px!important;padding-bottom:0!important;font-size:
 /* Sombreados = No: la barra fija de migas no proyecta sombra; sin borde, tampoco la raya */
 html:not([data-bsh="1"]) .bk-bar::after{display:none}
 html[data-nobd] .bk-bar::before{display:none}
+
+/* con un modal o una hoja abiertos (y dentro del iframe del modal de huéspedes) no se muestra el botón flotante «N more sections below» */
+html:has([role="dialog"]) .hub-sc,html:has([role="alertdialog"]) .hub-sc,html:has(.lv-ov) .hub-sc,html:has(.ivs-ov) .hub-sc,html:has(.ck-modal) .hub-sc,html:has(.rep-sh-back) .hub-sc,html:has(.rg-sheet) .hub-sc,html:has(.t2-sheet) .hub-sc,html:has([data-slot="drawer-overlay"]) .hub-sc,html:has([data-slot="dialog-overlay"]) .hub-sc,html:has([data-slot="sheet-overlay"]) .hub-sc{display:none!important}
+
+/* idem para el otro botón flotante (own-sc) */
+html:has([role="dialog"]) .own-sc,html:has([role="alertdialog"]) .own-sc,html:has(.lv-ov) .own-sc,html:has(.ivs-ov) .own-sc,html:has(.ck-modal) .own-sc,html:has(.rep-sh-back) .own-sc,html:has(.rg-sheet) .own-sc,html:has(.t2-sheet) .own-sc,html:has([data-slot="drawer-overlay"]) .own-sc,html:has([data-slot="dialog-overlay"]) .own-sc,html:has([data-slot="sheet-overlay"]) .own-sc{display:none!important}

@@ -353,7 +353,7 @@ var EMBED = new URLSearchParams(location.search).get('embed') === '1';
     window.addEventListener('message', function(ev){ if (ev.data && ev.data.rep === 'gc-go') document.documentElement.classList.remove('rep-wait'); });
     var gcTell = function(){ try { parent.postMessage({ rep: 'gc-ready' }, '*'); } catch (_) {} };
     if (document.readyState === 'complete') setTimeout(gcTell, 120); else window.addEventListener('load', function(){ setTimeout(gcTell, 120); });
-    var es = document.createElement('style'); es.textContent = 'html:root,html:root body{background:transparent!important}#root{visibility:hidden!important}.nv2>span>b{display:none!important}[data-rep-bar],.rep-switch,.rail-switch,#rep-panel{display:none!important}';   /* sin la nota "Taken from your booking" ni controles de la réplica */
+    var es = document.createElement('style'); es.textContent = 'html:root,html:root body{background:transparent!important}#root{visibility:hidden!important}.nv2>span>b{display:none!important}[data-rep-bar],.rep-switch,.rail-switch,#rep-panel,.hub-sc,.own-sc{display:none!important}';   /* sin la nota "Taken from your booking" ni controles de la réplica */
     document.head.appendChild(es);
     var closing = false;
     var closeMe = function(){ if (closing) return; closing = true; document.documentElement.classList.add('rep-closing'); setTimeout(function(){ try { parent.postMessage({ rep: 'gc-close' }, '*'); } catch (_) {} }, 440); };   /* sale con animación y luego se quita el marco */

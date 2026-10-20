@@ -138,3 +138,6 @@ html body .bk-bar{clip-path:none!important}
   div.sticky.bottom-0.z-10.mt-auto{margin-bottom:-20px!important;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))!important}
 }
 
+
+/* idem para el otro botón flotante (own-sc) */
+html:has([role="dialog"]) .own-sc,html:has([role="alertdialog"]) .own-sc,html:has(.lv-ov) .own-sc,html:has(.ivs-ov) .own-sc,html:has(.ck-modal) .own-sc,html:has(.rep-sh-back) .own-sc,html:has(.rg-sheet) .own-sc,html:has(.t2-sheet) .own-sc,html:has([data-slot="drawer-overlay"]) .own-sc,html:has([data-slot="dialog-overlay"]) .own-sc,html:has([data-slot="sheet-overlay"]) .own-sc{display:none!important}
