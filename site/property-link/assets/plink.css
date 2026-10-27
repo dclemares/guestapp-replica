@@ -1,0 +1,828 @@
+/* Property link / User link: entrada pública al check-in online.
+   Sistema de la réplica: Poppins, azul marino #161643, azul #385bf8, fondo #f6f7fc, tarjetas blancas.
+   Sin delineados ni sombras (salvo el mini sombreado del dock y de la cabecera al hacer scroll). */
+:root{--pl-ink:#161643;--pl-sub:#5a6695;--pl-mute:#8a8ca6;--pl-blue:#385bf8;--pl-blue-d:#2c48d6;--pl-soft:#f1f3fb;--pl-soft2:#e9edff;--pl-bg:#f6f7fc;--pl-red:#c8323c;--pl-red-bg:#fff1f2;--pl-amber-bg:#fff7e6;--pl-green:#1f9d63;--pl-hero:linear-gradient(135deg,#15153f 0%,#23235d 44%,#2e46c8 100%)}
+*{box-sizing:border-box}
+html,body{margin:0}
+body.pl-body{min-height:100vh;background:var(--pl-bg);color:var(--pl-ink);font:400 15px/1.45 Poppins,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+.pl-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* cabecera */
+.pl-top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;height:60px;padding:0 16px;background:#fff;transition:box-shadow .2s}
+html[data-hscroll] .pl-top{box-shadow:0 4px 14px rgba(22,22,67,.06)}
+.pl-back{width:40px;height:40px;margin-left:-6px;border:0;border-radius:12px;background:var(--pl-soft);display:grid;place-items:center}
+.pl-brand{display:flex;align-items:center;gap:10px;min-width:0;flex:1}
+.pl-logo{width:34px;height:34px;flex:none;border-radius:10px;background:var(--pl-hero);color:#fff;display:grid;place-items:center;font-weight:700;font-size:15px}
+.pl-brand b{font-weight:700;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl-lang{display:flex;align-items:center;gap:6px;height:34px;padding:0 12px;border:0;border-radius:99px;background:var(--pl-soft);font-weight:600;font-size:13px}
+
+/* estructura */
+.pl-main{max-width:520px;margin:0 auto;padding:12px 16px 132px}
+.pl-hero{position:relative;overflow:hidden;padding:18px 18px 20px;border-radius:20px;color:#fff;background:var(--pl-hero)}
+.pl-eyebrow{margin:0 0 6px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#aab6ff}
+.pl-hero h1{margin:0;font-size:23px;line-height:1.2;font-weight:700}
+.pl-hero p{margin:6px 0 0;font-size:13.5px;color:#d5dbff}
+.pl-steps{display:flex;gap:6px;margin:16px 0 0;padding:0;list-style:none}
+.pl-steps li{flex:1;display:flex;align-items:center;gap:7px;padding:8px 9px;border-radius:12px;background:rgba(255,255,255,.1);font-size:12px;font-weight:600;line-height:1.2}
+.pl-steps li i{flex:none;width:20px;height:20px;border-radius:99px;display:grid;place-items:center;font-style:normal;font-size:11px;font-weight:700;background:rgba(255,255,255,.18)}
+.pl-steps li.on{background:#fff;color:var(--pl-ink)}
+.pl-steps li.on i{background:var(--pl-blue);color:#fff}
+
+.pl-card{margin-top:12px;padding:18px 16px 20px;border-radius:20px;background:#fff}
+.pl-card h2{margin:0;font-size:18px;font-weight:700;line-height:1.3}
+.pl-card .pl-lead{margin:4px 0 0;color:var(--pl-sub);font-size:13.5px}
+
+/* selector de método: bandeja suave, la opción elegida en blanco */
+.pl-tabs{display:flex;gap:4px;margin:16px 0 4px;padding:4px;border-radius:14px;background:var(--pl-soft)}
+.pl-tab{flex:1;min-height:40px;padding:6px 4px;border:0;border-radius:10px;background:none;font-size:13px;font-weight:600;color:var(--pl-sub);line-height:1.2}
+.pl-tab.on{background:#fff;color:var(--pl-ink)}
+.pl-tab:focus-visible,.pl-btn:focus-visible,.pl-field:focus-visible,.pl-link:focus-visible{outline:2px solid var(--pl-blue);outline-offset:2px}
+
+/* campos */
+.pl-f{margin-top:14px}
+.pl-f>label,.pl-f>.pl-lab{display:block;margin:0 0 6px;font-size:13px;font-weight:600}
+.pl-field{display:flex;align-items:center;gap:10px;width:100%;min-height:52px;padding:0 14px;border:0;border-radius:12px;background:var(--pl-soft);font-size:15px;text-align:left}
+.pl-field input{flex:1;min-width:0;height:50px;border:0;background:none;outline:none;font-size:16px}
+.pl-field input::placeholder,.pl-field .ph{color:var(--pl-mute)}
+.pl-field:focus-within{background:var(--pl-soft2)}
+.pl-field svg{flex:none;color:var(--pl-sub)}
+.pl-field .val{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl-hint{margin:6px 2px 0;font-size:12.5px;color:var(--pl-sub)}
+.pl-err .pl-field{background:var(--pl-red-bg)}
+.pl-errt{margin:6px 2px 0;font-size:12.5px;font-weight:600;color:var(--pl-red)}
+.pl-new{animation:plIn .35s ease both}
+.pl-new .pl-field{background:var(--pl-soft2)}
+@keyframes plIn{from{opacity:0;transform:translateY(-6px)}}
+.pl-quick{display:flex;gap:6px;margin-top:8px}
+.pl-chip{height:32px;padding:0 12px;border:0;border-radius:99px;background:var(--pl-soft);font-size:12.5px;font-weight:600;color:var(--pl-ink)}
+.pl-chip.on{background:var(--pl-ink);color:#fff}
+
+/* avisos dentro de la tarjeta */
+.pl-note{display:flex;gap:10px;margin-top:14px;padding:12px 14px;border-radius:14px;font-size:13px;line-height:1.45}
+.pl-note svg{flex:none;margin-top:1px}
+.pl-note b{display:block;font-size:13.5px;margin-bottom:2px}
+.pl-note ul{margin:6px 0 0;padding-left:18px}
+.pl-note li{margin:2px 0}
+.pl-note.err{background:var(--pl-red-bg)}
+.pl-note.err svg{color:var(--pl-red)}
+.pl-note.info{background:var(--pl-soft2)}
+.pl-note.info svg{color:var(--pl-blue)}
+.pl-note.warn{background:var(--pl-amber-bg)}
+.pl-note.warn svg{color:#b7791f}
+.pl-link{display:inline;padding:0;border:0;background:none;color:var(--pl-blue);font-weight:600;text-decoration:underline;text-underline-offset:2px}
+.pl-priv{display:flex;align-items:center;justify-content:center;gap:6px;margin:16px 0 0;font-size:12px;color:var(--pl-mute)}
+
+/* tarjeta secundaria: crear la reserva / contactar */
+.pl-alt{margin-top:12px;padding:16px;border-radius:20px;background:#fff}
+.pl-alt h3{margin:0;font-size:15px;font-weight:700}
+.pl-alt p{margin:4px 0 12px;color:var(--pl-sub);font-size:13px}
+.pl-contact{display:flex;gap:8px;flex-wrap:wrap}
+
+/* botones */
+.pl-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 18px;border:0;border-radius:12px;font-size:15px;font-weight:600}
+.pl-btn.pri{width:100%;background:var(--pl-blue);color:#fff}
+.pl-btn.pri:hover{background:var(--pl-blue-d)}
+.pl-btn.sec{background:var(--pl-soft);color:var(--pl-ink)}
+.pl-btn.sm{min-height:40px;padding:0 14px;font-size:13.5px}
+.pl-btn.txt{width:100%;background:none;color:var(--pl-ink);min-height:40px}
+.pl-btn[aria-busy="true"]{pointer-events:none;opacity:.9}
+.pl-spin{width:18px;height:18px;border-radius:99px;border:2.5px solid rgba(255,255,255,.35);border-top-color:#fff;animation:plSp .7s linear infinite}
+@keyframes plSp{to{transform:rotate(360deg)}}
+
+/* dock estándar (móvil): barra blanca sin raya, mini sombreado hacia arriba */
+.pl-dock{position:fixed;left:0;right:0;bottom:0;z-index:15;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:#fff;box-shadow:0 -4px 14px rgba(22,22,67,.06)}
+.pl-dock>div{max-width:520px;margin:0 auto}
+
+/* encontrada */
+.pl-ok{display:grid;place-items:center;width:56px;height:56px;margin:4px 0 12px;border-radius:99px;background:#e6f7ef;color:var(--pl-green);animation:plPop .45s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes plPop{from{transform:scale(.6);opacity:0}}
+.pl-stay{margin-top:14px;padding:14px;border-radius:16px;background:var(--pl-soft)}
+.pl-stay .row{display:flex;justify-content:space-between;gap:12px}
+.pl-stay small{display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--pl-mute)}
+.pl-stay strong{display:block;font-size:15px;font-weight:700}
+.pl-stay .r{text-align:right}
+.pl-stay .pl-n{align-self:center;padding:3px 10px;border-radius:99px;background:#fff;font-size:12px;font-weight:600}
+.pl-stay hr{border:0;height:1px;background:#dfe3f3;margin:12px 0}
+.pl-stay .meta{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--pl-sub)}
+.pl-stay .meta+.meta{margin-top:6px}
+
+/* paso de huéspedes (crear la reserva) */
+.pl-step{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;padding:0 6px 0 14px;border-radius:12px;background:var(--pl-soft)}
+.pl-step .ctl{display:flex;align-items:center;gap:6px}
+.pl-step button{width:40px;height:40px;border:0;border-radius:10px;background:#fff;font-size:20px;font-weight:600;display:grid;place-items:center}
+.pl-step button.add{background:var(--pl-blue);color:#fff}
+.pl-step button:disabled{opacity:.4;cursor:default}
+.pl-step output{min-width:28px;text-align:center;font-weight:700;font-size:16px}
+.pl-two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+/* hojas (calendario, propiedad) */
+.pl-sheet{position:fixed;inset:0;z-index:40;display:flex;align-items:flex-end;justify-content:center;background:rgba(22,22,67,.42);animation:plFade .2s ease both}
+@keyframes plFade{from{opacity:0}}
+.pl-sheet>.pl-pane{width:100%;max-width:520px;max-height:88vh;overflow:auto;padding:8px 16px calc(18px + env(safe-area-inset-bottom));border-radius:22px 22px 0 0;background:#fff;animation:plUp .28s cubic-bezier(.2,.9,.3,1) both}
+@keyframes plUp{from{transform:translateY(40px);opacity:.4}}
+.pl-grab{width:38px;height:4px;margin:2px auto 12px;border-radius:99px;background:#d6daec}
+.pl-ph{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.pl-ph h3{margin:0;font-size:17px;font-weight:700}
+.pl-x{width:36px;height:36px;border:0;border-radius:99px;background:var(--pl-soft);display:grid;place-items:center}
+.pl-cal-h{display:flex;align-items:center;justify-content:space-between;margin:10px 0 6px}
+.pl-cal-h b{font-size:15px}
+.pl-cal-h button{width:36px;height:36px;border:0;border-radius:10px;background:var(--pl-soft);display:grid;place-items:center}
+.pl-cal-h button:disabled{opacity:.35;cursor:default}
+.pl-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center}
+.pl-grid .wd{padding:6px 0;font-size:11.5px;font-weight:600;color:var(--pl-mute)}
+.pl-grid button{height:42px;border:0;border-radius:12px;background:none;font-size:14.5px;font-weight:500}
+.pl-grid button:hover:not(:disabled){background:var(--pl-soft)}
+.pl-grid button.today{color:var(--pl-blue);font-weight:700}
+.pl-grid button.sel{background:var(--pl-ink);color:#fff;font-weight:700}
+.pl-grid button.rng{background:var(--pl-soft2);border-radius:0}
+.pl-grid button:disabled{color:#c3c7da;cursor:default}
+.pl-search{margin-bottom:10px}
+.pl-list{display:flex;flex-direction:column;gap:6px}
+.pl-opt{display:flex;align-items:center;gap:12px;width:100%;padding:10px;border:0;border-radius:14px;background:none;text-align:left}
+.pl-opt:hover,.pl-opt.on{background:var(--pl-soft)}
+.pl-opt .th{flex:none;width:44px;height:44px;border-radius:12px;display:grid;place-items:center;color:#fff;font-weight:700}
+.pl-opt b{display:block;font-size:14.5px;font-weight:600}
+.pl-opt span{display:block;font-size:12.5px;color:var(--pl-sub)}
+.pl-opt .ck{margin-left:auto;color:var(--pl-blue)}
+.pl-empty{padding:18px 6px;text-align:center;color:var(--pl-sub);font-size:13.5px}
+
+@media (max-width:1023px){.pl-dsk{display:none}}
+/* escritorio: dos columnas, el hero a la izquierda y la tarjeta a la derecha; sin dock */
+@media (min-width:1024px){
+  .pl-top{height:72px;padding:0 40px}
+  .pl-main{display:grid;grid-template-columns:minmax(0,1fr) 480px;gap:24px;max-width:1080px;padding:40px 40px 60px;align-items:start}
+  .pl-hero{position:sticky;top:112px;min-height:460px;padding:36px;border-radius:28px;display:flex;flex-direction:column}
+  .pl-hero h1{font-size:34px}
+  .pl-hero p{font-size:15px;max-width:420px}
+  .pl-steps{flex-direction:column;gap:8px;margin-top:auto;max-width:360px}
+  .pl-steps li{padding:12px 14px;font-size:14px}
+  .pl-steps li i{width:26px;height:26px;font-size:12px}
+  .pl-card{margin-top:0;padding:28px 28px 26px;border-radius:24px}
+  .pl-card h2{font-size:22px}
+  .pl-col>.pl-alt{padding:20px 24px;border-radius:24px}
+  .pl-dock{position:static;padding:0;margin-top:20px;background:none;box-shadow:none}
+  .pl-sheet{align-items:center}
+  .pl-sheet>.pl-pane{max-width:420px;border-radius:24px;padding:18px 20px 22px}
+  .pl-grab{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ===== PL-2 ===== */
+/* cabecera móvil: la de la guestapp (cristal blanco, botón cuadrado a la izquierda, nombre centrado, logo de Chekin a la derecha) */
+.pl-top-m{display:flex;gap:12px;height:61px;padding:10px 14px;background:rgba(255,255,255,.7);-webkit-backdrop-filter:blur(22px) saturate(1.8);backdrop-filter:blur(22px) saturate(1.8);transform:translateZ(0);isolation:isolate}
+.pl-top-d{display:none}
+.pl-sq{flex:none;width:36px;height:36px;border:0;border-radius:10px;background:#f4f6f8;color:var(--pl-ink);display:grid;place-items:center}
+.pl-sq:hover{background:#e9edf3}
+.pl-ttl{flex:1;min-width:0;display:flex;justify-content:center}
+.pl-ttl b{font-size:13.5px;line-height:20px;font-weight:700;text-align:center;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pl-chk{flex:none;width:40px;height:40px;display:block}
+@media (min-width:1024px){.pl-top-m{display:none}.pl-top-d{display:flex}}
+
+/* tarjeta azul con efecto glass: degradado + brillos (menta arriba a la derecha, lila abajo) + caja translúcida con filo blanco al 28 % */
+.pl-hero{isolation:isolate}
+.pl-hero:not(.pl-hero2)>*:not(.pl-bloom){position:relative;z-index:1}
+.pl-bloom{position:absolute;z-index:0;border-radius:9999px;pointer-events:none}
+.pl-bloom.a{right:-40px;top:-80px;width:300px;height:300px;background:radial-gradient(circle,rgba(107,224,168,.22),rgba(0,0,0,0) 62%)}
+.pl-bloom.b{right:160px;bottom:-100px;width:240px;height:240px;background:radial-gradient(circle,rgba(140,165,255,.3),rgba(0,0,0,0) 65%)}
+.pl-eyebrow{color:#abbafc;letter-spacing:.12em}
+.pl-glass{display:flex;align-items:flex-start;gap:12px;margin-top:16px;padding:12px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.16);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.pl-gi{flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:rgba(255,255,255,.18)}
+.pl-glass b{display:block;font-size:14.5px;font-weight:700;line-height:1.3}
+.pl-glass span:not(.pl-gi){display:block;margin-top:2px;font-size:12.5px;line-height:1.45;color:#dfe4ff}
+@media (min-width:1024px){.pl-hero{min-height:420px}.pl-glass{margin-top:auto;max-width:400px;padding:16px 18px}.pl-glass b{font-size:16px}.pl-glass span:not(.pl-gi){font-size:13.5px}}
+
+/* hoja de búsqueda: radar mientras busca; al encontrarla, la reserva y una barra que se llena antes de abrirla */
+.pl-srch>.pl-pane{text-align:center;padding-bottom:calc(14px + env(safe-area-inset-bottom))}
+.pl-srch h3{margin:6px 0 0;font-size:19px;font-weight:700}
+.pl-sp{margin:6px auto 14px;max-width:300px;color:var(--pl-sub);font-size:13.5px}
+.pl-radar{position:relative;width:96px;height:96px;margin:14px auto 8px}
+.pl-radar span{position:absolute;inset:20px;border-radius:99px;display:grid;place-items:center;background:var(--pl-soft2);color:var(--pl-blue);animation:plBob 1.6s ease-in-out infinite}
+.pl-radar i{position:absolute;inset:0;border-radius:99px;background:rgba(56,91,248,.14);animation:plRing 1.6s ease-out infinite}
+.pl-radar i+i{animation-delay:.8s}
+@keyframes plRing{from{transform:scale(.45);opacity:1}to{transform:scale(1);opacity:0}}
+@keyframes plBob{50%{transform:scale(1.06)}}
+.pl-srch .pl-ok{margin:10px auto 4px}
+.pl-srch .pl-stay{text-align:left;animation:plIn .4s ease .15s both}
+.pl-open{margin:16px 0 4px;font-size:13px;font-weight:600;color:var(--pl-sub)}
+.pl-open i{display:block;height:6px;margin:8px auto 0;max-width:260px;border-radius:99px;background:var(--pl-soft);overflow:hidden}
+.pl-open b{display:block;height:100%;border-radius:99px;background:var(--pl-blue);transform-origin:left;animation:plFill 3s linear both}
+@keyframes plFill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+/* ===== PL-3 · tarjeta de bienvenida ===== */
+.pl-hero2{display:flex;flex-direction:column;justify-content:flex-end;min-height:0;padding:0;border-radius:24px;background:#15153f}
+.pl-hero2 .pl-photo{position:absolute;left:0;right:0;top:0;z-index:0;width:100%;height:78%;object-fit:cover;object-position:50% 30%;transform:scale(1.04);animation:plKen 14s ease-out both}
+@keyframes plKen{from{transform:scale(1.12)}to{transform:scale(1.04)}}
+.pl-hero2 .pl-veil{position:absolute;inset:0;z-index:0;background:linear-gradient(180deg,rgba(21,21,63,.05) 0%,rgba(21,21,63,0) 18%,rgba(21,21,63,.18) 34%,rgba(21,21,63,.78) 52%,rgba(21,21,63,.95) 66%,#15153f 100%)}
+.pl-hero2 .pl-bloom.a{top:auto;bottom:120px;right:-60px;opacity:.9}
+.pl-hero2 .pl-bloom.b{right:auto;left:-60px;bottom:-110px}
+.pl-hero2 .pl-badge{position:absolute;z-index:2;top:14px;left:14px;display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px 0 9px;border-radius:99px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.18);-webkit-backdrop-filter:blur(14px) saturate(1.6);backdrop-filter:blur(14px) saturate(1.6);font-size:12px;font-weight:600;color:#fff;letter-spacing:.01em}
+.pl-badge svg{width:15px;height:15px;padding:2px;border-radius:99px;background:#6be0a8;color:#15153f;stroke-width:3}
+.pl-hb{position:relative;z-index:1;padding:178px 18px 16px}
+.pl-wel{margin:0;font-size:13px;font-weight:600;color:#c7d0ff;letter-spacing:.01em}
+.pl-hero2 h1{margin:2px 0 0;font-size:30px;line-height:1.1;font-weight:700;letter-spacing:-.015em}
+.pl-loc{display:flex;align-items:center;gap:5px;margin:8px 0 0!important;font-size:13px!important;font-weight:500;color:#dfe4ff!important}
+.pl-why{margin:12px 0 0!important;font-size:13.5px!important;line-height:1.5;color:#dfe4ff!important;max-width:440px}
+.pl-next{display:flex;align-items:center;gap:12px;margin-top:16px;padding:12px 12px 12px 14px;border-radius:16px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.16);-webkit-backdrop-filter:blur(16px) saturate(1.6);backdrop-filter:blur(16px) saturate(1.6)}
+.pl-next b{display:block;font-size:14.5px;font-weight:700;line-height:1.3}
+.pl-next span:not(.pl-gi):not(.pl-go){display:block;margin-top:2px;font-size:12.5px;line-height:1.45;color:#e3e8ff}
+.pl-next>div{flex:1;min-width:0}
+.pl-gi{background:rgba(255,255,255,.22)!important}
+.pl-go{flex:none;width:30px;height:30px;border-radius:99px;display:grid;place-items:center;background:#fff;color:#15153f;transform:rotate(90deg);animation:plNudgeD 1.8s ease-in-out infinite}
+@keyframes plNudgeD{50%{transform:rotate(90deg) translateX(3px)}}
+.pl-trust{display:flex;align-items:center;gap:6px;margin:14px 0 0!important;font-size:11.5px!important;font-weight:500;color:#aab4e6!important}
+@media (min-width:1024px){
+  .pl-hero2{position:sticky;top:112px;min-height:600px;border-radius:28px}
+  .pl-hb{padding:0 36px 32px}
+  .pl-hero2 .pl-badge{top:24px;left:24px;height:34px;font-size:13px}
+  .pl-wel{font-size:15px}
+  .pl-hero2 h1{font-size:44px}
+  .pl-loc{font-size:14.5px!important}
+  .pl-why{font-size:15px!important;margin-top:14px!important}
+  .pl-next{margin-top:22px;max-width:460px;padding:16px 16px 16px 18px}
+  .pl-next b{font-size:16px}
+  .pl-next span:not(.pl-gi):not(.pl-go){font-size:13.5px}
+  .pl-go{transform:none;animation:plNudgeR 1.8s ease-in-out infinite}
+  .pl-trust{margin-top:18px!important;font-size:12.5px!important}
+  .pl-hero2 .pl-veil{background:linear-gradient(180deg,rgba(21,21,63,0) 0%,rgba(21,21,63,.05) 25%,rgba(21,21,63,.7) 52%,rgba(21,21,63,.95) 72%,#15153f 100%)}
+}
+@keyframes plNudgeR{50%{transform:translateX(3px)}}
+
+/* ===== PL-4 · tarjeta de bienvenida con la UI de la cabecera del guidebook (V6: cristal sobre duotono) ===== */
+.pl-gh{position:relative;overflow:hidden;height:230px;border-radius:22px;color:#fff;background:linear-gradient(135deg,#15153f 0%,#2e4bd0 100%)}
+.pl-gh>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;mix-blend-mode:luminosity;opacity:.6}
+.pl-gh-gl{position:absolute;left:12px;right:12px;bottom:12px;display:flex;align-items:center;gap:12px;padding:12px 14px 12px 12px;border-radius:18px;background:rgba(255,255,255,.16);-webkit-backdrop-filter:blur(22px) saturate(1.5);backdrop-filter:blur(22px) saturate(1.5)}
+.pl-gh-ic{flex:none;display:grid;place-items:center;width:46px;height:46px;border-radius:14px;background:rgba(255,255,255,.28);color:#fff}
+.pl-gh-tx{min-width:0}
+.pl-gh-eye{display:block;margin-bottom:2px;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.9)}
+.pl-gh h1{margin:0;font-size:21px;line-height:27px;font-weight:700;letter-spacing:-.015em;color:#fff}
+.pl-gh p{margin:3px 0 0;font-size:13.5px;line-height:20px;color:rgba(255,255,255,.78)}
+@media (min-width:1024px){
+  .pl-gh{position:sticky;top:112px;height:460px;border-radius:26px}
+  .pl-gh-gl{left:22px;right:auto;bottom:22px;max-width:440px;gap:16px;padding:18px 22px 18px 18px;border-radius:20px}
+  .pl-gh-ic{width:56px;height:56px;border-radius:16px}
+  .pl-gh-eye{font-size:11px}
+  .pl-gh h1{font-size:24px;line-height:30px}
+  .pl-gh p{margin-top:4px;font-size:14px;line-height:21px}
+}
+
+/* ===== PL-5 · móvil: foto a sangre y una sola tarjeta blanca entera que la pisa ===== */
+.pl-om{display:none}
+@media (max-width:1023px){
+  .pl-om{display:inline}.pl-m-eye.pl-om{display:block}.pl-od{display:none}
+  .pl-main{padding:0 0 132px;max-width:none}
+  .pl-gh{height:220px;border-radius:0}
+  .pl-gh-gl{display:none}
+  .pl-col{max-width:560px;margin:0 auto}
+  .pl-col>.pl-card{border-radius:0;padding:22px 20px 22px}
+  .pl-gh:not(.pl-dsk)+.pl-col>.pl-card{position:relative;z-index:1;margin-top:-26px;border-radius:26px 26px 0 0}
+  .pl-col>.pl-alt{border-radius:0;margin-top:8px;padding:18px 20px}
+  .pl-m-eye{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--pl-blue)}
+  .pl-main-card h2{font-size:22px;line-height:1.25}
+  body.pl-body{background:#fff}
+  .pl-col>.pl-alt{background:var(--pl-bg)}
+}
+
+/* ===== PL-6 · móvil: «Welcome to» + nombre + ubicación sobre la foto ===== */
+.pl-gh-m{display:none}
+@media (max-width:1023px){
+  .pl-gh{height:250px}
+  .pl-gh::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(21,21,63,0) 35%,rgba(21,21,63,.55) 100%);pointer-events:none}
+  .pl-gh-m{display:block;position:absolute;z-index:1;left:20px;right:20px;bottom:44px}
+  .pl-gh .pl-gh-m .pl-wel{margin:0;font-size:13px;font-weight:600;color:#c7d0ff}
+  .pl-gh .pl-gh-m .pl-gh-name{margin:2px 0 0;font-size:30px;line-height:1.1;font-weight:700;letter-spacing:-.015em;color:#fff}
+  .pl-gh .pl-gh-m .pl-loc{display:flex;align-items:center;gap:5px;margin:8px 0 0;font-size:13px;font-weight:500;color:#dfe4ff}
+}
+
+/* ===== PL-7 · idioma fuera de la cabecera móvil: píldora de cristal sobre la foto ===== */
+.pl-sq-empty{visibility:hidden}
+.pl-gh-lang{display:none}
+.pl-lth{background:var(--pl-soft)!important;color:var(--pl-ink)!important;font-size:12.5px}
+@media (max-width:1023px){
+  .pl-gh-lang{position:absolute;z-index:2;top:14px;right:14px;display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 10px 0 11px;border:1px solid rgba(255,255,255,.28);border-radius:99px;background:rgba(255,255,255,.18);-webkit-backdrop-filter:blur(14px) saturate(1.6);backdrop-filter:blur(14px) saturate(1.6);color:#fff;font-size:12.5px;font-weight:600}
+  .pl-gh-lang svg:last-child{opacity:.8}
+}
+
+/* ===== PL-8 · móvil sin cabecera (salvo «New check-in»): la foto sube hasta arriba ===== */
+.pl-top-m.pl-gone{display:none!important}
+
+/* ===== PL-9 · móvil: sin hueco vacío y sin scroll ===== */
+@media (max-width:1023px){
+  /* idioma en la misma línea que la ubicación */
+  .pl-gh-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:8px}
+  .pl-gh .pl-gh-m .pl-gh-row .pl-loc{margin:0}
+  .pl-gh-lang{position:static;height:30px;padding:0 8px 0 10px;font-size:12px}
+  /* la pantalla ocupa justo el alto visible: foto arriba (se encoge si hace falta), tarjeta blanca hasta abajo y el CTA al pie */
+  html,body.pl-body{height:100%;overflow:hidden}
+  #pl-root{display:flex;flex-direction:column;height:100vh;height:100dvh}
+  #pl-root>.pl-main{flex:1;min-height:0;display:flex;flex-direction:column;padding:0;overflow:auto;overscroll-behavior:none}
+  .pl-gh{flex:0 1 210px;height:auto;min-height:118px}
+  .pl-gh-m{bottom:40px}
+  .pl-col{flex:1 0 auto;display:flex;flex-direction:column;width:100%}
+  .pl-col>.pl-card{flex:1 0 auto;padding:20px 20px 12px}
+  .pl-main-card h2{font-size:21px}
+  .pl-card .pl-lead{font-size:13px}
+  .pl-tabs{margin:14px 0 2px}
+  .pl-f{margin-top:12px}
+  .pl-field{min-height:50px}
+  .pl-priv{margin-top:12px}
+  .pl-dock{position:static;flex:none}
+  .pl-col>.pl-alt{flex:none;margin-top:0;padding:14px 20px;background:#fff}
+  .pl-col>.pl-alt p{margin:2px 0 10px}
+  /* con avisos o errores: fuera los textos de ayuda, la entradilla, los atajos de fecha y la nota de privacidad */
+  .pl-compact .pl-hint,.pl-compact .pl-card .pl-lead,.pl-compact .pl-priv,.pl-compact .pl-quick{display:none}
+  .pl-compact .pl-gh{flex-basis:150px}
+  .pl-compact .pl-note{margin-top:10px;padding:10px 12px;font-size:12.5px}
+  .pl-compact .pl-note ul{display:none}
+}
+@media (max-width:1023px){
+  .pl-compact .pl-col>.pl-alt p{display:none}
+  .pl-compact .pl-col>.pl-alt h3{margin-bottom:10px}
+  .pl-compact .pl-col>.pl-alt{padding:12px 20px}
+}
+
+/* ===== PL-10 · V2: tarjetas de selección del método ===== */
+.pl-mo{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+.pl-mo-b{display:flex;align-items:center;gap:14px;width:100%;padding:14px 12px 14px 14px;border:0;border-radius:18px;background:var(--pl-bg);text-align:left;transition:background .15s,transform .15s}
+.pl-mo-b:hover{background:#eef1ff}
+.pl-mo-b:active{transform:scale(.99)}
+.pl-mo-b:focus-visible{outline:2px solid var(--pl-blue);outline-offset:2px}
+.pl-mo-ic{flex:none;display:grid;place-items:center;width:46px;height:46px;border-radius:14px;background:var(--pl-soft2);color:var(--pl-blue)}
+.pl-mo-ic.sm{width:34px;height:34px;border-radius:10px}
+.pl-mo-tx{flex:1;min-width:0}
+.pl-mo-tx b{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700;line-height:1.3}
+.pl-mo-tx b em{font-style:normal;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:99px;background:#e6f7ef;color:var(--pl-green)}
+.pl-mo-tx>span{display:block;margin-top:2px;font-size:12.5px;line-height:1.45;color:var(--pl-sub)}
+.pl-mo-tx small{display:inline-flex;align-items:center;gap:5px;margin-top:7px;padding:3px 8px;border-radius:7px;background:#fff;font-size:11.5px;font-weight:600;color:var(--pl-ink)}
+.pl-mo-tx small svg{color:var(--pl-blue)}
+.pl-mo-go{flex:none;width:30px;height:30px;border-radius:99px;display:grid;place-items:center;background:#fff;color:var(--pl-blue)}
+.pl-mbar{display:flex;align-items:center;gap:10px;margin-top:14px;padding:8px 12px 8px 8px;border-radius:14px;background:var(--pl-bg)}
+.pl-mbar-tx{flex:1;min-width:0}
+.pl-mbar-tx small{display:block;font-size:11px;color:var(--pl-sub)}
+.pl-mbar-tx b{display:block;font-size:13.5px;font-weight:700;line-height:1.3}
+.pl-mbar .pl-link{flex:none;font-size:13px}
+@media (max-width:1023px){.pl-compact .pl-card .pl-lead.pl-keep{display:block}}
+
+/* ===== PL-12 · V2: búsqueda a pantalla completa, sin spinner ===== */
+.pl-fs{position:fixed;inset:0;z-index:60;display:flex;flex-direction:column;color:#fff;background:linear-gradient(135deg,#15153f 0%,#2e4bd0 100%);animation:plFade .25s ease both;overflow:hidden}
+.pl-fs>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;mix-blend-mode:luminosity;opacity:.35;animation:plKen 6s ease-out both}
+.pl-fs-c{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
+.pl-fs h2{margin:0;font-size:26px;line-height:1.2;font-weight:700;letter-spacing:-.015em}
+.pl-fs-look h2{animation:plLook .9s ease both}
+@keyframes plLook{0%{opacity:0;transform:translateY(8px)}35%,100%{opacity:1;transform:none}}
+.pl-fs-ok{display:grid;place-items:center;width:68px;height:68px;margin-bottom:16px;border-radius:99px;background:#6be0a8;color:#15153f;animation:plPop .5s cubic-bezier(.2,1.4,.4,1) both}
+.pl-fs-ok svg{stroke-width:3}
+.pl-fs-eye{margin:0 0 4px;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#c7d0ff;animation:plIn .4s ease .1s both}
+.pl-fs-found h2{font-size:30px;animation:plIn .4s ease .15s both}
+.pl-fs-stay{width:100%;max-width:380px;margin-top:22px;padding:16px;border-radius:18px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.16);-webkit-backdrop-filter:blur(22px) saturate(1.5);backdrop-filter:blur(22px) saturate(1.5);text-align:left;animation:plIn .45s ease .3s both}
+.pl-fs-stay .row{display:flex;justify-content:space-between;gap:12px;padding-bottom:12px;margin-bottom:12px;border-bottom:1px solid rgba(255,255,255,.22)}
+.pl-fs-stay small{display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#c7d0ff}
+.pl-fs-stay strong{display:block;font-size:16px;font-weight:700}
+.pl-fs-stay .r{text-align:right}
+.pl-fs-stay .pl-n{align-self:center;padding:3px 10px;border-radius:99px;background:rgba(255,255,255,.2);font-size:12px;font-weight:600}
+.pl-fs-stay .meta{display:flex;align-items:center;gap:8px;font-size:13.5px;color:#e3e8ff}
+.pl-fs-stay .meta+.meta{margin-top:6px}
+.pl-fs-open{margin:20px 0 0;font-size:13.5px;font-weight:600;color:#c7d0ff;animation:plIn .4s ease .6s both}
+.pl-fs-foot{position:relative;z-index:1;padding:12px 16px calc(18px + env(safe-area-inset-bottom));text-align:center}
+.pl-fs-back{border:0;background:none;color:#fff;font-size:14px;font-weight:600;text-decoration:underline;text-underline-offset:3px;padding:10px}
+@media (min-width:1024px){.pl-fs h2{font-size:34px}.pl-fs-found h2{font-size:40px}.pl-fs-stay{max-width:440px}}
+
+/* ===== PL-13 · «Looking for your booking…» en el CTA + animaciones V3–V6 ===== */
+/* CTA buscando: sin spinner; un brillo suave lo recorre */
+.pl-btn.pl-looking{position:relative;overflow:hidden;pointer-events:none;background:var(--pl-blue-d)}
+.pl-btn.pl-looking span{animation:plIn .25s ease both}
+.pl-btn.pl-looking::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 20%,rgba(255,255,255,.28) 50%,transparent 80%);transform:translateX(-100%);animation:plSweep 1s ease-in-out infinite}
+@keyframes plSweep{to{transform:translateX(100%)}}
+
+/* base común */
+.pl-fx{position:fixed;inset:0;z-index:60;display:flex;flex-direction:column;overflow:hidden;color:#fff;background:linear-gradient(135deg,#15153f 0%,#2e4bd0 100%)}
+.pl-fx>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.pl-x-c{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
+.pl-fx h2{margin:0;font-size:32px;line-height:1.15;font-weight:700;letter-spacing:-.02em}
+.pl-x-eye{display:inline-flex;align-items:center;gap:6px;margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#c7d0ff}
+.pl-x-eye svg{width:16px;height:16px;padding:2px;border-radius:99px;background:#6be0a8;color:#15153f;stroke-width:3}
+.pl-x-eye.lt{color:#c7d0ff}
+.pl-x-glass{width:100%;max-width:380px;margin-top:22px;padding:16px;border-radius:18px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.16);-webkit-backdrop-filter:blur(22px) saturate(1.5);backdrop-filter:blur(22px) saturate(1.5);text-align:left}
+.pl-x-glass .row{display:flex;justify-content:space-between;gap:12px}
+.pl-x-glass:not(.sm) .row{padding-bottom:12px;margin-bottom:12px;border-bottom:1px solid rgba(255,255,255,.22)}
+.pl-x-glass small{display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#c7d0ff}
+.pl-x-glass strong{display:block;font-size:16px;font-weight:700}
+.pl-x-glass .r{text-align:right}
+.pl-x-glass .pl-n{align-self:center;padding:3px 10px;border-radius:99px;background:rgba(255,255,255,.2);font-size:12px;font-weight:600}
+.pl-x-glass .meta{display:flex;align-items:center;gap:8px;font-size:13.5px;color:#e3e8ff}
+.pl-x-glass .meta+.meta{margin-top:6px}
+.pl-x-open{display:flex;align-items:center;gap:8px;margin:20px 0 0;font-size:13.5px;font-weight:600;color:#c7d0ff}
+.pl-x-open i{display:block;width:56px;height:3px;border-radius:99px;background:rgba(255,255,255,.22);overflow:hidden;position:relative}
+.pl-x-open i::after{content:"";position:absolute;inset:0;background:#fff;transform-origin:left;animation:plFill 3.2s linear .6s both}
+.pl-x-foot{position:relative;z-index:2;padding:12px 16px calc(18px + env(safe-area-inset-bottom));text-align:center}
+.pl-x-back{border:0;background:none;color:#fff;font-size:14px;font-weight:600;text-decoration:underline;text-underline-offset:3px;padding:10px;opacity:.9}
+@keyframes plUpIn{from{opacity:0;transform:translateY(16px)}}
+
+/* V3 · desde el botón: revelado circular */
+.pl-v3{clip-path:circle(0 at var(--x) var(--y));animation:plCirc .75s cubic-bezier(.7,0,.2,1) both}
+@keyframes plCirc{to{clip-path:circle(150vmax at var(--x) var(--y))}}
+.pl-v3>img{mix-blend-mode:luminosity;opacity:0;animation:plImg 1.4s ease .5s both}
+@keyframes plImg{to{opacity:.35}}
+.pl-draw svg{width:76px;height:76px;margin-bottom:16px}
+.pl-draw .c{fill:#6be0a8;transform-origin:center;transform:scale(0);animation:plPopC .45s cubic-bezier(.2,1.4,.4,1) .55s both}
+@keyframes plPopC{to{transform:scale(1)}}
+.pl-draw .k{fill:none;stroke:#15153f;stroke-width:4.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:36;stroke-dashoffset:36;animation:plDraw .4s ease .85s forwards}
+@keyframes plDraw{to{stroke-dashoffset:0}}
+.pl-v3 .pl-x-eye{animation:plUpIn .45s ease .95s both}
+.pl-v3 h2{animation:plUpIn .5s ease 1.02s both}
+.pl-v3 .pl-x-glass{animation:plUpIn .55s cubic-bezier(.2,.9,.3,1) 1.15s both}
+.pl-v3 .pl-x-open,.pl-v3 .pl-x-foot{animation:plUpIn .4s ease 1.35s both}
+
+/* V4 · se abre la foto: el recorte crece desde la cabecera y el duotono se convierte en color */
+.pl-v4{background:#15153f;clip-path:inset(var(--t) var(--r) var(--b) var(--l) round 0);animation:plOpen .9s cubic-bezier(.65,0,.25,1) both}
+@keyframes plOpen{to{clip-path:inset(0 0 0 0 round 0)}}
+.pl-v4>img{animation:plColor 1.6s ease .5s both, plKen 6s ease-out both}
+@keyframes plColor{from{filter:grayscale(1) brightness(.9)}to{filter:none}}
+.pl-v4-tint{position:absolute;inset:0;z-index:1;background:linear-gradient(135deg,#15153f,#2e4bd0);mix-blend-mode:color;animation:plTint 1.6s ease .5s both}
+@keyframes plTint{to{opacity:0}}
+.pl-v4-scrim{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(21,21,63,.25) 0%,rgba(21,21,63,0) 30%,rgba(21,21,63,.55) 58%,rgba(21,21,63,.92) 100%)}
+.pl-v4-c{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;justify-content:flex-end;padding:24px 22px 8px}
+.pl-v4 h2{font-size:38px;animation:plUpIn .55s ease 1s both}
+.pl-v4 .pl-x-eye{animation:plUpIn .45s ease .9s both}
+.pl-v4-sub{margin:6px 0 0;font-size:15px;color:#e3e8ff;animation:plUpIn .5s ease 1.1s both}
+.pl-v4-pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px;animation:plUpIn .5s ease 1.25s both}
+.pl-v4-pills span{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:99px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.16);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);font-size:12.5px;font-weight:600}
+.pl-v4 .pl-x-open{animation:plUpIn .4s ease 1.45s both}
+.pl-v4 .pl-x-foot{text-align:left;padding-left:12px;animation:plUpIn .4s ease 1.45s both}
+
+/* V5 · tarjeta de reserva tipo billete */
+.pl-v5{background:rgba(21,21,63,.94);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);animation:plFade .3s ease both}
+.pl-v5-c{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px}
+.pl-v5 .pl-x-eye{animation:plUpIn .4s ease .1s both}
+.pl-v5 h2{animation:plUpIn .45s ease .18s both}
+.pl-tk{width:100%;max-width:360px;margin-top:22px;border-radius:22px;background:#fff;color:var(--pl-ink);overflow:hidden;text-align:left;animation:plTk .8s cubic-bezier(.2,1.25,.35,1) .3s both}
+@keyframes plTk{from{opacity:0;transform:translateY(120px) rotate(-4deg) scale(.92)}}
+.pl-tk-ph{position:relative;height:130px;background:#15153f}
+.pl-tk-ph img{width:100%;height:100%;object-fit:cover;display:block}
+.pl-tk-ph::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(21,21,63,0) 40%,rgba(21,21,63,.75))}
+.pl-tk-nm{position:absolute;z-index:1;left:16px;bottom:12px;display:flex;align-items:center;gap:4px;font-size:12px;color:#e3e8ff}
+.pl-tk-nm b{font-size:17px;color:#fff;margin-right:6px}
+.pl-stamp{position:absolute;z-index:1;top:12px;right:12px;display:inline-flex;align-items:center;gap:5px;height:30px;padding:0 12px 0 9px;border-radius:99px;background:#6be0a8;color:#15153f;font-size:12.5px;font-weight:700;animation:plStamp .45s cubic-bezier(.2,1.6,.4,1) .95s both}
+.pl-stamp svg{stroke-width:3}
+@keyframes plStamp{from{opacity:0;transform:scale(1.8) rotate(-12deg)}}
+.pl-tk-d{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:16px 16px 14px}
+.pl-tk-d small{display:block;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--pl-mute)}
+.pl-tk-d strong{display:block;font-size:24px;line-height:1.15;font-weight:700}
+.pl-tk-d span{display:block;font-size:12.5px;color:var(--pl-sub)}
+.pl-tk-d .r{text-align:right}
+.pl-tk-n{flex:1;display:flex!important;align-items:center;gap:6px;justify-content:center;font-size:12px!important;font-weight:600;color:var(--pl-blue)!important;white-space:nowrap}
+.pl-tk-n i{flex:1;height:2px;border-radius:99px;background:var(--pl-soft2)}
+.pl-tk-cut{position:relative;height:2px;margin:0 16px;background:radial-gradient(circle,#d6daec 1px,transparent 1.5px) 0 0/8px 2px}
+.pl-tk-cut::before,.pl-tk-cut::after{content:"";position:absolute;top:-9px;width:20px;height:20px;border-radius:99px;background:#1d1d4d}
+.pl-tk-cut::before{left:-26px}.pl-tk-cut::after{right:-26px}
+.pl-tk-f{display:flex;align-items:center;gap:8px;padding:14px 16px 16px;font-size:13.5px;color:var(--pl-sub)}
+.pl-v5 .pl-x-open,.pl-v5 .pl-x-foot{animation:plUpIn .4s ease 1.1s both}
+
+/* V6 · puertas: dos hojas azules se abren y descubren la propiedad a todo color */
+.pl-v6{background:#15153f}
+.pl-v6>img{animation:plV6img 1.6s cubic-bezier(.2,.8,.2,1) .45s both}
+@keyframes plV6img{from{transform:scale(1.18);filter:brightness(.6)}}
+.pl-v6-scrim{position:absolute;inset:0;z-index:1;background:radial-gradient(ellipse at 50% 55%,rgba(21,21,63,.55),rgba(21,21,63,.2) 60%),linear-gradient(180deg,rgba(21,21,63,.2),rgba(21,21,63,.85))}
+.pl-door{position:absolute;z-index:3;top:0;bottom:0;width:50.5%;background:linear-gradient(135deg,#15153f 0%,#2e4bd0 100%)}
+.pl-door.l{left:0;animation:plDoorL .95s cubic-bezier(.7,0,.25,1) .5s both}
+.pl-door.r{right:0;background:linear-gradient(135deg,#23235d 0%,#2e4bd0 100%);animation:plDoorR .95s cubic-bezier(.7,0,.25,1) .5s both}
+@keyframes plDoorL{to{transform:translateX(-101%)}}
+@keyframes plDoorR{to{transform:translateX(101%)}}
+.pl-v6-seal{position:absolute;z-index:4;left:50%;top:50%;width:72px;height:72px;margin:-36px 0 0 -36px;border-radius:99px;display:grid;place-items:center;background:#6be0a8;color:#15153f;animation:plSeal .9s cubic-bezier(.6,0,.3,1) both}
+.pl-v6-seal svg{stroke-width:3}
+@keyframes plSeal{0%{transform:scale(0)}35%{transform:scale(1)}60%{transform:scale(1);opacity:1}100%{transform:scale(.6);opacity:0}}
+.pl-v6-c{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
+.pl-v6 .pl-x-eye{animation:plUpIn .45s ease 1.05s both}
+.pl-v6 h2{font-size:38px;animation:plUpIn .55s ease 1.12s both}
+.pl-v6-sub{margin:6px 0 0;font-size:15px;color:#e3e8ff;animation:plUpIn .5s ease 1.22s both}
+.pl-v6 .pl-x-glass{animation:plUpIn .55s ease 1.35s both}
+.pl-v6 .pl-x-open,.pl-v6 .pl-x-foot{animation:plUpIn .4s ease 1.5s both}
+@media (min-width:1024px){.pl-fx h2,.pl-v4 h2,.pl-v6 h2{font-size:46px}.pl-x-glass{max-width:440px}.pl-tk{max-width:420px}.pl-v4-c{padding:48px 56px 8px}.pl-v4 .pl-x-foot{padding-left:44px}}
+
+/* ===== PL-14 · V2 sin foto de la propiedad (cabecera y animaciones) ===== */
+html.pl-nophoto{--pl-glow:radial-gradient(circle at 88% -8%,rgba(107,224,168,.24),rgba(0,0,0,0) 42%),radial-gradient(circle at 18% 112%,rgba(140,165,255,.34),rgba(0,0,0,0) 46%),radial-gradient(circle at 60% 55%,rgba(56,91,248,.18),rgba(0,0,0,0) 55%),linear-gradient(135deg,#15153f 0%,#23235d 44%,#2e46c8 100%)}
+html.pl-nophoto .pl-gh>img,html.pl-nophoto .pl-fx>img,html.pl-nophoto .pl-tk-ph img,html.pl-nophoto .pl-v4-tint{display:none}
+html.pl-nophoto .pl-gh,html.pl-nophoto .pl-fx,html.pl-nophoto .pl-v4,html.pl-nophoto .pl-v6,html.pl-nophoto .pl-tk-ph{background:var(--pl-glow)}
+html.pl-nophoto .pl-gh::after{background:none}
+html.pl-nophoto .pl-v4-scrim{background:linear-gradient(180deg,rgba(21,21,63,0) 40%,rgba(21,21,63,.35) 100%)}
+html.pl-nophoto .pl-v6-scrim{background:none}
+html.pl-nophoto .pl-tk-ph{height:96px}
+html.pl-nophoto .pl-tk-ph::after{background:none}
+/* sin foto, el fondo de las animaciones respira: los brillos se mueven despacio */
+html.pl-nophoto .pl-fx{background-size:140% 140%;animation-name:plCirc,plGlow;animation-duration:.75s,8s;animation-timing-function:cubic-bezier(.7,0,.2,1),ease-in-out;animation-iteration-count:1,infinite;animation-direction:normal,alternate;animation-fill-mode:both,both}
+html.pl-nophoto .pl-fx:not(.pl-v3){animation:plGlow 8s ease-in-out infinite alternate}
+html.pl-nophoto .pl-fx.pl-v4{animation:plOpen .9s cubic-bezier(.65,0,.25,1) both,plGlow 8s ease-in-out infinite alternate}
+html.pl-nophoto .pl-fx.pl-v5{background:rgba(21,21,63,.94);animation:plFade .3s ease both}
+@keyframes plGlow{from{background-position:0% 0%}to{background-position:100% 100%}}
+html.pl-nophoto .pl-fs>img{display:none}
+html.pl-nophoto .pl-fs{background:var(--pl-glow);background-size:140% 140%;animation:plFade .25s ease both,plGlow 8s ease-in-out infinite alternate}
+html.pl-nophoto .pl-v4-c{justify-content:center;padding-bottom:24px}
+
+/* ===== PL-15 · V7 · Tus datos encajan ===== */
+.pl-fx.pl-v7{background:none!important;animation:none!important}
+.pl-v7-bg{position:absolute;inset:0;z-index:0;background:linear-gradient(135deg,#15153f 0%,#23235d 44%,#2e46c8 100%);opacity:0;animation:plV7bg .5s ease .05s both}
+html.pl-nophoto .pl-v7-bg{background:var(--pl-glow);background-size:140% 140%;animation:plV7bg .5s ease .05s both,plGlow 8s ease-in-out infinite alternate}
+@keyframes plV7bg{to{opacity:1}}
+.pl-v7>img{z-index:0;mix-blend-mode:luminosity;opacity:0;animation:plV7img 1.2s ease .4s both}
+@keyframes plV7img{to{opacity:.28}}
+html.pl-nophoto .pl-v7>img{display:none}
+/* los datos despegan de sus campos y convergen en el centro */
+.pl-fly{position:fixed;z-index:3;display:flex;align-items:center;padding:0 14px;border-radius:12px;background:#fff;color:var(--pl-ink);font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;animation:plFly .85s cubic-bezier(.6,0,.2,1) both}
+@keyframes plFly{
+  0%{transform:none;opacity:1}
+  35%{transform:translateY(-10px) scale(1.03);opacity:1}
+  80%{transform:translate(var(--dx),var(--dy)) scale(.62);opacity:1;border-radius:99px}
+  100%{transform:translate(var(--dx),var(--dy)) scale(.2);opacity:0;border-radius:99px}
+}
+/* se funden en el check, con una onda */
+.pl-v7-ok{position:absolute;z-index:4;left:50%;width:80px;height:80px;margin:-40px 0 0 -40px}
+.pl-v7-ok svg{width:80px;height:80px}
+.pl-v7-ok .c{fill:#6be0a8;transform-origin:center;transform:scale(0);animation:plPopC .5s cubic-bezier(.2,1.5,.4,1) .78s both}
+.pl-v7-ok .k{fill:none;stroke:#15153f;stroke-width:4.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:36;stroke-dashoffset:36;animation:plDraw .35s ease 1.02s forwards}
+.pl-v7-ring{position:absolute;z-index:3;left:50%;width:80px;height:80px;margin:-40px 0 0 -40px;border-radius:99px;background:rgba(107,224,168,.35);transform:scale(.6);opacity:0;animation:plRing2 1s ease-out .82s both}
+@keyframes plRing2{0%{transform:scale(.6);opacity:.9}100%{transform:scale(2.6);opacity:0}}
+.pl-v7-c{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;align-items:center;padding-left:20px;padding-right:20px;text-align:center}
+.pl-v7 .pl-x-eye{animation:plUpIn .45s ease 1.05s both}
+.pl-v7 h2{animation:plUpIn .5s ease 1.12s both}
+/* la semana de la estancia: los días se encienden uno a uno y una barra los une */
+.pl-wk{width:100%;max-width:380px;margin-top:22px;padding:14px 12px 12px;border-radius:20px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.14);-webkit-backdrop-filter:blur(22px) saturate(1.5);backdrop-filter:blur(22px) saturate(1.5);animation:plUpIn .5s cubic-bezier(.2,.9,.3,1) 1.22s both}
+.pl-wk-m{margin:0 0 8px 4px;text-align:left;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#c7d0ff}
+.pl-wk-row{position:relative;display:grid;grid-template-columns:repeat(7,1fr);gap:0}
+.pl-wk-bar{position:absolute;z-index:0;top:4px;bottom:4px;left:calc(var(--l) * 100% / 7 + 100% / 14);width:calc(var(--n) * 100% / 7);border-radius:99px;background:rgba(255,255,255,.22);transform-origin:left;transform:scaleX(0);animation:plBar .5s cubic-bezier(.4,0,.2,1) 1.45s forwards}
+@keyframes plBar{to{transform:scaleX(1)}}
+.pl-wk-d{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;height:56px;margin:0 3px;border-radius:14px;color:rgba(255,255,255,.55)}
+.pl-wk-d small{font-size:10.5px;font-weight:700}
+.pl-wk-d b{font-size:17px;font-weight:700}
+.pl-wk-d.on{animation:plDay .4s cubic-bezier(.2,1.4,.4,1) both}
+.pl-wk-d.ci,.pl-wk-d.co{background:#fff;color:var(--pl-ink)}
+.pl-wk-d.on:not(.ci):not(.co){color:#fff}
+@keyframes plDay{from{transform:scale(.6);opacity:.3}}
+.pl-wk-f{display:flex;justify-content:space-between;gap:10px;margin:12px 4px 0;font-size:12.5px;color:#e3e8ff;animation:plUpIn .4s ease 1.9s both}
+.pl-wk-f span{display:inline-flex;align-items:center;gap:5px}
+.pl-v7 .pl-x-open,.pl-v7 .pl-x-foot{animation:plUpIn .4s ease 2s both}
+@media (min-width:1024px){.pl-wk{max-width:460px}.pl-wk-d{height:64px}.pl-wk-d b{font-size:20px}}
+
+/* ===== PL-16 · V7: estancias largas ===== */
+.pl-wk-row+.pl-wk-row{margin-top:6px}
+.pl-wk-bar{width:auto;transform:scaleX(0)}
+.pl-wk-d.m1 small{color:#6be0a8}
+.pl-tl{display:flex;align-items:center;gap:10px;padding:4px 4px 2px}
+.pl-tl-d{flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;width:84px;height:84px;border-radius:18px;background:#fff;color:var(--pl-ink);animation:plDay .45s cubic-bezier(.2,1.4,.4,1) 1.35s both}
+.pl-tl-d.r{animation-delay:2.1s}
+.pl-tl-d small{font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--pl-mute)}
+.pl-tl-d b{font-size:28px;line-height:1.1;font-weight:700}
+.pl-tl-d span{font-size:11px;color:var(--pl-sub)}
+.pl-tl-mid{position:relative;flex:1;display:flex;align-items:center;justify-content:center;height:84px}
+.pl-tl-ln{position:absolute;left:0;right:0;top:50%;height:3px;margin-top:-1.5px;border-radius:99px;background:rgba(255,255,255,.35);transform-origin:left;transform:scaleX(0);animation:plBar .7s cubic-bezier(.4,0,.2,1) 1.5s forwards}
+.pl-tl-mid em{position:relative;padding:4px 10px;border-radius:99px;background:#2e46c8;font-style:normal;font-size:12px;font-weight:700;white-space:nowrap;animation:plUpIn .4s ease 1.85s both}
+html.pl-nophoto .pl-tl-mid em{background:#2b3aa8}
+
+/* ===== PL-17 · V8 · V3 abriéndose como V4 ===== */
+.pl-fx.pl-v8{background:linear-gradient(135deg,#15153f 0%,#2e4bd0 100%);clip-path:inset(var(--t) var(--r) var(--b) var(--l) round 0);animation:plOpen .9s cubic-bezier(.65,0,.25,1) both}
+.pl-v8>img{mix-blend-mode:luminosity;opacity:.6;animation:plV8img 1.2s ease .35s both,plKen 6s ease-out both}
+@keyframes plV8img{to{opacity:.32}}
+html.pl-nophoto .pl-fx.pl-v8{background:var(--pl-glow);background-size:140% 140%;animation:plOpen .9s cubic-bezier(.65,0,.25,1) both,plGlow 8s ease-in-out infinite alternate}
+.pl-v8 .pl-draw .c{animation-delay:.75s}
+.pl-v8 .pl-draw .k{animation-delay:1.05s}
+.pl-v8 .pl-x-eye{animation:plUpIn .45s ease 1.1s both}
+.pl-v8 h2{animation:plUpIn .5s ease 1.17s both}
+.pl-v8 .pl-x-glass{animation:plUpIn .55s cubic-bezier(.2,.9,.3,1) 1.3s both}
+.pl-v8 .pl-x-open,.pl-v8 .pl-x-foot{animation:plUpIn .4s ease 1.5s both}
+@media (min-width:1024px){.pl-fx.pl-v8{clip-path:inset(var(--t) var(--r) var(--b) var(--l) round 26px)}}
+
+/* patrones genéricos: más suaves detrás del texto */
+html.pl-pat .pl-gh>img{opacity:.38}
+html.pl-pat .pl-fx>img{opacity:.22!important;animation:none!important}
+
+/* móvil: el contenedor principal siempre a todo el ancho (con margin:auto en una columna flex se encogía al ancho del contenido, p. ej. con un solo método) */
+@media (max-width:1023px){#pl-root>.pl-main{width:100%;margin:0;align-self:stretch}}
+
+/* ===== PL-23 · V8: lupa → casa en lugar del tick ===== */
+.pl-found .mg,.pl-found .hs,.pl-found .dr{fill:none;stroke:#15153f;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round}
+.pl-found .mg{transform-origin:26px 26px;opacity:0;animation:plMg .75s cubic-bezier(.3,1.3,.5,1) .82s both}
+@keyframes plMg{0%{opacity:0;transform:scale(.5) rotate(-20deg)}30%{opacity:1;transform:scale(1) rotate(0)}60%{opacity:1;transform:scale(1.08) translate(1px,1px)}100%{opacity:0;transform:scale(.4)}}
+.pl-found .hs{stroke-dasharray:80;stroke-dashoffset:80;animation:plDraw .5s ease 1.35s forwards}
+.pl-found .dr{stroke-dasharray:22;stroke-dashoffset:22;animation:plDraw .3s ease 1.7s forwards}
+.pl-v8 .pl-found .c{animation-delay:.72s}
+
+/* ===== PL-24 · al fallar no cambia el tamaño de nada (móvil) ===== */
+@media (max-width:1023px){
+  .pl-col>.pl-card{flex:1 1 auto}   /* solo cede su hueco libre, nunca su contenido */
+  .pl-dnote .pl-note{margin:0 0 10px;padding:10px 12px;font-size:12.5px;animation:plIn .3s ease both}
+  .pl-dnote .pl-note ul{display:none}
+  .pl-dnote .pl-note p{margin-top:4px!important}
+  .pl-col>.pl-alt{padding:12px 20px}
+  .pl-col>.pl-alt p{display:none}
+  .pl-col>.pl-alt h3{margin-bottom:10px}
+}
+@media (max-width:1023px){
+  .pl-gh{flex-shrink:0!important}   /* la foto nunca encoge */
+  .pl-dnote{margin-bottom:10px;padding:10px 12px;border-radius:14px;background:var(--pl-red-bg);animation:plIn .3s ease both}
+  .pl-dnote .pl-note{margin:0;padding:0;background:none}
+  .pl-dnote .pl-note.info{color:inherit}
+  .pl-dnote:has(.pl-note.info){background:var(--pl-soft2)}
+  .pl-dnote:has(.pl-note.warn){background:var(--pl-amber-bg)}
+  .pl-dnote .pl-ctry{display:none}
+  .pl-dn-act{margin-top:8px}
+  .pl-dn-act .pl-contact{gap:6px}
+  .pl-dn-act .pl-btn.sm{min-height:36px;padding:0 12px;font-size:13px;background:#fff}
+}
+@media (max-width:1023px){
+  /* con aviso o con la fecha de salida: fuera lo accesorio para que quepa sin mover la foto ni la tarjeta */
+  .pl-has-note .pl-priv{display:none}
+  .pl-has-cout .pl-quick,.pl-has-cout .pl-new .pl-hint{display:none}
+  .pl-dnote .pl-note p{display:none}
+  .pl-dnote .pl-note.err p{display:block}
+}
+@media (max-width:1023px){.pl-has-cout .pl-f:has([data-k="cout"]) .pl-hint{display:none}}
+
+/* ===== PL-25 · guías «¿dónde lo encuentro?» ===== */
+.pl-f{position:relative}
+.pl-lrow{display:flex;align-items:center;gap:6px;margin:0 0 6px}
+.pl-lrow>label,.pl-lrow>.pl-lab{margin:0!important;font-size:13px;font-weight:600}
+.pl-tipb{flex:none;width:20px;height:20px;padding:0;border:0;border-radius:99px;background:var(--pl-soft2);color:var(--pl-blue);font:700 12px/20px Poppins,system-ui,sans-serif;text-align:center}
+.pl-tipb.on{background:var(--pl-blue);color:#fff}
+.pl-tipb:focus-visible{outline:2px solid var(--pl-blue);outline-offset:2px}
+.pl-tip{position:absolute;z-index:8;left:0;right:0;top:28px;padding:12px 14px;border-radius:14px;background:var(--pl-ink);color:#fff;font-size:12.5px;line-height:1.45;animation:plTip .18s ease both}
+.pl-tip::before{content:"";position:absolute;top:-6px;left:var(--ax,96px);width:12px;height:12px;border-radius:2px;background:var(--pl-ink);transform:rotate(45deg)}
+.pl-tip b{display:block;font-size:13px;margin-bottom:3px}
+.pl-tip p{margin:0;color:#dfe4ff}
+.pl-tip ul{margin:6px 0 0;padding:0;list-style:none}
+.pl-tip li{margin:5px 0 0;color:#dfe4ff}
+.pl-tip li strong{display:block;color:#fff;font-weight:600}
+@keyframes plTip{from{opacity:0;transform:translateY(-4px)}}
+
+/* ===== PL-26 · guías: hoja en móvil, hover en escritorio ===== */
+.pl-tipw{position:relative;display:inline-flex}
+.pl-tipw>.pl-tip{display:none}
+.pl-tipsheet{margin:0 0 16px;font-size:14px;line-height:1.5;color:var(--pl-sub)}
+.pl-tipsheet p{margin:0}
+.pl-tipsheet ul{margin:0;padding:0;list-style:none}
+.pl-tipsheet li{padding:12px 14px;border-radius:14px;background:var(--pl-soft)}
+.pl-tipsheet li+li{margin-top:8px}
+.pl-tipsheet li strong{display:block;margin-bottom:2px;color:var(--pl-ink);font-weight:700}
+@media (min-width:1024px){
+  .pl-tipb{cursor:help}
+  .pl-tipw>.pl-tip{display:block;position:absolute;z-index:9;top:calc(100% + 10px);left:-18px;right:auto;width:320px;opacity:0;visibility:hidden;transform:translateY(-4px);transition:opacity .15s,transform .15s,visibility .15s;animation:none;pointer-events:none}
+  .pl-tipw>.pl-tip::before{left:22px}
+  .pl-tipw:hover>.pl-tip,.pl-tipb:focus-visible+.pl-tip{opacity:1;visibility:visible;transform:none}
+  .pl-tipw:hover>.pl-tipb{background:var(--pl-blue);color:#fff}
+}
+
+/* ===== PL-27 · cuatro maquetaciones de escritorio (D1–D4) ===== */
+.pl-dwel{display:none}
+@media (min-width:1024px){
+  /* común: título «Let's find your booking» y la entradilla corta (como en móvil) */
+  html.pl-dx .pl-om{display:inline}
+  html.pl-dx .pl-od{display:none}
+  html.pl-dx .pl-main-card h2{font-size:28px;letter-spacing:-.015em}
+  /* bienvenida sobre la foto (la del móvil), en grande */
+  html.pl-dx .pl-gh-m{display:block;position:absolute;z-index:2}
+  html.pl-dx .pl-gh .pl-gh-m .pl-wel{margin:0;font-size:16px;font-weight:600;color:#c7d0ff}
+  html.pl-dx .pl-gh .pl-gh-m .pl-gh-name{margin:4px 0 0;font-size:52px;line-height:1.05;font-weight:700;letter-spacing:-.02em;color:#fff}
+  html.pl-dx .pl-gh-row{display:flex;align-items:center;gap:16px;margin-top:14px}
+  html.pl-dx .pl-gh .pl-gh-m .pl-loc{display:flex;align-items:center;gap:6px;margin:0;font-size:15px;font-weight:500;color:#dfe4ff}
+  html.pl-dx .pl-gh-lang{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border:1px solid rgba(255,255,255,.28);border-radius:99px;background:rgba(255,255,255,.18);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);color:#fff;font-size:13px;font-weight:600}
+  html.pl-dx .pl-gh::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(21,21,63,0) 40%,rgba(21,21,63,.6) 100%);pointer-events:none}
+  html.pl-dx .pl-gh-gl{display:none}
+
+  /* D1 · Mitad y mitad: foto a sangre a la izquierda (toda la altura), buscador limpio a la derecha, sin cabecera */
+  html.pl-d1 .pl-top-d{display:none}
+  html.pl-d1 .pl-main{grid-template-columns:1.08fr 1fr;max-width:none;padding:0;gap:0;min-height:100vh;align-items:stretch}
+  html.pl-d1 .pl-gh{position:sticky;top:0;height:100vh;border-radius:0}
+  html.pl-d1 .pl-gh-m{left:56px;right:56px;bottom:56px}
+  html.pl-d1 .pl-col{display:flex;flex-direction:column;justify-content:center;align-items:center;padding:56px clamp(40px,6vw,104px);background:#fff}
+  html.pl-d1 .pl-col>*{width:100%;max-width:460px}
+  html.pl-d1 .pl-card{padding:0;border-radius:0;background:none}
+  html.pl-d1 body.pl-body{background:#fff}
+
+  /* D2 · Tarjeta flotante: foto a pantalla completa y la tarjeta blanca flotando a la derecha */
+  html.pl-d2 .pl-top-d{display:none}
+  html.pl-d2 .pl-main{display:block;max-width:none;padding:0;min-height:100vh;position:relative}
+  html.pl-d2 .pl-gh{position:fixed;inset:0;height:auto;border-radius:0}
+  html.pl-d2 .pl-gh-m{left:64px;bottom:64px;max-width:calc(100vw - 680px)}
+  html.pl-d2 .pl-col{position:relative;z-index:3;width:500px;min-height:100vh;margin:0 6vw 0 auto;display:flex;flex-direction:column;justify-content:center;padding:40px 0}
+  html.pl-d2 .pl-card{padding:34px 34px 30px;border-radius:30px}
+  html.pl-d2 .pl-col>.pl-alt{border-radius:24px}
+
+  /* D3 · Banner panorámico: el móvil en grande; banner a todo el ancho y la tarjeta montada encima */
+  html.pl-d3 .pl-main{display:block;max-width:none;padding:0 0 64px}
+  html.pl-d3 .pl-gh{position:relative;top:auto;height:380px;min-height:0;border-radius:0}
+  html.pl-d3 .pl-gh-m{left:calc(50% - 290px);right:calc(50% - 290px);bottom:92px}
+  html.pl-d3 .pl-col{position:relative;z-index:3;width:580px;margin:-64px auto 0}
+  html.pl-d3 .pl-card{padding:34px 34px 30px;border-radius:30px}
+  html.pl-d3 .pl-top-d{position:absolute;left:0;right:0;z-index:5;background:none}
+  html.pl-d3 .pl-top-d .pl-brand b{color:#fff}
+  html.pl-d3 .pl-top-d .pl-lang{display:none}
+
+  /* D4 · Minimal centrado: columna central, la propiedad en miniatura y los métodos en tres columnas */
+  html.pl-d4 .pl-top-d{display:none}
+  html.pl-d4 body.pl-body{background:#fff}
+  html.pl-d4 .pl-main{display:block;max-width:720px;padding:64px 24px 48px;margin:0 auto}
+  html.pl-d4 .pl-gh{position:relative;top:auto;width:112px;height:112px;min-height:0;margin:0 auto;border-radius:32px}
+  html.pl-d4 .pl-gh::after,html.pl-d4 .pl-gh-m{display:none}
+  html.pl-d4 .pl-col{margin-top:18px}
+  html.pl-d4 .pl-card{padding:0;background:none;border-radius:0}
+  html.pl-d4 .pl-dwel{display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:28px;text-align:center}
+  html.pl-d4 .pl-dwel-t{font-size:16px;color:var(--pl-sub)}
+  html.pl-d4 .pl-dwel-t b{display:block;margin-top:2px;font-size:40px;line-height:1.1;letter-spacing:-.02em;color:var(--pl-ink)}
+  html.pl-d4 .pl-dwel-l{display:inline-flex;align-items:center;gap:5px;font-size:14px;color:var(--pl-sub)}
+  html.pl-d4 .pl-dwel-lang{position:absolute;top:24px;right:32px;border:0;background:var(--pl-soft);color:var(--pl-ink);-webkit-backdrop-filter:none;backdrop-filter:none}
+  html.pl-d4 .pl-main-card>h2,html.pl-d4 .pl-main-card>.pl-lead{text-align:center}
+  html.pl-d4 .pl-mo{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:12px;margin-top:24px}
+  html.pl-d4 .pl-mo-b{flex-direction:column;align-items:center;justify-content:flex-start;gap:12px;padding:24px 18px 22px;text-align:center;border-radius:22px}
+  html.pl-d4 .pl-mo-tx b{justify-content:center}
+  html.pl-d4 .pl-mo-go{display:none}
+  html.pl-d4 .pl-mo-ic{width:56px;height:56px;border-radius:18px}
+  html.pl-d4 .pl-mbar,html.pl-d4 .pl-f,html.pl-d4 .pl-note{max-width:460px;margin-left:auto;margin-right:auto}
+  html.pl-d4 .pl-dock>div,html.pl-d4 .pl-col>.pl-alt{max-width:460px;margin-left:auto;margin-right:auto}
+}
+
+/* ===== PL-28 · D2.2: la parte blanca como la hoja del móvil (pegada al borde derecho, esquinas grandes hacia la foto) ===== */
+@media (min-width:1024px){
+  html.pl-d22 .pl-col{width:min(560px,44vw);margin:0 0 0 auto;padding:0;min-height:100vh;background:#fff;border-radius:40px 0 0 40px;justify-content:center;animation:plSheetIn .6s cubic-bezier(.2,.9,.3,1) both}
+  html.pl-d22 .pl-col>*{width:100%;max-width:440px;margin-left:auto;margin-right:auto}
+  html.pl-d22 .pl-card{padding:0;border-radius:0;background:none}
+  html.pl-d22 .pl-col>.pl-alt{background:var(--pl-bg)}
+  html.pl-d22 .pl-gh-m{max-width:calc(100vw - min(560px,44vw) - 128px)}
+  @keyframes plSheetIn{from{transform:translateX(40px);opacity:.6}}
+}
+
+/* ===== PL-29 · escritorio: el CTA dentro de la tarjeta blanca (Actual, D2, D3) ===== */
+@media (min-width:1024px){
+  .pl-col{display:flex;flex-direction:column}
+  .pl-col>.pl-card{order:0}
+  .pl-col>.pl-dock{order:1}
+  .pl-col>.pl-alt{order:2;margin-top:12px}
+  html:not(.pl-d1):not(.pl-d22):not(.pl-d4) .pl-col>.pl-card:has(+ .pl-alt + .pl-dock),
+  html:not(.pl-d1):not(.pl-d22):not(.pl-d4) .pl-col>.pl-card:has(+ .pl-dock){border-bottom-left-radius:0;border-bottom-right-radius:0;padding-bottom:6px}
+  html:not(.pl-d1):not(.pl-d22):not(.pl-d4) .pl-col>.pl-dock{margin-top:0;padding:18px 28px 26px;background:#fff;border-radius:0 0 24px 24px}
+  html.pl-d2:not(.pl-d22) .pl-col>.pl-dock,html.pl-d3 .pl-col>.pl-dock{padding:18px 34px 30px;border-radius:0 0 30px 30px}
+}
+
+/* escritorio: sin raya entre la tarjeta y su CTA (la junta de 1 px dejaba asomar el fondo); en móvil el dock conserva su mini sombreado */
+@media (min-width:1024px){html:not(.pl-d1):not(.pl-d22):not(.pl-d4) .pl-col>.pl-dock{margin-top:-1px;box-shadow:none!important}}
+
+/* ===== PL-30 · flujos de error ===== */
+.pl-key{display:none}
+.pl-hint .pl-link{font-size:12.5px}
+.pl-hint b{color:var(--pl-ink)}
+.pl-alt-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.pl-block{text-align:center;padding:8px 0 4px}
+.pl-block-ic{display:inline-grid;place-items:center;width:60px;height:60px;margin-bottom:12px;border-radius:99px;background:var(--pl-amber-bg);color:#b7791f}
+.pl-block h2{font-size:21px}
+.pl-cdw{margin:14px 0 0;font-size:14px;color:var(--pl-sub)}
+.pl-cdw b{display:block;margin-top:4px;font-size:34px;line-height:1.1;font-weight:700;color:var(--pl-ink);font-variant-numeric:tabular-nums}
+@media (max-width:1023px){
+  .pl-dnote .pl-key{display:block;margin-top:2px}
+  .pl-dnote .pl-note.err p{margin-top:4px}
+  .pl-dn-act{display:flex;gap:8px;flex-wrap:wrap}
+  .pl-dn-act .pl-btn.sm{flex:1;min-width:0;white-space:nowrap}
+}
+@media (max-width:1023px){.pl-dnote:has(.pl-dn-act) .pl-note p{display:none!important}}
+
+/* ===== PL-31 · móvil: si no cabe, se recoge por niveles (nunca scroll) ===== */
+@media (max-width:1023px){
+  /* 1 · fuera los textos de ayuda (los errores y la sugerencia de email se quedan) */
+  .pl-fit1 .pl-hint:not(:has(.pl-link)){display:none}
+  .pl-fit1 .pl-f.pl-err .pl-errt{margin-top:4px}
+  /* 2 · fuera la entradilla, los atajos de fecha y las descripciones de las tarjetas de método */
+  .pl-fit2 .pl-card .pl-lead,.pl-fit2 .pl-quick,.pl-fit2 .pl-mo-tx>span{display:none}
+  .pl-fit2 .pl-mo-tx small{margin-top:4px}
+  /* 3 · espacios más apretados */
+  .pl-fit3 .pl-col>.pl-card{padding-top:16px}
+  .pl-fit3 .pl-f{margin-top:10px}
+  .pl-fit3 .pl-lrow{margin-bottom:4px}
+  .pl-fit3 .pl-field{min-height:46px}
+  .pl-fit3 .pl-field input{height:44px}
+  .pl-fit3 .pl-mbar{margin-top:10px;padding:6px 10px 6px 6px}
+  .pl-fit3 .pl-tabs{margin-top:10px}
+  .pl-fit3 .pl-mo{gap:6px;margin-top:12px}
+  .pl-fit3 .pl-mo-b{padding:10px 10px 10px 12px}
+  .pl-fit3 .pl-dock{padding-top:8px;padding-bottom:calc(10px + env(safe-area-inset-bottom))}
+  /* 4 · la foto baja a 150 px (sin «Welcome to») */
+  .pl-fit4 .pl-gh{flex-basis:150px!important}
+  .pl-fit4 .pl-gh .pl-gh-m .pl-wel{display:none}
+  .pl-fit4 .pl-gh .pl-gh-m .pl-gh-name{font-size:26px}
+  /* 5 · la foto baja a 118 px */
+  .pl-fit5 .pl-gh{flex-basis:118px!important}
+  .pl-fit5 .pl-gh .pl-gh-m{bottom:36px}
+  .pl-fit5 .pl-gh .pl-gh-m .pl-gh-name{font-size:22px}
+  .pl-fit5 .pl-gh-row{margin-top:4px}
+}
+@media (max-width:1023px){
+  /* 6 · avisos en versión mínima (título + acción) y la barra del método sin «Searching with» */
+  .pl-fit6 .pl-dnote{padding:8px 10px;margin-bottom:8px}
+  .pl-fit6 .pl-dnote .pl-key{display:none}
+  .pl-fit6 .pl-dn-act{margin-top:6px}
+  .pl-fit6 .pl-dn-act .pl-btn.sm{min-height:32px}
+  .pl-fit6 .pl-mbar-tx small{display:none}
+  .pl-fit6 .pl-mo-ic.sm{width:28px;height:28px}
+  /* 7 · campos un poco más bajos */
+  .pl-fit7 .pl-field{min-height:42px}
+  .pl-fit7 .pl-field input{height:40px;font-size:15px}
+  .pl-fit7 .pl-f{margin-top:8px}
+  .pl-fit7 .pl-lrow>label,.pl-fit7 .pl-lrow>.pl-lab{font-size:12.5px}
+  .pl-fit7 .pl-main-card h2{font-size:19px}
+}

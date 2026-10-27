@@ -19,6 +19,16 @@ python3 -m http.server 7791 -d site
 
 The root page opens the **mobile + desktop mockup** side by side (`split.html`): whatever you do in one frame is mirrored in the other. Single-device mockups (phone, tablet, desktop) are one click away in the top bar, and `screens.html` lists every captured screen.
 
+## Property link prototype
+
+`site/property-link/` is a standalone prototype of the **property link / user link**: the public entry point where a guest finds their booking before the online check-in. Live at https://dclemares.github.io/guestapp-replica/property-link/ (mobile + desktop mockup).
+
+- The **Booking settings** tab of the controls panel mirrors the dashboard settings (Account → Online check-in → Guest Reservation Lookup): link type (property link / user link), lookup methods (name + arrival date, booking code, email + arrival date; one or more), ask for the property (user link only) and create the booking if not found (property link only).
+- The **Controls** tab switches the search result (found, several matches → departure date, still ambiguous, not found, connection error, too many attempts), the method picker (tabs or cards), with/without property photo and a test stay length.
+- Mobile never scrolls: if a state does not fit, secondary content is collapsed step by step. Desktop uses a full-screen photo with a floating card.
+- When a booking is found, the header expands to full screen, shows the stay and opens the replica home.
+- Sources: `plink.html`, `assets/plink.js`, `assets/plink.css`; `python3 build.py` (run inside `site/property-link/`) regenerates `screens/`. Property and generic images are loaded from Unsplash (Unsplash License).
+
 ## Rebuild
 
 ```bash

@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Vista móvil y tablet</title>
+<style>
+html,body{height:100%;margin:0}
+body{background:linear-gradient(180deg,#e9ecf9 0%,#dde1f3 100%);font:600 12px system-ui,sans-serif;color:#161643;display:flex;flex-direction:column;align-items:center;overflow:hidden}
+.bar{display:flex;align-items:center;flex-wrap:wrap;justify-content:center;gap:4px;margin:12px 8px;padding:4px;border-radius:20px;background:#fff;border:1px solid #e5e6ee;box-shadow:0 6px 20px rgba(60,72,140,.18)}
+.bar span{padding:0 6px 0 8px;font-weight:500;color:#6b6b95}
+.bar a{padding:6px 12px;border-radius:99px;color:#161643;text-decoration:none}
+.bar a.on{background:#385bf8;color:#fff}
+.bar a.idx{background:#161643;color:#fff}
+.bar i{width:1px;height:18px;background:#e5e6ee;margin:0 4px}
+.bar select,.bar button{font:inherit;color:#161643;border:1px solid #d9dcec;background:#f6f7fb;border-radius:99px;padding:5px 10px;cursor:pointer}
+.bar button:hover,.bar select:hover{background:#eef0f8}
+.bar .dim{font-variant-numeric:tabular-nums;padding:0 8px 0 4px}
+.stage{flex:1;min-height:0;width:100%;position:relative}
+.phone{position:absolute;left:0;top:0;transform-origin:top left;background:linear-gradient(145deg,#34365c 0%,#12132b 38%,#1c1d3b 100%);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.16),inset 0 0 0 5px #08091a,0 34px 60px -26px rgba(38,48,118,.5),0 10px 22px rgba(38,48,118,.2)}
+.phone::before{content:"";position:absolute;left:-3px;top:23%;width:3px;height:11%;border-radius:2px 0 0 2px;background:#1d1e3c;box-shadow:0 52px 0 #1d1e3c}
+.phone::after{content:"";position:absolute;right:-3px;top:29%;width:3px;height:13%;border-radius:0 2px 2px 0;background:#1d1e3c}
+.scr{position:relative;width:100%;height:100%;overflow:hidden;background:#fff}
+.sb{position:absolute;left:0;right:0;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;background:#fff;color:#161643;font:600 16px/1 system-ui,-apple-system,"SF Pro Text","Segoe UI",sans-serif;letter-spacing:-.01em}
+.sb .ic{display:flex;align-items:center;gap:6px}
+.phone iframe{position:absolute;left:0;width:100%;border:0;background:#fff;display:block}
+.phone.desk::before{left:50%;right:auto;top:100%;width:15%;height:44px;transform:translateX(-50%);border-radius:0;background:linear-gradient(90deg,#aeb2c9,#d4d7e6 50%,#aeb2c9);box-shadow:none}
+.phone.desk::after{left:50%;right:auto;top:calc(100% + 44px);width:30%;height:9px;transform:translateX(-50%);border-radius:0 0 12px 12px;background:linear-gradient(90deg,#9ea3bd,#c7cadc 50%,#9ea3bd)}
+.phone.desk .sb,.phone.desk .hi{display:none}
+.di{position:absolute;left:50%;transform:translateX(-50%);z-index:3;background:#000;border-radius:99px;pointer-events:none}
+.hi{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);z-index:3;width:36%;max-width:146px;height:5px;border-radius:99px;background:#161643;opacity:.88;pointer-events:none}
+.hi{display:none!important}  /* sin indicador de inicio del iPhone: tapaba el CTA */
+</style></head><body>
+<div class="bar"><span>Vista</span><a href="#" data-m="phone">Mockup móvil</a><a href="#" data-m="tab">Mockup tablet</a><a href="#" data-m="desk">Mockup escritorio</a><a id="sp" href="split.html">Móvil + escritorio</a><a id="d" href="#">Sin mockup</a><a class="idx" href="index.html">Índice</a><i></i><span>Dispositivo</span><select id="dev" aria-label="Dispositivo"></select><button id="rot" type="button" title="Girar el dispositivo">⟳ Girar</button><span class="dim" id="dim"></span></div>
+<div class="stage"><div class="phone" id="ph"><div class="scr" id="scr"><div class="sb" id="sb"><span class="tm">9:41</span><span class="ic" aria-hidden="true"><svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg width="17" height="12" viewBox="0 0 17 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1.5 4.2a10 10 0 0 1 14 0"/><path d="M4.2 7a6 6 0 0 1 8.6 0"/><circle cx="8.5" cy="10" r="1.3" fill="currentColor" stroke="none"/></svg><svg width="27" height="13" viewBox="0 0 27 13"><rect x=".5" y=".5" width="22" height="12" rx="3.8" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="19" height="9" rx="2.5" fill="currentColor"/><path d="M24 4.5v4c1-.3 1.8-1.1 1.8-2s-.8-1.7-1.8-2z" fill="currentColor" opacity=".45"/></svg></span></div><iframe id="fr" name="phone" title="Réplica en el dispositivo"></iframe><iframe id="fr2" name="phone2" title="Réplica en el dispositivo (siguiente)" aria-hidden="true"></iframe><div class="di" id="di"></div><div class="hi"></div></div></div></div>
+<script>
+window.__phoneHost = true;
+/* tamaños en px CSS (viewport vertical) */
+var DEVICES = [
+  ['Móviles', [['se', 'iPhone SE', 375, 667], ['i15', 'iPhone 15', 390, 844], ['i15pm', 'iPhone 15 Pro Max', 430, 932], ['px8', 'Pixel 8', 412, 915], ['s23', 'Galaxy S23', 360, 780]]],
+  ['Tablets', [['ipm', 'iPad mini', 744, 1133], ['ip', 'iPad', 820, 1180], ['ipp11', 'iPad Pro 11"', 834, 1194], ['ipp13', 'iPad Pro 12,9"', 1024, 1366]]],
+  ['Escritorio', [['lap', 'Portátil pequeño', 1280, 720], ['mba13', 'MacBook Air 13"', 1440, 900], ['mbp14', 'MacBook Pro 14"', 1512, 982], ['mbp16', 'MacBook Pro 16"', 1728, 1117], ['fhd', 'Monitor Full HD', 1920, 1080], ['qhd', 'Monitor QHD', 2560, 1440]]]
+];
+var MODES = { phone: 'Móviles', tab: 'Tablets', desk: 'Escritorio' }, DEF = { phone: 'i15', tab: 'ip', desk: 'mbp14' };
+var BY = {}; var sel = document.getElementById('dev');
+DEVICES.forEach(function(g){ g[1].forEach(function(d){ BY[d[0]] = d; d[4] = g[0] === 'Móviles' ? 'phone' : g[0] === 'Tablets' ? 'tab' : 'desk'; }); });
+function fillSel(){ sel.innerHTML = ''; DEVICES.forEach(function(g){ if (g[0] !== MODES[mode]) return; g[1].forEach(function(d){ var o = document.createElement('option'); o.value = d[0]; o.textContent = d[1] + ' (' + d[2] + '×' + d[3] + ')'; sel.appendChild(o); }); }); }
+var q = new URLSearchParams(location.search), id = q.get('s') || 'property-link', extra = q.get('q') || '';
+try { var __nv = performance.getEntriesByType('navigation')[0]; if (__nv && __nv.type === 'reload') { id = 'home'; extra = ''; history.replaceState(null, '', location.pathname + '?s=home'); } } catch (e) {}   /* Cmd+R siempre vuelve a la Home */
+var saved = {}; try { saved = JSON.parse(localStorage.getItem('replica-device') || '{}'); } catch (e) {}
+var dev = BY[q.get('dev')] ? q.get('dev') : (BY[saved.dev] ? saved.dev : 'i15');
+var mode = BY[dev][4];
+var land = q.has('land') ? q.get('land') === '1' : !!saved.land;
+var fr = document.getElementById('fr'), fr2 = document.getElementById('fr2'), ph = document.getElementById('ph');
+fr2.style.opacity = '0'; fr2.style.pointerEvents = 'none'; fr2.style.zIndex = '0'; fr.style.zIndex = '1';
+function kindOf(d){ return d[4] === 'desk' ? 'desk' : d[2] >= 700 ? 'tab' : (/^(se)$/.test(d[0]) ? 'se' : (/^(px8|s23|fold)$/.test(d[0]) ? 'and' : 'ios')); }
+var LOOK = { ios: { r: 50, sb: 54, pad: 12, island: [122, 35, 11], pl: 34 }, and: { r: 34, sb: 38, pad: 11, hole: 14, pl: 22 }, se: { r: 22, sb: 22, pad: 12, pl: 14 }, tab: { r: 24, sb: 26, pad: 14, pl: 24 }, desk: { r: 8, sb: 0, pad: 14, pl: 0 } };
+function size(){ var d = BY[dev], k = kindOf(d), L = LOOK[k], w = land && k !== 'desk' ? d[3] : d[2], h = land && k !== 'desk' ? d[2] : d[3]; return { w: w, h: h, pad: L.pad, tab: k === 'tab', k: k, L: L, desk: k === 'desk' }; }
+function layout(reload){
+  var s = size(), L = s.L, sbh = s.desk ? 0 : land && s.k !== 'tab' ? 28 : L.sb;
+  ph.classList.toggle('desk', s.desk); document.getElementById('rot').style.display = s.desk ? 'none' : '';
+  document.querySelectorAll('.bar [data-m]').forEach(function(a){ a.classList.toggle('on', a.getAttribute('data-m') === mode); });
+  /* la pantalla mide exactamente los px CSS del dispositivo (p. ej. 430 × 932); el marco se suma por fuera */
+  ph.style.width = s.w + 'px'; ph.style.height = s.h + 'px'; ph.style.padding = s.pad + 'px';
+  ph.style.borderRadius = (L.r + s.pad) + 'px';
+  var scr = document.getElementById('scr'), sb = document.getElementById('sb'), di = document.getElementById('di');
+  scr.style.borderRadius = L.r + 'px';
+  sb.style.height = sbh + 'px'; sb.style.padding = '0 ' + L.pl + 'px'; sb.style.paddingTop = (s.k === 'ios' && !land ? 8 : 0) + 'px'; sb.style.boxSizing = 'border-box';
+  [fr, fr2].forEach(function(f){ f.style.top = sbh + 'px'; f.style.height = (s.h - sbh) + 'px'; f.style.width = s.w + 'px'; });
+  if (L.island && !land) { di.style.display = 'block'; di.style.width = L.island[0] + 'px'; di.style.height = L.island[1] + 'px'; di.style.top = L.island[2] + 'px'; }
+  else if (L.hole && !land) { di.style.display = 'block'; di.style.width = di.style.height = L.hole + 'px'; di.style.top = Math.round((sbh - L.hole) / 2) + 'px'; }
+  else di.style.display = 'none';
+  document.getElementById('dim').textContent = s.w + '×' + s.h;
+  sel.value = dev;
+  fit();
+  if (reload) {
+    if (swapReady) { goNext(new URL('screens/' + id + '.m.html' + (extra ? '?' + extra : ''), location.href).href, true); }   /* al cambiar de mockup o dispositivo, la pantalla actual se queda visible mientras carga la nueva (sin pantalla en blanco) */
+    else { fr2.style.opacity = '0'; fr2.style.pointerEvents = 'none'; fr.style.opacity = '1'; fr.style.pointerEvents = 'auto'; fr.style.zIndex = '1'; fr2.style.zIndex = '0'; fr2.removeAttribute('src'); fr = document.getElementById('fr'); bufA = fr; bufB = fr2; swapTok++; fr.src = 'screens/' + id + '.m.html' + (extra ? '?' + extra : ''); }
+  }   /* la réplica elige sola la vista (móvil o escritorio) según el ancho */
+}
+/* la ventana se parte en dos tercios + un tercio: el mockup va centrado en los dos tercios de la izquierda y los controles ocupan el tercio derecho */
+function fit(){
+  var s = size(), W = s.w + 2 * s.pad, H = s.h + 2 * s.pad, half = window.innerWidth * 2 / 3;
+  var Wt = W, Ht = H + (s.desk ? 54 : 0);   /* tamaño total del marco (pantalla + bezel) */
+  var k = Math.min(1, (window.innerHeight - 96) / Ht, (half - 32) / Wt);   /* en escritorio el monitor se reduce para caber en su mitad */
+  if (k < .3) k = .3;
+  ph.style.transform = 'scale(' + k + ')'; ph.style.marginBottom = '';
+  ph.style.left = Math.max(8, Math.round(half / 2 - Wt * k / 2)) + 'px';
+}
+var last = saved.last || {};
+function persist(){ last[mode] = dev; try { localStorage.setItem('replica-device', JSON.stringify({ dev: dev, land: land, last: last })); } catch (e) {} }
+fillSel();
+document.querySelectorAll('.bar [data-m]').forEach(function(a){ a.addEventListener('click', function(e){ e.preventDefault(); var m = a.getAttribute('data-m'); if (m === mode) return; last[mode] = dev; mode = m; dev = BY[last[m]] && BY[last[m]][4] === m ? last[m] : DEF[m]; fillSel(); persist(); layout(true); }); });
+sel.addEventListener('change', function(){ dev = sel.value; persist(); layout(true); });
+document.getElementById('rot').addEventListener('click', function(){ land = !land; persist(); layout(true); });
+window.addEventListener('resize', fit);
+function sync(){ try { var sp = document.getElementById('sp'); sp.href = 'split.html?s=' + id + (extra ? '&q=' + encodeURIComponent(extra) : ''); } catch (e) {} try { var m = /screens\/([^/]+)\.[md]\.html/.exec(fr.contentWindow.location.pathname); if (m) { id = m[1]; extra = (fr.contentWindow.location.search || '').slice(1); } } catch (e) {} document.getElementById('d').href = 'screens/' + id + '.d.html' + (extra ? '?' + extra : ''); }
+fr.addEventListener('load', function(){ sync(); try { fr.contentWindow.addEventListener('pagehide', function(){ setTimeout(sync, 50); }); } catch (e) {} });
+setInterval(sync, 700);
+var swapReady = false;
+layout(true); sync();
+/* ===== navegación sin parpadeo: la pantalla siguiente se carga detrás, en un segundo marco, y solo se muestra cuando está completa ===== */
+var bufA = fr, bufB = fr2, swapTok = 0; swapReady = true;   /* bufA = visible · bufB = el que carga */
+function frames(){ return [bufA, bufB]; }
+var trail = [];   /* pantallas por las que se ha pasado (para «atrás») */
+var pendingUrl = null;
+function goNext(url, noPush){
+  if (pendingUrl === url) return;   /* ya se está cargando: un segundo clic no la reinicia */
+  var tok = ++swapTok, nx = bufB, cu = bufA; pendingUrl = url;
+  if (!noPush) { try { trail.push(bufA.contentWindow.location.href); if (trail.length > 40) trail.shift(); } catch (e) {} }
+  nx.style.transition = 'none'; nx.style.opacity = '0'; nx.style.pointerEvents = 'none'; nx.style.zIndex = '1'; cu.style.zIndex = '0';
+  var done = false, t0 = Date.now();
+  var finish = function(){
+    if (done || tok !== swapTok) return; done = true;
+    setTimeout(function(){   /* deja que la página termine sus ajustes antes de mostrarla */
+      if (tok !== swapTok) return;
+      nx.style.transition = 'opacity .14s ease'; nx.style.opacity = '1'; nx.style.pointerEvents = 'auto';
+      setTimeout(function(){ if (tok !== swapTok) return; cu.style.transition = 'none'; cu.style.opacity = '0'; cu.style.pointerEvents = 'none'; cu.style.zIndex = '0'; nx.style.zIndex = '1'; try { cu.src = 'about:blank'; } catch (e) {} bufA = nx; bufB = cu; fr = nx; pendingUrl = null; sync(); }, 150);
+    }, 90);
+  };
+  nx.onload = null; nx.src = url;
+  /* no se espera al evento «load» (imágenes lentas): basta con que el documento esté analizado y sus scripts hayan corrido */
+  (function poll(){
+    if (done || tok !== swapTok) return;
+    var d = null; try { d = nx.contentDocument; } catch (e) {}
+    if ((d && d.URL && d.URL !== 'about:blank' && d.readyState !== 'loading' && d.getElementById('rep-end')) || Date.now() - t0 > 2500) finish(); else setTimeout(poll, 25);
+  })();
+}
+window.addEventListener('message', function(ev){
+  var m = ev.data; if (!m || m.rep !== 'phone-nav' || typeof m.url !== 'string') return;
+  var ok = frames().some(function(f){ return f.contentWindow === ev.source; }); if (!ok) return;
+  var u; try { u = new URL(m.url, location.href); } catch (e) { return; } if (u.origin !== location.origin) return;
+  goNext(u.href);
+});
+window.addEventListener('message', function(ev){
+  var m = ev.data; if (!m || m.rep !== 'phone-back') return;
+  if (!frames().some(function(f){ return f.contentWindow === ev.source; })) return;
+  var u = trail.pop(); goNext(u || new URL('screens/home.m.html', location.href).href, true);
+});
+</script><script src="assets/i18n-en.js?v=1792488270"></script></body></html>
