@@ -581,6 +581,9 @@ window.addEventListener('scroll', function(){ if (window.scrollY > 4) document.d
 window.__plSuggest = suggest; window.__plSetSug = function(sg){ if (sg === S.sug) return; S.sug = sg; render(); };
 render();
 
+/* textos del panel: en español en local (:7794) y en inglés en la versión publicada */
+var PEN = {"Tipo de enlace": "Link type", "Cómo buscan la reserva (una o varias, mín. 1)": "How guests find their booking (one or more, min. 1)", "Nombre + fecha": "Name + date", "Código": "Code", "Email + fecha": "Email + date", "Pedir la propiedad": "Ask for the property", "Crear la reserva si no aparece": "Create booking if not found", "Sí": "Yes", "Resultado de la búsqueda": "Search result", "Encontrada": "Found", "Varias → con salida": "Several → departure date", "Varias → sin resolver": "Several → still ambiguous", "No encontrada": "Not found", "Sin conexión": "Connection error", "Demasiados intentos": "Too many attempts", "Elegir cómo buscar": "Method picker", "V1 · Pestañas": "V1 · Tabs", "V2 · Tarjetas": "V2 · Cards", "Foto de la propiedad": "Property photo", "Con foto de la propiedad": "With property photo", "Sin foto (imagen genérica)": "No photo (generic image)", "Duración de la reserva (prueba)": "Stay length (test)", "2 noches": "2 nights", "7 noches": "7 nights", "15 noches": "15 nights"};
+var T = function(x){ return location.port === '7794' ? x : (PEN[x] || x); };
 /* ---------- panel ---------- */
 var seg = function(list, cur, attr, onPick){ var d = document.createElement('div'); d.className = 'rail-switch';
   d.innerHTML = list.map(function(o){ return '<button type="button" class="rs-chip' + (o[0] === cur ? ' on' : '') + '" ' + attr + '="' + o[0] + '">' + o[1] + '</button>'; }).join('');
@@ -603,27 +606,27 @@ function changed(){ clearTimeout(timer); reset(); S.cta = null; render(); releva
 var tries = 0, tm = setInterval(function(){
   if (!window.__repPanel) { if (++tries > 40) clearInterval(tm); return; } clearInterval(tm);
   rows.type = seg([['prop', 'Property link'], ['user', 'User link']], C.type, 'data-pt', function(k){ C.type = k; LSset('replica-pl-type', k); changed(); });
-  rows.m = multi([['n', 'Nombre + fecha'], ['c', 'Código'], ['e', 'Email + fecha']], C.methods, 'data-pm', function(v){ C.methods = v; LSset('replica-pl-m', v); changed(); });
-  rows.askp = seg([['1', 'Sí'], ['0', 'No']], C.askProp, 'data-pa', function(k){ C.askProp = k; LSset('replica-pl-askp', k); changed(); });
-  rows.create = seg([['1', 'Sí'], ['0', 'No']], C.create, 'data-pc', function(k){ C.create = k; LSset('replica-pl-create', k); changed(); });
-  rows.out = seg([['found', 'Encontrada'], ['multi', 'Varias → con salida'], ['ambig', 'Varias → sin resolver'], ['none', 'No encontrada'], ['net', 'Sin conexión'], ['block', 'Demasiados intentos']], C.out, 'data-po', function(k){ C.out = k; LSset('replica-pl-out', k); changed(); });
-  window.__repPanel.add('Tipo de enlace', rows.type, 1.1);
-  window.__repPanel.add('Cómo buscan la reserva (una o varias, mín. 1)', rows.m, 1.2);
-  window.__repPanel.add('Pedir la propiedad', rows.askp, 1.3);
-  window.__repPanel.add('Crear la reserva si no aparece', rows.create, 1.4);
-  window.__repPanel.add('Resultado de la búsqueda', rows.out, 20);
-  rows.mv = seg([['1', 'V1 · Pestañas'], ['2', 'V2 · Tarjetas']], C.mv, 'data-pv', function(k){ C.mv = k; LSset('replica-pl-mv', k); changed(); });
-  window.__repPanel.add('Elegir cómo buscar', rows.mv, 19);
+  rows.m = multi([['n', T('Nombre + fecha')], ['c', T('Código')], ['e', T('Email + fecha')]], C.methods, 'data-pm', function(v){ C.methods = v; LSset('replica-pl-m', v); changed(); });
+  rows.askp = seg([['1', T('Sí')], ['0', 'No']], C.askProp, 'data-pa', function(k){ C.askProp = k; LSset('replica-pl-askp', k); changed(); });
+  rows.create = seg([['1', T('Sí')], ['0', 'No']], C.create, 'data-pc', function(k){ C.create = k; LSset('replica-pl-create', k); changed(); });
+  rows.out = seg([['found', T('Encontrada')], ['multi', T('Varias → con salida')], ['ambig', T('Varias → sin resolver')], ['none', T('No encontrada')], ['net', T('Sin conexión')], ['block', T('Demasiados intentos')]], C.out, 'data-po', function(k){ C.out = k; LSset('replica-pl-out', k); changed(); });
+  window.__repPanel.add(T('Tipo de enlace'), rows.type, 1.1);
+  window.__repPanel.add(T('Cómo buscan la reserva (una o varias, mín. 1)'), rows.m, 1.2);
+  window.__repPanel.add(T('Pedir la propiedad'), rows.askp, 1.3);
+  window.__repPanel.add(T('Crear la reserva si no aparece'), rows.create, 1.4);
+  window.__repPanel.add(T('Resultado de la búsqueda'), rows.out, 20);
+  rows.mv = seg([['1', T('V1 · Pestañas')], ['2', T('V2 · Tarjetas')]], C.mv, 'data-pv', function(k){ C.mv = k; LSset('replica-pl-mv', k); changed(); });
+  window.__repPanel.add(T('Elegir cómo buscar'), rows.mv, 19);
   rows.av = seg([['1', 'V1 · Hoja'], ['2', 'V2 · Pantalla completa'], ['3', 'V3 · Desde el botón'], ['4', 'V4 · Se abre la foto'], ['5', 'V5 · Tarjeta de reserva'], ['6', 'V6 · Puertas'], ['7', 'V7 · Tus datos encajan'], ['8', 'V8 · V3 abriéndose como V4']], C.av, 'data-pz', function(k){ C.av = k; LSset('replica-pl-av', k); changed(); });
   /* «Animación de búsqueda» ya no se elige: V8 definitiva */
-  rows.ph = seg([['1', 'Con foto de la propiedad'], ['0', 'Sin foto (imagen genérica)']], C.ph, 'data-pf', function(k){ C.ph = k; LSset('replica-pl-ph', k); changed(); });
-  window.__repPanel.add('Foto de la propiedad', rows.ph, 19.2);
+  rows.ph = seg([['1', T('Con foto de la propiedad')], ['0', T('Sin foto (imagen genérica)')]], C.ph, 'data-pf', function(k){ C.ph = k; LSset('replica-pl-ph', k); changed(); });
+  window.__repPanel.add(T('Foto de la propiedad'), rows.ph, 19.2);
   rows.dv = seg([['0', 'Actual'], ['1', 'D1 · Mitad y mitad'], ['2', 'D2 · Tarjeta flotante'], ['22', 'D2.2 · Hoja como en móvil'], ['3', 'D3 · Banner panorámico'], ['4', 'D4 · Minimal centrado']], C.dv, 'data-pd', function(k){ C.dv = k; LSset('replica-pl-dv', k); changed(); });
   /* «Escritorio» ya no se elige: D2 definitiva */
   rows.gi = seg([['f1', 'Foto · Llaves en la entrada'], ['f2', 'Foto · Llave en mano'], ['f3', 'Foto · Puertas al balcón'], ['f4', 'Foto · Maleta'], ['f5', 'Foto · Maleta abierta'], ['t1', 'Patrón · Geométrico'], ['t2', 'Patrón · Curvas de papel'], ['t3', 'Patrón · Pliegues'], ['t4', 'Patrón · Azulejos'], ['t5', 'Patrón · Terrazo'], ['r', 'Recepcionista (la tuya)']], C.gi, 'data-pg', function(k){ C.gi = k; LSset('replica-pl-gi', k); changed(); });
   /* «Imagen genérica» ya no se elige: curvas de papel */
-  rows.nn = seg([['2', '2 noches'], ['7', '7 noches'], ['15', '15 noches']], C.nn, 'data-pn', function(k){ C.nn = k; LSset('replica-pl-nn', k); setNights(k); changed(); });
-  window.__repPanel.add('Duración de la reserva (prueba)', rows.nn, 20.5);
+  rows.nn = seg([['2', T('2 noches')], ['7', T('7 noches')], ['15', T('15 noches')]], C.nn, 'data-pn', function(k){ C.nn = k; LSset('replica-pl-nn', k); setNights(k); changed(); });
+  window.__repPanel.add(T('Duración de la reserva (prueba)'), rows.nn, 20.5);
   setTimeout(relevance, 0);
 }, 50);
 })();
