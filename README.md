@@ -35,7 +35,16 @@ The same prototype also contains the **one click check-in** screen (switch scree
 
 - Desktop: full-screen property photo in the brand blue with a slow looping zoom, the "Welcome to" block bottom-left and a floating **Your stay** card on the right: a journey line (Booked → Online check-in → Arrival → Departure) where the current step holds the check-in box: "0 of 3 guests checked in", Continue with Google / Apple (recommended, to save guests for next time), "Been here before?" and "Continue without an account".
 - Mobile: same structure as the property link (photo header with "Welcome to"), with the **Your stay** card as the white body. No scroll.
-- Signed-in states: pick saved guests, add a missing detail, first check-in with an account. Booking data is sample data.
+- Flow after signing in with Google / Apple (each step replaces the content of the same card; the header photo stays in place):
+  1. **Confirm who's coming**: adults and minors pre-filled from the booking, plus the steps to finish before arrival (guest registration and the payments enabled in Booking settings: security deposit, tourist tax, reservation payment).
+  2. **Who's coming?**: pick the saved guests for this stay (or add someone new).
+  3. **Registering…**: the same registration animation as the guest app.
+  4. **What's left** (only if something is missing): who is already checked in and which guests still have pending details. "Complete details" walks through each incomplete guest in turn ("Guest 1 of 2", Save and continue / Save and finish, Back), asking only for the missing fields.
+  5. **Final screen**: "N steps left before you arrive", an animated list of what is done and what is still pending, and "Opening your booking" before handing over to the guest app home.
+- "Continue without an account" goes straight to the final screen and then to the guest app home.
+- Booking settings include a saved-guests state where two guests have pending details (one missing 1 field, the other 5) to test long forms.
+- Desktop: the card never scrolls; when content does not fit it tightens spacing, drops secondary text, switches fields to two columns and, as a last resort, scales the content down.
+- Booking data is sample data.
 
 ## Rebuild
 

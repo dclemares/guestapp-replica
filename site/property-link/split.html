@@ -104,6 +104,7 @@ window.addEventListener('message', function(ev){
 var tmr = 0, reloads = [];
 document.addEventListener('click', function(e){
   if (!e.target.closest || !e.target.closest('#rep-panel') || e.target.closest('.rp-tab') || e.target.closest('.rp-s[data-t="Vela sombreado"]') || e.target.closest('.rp-s[data-t="Bordes"]') || e.target.closest('.rp-s[data-t="Modal huéspedes"]') || e.target.closest('.rp-s[data-t="Tarjeta de prueba"]') || e.target.closest('.rp-s[data-t="Ver paso (sin pagar)"]')) return;   /* «Modal huéspedes», «Tarjeta de prueba» y «Ver paso» no cambian ajustes (solo abren o rellenan el modal, y se replican en el otro marco): recargar el escritorio lo cerraría */   /* las pestañas del panel no cambian ajustes */
+  try { if (frD.contentWindow.__liveSettings) return; } catch (x) {}   /* el one click aplica los ajustes en vivo: recargarlo lo devolvía al paso 1 mientras el móvil seguía (se desincronizaban) */
   var now = Date.now(); reloads = reloads.filter(function(t){ return now - t < 8000; }); if (reloads.length >= 4) return;
   clearTimeout(tmr); tmr = setTimeout(function(){ reloads.push(Date.now()); try { go(frD, frD.contentWindow.location.href); } catch (x) { go(frD, url('d')); } }, 450);
 }, true);

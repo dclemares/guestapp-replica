@@ -26,8 +26,18 @@ var C = {
   av: '8',                                      /* animación definitiva: V8 (las demás quedan en el código como referencia) */              /* animación de búsqueda: 1 = hoja · 2 = pantalla completa */
   nn: LSget('replica-pl-nn', '2'),
   ocs: LSget('replica-oc-s', '0'),              /* one click: sesión iniciada al entrar (0 no · 1 sí) */
-  ocv: LSget('replica-oc-v', 'miss'),           /* one click: huéspedes guardados (none · ok · miss = uno con un dato pendiente) */
-  ocg: LSget('replica-oc-g', '3'),
+  ocv: (function(v){ return v === 'miss5' ? 'miss' : v; })(LSget('replica-oc-v', 'miss')),           /* one click: huéspedes guardados (none · ok · miss = uno con un dato pendiente) */
+  ocg: (function(v){ return ['2', '4', '6', '9', '14'].indexOf(v) >= 0 ? v : '4'; })(LSget('replica-oc-g', '4')),   /* ajustes de la reserva (como en la Gestap): número de huéspedes */
+  bmin: LSget('replica-oc-min', '1'),             /* hay menores en la reserva */
+  bpay: LSget('replica-oc-pay', 'reservation'),   /* pagos pendientes, separados por comas (vacío = solo registro de huéspedes): deposit, taxes, reservation */
+  bdep: LSget('replica-oc-dep', 'hold'),          /* tipo de depósito: retención (hold) o tarjeta guardada (token) */
+  bra: LSget('replica-oc-ra', '1'),               /* remote access (llaves) */
+  ocwc: 'g',                                     /* tarjeta del huésped pendiente («What's left»): gris de la Gestap (decidido); naranja y amarillo quedan solo en el CSS */
+  ocx: '5',                                      /* «Complete the missing details»: definitiva V5 · tarjeta oscura + campo (2026-10-28); V0–V4 quedan solo en el código */               /* «Complete the missing details»: 4 versiones con el formulario de la Gestap */
+  ocf: '2',                                      /* pantalla final (abriendo la reserva): definitiva 2 · Lista animada (2026-10-28); 1 resumen y 3 llaves quedan solo en el código */
+  ocl: '4',                                      /* «What's left»: huésped con datos pendientes = V4 · Destacada (definitiva 2026-10-28); V1–V3 quedan solo en el código */
+  oca: 'c',                                      /* «Almost done»: definitiva C · Lo que falta (2026-10-28); A lista y B anillo quedan solo en el código */
+  gcm: LSget('replica-oc-gcm', 'ages'),         /* modal de huéspedes entre el paso 1 y el 2: «Por edad» (adultos + menores) o «Total», como en la Gestap */
   ocw: '13',                                     /* one click: entrada definitiva W13 (decidida 2026-10-28); W1–W12 quedan solo en el código como referencia */
   dv: '2',                                      /* escritorio definitivo: D2 · Tarjeta flotante (las demás quedan en el código como referencia) */              /* maquetación de escritorio: 0 = actual · 1 mitad y mitad · 2 tarjeta flotante · 3 banner panorámico · 4 minimal centrado */
   cv: '41',                                     /* tarjetas definitivas: C4.1 · Dónde + descripción (las demás quedan en el código como referencia) */              /* tarjetas de elección de método (V2): 0 actual · 1 recomendada · 2 lo que vas a escribir · 3 ayuda primero · 4 dónde encontrarlo */
@@ -95,6 +105,7 @@ var P = {
   arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
   hash: '<path d="M5 9h14M5 15h14M10 4 8 20M16 4l-2 16"/>',
   bolt: '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
+  crown: '<path d="M3 8l4.5 3.5L12 5l4.5 6.5L21 8l-2 11H5z"/>',
   shield: '<path d="M12 3 5 6v5.5c0 4.2 2.9 8 7 9.5 4.1-1.5 7-5.3 7-9.5V6z"/><path d="m9 12 2 2 4-4"/>',
   plus: '<path d="M12 5v14M5 12h14"/>',
   users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6"/>'
@@ -105,8 +116,8 @@ var LANGS = [['EN', 'English'], ['ES', 'Español'], ['FR', 'Français'], ['DE', 
 /* ---------- estado del flujo (solo en memoria) ---------- */
 var S;
 function reset(){
-  S = { phase: 'form', method: methods()[0], f: { name: '', prop: '', cin: '', cout: '', code: '', email: '', cName: '', cEmail: '', guests: 1, cCin: '', cCout: '', bd: '' },
-        oc: { why: false, save: null, step: C.ocs === '1' ? (C.ocv === 'none' ? 'new' : 'pick') : 'welcome', sel: ['g1'], count: +C.ocg, busy: '', signed: C.ocs === '1' },
+  S = { phase: 'form', method: methods()[0], f: { name: '', prop: '', cin: '', cout: '', code: '', email: '', cName: '', cEmail: '', guests: 1, cCin: '', cCout: '', bd: '', exp: '', nat: '', addr: '', city: '', zip: '' },
+        oc: { why: false, save: null, step: C.ocs === '1' ? (C.ocv === 'none' ? 'new' : 'pick') : C.ocs === 'c' ? 'count' : 'welcome', sel: [], count: +C.ocg, ad: ocSplit()[0], mi: ocSplit()[1], busy: '', signed: C.ocs !== '0', fixd: {}, fq: [], fi: 0 },
         lang: 0, tip: null, picked: false, fails: 0, sug: '', until: 0, needCout: false, notice: null, err: {}, busy: false, sheet: null, cal: null, q: '' };
 }
 reset();
@@ -473,16 +484,35 @@ function sCal(){
 /* móvil sin scroll nunca: si el contenido no cabe, se recoge por niveles (de lo menos a lo más visible) hasta que cabe */
 var FIT = ['pl-fit1', 'pl-fit2', 'pl-fit3', 'pl-fit4', 'pl-fit5', 'pl-fit6', 'pl-fit7'];
 function fit(){
-  var m = root.querySelector('.pl-main'); FIT.forEach(function(c){ root.classList.remove(c); });
+  var m = OC ? root.querySelector('.pl-col>.pl-card') : root.querySelector('.pl-main'); FIT.forEach(function(c){ root.classList.remove(c); });   /* one click: se mide la caja, no la pantalla (la cabecera no se toca) */
+  if (OC && !isMob()) { var lg = root.querySelector('.pl-gh-lang'), lr = lg && lg.getBoundingClientRect(); if (lr && lr.height) root.style.setProperty('--pl-lb', Math.max(24, Math.round(innerHeight - lr.bottom)) + 'px'); }   /* escritorio: la caja no baja más que la cajita del idioma («English») */
+  ocDFit();
+  ocMore();
   if (!m || !isMob()) return;
   for (var i = 0; i < FIT.length && m.scrollHeight - m.clientHeight > 0; i++) root.classList.add(FIT[i]);
 }
+/* escritorio: la caja del one click nunca hace scroll. Si no cabe: 1 compacta márgenes · 2 quita textos secundarios (notas, consejos, ayudas) · 3 campos en dos columnas y sin ayudas · 4 reduce el tamaño del contenido lo justo (mínimo 70 %) */
+var DFIT = ['pl-dfit1', 'pl-dfit2', 'pl-dfit3'];   /* 3: campos en dos columnas y sin ayudas (varios datos pendientes) */
+function ocDFit(){
+  if (!OC || !root) return; var c = root.querySelector('.pl-col>.pl-card:not(.pl-ghost)'); DFIT.forEach(function(k){ root.classList.remove(k); }); if (!c) return; c.style.removeProperty('--dz');
+  if (isMob()) return;
+  var over = function(){ return c.scrollHeight - c.clientHeight > 1; };
+  for (var i = 0; i < DFIT.length && over(); i++) root.classList.add(DFIT[i]);
+  for (var z = 1, n = 0; n < 6 && over() && z > .7; n++) { z = Math.max(.7, z * (c.clientHeight / c.scrollHeight) - .005); c.style.setProperty('--dz', z.toFixed(3)); }
+}
+/* si la caja tiene más contenido debajo (muchos huéspedes), sombra encima del botón hasta llegar al final */
+function ocMore(){ if (!OC || !root) return; var c = root.querySelector('.pl-col>.pl-card:not(.pl-ghost)'), col = c && c.parentNode; if (!col) return; col.classList.toggle('pl-more', c.scrollHeight - c.clientHeight - c.scrollTop > 2); }
+document.addEventListener('scroll', function(e){ if (e.target && e.target.classList && e.target.classList.contains('pl-card')) ocMore(); }, true);
 window.addEventListener('resize', function(){ if (root) fit(); });
 window.matchMedia('(max-width:1023px)').addEventListener('change', function(){ if (root && OC) render(); });   /* W13 cambia de estructura entre móvil y escritorio */
 /* ============ ONE CLICK CHECK-IN (screens/one-click.*) — mismas piezas que el property link ============
    IT-3894: el huésped que vuelve (con sesión) elige sus huéspedes guardados y se registran en un toque; si a alguno le falta un dato, solo se pide ese dato.
    Sin sesión: se registra a mano (formulario de la réplica), con la invitación a iniciar sesión para la próxima vez. Sin estado: nada se guarda. */
 var OC = S0.id === 'one-click';
+/* ajustes de la reserva (como en la Gestap): reparto adultos/menores por número de huéspedes y pagos pendientes */
+function ocSplit(){ var a = ({ 2: [2, 0], 4: [3, 1], 6: [4, 2], 9: [6, 3], 14: [10, 4] })[+C.ocg] || [+C.ocg, 0];   /* mismo reparto que la Gestap (GCA) */ return C.bmin === '1' ? [a[0], a[1]] : [a[0] + a[1], 0]; }
+var PAYS = { deposit: ['Security deposit', 'Held on your card, released after your stay.'], taxes: ['Tourist tax', 'Per guest and night.'], reservation: ['Reservation payment', 'Pending amount for your booking.'] };
+function ocPays(){ return (C.bpay || '').split(',').filter(function(k){ return PAYS[k]; }); }
 var SAVED = [
   { id: 'g1', n: 'Maria Lowe', you: true, adult: true, doc: 'Passport ··· 4821', bg: 'linear-gradient(135deg,#385bf8,#7a8cff)' },
   { id: 'g2', n: 'James Lowe', adult: true, doc: 'ID card ··· 1093', bg: 'linear-gradient(135deg,#0f766e,#34d399)' },
@@ -490,13 +520,24 @@ var SAVED = [
   { id: 'g4', n: 'Tom Baker', adult: true, doc: 'Passport ··· 3317', bg: 'linear-gradient(135deg,#7a3cf0,#c86bfa)' }
 ];
 var ocG = function(id){ for (var i = 0; i < SAVED.length; i++) if (SAVED[i].id === id) return SAVED[i]; return null; };
-var ocMiss = function(g){ return C.ocv === 'miss' && g.id === 'g3'; };   /* a Lucía le falta la fecha de nacimiento */
+/* qué le falta a cada huésped: «miss» → Lucía 1 dato y Tom 1 dato · «miss5» → Lucía 1 dato y Tom 5 */
+var MFD = {
+  bd: { l: 'Birth date', l0: 'Date of birth', d: 1, e: 'Enter the date of birth, e.g. 14 / 03 / 2018.' },
+  exp: { l: 'Passport expiry date', l0: 'Passport expiry date', d: 1, e: 'Enter the expiry date, e.g. 22 / 08 / 2031.' },
+  nat: { l: 'Nationality', l0: 'Nationality', ph: 'e.g. British', e: 'Enter the nationality.' },
+  addr: { l: 'Address', l0: 'Home address', ph: 'Street and number', e: 'Enter the address.' },
+  city: { l: 'City', l0: 'City', ph: 'e.g. Manchester', e: 'Enter the city.' },
+  zip: { l: 'Postal code', l0: 'Postal code', ph: 'e.g. M1 1AE', e: 'Enter the postal code.' }
+};
+var MFS = { miss: { g3: ['bd'], g4: ['nat', 'exp', 'addr', 'city', 'zip'] } };   /* Lucía: 1 dato · Tom: 5 (antes había un estado aparte «miss5»; se juntan para que siempre salgan los 5) */
+function mfOf(id){ var m = MFS[C.ocv]; return (m && m[id]) || []; }
+var ocMiss = function(g){ return mfOf(g.id).length > 0; };   /* huéspedes incompletos (Lucía y Tom); con «miss5» a Tom le faltan 5 datos */
 var ocFirst = function(n){ return n.split(' ')[0]; };
 var ocInit = function(g, s){ s = s || 40; return '<span class="pl-oc-av" style="width:' + s + 'px;height:' + s + 'px;background:' + g.bg + '">' + g.n.charAt(0) + '</span>'; };
 function ocLead(){ for (var i = 0; i < S.oc.sel.length; i++) { var g = ocG(S.oc.sel[i]); if (g && g.adult) return g.id; } return ''; }
 function ocNames(list){ var n = list.map(function(g){ return '<b>' + esc(ocFirst(g.n)) + '</b>'; }); return n.length < 2 ? n.join('') : n.slice(0, -1).join(', ') + ' and ' + n[n.length - 1]; }
 function ocStay(){ return '<div class="pl-oc-stay"><span>' + ic('cal', 15) + fmt(BOOKING.cin) + ' – ' + fmt(BOOKING.cout) + '</span><span>' + ic('users', 15) + S.oc.count + (S.oc.count === 1 ? ' guest' : ' guests') + '</span></div>'; }
-function ocAcc(){ return '<div class="pl-oc-acc">' + ocInit(SAVED[0], 28) + '<span>Signed in as <b>maria.lowe@gmail.com</b></span><button type="button" class="pl-link" data-a="ocout">Not you?</button></div>'; }
+function ocAcc(){ return '<div class="pl-oc-acc">' + ocInit(SAVED[0], 28) + '<span>Signed in as <b>maria.lowe@gmail.com</b></span></div>'; }   /* sin «Not you?» (pedido por Dani) */
 var GSVG = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.4h6.5a5.6 5.6 0 0 1-2.4 3.6v3h3.9c2.3-2.1 3.5-5.2 3.5-8.7z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-2.9l-3.9-3c-1.1.7-2.5 1.2-4.1 1.2-3.1 0-5.8-2.1-6.7-5H1.3v3.1A12 12 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.3 14.3a7.2 7.2 0 0 1 0-4.6V6.6h-4a12 12 0 0 0 0 10.8z"/><path fill="#EA4335" d="M12 4.8c1.8 0 3.3.6 4.6 1.8l3.4-3.4A11.9 11.9 0 0 0 1.3 6.6l4 3.1c.9-2.9 3.6-4.9 6.7-4.9z"/></svg>';
 var ASVG = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="currentColor"><path d="M16.4 12.7c0-2.6 2.1-3.8 2.2-3.9a4.8 4.8 0 0 0-3.8-2c-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9a5 5 0 0 0-4.2 2.6c-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8s2 .8 3.4.8c1.4 0 2.3-1.3 3.1-2.5a10.6 10.6 0 0 0 1.4-2.9 4.5 4.5 0 0 1-2.6-4.1zM13.9 5.1a4.5 4.5 0 0 0 1-3.3 4.6 4.6 0 0 0-3 1.6 4.3 4.3 0 0 0-1.1 3.1 3.8 3.8 0 0 0 3.1-1.4z"/></svg>';
 /* W13 · copy del paso «Online check-in» (el «cercano», elegido por Dani) */
@@ -615,7 +656,7 @@ function ocWy(btn){
     var stp = function(cls, icn, t, d, extra){ return '<li class="' + cls + '"><span class="pl-w7dot">' + icn + '</span><div><b>' + t + '</b>' + (d ? '<span>' + d + '</span>' : '') + (extra || '') + '</div></li>'; };
     /* copy del paso «Online check-in» (mismo cuadro, 4 textos): qué hay que hacer (antes de llegar), por qué conviene la cuenta, qué pasa si ya la tienes y que se puede seguir sin ella */
     var cp = COPY13;
-    var nowBox = '<div class="pl-w7box pl-c13"><p><b>' + cp.t.replace('{g}', gs) + '</b>' + cp.d + '</p>'
+    var nowBox = '<div class="pl-w7box pl-c13"><p><b>' + cp.t.replace('{g}', gs) + '</b>' + cp.d.replace(/ (Tip:.*)$/, ' <span class="pl-c13tip">$1</span>') + '</p>'
       + '<div class="pl-oc-auth">' + auth + '</div><p class="pl-c13ret">' + cp.r + '</p>'
       + '<button type="button" class="pl-btn txt pl-oc-skip" data-a="ocskip">' + cp.s + ic('arrow', 16) + '</button></div>';
     var stay = '<h2 class="pl-w7h" id="pl-w13t">Your stay</h2><ol class="pl-w7tl">'
@@ -624,7 +665,7 @@ function ocWy(btn){
       + stp('next', ic('pin', 13), 'Arrival', fmt(b.cin) + ' · from ' + BK.tin)
       + stp('next', ic('cal', 13), 'Departure', fmt(b.cout) + ' · by ' + BK.tout + ' · ' + N) + '</ol>';
     /* móvil: como la W1 (foto con «Welcome to» arriba) y la caja blanca es «Your stay» entera */
-    if (isMob()) return hero() + '<div class="pl-col"><section class="pl-card pl-main-card pl-w13m pl-tl2" aria-labelledby="pl-w13t">' + stay + '</section></div>';
+    return hero() + '<div class="pl-col"><section class="pl-card pl-main-card pl-w13m pl-tl2" aria-labelledby="pl-w13t">' + dwel() + stay + '</section></div>';   /* misma cabecera y misma caja que el property link, en móvil y en escritorio */
     return '<div class="pl-wx pl-wy pl-w11 pl-w13"><img class="pl-w11bg" src="' + PHOTO() + '" alt=""><div class="pl-w11in"><div class="pl-w11top"><span>Online check-in</span>' + lang + '</div>'
       + '<div class="pl-w11b pl-w13l"><p class="pl-w11eye">Welcome to</p><h2>' + esc(p.name) + '</h2><p class="pl-w11addr">' + ic('pin', 13) + BK.addr + '<span class="pl-w13lang">' + lang + '</span></p>' + big + facts
       + '<button type="button" class="pl-btn pl-w11go" data-a="ochow">Check in now' + ic('arrow', 18) + '</button><p class="pl-wy-sub lt">' + gs + ' · about 2 min each</p></div>'   /* móvil: igual que la W11.1; en escritorio el botón cede el sitio a la tarjeta «Your stay» */
@@ -661,6 +702,17 @@ function vOc(){
     card = '<section class="pl-card pl-main-card pl-ocw pl-ocw' + C.ocw + '" aria-labelledby="pl-h">' + dwel() + ocWelcome() + '</section>';
     dock = '<div class="pl-dock"><div class="pl-oc-auth">' + btn('ocgoogle', 'pl-soc g', GSVG + 'Continue with Google', 'Signing in…') + btn('ocapple', 'pl-soc a', ASVG + 'Continue with Apple', 'Signing in…')
       + '<button type="button" class="pl-btn txt pl-oc-skip" data-a="ocskip">' + SKIP + ic('arrow', 16) + '</button></div></div>';
+  } else if (st === 'count') {   /* paso 2: cuántos sois (el contenido del modal de la Gestap, dentro de la caja) */
+    var oc2 = S.oc, ages = C.gcm !== 'total', tot = ages ? oc2.ad + oc2.mi : oc2.count;
+    var stepper = function(k, label, sub, v, min){ return '<div class="pl-gcr"><span class="pl-gcr-ic' + (k === 'mi' ? ' mi' : '') + '">' + ic('user', 18) + '</span><span class="pl-gcr-tx"><b>' + label + '</b>' + (sub ? '<small>' + sub + '</small>' : '') + '</span>'
+      + '<span class="pl-gcr-ctl"><button type="button" class="pl-gcb" data-a="ocgc" data-k="' + k + '" data-d="-1" aria-label="One ' + label.toLowerCase() + ' less"' + (v <= min ? ' disabled' : '') + '>−</button><output aria-live="polite">' + v + '</output><button type="button" class="pl-gcb add" data-a="ocgc" data-k="' + k + '" data-d="1" aria-label="One ' + label.toLowerCase() + ' more"' + (tot >= 20 ? ' disabled' : '') + '>+</button></span></div>'; };
+    var pays = ocPays(), tail = ' before you arrive.';   /* sin «to unlock your keys» (sobraba) */
+    var reqs = '<li><span>1</span><div><b>Register all ' + tot + (tot === 1 ? ' guest' : ' guests') + '</b><small>Required for everyone staying.</small></div></li>' + pays.map(function(k, i){ return '<li><span>' + (i + 2) + '</span><div><b>' + PAYS[k][0] + '</b><small>' + (k === 'deposit' && C.bdep === 'token' ? 'Save your card for your stay.' : PAYS[k][1]) + '</small></div></li>'; }).join('');
+    card = '<section class="pl-card pl-main-card pl-gc" aria-labelledby="pl-h">' + dwel() + ocAcc() + '<h2 id="pl-h">Confirm who\'s coming</h2><p class="pl-lead pl-keep">' + (pays.length ? 'Then finish these steps' : 'Then register all the guests') + tail + '</p>'
+      + (pays.length ? '<ol class="pl-gcsteps">' + reqs + '</ol>' : '')
+      + (ages ? stepper('ad', 'Adults', '18 or older on arrival day', oc2.ad, 1) + (C.bmin === '1' ? stepper('mi', 'Minors', 'Under 18 on arrival day', oc2.mi, 0) : '') : stepper('n', 'Guests', 'Everyone staying, children included', oc2.count, 1))
+      + '<p class="pl-gcnote">' + ic('info', 14) + '<span>Pre-filled from your booking. Change it if your group is different, but it must match your arrival and the reservation you booked.</span></p></section>';
+    dock = '<div class="pl-dock"><div>' + btn('ocgcok', 'pri', 'Confirm ' + tot + (tot === 1 ? ' guest' : ' guests'), 'Confirming…') + '</div></div>';
   } else if (st === 'new') {
     card = '<section class="pl-card pl-main-card" aria-labelledby="pl-h">' + dwel() + ocAcc() + '<h2 id="pl-h">You\'re signed in</h2><p class="pl-lead pl-keep">It\'s your first check-in with us. Add each guest once and next time it\'s one tap.</p>' + ocStay()
       + '<div class="pl-oc-ben"><span class="pl-oc-ben-ic">' + ic('check', 20) + '</span><div><b>We\'ll save them for you</b><span>Every guest you add today will be ready for your next stays.</span></div></div></section>';
@@ -670,26 +722,77 @@ function vOc(){
     var rows = SAVED.map(function(g){
       var on = S.oc.sel.indexOf(g.id) >= 0, dis = !on && full, miss = ocMiss(g);
       var sub = (g.you ? 'You · ' : '') + (g.adult ? '' : 'Child, ' + g.age + ' · ') + g.doc;
-      return '<button type="button" class="pl-oc-g' + (on ? ' on' : '') + (dis ? ' dis' : '') + '" data-a="ocsel" data-g="' + g.id + '" role="checkbox" aria-checked="' + on + '"' + (dis ? ' aria-disabled="true"' : '') + '><span class="pl-oc-ck">' + ic('check', 14) + '</span>' + ocInit(g)
-        + '<span class="pl-oc-gt"><b>' + esc(g.n) + '</b><span>' + (on && g.id === lead ? '<em class="pl-oc-lead">Lead guest</em>' : '') + sub + '</span></span>'
-        + (miss ? '<i class="pl-oc-st miss">1 detail missing</i>' : '<i class="pl-oc-st ok">' + ic('check', 11) + 'Ready</i>') + '</button>';
+      var isLead = on && g.id === lead;   /* definitiva (V1.2): sin «Ready»; «Lead guest» con corona en su sitio; iniciales en cuadrado azul (sin elegir) o verde (elegido), con delineado fino */
+      var av = '<span class="pl-g11av ol' + (on ? ' on' : '') + '">' + g.n.split(' ').map(function(w){ return w[0]; }).join('').slice(0, 2) + '</span>';
+      var right = isLead ? '<i class="pl-g11lead">' + ic('crown', 12) + 'Lead guest</i>' : '';   /* sin «1 detail missing»: lo que falte se pide después del registro */
+      return '<button type="button" class="pl-oc-g' + (on ? ' on' : '') + (dis ? ' dis' : '') + '" data-a="ocsel" data-g="' + g.id + '" role="checkbox" aria-checked="' + on + '"' + (dis ? ' aria-disabled="true"' : '') + '><span class="pl-oc-ck">' + ic('check', 14) + '</span>' + av
+        + '<span class="pl-oc-gt"><b>' + esc(g.n) + '</b><span>' + sub + '</span></span>'
+        + right + '</button>';
     }).join('');
     var err = S.oc.err ? '<p class="pl-errt" role="alert">' + S.oc.err + '</p>' : '';
     card = '<section class="pl-card pl-main-card" aria-labelledby="pl-h">' + dwel() + ocAcc() + '<h2 id="pl-h">Who\'s coming?</h2>'
-      + '<p class="pl-oc-cnt">This booking is for <b>' + S.oc.count + (S.oc.count === 1 ? ' guest' : ' guests') + '</b> <button type="button" class="pl-link" data-a="occount">Change</button></p>'
-      + '<div class="pl-oc-list" role="group" aria-label="Your saved guests">' + rows + '<button type="button" class="pl-oc-g pl-oc-add" data-a="ocform"><span class="pl-oc-addic">' + ic('plus', 18) + '</span><span class="pl-oc-gt"><b>Add someone new</b><span>Not in your list yet</span></span></button></div>' + err + '</section>';
+      + '<p class="pl-oc-cnt">You\'ve checked in with these guests before. Select who\'s coming on this stay.</p>'   /* antes: «This booking is for 3 guests · Change» */
+      + ('<div class="pl-oc-list" role="group" aria-label="Your saved guests">' + rows + '<button type="button" class="pl-oc-g pl-oc-add" data-a="ocform"><span class="pl-oc-addic">' + ic('plus', 18) + '</span><span class="pl-oc-gt"><b>Add someone new</b><span>Not in your list yet</span></span></button></div>') + err + '</section>';
     var left = S.oc.count - n;
-    dock = '<div class="pl-dock"><div>' + (n && left > 0 ? '<p class="pl-oc-cap">You can add the other ' + (left === 1 ? 'guest' : left + ' guests') + ' later.</p>' : '')
+    dock = '<div class="pl-dock"><div>' + (!n ? '<p class="pl-oc-cap"><button type="button" class="pl-link" data-a="oclaterall">You can add guests later</button></p>'   /* sin nadie elegido: se puede seguir y añadirlos después (pulsable) */
+      : '<p class="pl-oc-cap"' + (left > 0 ? '>' : ' style="visibility:hidden" aria-hidden="true">') + 'You can add the other ' + (left === 1 ? 'guest' : (left || 2) + ' guests') + ' later.</p>')   /* todos elegidos: el texto no se ve, pero conserva su hueco (la caja no se encoge) */   /* con alguien elegido: solo informa, ya no se pulsa */
       + btn('ocgo', 'pri' + (n ? '' : ' pl-oc-off'), n ? 'Check in ' + n + (n === 1 ? ' guest' : ' guests') : 'Choose who\'s coming', 'Checking in your guests…') + '</div></div>';
-  } else if (st === 'fix') {
-    var miss2 = S.oc.sel.map(ocG).filter(ocMiss);
-    card = '<section class="pl-card pl-main-card" aria-labelledby="pl-h">' + dwel() + '<div class="pl-mbar"><span class="pl-mo-ic sm">' + ic('users', 18) + '</span><span class="pl-mbar-tx"><small>Almost done</small><b>' + (S.oc.sel.length - miss2.length) + ' of ' + S.oc.sel.length + ' guests checked in</b></span></div>'
-      + '<h2 id="pl-h">Just one more detail</h2><p class="pl-lead pl-keep">We only ask for what\'s missing. Everything else is saved.</p>'
-      + miss2.map(function(g){ return '<div class="pl-oc-fix"><div class="pl-oc-fixh">' + ocInit(g, 32) + '<b>' + esc(g.n) + '</b><i class="pl-oc-st miss">Date of birth</i></div>'
-        + textField('bd', 'Date of birth', 'DD / MM / YYYY', 'As it appears on ' + esc(ocFirst(g.n)) + '\'s passport.', 'inputmode="numeric" autocomplete="bday"') + '</div>'; }).join('') + '</section>';
-    dock = '<div class="pl-dock"><div>' + btn('ocsave', 'pri', 'Save and finish', 'Saving…') + '</div></div>';
+  } else if (st === 'reg') {   /* registrando: la animación de la Gestap (anillo, «Registering…» y los tres hitos) dentro de la caja */
+    var rn = S.oc.sel.length, rw = rn === 1 ? esc(ocFirst(ocG(S.oc.sel[0]).n)) : rn + ' guests';
+    card = '<section class="pl-card pl-main-card pl-reg" aria-labelledby="pl-h">' + dwel() + '<div class="pl-reg-ring" data-st="run"><svg viewBox="0 0 140 140" aria-hidden="true"><circle class="trk" cx="70" cy="70" r="60"/><circle class="arc" cx="70" cy="70" r="60"/></svg><span class="pl-reg-i u">' + ic('users', 38) + '</span><span class="pl-reg-i k">' + ic('check', 48) + '</span></div>'
+      + '<h2 id="pl-h" role="status" aria-live="polite">Registering ' + rw + '…</h2><p class="pl-lead pl-keep">Just a moment, this only takes a few seconds.</p>'
+      + '<ol class="pl-reg-steps">' + ['Details sent', 'Registering', 'Confirmed'].map(function(t){ return '<li><span class="pl-reg-sd"><i></i>' + ic('check', 14) + '</span><span class="pl-reg-sl">' + t + '</span></li>'; }).join('') + '</ol>'
+      + '<p class="pl-reg-note">' + ic('shield', 16) + '<span>Your details are saved on this device until we confirm</span></p></section>';
+  } else if (st === 'almost') {   /* quedan huéspedes o datos: en la caja, no en un modal. Texto genérico: no se nombra qué dato falta (pueden ser varios) */
+    var asel = S.oc.sel.map(ocG).sort(function(x, y){ return SAVED.indexOf(x) - SAVED.indexOf(y); }), adone = asel.filter(function(g){ return !ocMiss(g); }), amiss = asel.filter(ocMiss), aleft = S.oc.count - asel.length, atot = S.oc.count, nd = adone.length;
+    var av = function(g, on){ return '<span class="pl-g11av ol' + (on ? ' on' : '') + '">' + g.n.split(' ').map(function(w){ return w[0]; }).join('').slice(0, 2) + '</span>'; };
+    var gl = function(n){ return n === 1 ? '1 more guest' : n + ' more guests'; };
+    if (C.oca === 'b') {   /* B · anillo: el progreso manda; lo pendiente, resumido debajo */
+      var R = 52, CC = 2 * Math.PI * R, off = CC * (1 - nd / atot);
+      card = '<section class="pl-card pl-main-card pl-alm pl-almb" aria-labelledby="pl-h">' + dwel()
+        + '<div class="pl-almb-ring" role="img" aria-label="' + nd + ' of ' + atot + ' guests checked in"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="' + R + '" fill="none" stroke="#e5e6ee" stroke-width="9"/><circle cx="60" cy="60" r="' + R + '" fill="none" stroke="#37e08f" stroke-width="9" stroke-linecap="round" stroke-dasharray="' + CC.toFixed(1) + '" stroke-dashoffset="' + off.toFixed(1) + '" transform="rotate(-90 60 60)"/></svg><b>' + nd + '/' + atot + '</b></div>'
+        + '<h2 id="pl-h">' + nd + ' of ' + atot + ' checked in</h2><p class="pl-lead pl-keep">A few things are left before you arrive.</p>'
+        + '<div class="pl-almb-left">' + (amiss.length ? '<div><span class="pl-almb-ic">' + ic('user', 16) + '</span><span><b>' + amiss.map(function(g){ return esc(ocFirst(g.n)); }).join(', ') + '</b><small>Some details are missing</small></span></div>' : '')
+        + (aleft > 0 ? '<div><span class="pl-almb-ic">' + ic('plus', 16) + '</span><span><b>' + gl(aleft) + '</b><small>Not added yet</small></span></div>' : '') + '</div></section>';
+    } else if (C.oca === 'c') {   /* C · lo que falta: lo hecho en una línea verde y, debajo, las tareas pendientes */
+      card = '<section class="pl-card pl-main-card pl-alm pl-almc" aria-labelledby="pl-h">' + dwel()
+        + (nd ? '<div class="pl-almc-ok"><span class="pl-almc-avs">' + adone.slice(0, 3).map(function(g){ return av(g, true); }).join('') + '</span><span>' + ocNames(adone) + (nd === 1 ? ' is' : ' are') + ' checked in</span>' + ic('check', 16) + '</div>' : '')
+        + '<h2 id="pl-h">What\'s left</h2><p class="pl-lead pl-keep">Finish these before you arrive.</p><div class="pl-gs pl-gs' + C.ocl + ' pl-gsc-' + C.ocwc + '">'
+        + amiss.map(ocPend).join('')
+        + '</div></section>';
+    } else {   /* A · lista: los huéspedes de la reserva como en la Gestap, cada uno con su estado */
+      var rowsA = adone.map(function(g){ return '<div class="pl-alma-r">' + av(g, true) + '<span class="pl-oc-gt"><b>' + esc(g.n) + '</b><em class="pl-achip ok">' + ic('check', 10) + 'Checked in</em></span></div>'; }).join('')
+        + amiss.map(function(g){ return '<div class="pl-alma-r">' + av(g) + '<span class="pl-oc-gt"><b>' + esc(g.n) + '</b><em class="pl-achip">Details pending</em></span><button type="button" class="pl-alma-b" data-a="ocfix">Complete</button></div>'; }).join('')
+        + Array.apply(null, Array(Math.max(0, aleft))).map(function(_, k){ return '<div class="pl-alma-r"><span class="pl-g11av pl-alma-e">' + ic('user', 18) + '</span><span class="pl-oc-gt"><b>Guest ' + (asel.length + k + 1) + '</b><em class="pl-achip na">Not added yet</em></span><button type="button" class="pl-alma-b" data-a="ocform">Add</button></div>'; }).join('');
+      card = '<section class="pl-card pl-main-card pl-alm pl-alma" aria-labelledby="pl-h">' + dwel()
+        + '<h2 id="pl-h">Almost done</h2><p class="pl-lead pl-keep">' + nd + ' of ' + atot + ' guests checked in. Finish the rest before you arrive.</p>'
+        + '<div class="pl-alma-bar" aria-hidden="true">' + Array.apply(null, Array(atot)).map(function(_, k){ return '<i' + (k < nd ? ' class="on"' : '') + '></i>'; }).join('') + '</div>'
+        + '<div class="pl-alma-list">' + rowsA + '</div></section>';
+    }
+    dock = '<div class="pl-dock"><div>' + (C.oca === 'c' ? (amiss.length ? '<button type="button" class="pl-btn pri" data-a="ocfix">Complete details</button>' : '') : '<button type="button" class="pl-btn pri" data-a="' + (amiss.length ? 'ocfix' : 'ocform') + '">' + (C.oca === 'b' ? 'Finish check-in' : 'Continue check-in') + '</button>')   /* C (definitiva): sin CTA principal, la acción está en la fila */
+      + '<button type="button" class="pl-btn txt" data-a="oclater">I\'ll do it later</button></div></div>';
+  } else if (st === 'fix') {   /* completar datos: piezas del formulario de huésped de la Gestap (g2-form-empty): título con la palabra en azul, tarjeta de sección, campo con etiqueta flotante y chips */
+    var miss2 = S.oc.sel.map(ocG).filter(ocMiss), fq = S.oc.fq.length ? S.oc.fq : miss2.map(function(g){ return g.id; }), fi = Math.min(S.oc.fi, fq.length - 1), g1 = ocG(fq[fi]), fl = mfOf(g1.id), who = esc(ocFirst(g1.n)) + '\'s', fn = esc(ocFirst(g1.n));
+    var h1 = '<h1 id="pl-h" class="pl-ffh m-0 min-w-0 font-semibold text-[var(--chekin-color-brand-navy)] text-[23px] leading-[28px] tracking-[-0.015em]">Complete ' + who + ' <span class="text-[var(--chekin-color-brand-blue)]">details</span></h1><p class="pl-ffs">We only ask for what\'s missing. Everything else is saved.</p>';
+    var one = function(k){ var f = MFD[k]; return '<div data-field="' + k + '" class="relative min-w-0">' + ocFF(k, f.l, S.f[k], false, C.ocx === '4' ? '<em class="pl-ffchip miss">Missing</em>' : '', f.d) + (S.err[k] ? '<p class="pl-fferr" role="alert">' + S.err[k] + '</p>' : f.d ? '<p class="pl-ffhint">DD / MM / YYYY, as on ' + fn + '\'s passport</p>' : '') + '</div>'; };
+    var bd = fl.map(function(k){ return k === 'city' && fl.indexOf('zip') >= 0 ? '<div class="pl-ffgrid">' + one('city') + one('zip') + '</div>' : k === 'zip' && fl.indexOf('city') >= 0 ? '' : one(k); }).join('');   /* ciudad y código postal, en la misma fila */
+    var oldF = '<div class="pl-oc-fix">' + (C.ocx === '5' ? '' : '<div class="pl-oc-fixh">' + ocInit(g1, 32) + '<b>' + esc(g1.n) + '</b><i class="pl-oc-st miss">' + (fl.length === 1 ? MFD[fl[0]].l0 : fl.length + ' details') + '</i></div>')   /* V5: sin la cabecera del huésped, ya lo dice la tarjeta oscura */
+      + fl.map(function(k){ var f = MFD[k]; return textField(k, f.l0, f.d ? 'DD / MM / YYYY' : f.ph, f.d ? 'As it appears on ' + fn + '\'s passport.' : '', f.d ? 'inputmode="numeric"' : ''); }).join('') + '</div>';   /* el campo de antes (OC-26): caja suave con sus campos */
+    var stepT = fq.length > 1 ? '<p class="pl-ffstep"><span>Guest ' + (fi + 1) + ' of ' + fq.length + '</span>' + fq.map(function(id, k){ return '<i' + (k < fi ? ' class="ok"' : k === fi ? ' class="on"' : '') + '></i>'; }).join('') + (fi > 0 ? '<button type="button" class="pl-ffback" data-a="ocfixback">' + ic('left', 14) + 'Back to ' + esc(ocFirst(ocG(fq[fi - 1]).n)) + '</button>' : '') + '</p>' : '';   /* volver al anterior: enlace pequeño junto al indicador */   /* varios huéspedes incompletos: en cuál vas */
+    var dark = '<div class="pl-as1"><div class="pl-as-t"><b>' + esc(ocFirst(g1.n)) + '\'s details are almost complete</b><span><i class="pl-as-l">We kept everything from the last check-in. </i>Only what\'s missing is asked here.</span></div></div>';
+    var body;
+    if (C.ocx === '0') body = '<div class="pl-mbar"><span class="pl-mo-ic sm">' + ic('users', 18) + '</span><span class="pl-mbar-tx"><small>Your check-in</small><b>' + (S.oc.sel.length - miss2.filter(function(g){ return !S.oc.fixd[g.id]; }).length) + ' of ' + S.oc.sel.length + ' guests checked in</b></span></div>'
+      + '<h2 id="pl-h">Complete the missing details</h2><p class="pl-lead pl-keep">We only ask for what\'s missing. Everything else is saved.</p>' + oldF;   /* V0 · la versión anterior, tal cual */
+    else if (C.ocx === '5') body = dark + '<div class="pl-ffdiv"><span>Missing details</span></div>' + oldF;   /* V5 · la tarjeta oscura (V3) con el campo de antes */
+    else if (C.ocx === '2') body = h1 + '<div class="pl-gs"><div class="pl-gs-row pl-ffrow">' + '<span class="pl-gs-av">' + g1.n.split(' ').map(function(w){ return w[0]; }).join('').slice(0, 2) + '</span><span class="pl-gs-tx"><b>' + esc(g1.n) + '</b><em class="pl-gs-chip">Details pending</em></span></div></div>' + ocSec('Personal information', bd);   /* V2 · la fila del huésped (Guest summary) y debajo la sección */
+    else if (C.ocx === '3') body = dark + '<div class="pl-ffdiv"><span>Missing details</span></div>' + ocSec('Personal information', bd);   /* V3 · la tarjeta oscura del formulario («Verify your identity…») y el separador «OR FILL MANUALLY» */
+    else if (C.ocx === '4') body = h1 + ocSec('Personal information', '<div class="pl-ffgrid">' + ocFF('n1', 'Name', ocFirst(g1.n), true, '<em class="pl-ffchip ok">Saved</em>') + ocFF('n2', 'Surname', g1.n.split(' ').slice(1).join(' '), true, '<em class="pl-ffchip ok">Saved</em>') + '</div>' + ocFF('doc', 'Identity document', g1.doc, true, '<em class="pl-ffchip ok">Saved</em>') + bd);   /* V4 · la sección con lo guardado (relleno, chip SAVED) y el dato que falta (chip MISSING) */
+    else body = h1 + ocSec('Personal information', bd);   /* V1 · título y la sección con el campo */
+    card = '<section class="pl-card pl-main-card pl-ffx pl-ffx' + C.ocx + '" aria-labelledby="pl-h">' + dwel() + stepT + body + '</section>';
+    dock = '<div class="pl-dock"><div>' + btn('ocsave', 'pri', fi < fq.length - 1 ? 'Save and continue' : 'Save and finish', 'Saving…') + '<button type="button" class="pl-btn txt" data-a="oclater">I\'ll do it later</button></div></div>';
   }
-  return hero() + '<div class="pl-col">' + card + dock + '</div>';
+  var ent = S.oc.enter ? ' pl-in-' + S.oc.enter : '';   /* la caja nueva entra con la transición elegida */
+  return hero() + '<div class="pl-col' + ent + '">' + card + dock + '</div>';
 }
 function sOcWhy(){
   var full = function(list, cls){ return list.map(function(x){ return '<li class="' + cls + '">' + ic(cls === 'y' ? 'check' : 'shield', 13) + '<span><b>' + x[0] + '</b> <i>' + x[1] + '</i></span></li>'; }).join(''); };
@@ -711,23 +814,68 @@ function sOcCount(){
 }
 /* registrados: la misma apertura que la V8 (la cabecera crece a pantalla completa) con los huéspedes registrados */
 function sOcDone(){
-  var h = S.hr || { t: 0, l: 0, r: 0, b: Math.round(innerHeight * .7) }, sel = S.oc.sel.map(ocG), done = sel.filter(function(g){ return !ocMiss(g) || S.oc.fixed; }), pend = sel.length - done.length, left = S.oc.count - sel.length + pend;
-  var title = left > 0 ? done.length + ' of ' + S.oc.count + ' checked in' : 'You\'re all set, ' + esc(ocFirst(SAVED[0].n)) + '!';
-  var sub = left > 0 ? 'You can add the rest from your stay page.' : 'Everyone is checked in for ' + esc(prop(BOOKING.prop).name) + '.';
-  return '<div class="pl-fx pl-v8" style="--t:' + h.t + 'px;--l:' + h.l + 'px;--r:' + h.r + 'px;--b:' + h.b + 'px" role="dialog" aria-modal="true" aria-labelledby="pl-sh" aria-live="polite"><img src="' + PHOTO() + '" alt="">'
-    + '<div class="pl-x-c"><span class="pl-draw">' + CHECK_SVG + '</span><p class="pl-x-eye">Check-in done</p><h2 id="pl-sh">' + title + '</h2><p class="pl-oc-dsub">' + sub + '</p>'
-    + '<div class="pl-oc-donel">' + done.map(function(g){ return '<span class="pl-oc-chip lt">' + ocInit(g, 24) + esc(ocFirst(g.n)) + ic('check', 13) + '</span>'; }).join('') + '</div>' + openTxt() + '</div></div>';
+  var h = S.hr || { t: 0, l: 0, r: 0, b: Math.round(innerHeight * .7) }, sel = S.oc.sel.map(ocG).sort(function(x, y){ return SAVED.indexOf(x) - SAVED.indexOf(y); }), done = sel.filter(function(g){ return !ocMiss(g) || S.oc.fixd[g.id]; });
+  var gl = S.oc.count - done.length, pays = ocPays(), keys = C.bra === '1';
+  var todo = (gl > 0 ? [['users', !done.length ? (gl === 1 ? 'Register your guest' : 'Register all ' + gl + ' guests') : gl === 1 ? 'Register 1 more guest' : 'Register ' + gl + ' more guests', gl === 1 ? '1 guest' : gl + ' guests']] : [])
+    .concat(pays.map(function(k){ return [k === 'deposit' ? 'shield' : k === 'taxes' ? 'pin' : 'lock', k === 'deposit' ? (C.bdep === 'token' ? 'Save your card for the deposit' : 'Leave the security deposit') : k === 'taxes' ? 'Pay the tourist tax' : 'Pay your reservation', k === 'deposit' ? 'Deposit' : k === 'taxes' ? 'Tourist tax' : 'Reservation']; }));
+  var n = todo.length, wrap = function(cls, inner, nn){ S.finAt = cls === 'pl-fin2' ? 1.35 + (nn || 0) * .32 : cls ? 1.7 : 1.5;  return '<div class="pl-fx pl-v8 pl-fin ' + cls + '" style="--t:' + h.t + 'px;--l:' + h.l + 'px;--r:' + h.r + 'px;--b:' + h.b + 'px;--n:' + (nn || 0) + ';--fa:' + S.finAt + 's" role="dialog" aria-modal="true" aria-labelledby="pl-sh" aria-live="polite"><img src="' + PHOTO() + '" alt=""><div class="pl-x-c">' + inner + openTxt() + '</div></div>'; };
+  var chips = '<div class="pl-oc-donel">' + done.map(function(g){ return '<span class="pl-oc-chip lt">' + ocInit(g, 24) + esc(ocFirst(g.n)) + ic('check', 13) + '</span>'; }).join('') + '</div>';
+  var regT = done.length === S.oc.count ? (done.length === 1 ? 'Guest registered' : 'All ' + done.length + ' guests registered') : done.length + ' of ' + S.oc.count + ' guests registered';
+  if (!n) return wrap('', '<span class="pl-draw">' + CHECK_SVG + '</span><p class="pl-x-eye">Check-in done</p><h2 id="pl-sh">You\'re all set, ' + esc(ocFirst(SAVED[0].n)) + '!</h2><p class="pl-oc-dsub">Everyone is checked in for ' + esc(prop(BOOKING.prop).name) + '.</p>' + chips);   /* nada pendiente: como siempre */
+  var left = n + (n === 1 ? ' step' : ' steps') + ' left before you arrive';   /* siempre «before you arrive» (antes, con llaves, «to unlock your keys») */
+  if (C.ocf === '2') {   /* 2 · lista animada: lo hecho se marca y lo que falta va apareciendo, uno a uno, hasta «Opening your booking» */
+    var rows = done.map(function(g){ return '<li class="ok">' + ic('check', 14) + '<span>' + esc(ocFirst(g.n)) + ' registered</span></li>'; }).concat(todo.map(function(t){ return '<li class="to"><i></i><span>' + t[1] + '</span></li>'; }));
+    return wrap('pl-fin2', '<p class="pl-x-eye">' + (done.length ? 'Almost there' : 'Next steps') + '</p><h2 id="pl-sh">' + left.charAt(0).toUpperCase() + left.slice(1) + '</h2><ul class="pl-fin-list">' + rows.map(function(r, k){ return r.replace('<li ', '<li style="--d:' + (1.35 + k * .32).toFixed(2) + 's" '); }).join('') + '</ul>', rows.length);
+  }
+  if (C.ocf === '3') {   /* 3 · llaves: la tarjeta «Unlock your keys» de la home a la que vas, con lo que falta */
+    return wrap('pl-fin3', '<span class="pl-draw">' + CHECK_SVG + '</span><p class="pl-x-eye">' + regT + '</p><h2 id="pl-sh">Next, in your booking</h2>'
+      + '<div class="pl-fin-key"><div class="pl-fin-kh"><span class="pl-fin-ki">' + ic(keys ? 'lock' : 'clock', 18) + '</span><span><b>' + (keys ? 'Unlock your keys' : 'Before you arrive') + '</b><small>Due before 25 Nov</small></span><em>' + n + (n === 1 ? ' step' : ' steps') + ' left</em></div>'
+      + '<div class="pl-fin-kbar">' + Array.apply(null, Array(n + 1)).map(function(_, k){ return '<i' + (k === 0 ? ' class="on"' : '') + '></i>'; }).join('') + '</div>'
+      + '<div class="pl-fin-kc">' + todo.map(function(t){ return '<span>' + ic(t[0], 13) + t[2] + '</span>'; }).join('') + '</div></div>');
+  }
+  /* 1 · resumen: quién se ha registrado y, debajo, lo que queda por hacer en la reserva */
+  return wrap('pl-fin1', '<span class="pl-draw">' + CHECK_SVG + '</span><p class="pl-x-eye">Guests registered</p><h2 id="pl-sh">' + regT + '</h2>' + chips
+    + '<div class="pl-x-glass pl-fin-todo"><p>Still to do before you arrive</p>' + todo.map(function(t){ return '<div><span>' + ic(t[0], 15) + '</span>' + t[1] + '</div>'; }).join('') + '</div>');
 }
 function ocDoneNow(){
   var gh = document.querySelector('.pl-gh'); if (gh) { var r = gh.getBoundingClientRect(); S.hr = { t: Math.max(0, Math.round(r.top)), l: Math.round(r.left), r: Math.round(innerWidth - r.right), b: Math.round(innerHeight - r.bottom) }; }
-  S.sheet = 'ocdone'; render(); clearTimeout(timer); timer = setTimeout(goApp, 3800);
+  S.sheet = 'ocdone'; render(); clearTimeout(timer); timer = setTimeout(goApp, Math.round(((S.finAt || 1.5) + OC_LOAD) * 1000) + 150);   /* «Opening your booking» carga como mínimo 6 s desde que aparece */
+}
+/* cambio de paso con transición (A fundido · B deslizar · C subida escalonada · D barrido): sale la caja actual, cambia el paso y entra la nueva */
+function ocGo(step){
+  var tr = isMob() ? 'e' : 'b';   /* decidido: en móvil la tarjeta que sube; en escritorio, deslizar */
+  var card = root.querySelector('.pl-col>.pl-card'), dock = root.querySelector('.pl-col>.pl-dock'), reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var swap = function(){ S.oc.step = step; S.oc.enter = tr; render(); S.oc.enter = ''; };
+  if (!card || reduce) { S.oc.step = step; render(); return; }
+  if (tr === 'e') {   /* E · tarjeta que sube: la caja actual se queda, se vuelve translúcida y la nueva sube por encima con su sombra hasta taparla */
+    var ghosts = [card, dock].filter(Boolean).map(function(e){ var g = e.cloneNode(true); g.classList.add('pl-ghost'); g.setAttribute('aria-hidden', 'true'); g.style.top = e.offsetTop + 'px'; g.style.height = e.offsetHeight + 'px'; return g; });
+    swap();
+    var col = root.querySelector('.pl-col'); ghosts.forEach(function(g){ col.insertBefore(g, col.firstChild); });
+    setTimeout(function(){ ghosts.forEach(function(g){ g.remove(); }); }, 680);
+    return;
+  }
+  [card, dock].forEach(function(e){ if (e) e.classList.add('pl-out-' + tr); });
+  setTimeout(swap, { a: 176, b: 220, c: 176, d: 352, e: 286 }[tr] || 176);
+}
+/* registrando: la misma secuencia que la Gestap (registered.js · runProcessing) y, al confirmar, a «Almost done» si falta alguien o a la pantalla final */
+function ocReg(){
+  var q = function(sel){ return root.querySelector(sel); }, li = function(i, c){ var l = root.querySelectorAll('.pl-reg-steps li')[i]; if (l) l.className = c; };
+  var rn = S.oc.sel.length, rd = S.oc.sel.map(ocG).filter(function(g){ return !ocMiss(g); }).length, who = rd < rn ? rd + ' of ' + rn + ' guests' : rn === 1 ? ocFirst(ocG(S.oc.sel[0]).n) + ' is' : rn + ' guests are';   /* si a alguien le falta un dato, no se cuenta como registrado */
+  setTimeout(function(){ li(0, 'act'); }, 330);
+  setTimeout(function(){ li(0, 'done'); li(1, 'act'); }, 825);
+  setTimeout(function(){ li(1, 'done'); li(2, 'act'); }, 2200);
+  setTimeout(function(){ li(2, 'done'); var r = q('.pl-reg-ring'), h = q('.pl-reg h2'), p = q('.pl-reg .pl-lead'); if (r) r.setAttribute('data-st', 'ok'); if (h) h.textContent = who + ' registered'; if (p) p.textContent = 'All set'; }, 2585);
+  setTimeout(function(){ if (S.oc.step !== 'reg') return; var pend = S.oc.sel.map(ocG).some(ocMiss) || (C.oca !== 'c' && S.oc.sel.length < S.oc.count); if (pend) ocGo('almost'); else ocDoneNow(); }, 3630);   /* C: «What's left» solo si alguien tiene datos pendientes; si solo faltan huéspedes, la pantalla final («2 of 4 checked in») */
 }
 function goForm(){ if (/[?&]hold=1/.test(location.search)) return; location.href = (location.port === '7794' ? 'http://localhost:7791/screens/' : '../../screens/') + (DESK ? 'form-empty.d.html' : 'g2-form-empty.m.html'); }   /* registro manual: el formulario de la réplica */
 function ocAction(a, t){
   var oc = S.oc;
   switch (a) {
-    case 'ocgoogle': case 'ocapple': if (oc.busy) return true; S.sheet = null; oc.busy = a; render(); setTimeout(function(){ oc.busy = ''; oc.signed = true; oc.step = C.ocv === 'none' ? 'new' : 'pick'; render(); }, 900); return true;
-    case 'ocskip': case 'ocform': goForm(); return true;
+    case 'ocgoogle': case 'ocapple': if (oc.busy) return true; S.sheet = null; oc.busy = a; render(); setTimeout(function(){ oc.busy = ''; oc.signed = true; ocGo('count'); }, OC_WAIT); return true;   /* tras iniciar sesión: primero cuántos sois (en la misma caja) */
+    case 'ocgc': var gk = t.getAttribute('data-k'), gd = +t.getAttribute('data-d'), gt = C.gcm !== 'total' ? oc.ad + oc.mi : oc.count; if (gd > 0 && gt >= 20) return true; if (gk === 'ad') oc.ad = Math.max(1, oc.ad + gd); else if (gk === 'mi') oc.mi = Math.max(0, oc.mi + gd); else oc.count = Math.max(1, oc.count + gd); break;
+    case 'ocgcok': if (oc.busy) return true; if (C.gcm !== 'total') oc.count = oc.ad + oc.mi; oc.sel = oc.sel.slice(0, oc.count); oc.busy = 'ocgcok'; render(); setTimeout(function(){ oc.busy = ''; ocGo(C.ocv === 'none' ? 'new' : 'pick'); }, OC_WAIT); return true;   /* misma cadencia que del paso 1 al 2 */
+    case 'ocskip': if (oc.busy) return true; S.sheet = null; oc.sel = []; oc.fixd = {}; ocDoneNow(); return true;   /* sin cuenta: a la home, con la misma pantalla final (lista animada + «Opening your booking»), sin nadie registrado */
+    case 'ocform': goForm(); return true;
     case 'ocout': oc.step = 'welcome'; oc.signed = false; break;
     case 'ocsel': var id = t.getAttribute('data-g'), i = oc.sel.indexOf(id); oc.err = ''; if (i >= 0) oc.sel.splice(i, 1); else if (oc.sel.length < oc.count) oc.sel.push(id); else return true; break;
     case 'occount': S.sheet = 'occount'; break;
@@ -743,17 +891,55 @@ function ocAction(a, t){
       if (!oc.sel.length || oc.busy) return true;
       if (!ocLead()) { oc.err = 'Choose at least one adult: someone has to be the lead guest.'; break; }
       oc.busy = 'ocgo'; render();
-      setTimeout(function(){ oc.busy = ''; if (oc.sel.map(ocG).some(ocMiss)) { S.sheet = 'ocmiss'; render(); } else ocDoneNow(); }, 1000);
+      setTimeout(function(){ oc.busy = ''; ocGo('reg'); ocReg(); }, OC_WAIT);   /* registrando (como la Gestap), dentro de la caja */   /* quedan huéspedes o datos → «Almost done» en la caja; todos registrados → la pantalla final de siempre */
       return true;
-    case 'ocfix': S.sheet = null; oc.step = 'fix'; break;
+    case 'oclaterall': goApp(); return true;   /* «You can add guests later»: sin elegir a nadie, a la estancia */
+    case 'ocfix': S.sheet = null; var fg = t.getAttribute('data-g'), q = oc.sel.map(ocG).filter(function(g){ return ocMiss(g) && !oc.fixd[g.id]; }).sort(function(x, y){ return SAVED.indexOf(x) - SAVED.indexOf(y); }).map(function(g){ return g.id; }); if (fg && q.indexOf(fg) > 0) { q.splice(q.indexOf(fg), 1); q.unshift(fg); } oc.fq = q; oc.fi = 0; ocGo('fix'); return true;   /* se completan uno detrás de otro, empezando por el pulsado */
+    case 'ocfixback': if (oc.fi > 0) { oc.fi--; S.err = {}; ocGo('fix'); } return true;
     case 'oclater': S.sheet = null; ocDoneNow(); return true;
     case 'ocsave':
-      if (!/^\d{1,2}\s*\/?\s*\d{1,2}\s*\/?\s*\d{4}$/.test((S.f.bd || '').replace(/\s/g, '')) && !/^\d{8}$/.test((S.f.bd || '').replace(/\D/g, ''))) { S.err.bd = 'Enter the date of birth, e.g. 14 / 03 / 2018.'; break; }
-      oc.busy = 'ocsave'; render(); setTimeout(function(){ oc.busy = ''; oc.fixed = true; ocDoneNow(); }, 800); return true;
+      var cg = oc.fq[oc.fi], bad = 0; S.err = {};
+      mfOf(cg).forEach(function(k){ var f = MFD[k], v = (S.f[k] || '').trim(), cv = v.replace(/\s/g, ''); if (f.d ? (!/^\d{1,2}\/?\d{1,2}\/?\d{4}$/.test(cv) && !/^\d{8}$/.test(cv.replace(/\D/g, ''))) : !v) { S.err[k] = f.e; bad++; } });
+      if (bad) break;
+      oc.busy = 'ocsave'; render(); setTimeout(function(){ oc.busy = ''; oc.fixd[cg] = true; if (oc.fi < oc.fq.length - 1) { oc.fi++; ocGo('fix'); } else ocDoneNow(); }, OC_WAIT); return true;   /* siguiente huésped incompleto o, si era el último, la pantalla final */
     default: return false;
   }
   render(); return true;
 }
+var TR_UCHK = '<path d="m16 11 2 2 4-4"></path><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle>';
+var TR_UADD = '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" x2="19" y1="8" y2="14"></line><line x1="22" x2="16" y1="11" y2="11"></line>';
+/* formulario de la Gestap: tarjeta de sección (data-slot="form-section") y campo con etiqueta flotante (.input), copiados de g2-form-empty */
+function ocSec(title, body){
+  return '<section data-slot="form-section" class="pl-ffsec rounded-[var(--form-section-radius)] border border-[var(--form-section-border)] bg-[var(--form-section-bg)] text-left [--empty-field-background:var(--chekin-color-white)] [--field-border:var(--chekin-border-default)] [--field-label-font-weight:500] [--field-max-width:100%]"><header data-slot="form-section-header" class="flex items-center gap-2.5 border-b border-[var(--form-section-border)] bg-[var(--form-section-header-bg)] px-[var(--form-section-px)] py-[var(--form-section-header-py)] rounded-t-[calc(var(--form-section-radius)-1px)]"><span class="flex shrink-0 items-center text-[var(--form-section-icon-color)] [&amp;_svg]:size-[var(--form-section-icon-size)]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 2v2"></path><path d="M7 22v-2a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2"></path><path d="M8 2v2"></path><circle cx="12" cy="11" r="3"></circle><rect x="3" y="4" width="18" height="18" rx="2"></rect></svg></span><span class="m-0 flex flex-1 items-center gap-2 uppercase leading-5 text-[var(--form-section-title-color)] [font-size:var(--form-section-title-size)] [font-weight:var(--form-section-title-weight)] [letter-spacing:var(--form-section-title-tracking)]">' + title + '</span></header>'
+    + '<div data-slot="form-section-body" class="flex flex-col gap-3.5 p-[var(--form-section-px)]">' + body + '</div></section>';
+}
+function ocFF(k, label, v, ro, chip, isDate){
+  return '<div class="pl-ff' + (v ? ' pl-up' : '') + (ro ? ' pl-ro' : '') + '"><div data-field-name="' + k + '" class="input relative block w-full min-h-[var(--field-min-height,48px)]"><div class="input__content relative w-full cursor-text"><div class="absolute box-border inline-flex max-w-full items-center pl-[3px] pr-5 transition-all duration-100 ease-in cursor-text left-[13px] text-[var(--chekin-color-gray-1)] top-[var(--field-label-top)] input__label"><label for="pl-' + k + '" class="block cursor-[inherit] truncate transition-all duration-100 ease-in text-[length:var(--field-label-font-size)] font-[var(--field-label-font-weight)]">' + label + '</label></div>'
+    + '<fieldset aria-hidden="true" class="pointer-events-none absolute -top-[5px] bottom-0 left-0 right-0 m-0 min-w-0 rounded-[var(--field-radius)] border px-[13px] text-left transition-colors duration-75 border-[var(--field-border)] input__fieldset"><legend class="invisible float-none block h-[11px] max-w-[0.01px] whitespace-nowrap p-0 text-[0.75em] transition-[max-width] duration-[50ms] ease-out"><span class="visible inline-block px-1 text-[length:var(--field-label-raised-font-size)] opacity-0 font-[var(--field-label-font-weight)]">' + label + '</span></legend></fieldset>'
+    + '<input id="pl-' + k + '" ' + (ro ? 'readonly tabindex="-1"' : 'name="' + k + '"' + (isDate ? ' inputmode="numeric"' : '')) + ' placeholder=" " value="' + esc(v || '') + '"' + (!ro && S.err[k] ? ' aria-invalid="true"' : '') + ' class="input__control m-0 box-border h-12 w-full rounded-[var(--field-radius)] border-0 px-4 text-[16px] font-medium leading-5 outline-none transition-colors duration-200 bg-[var(--empty-field-background)] text-[var(--chekin-color-gray-1)]"></div></div>' + (chip || '') + '</div>';
+}
+/* huésped con datos pendientes: la fila de Guest summary de la Gestap (hub.js rowH · .v1-row/.v1-av/.v1-tx/.v1-chip/.v1-btn), en 4 versiones */
+function ocPend(g){
+  var av = '<span class="pl-gs-av">' + g.n.split(' ').map(function(w){ return w[0]; }).join('').slice(0, 2) + '</span>', chip = '<em class="pl-gs-chip">Details pending</em>';
+  if (C.ocl === '2') return '<button type="button" class="pl-gs-row pl-gs-tap" data-a="ocfix">' + av + '<span class="pl-gs-tx"><b>' + esc(g.n) + '</b>' + chip + '</span>' + ic('right', 20) + '</button>';   /* V2 · toda la fila se pulsa, con chevron */
+  if (C.ocl === '3') return '<div class="pl-gs-row">' + av + '<span class="pl-gs-tx"><b>' + esc(g.n) + '</b><span>Some details are missing</span>' + chip + '</span><button type="button" class="pl-gs-btn" data-a="ocfix">Complete</button></div>';   /* V3 · con la línea gris de Guest summary («You · Details saved») */
+  if (C.ocl === '4') return '<div class="pl-gs-row pl-gs-warm"><div class="pl-gs-top">' + av + '<span class="pl-gs-tx"><b>' + esc(g.n) + '</b>' + chip + '</span></div><p>Some details are missing. Complete them before you arrive.</p></div>';   /* sin botón: «Complete details» es el CTA principal de la barra */   /* V4 · destacada en ámbar suave, con el botón a lo ancho */
+  return '<div class="pl-gs-row">' + av + '<span class="pl-gs-tx"><b>' + esc(g.n) + '</b>' + chip + '</span><button type="button" class="pl-gs-btn" data-a="ocfix">Complete</button></div>';   /* V1 · la fila tal cual */
+}
+function ocTask(a, icon, title, desc){   /* copia literal del componente de la Gestap: home-after-1 · task-row pendiente + tag warning «Pending» */
+  return '<button data-slot="task-row" data-state="pending" type="button" data-a="' + a + '" class="group relative flex w-full items-center text-left gap-[var(--task-row-gap)] px-[var(--task-row-px)] py-[var(--task-row-py)] border-t border-[color:var(--task-row-divider)] first:border-t-0 transition-colors hover:bg-[var(--task-row-hover-bg)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--chekin-color-brand-blue)] [background:var(--task-row-pending-tint)] before:absolute before:inset-y-2.5 before:left-0 before:w-1 before:rounded-r before:bg-[var(--task-row-pending-marker)] before:content-[&quot;&quot;] before:[animation:task-row-pending-marker_1.6s_ease-in-out_infinite] motion-reduce:before:animate-none">'
+    + '<span class="relative z-[1] grid shrink-0 place-items-center size-[var(--task-row-badge-size)] rounded-[var(--task-row-badge-radius)] border-[3px] [&amp;_svg:not([class*=\'size-\'])]:size-[18px] border-transparent bg-[var(--task-row-badge-pending-bg)] text-[color:var(--task-row-badge-pending-text)] after:absolute after:-inset-[8px] after:rounded-[calc(var(--task-row-badge-radius)+4px)] after:content-[\'\'] after:border-[3px] after:border-[color:var(--task-row-pending-halo)] after:opacity-0 after:[animation:task-row-pending-ring_1.6s_ease-in-out_infinite] motion-reduce:after:animate-none"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide" aria-hidden="true">' + icon + '</svg></span>'
+    + '<span class="flex min-w-0 flex-1 flex-col"><span class="text-[length:var(--task-row-title-font-size)] font-semibold leading-5 text-[color:var(--task-row-title)]">' + title + '</span><span class="mt-0.5 text-[length:var(--task-row-description-font-size)] leading-[var(--task-row-description-line-height)] text-[color:var(--task-row-description)]">' + desc + '</span></span>'
+    + '<span class="ml-auto flex shrink-0 items-center gap-2"><span data-slot="tag" data-tone="warning" data-casing="upper" class="inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full font-bold [&amp;&gt;svg]:shrink-0 uppercase tracking-[var(--tag-tracking)] bg-[var(--tag-warning-bg)] text-[color:var(--tag-warning-text)] h-[var(--tag-height-xs)] px-[var(--tag-padding-x-xs)] text-[length:var(--tag-font-size-xs)] [&amp;&gt;svg]:size-[var(--tag-icon-size-xs)]"><span aria-hidden="true" class="size-2 rounded-full bg-[var(--task-row-pending-marker)] [animation:task-row-pending-dot_1.6s_ease-in-out_infinite] motion-reduce:animate-none"></span>Pending</span>'
+    + '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right size-5 shrink-0 text-[color:var(--task-row-pending-chevron)] transition-[transform,color] group-hover:translate-x-[3px] group-hover:text-[color:var(--chekin-color-brand-blue)]" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg></span></button>';
+}
+var KB0 = Date.now();
+/* vista dividida: en el one click el escritorio NO se recarga al tocar el panel (perdía el paso en el que estaba y se desincronizaba del móvil); aplica el ajuste en vivo, igual que el móvil */
+window.__liveSettings = !!OC;
+var LIVE = { 'replica-oc-s': ['ocs', 1], 'replica-oc-v': ['ocv', 1], 'replica-oc-g': ['ocg', 1], 'replica-oc-min': ['bmin', 1], 'replica-oc-pay': ['bpay', 0], 'replica-oc-dep': ['bdep', 0], 'replica-oc-ra': ['bra', 0], 'replica-oc-gcm': ['gcm', 0] };   /* 1 = el móvil reinicia el flujo (changed) · 0 = solo redibuja */
+window.addEventListener('storage', function(e){ var k = OC && LIVE[e.key]; if (!k || e.newValue === null) return; C[k[0]] = e.newValue; if (k[1]) changed(); else render(); });
+var OC_LOAD = 4.5;   /* segundos que dura la carga de la reserva en la pantalla final (pedido por Dani; antes 6) */
+var OC_WAIT = 990;   /* lo que dura «Signing in… / Confirming… / Checking in…» antes de cambiar de paso (900 ms + 10 %), igual en todos los pasos */
 function render(){
   document.documentElement.classList.remove('pl-nophoto');
   ['pl-dx', 'pl-d1', 'pl-d2', 'pl-d22', 'pl-d3', 'pl-d4'].forEach(function(c){ document.documentElement.classList.remove(c); });
@@ -761,8 +947,18 @@ function render(){
   if (C.dv === '22') document.documentElement.classList.add('pl-d22');   /* D2.2: como D2, pero la parte blanca es la hoja del móvil pegada al borde derecho */   /* maquetación de escritorio (solo afecta a ≥ 1024 px) */
   document.documentElement.classList.toggle('pl-pat', C.ph === '0' && /^t/.test(C.gi));   /* patrones: más suaves para que el texto se lea */   /* sin foto de la propiedad: ahora se usa una imagen genérica (PHOTO), no el degradado solo */
   var body = OC ? vOc() : S.phase === 'blocked' ? vBlocked() : S.phase === 'create' ? vCreate() : vForm();
-  root.className = (S.notice ? 'pl-has-note ' : '') + (S.needCout ? 'pl-has-cout' : '');   /* sin modo compacto: al fallar no cambia el tamaño de nada (el aviso va junto al botón y el error de cada campo sustituye a su ayuda) */
-  root.innerHTML = header() + '<main class="pl-main">' + body + '</main>' + sheet();
+  root.className = (S.notice ? 'pl-has-note ' : '') + (S.needCout ? 'pl-has-cout' : '') + (OC ? ' pl-ocm' : '');
+  if (OC) root.style.setProperty('--pl-photo', 'url("' + PHOTO() + '")');   /* móvil: la misma foto continúa por detrás de la caja, cada vez más grande hacia abajo */   /* sin modo compacto: al fallar no cambia el tamaño de nada (el aviso va junto al botón y el error de cada campo sustituye a su ayuda) */
+  var head = header(), sh = sheet(), ci = OC ? body.indexOf('<div class="pl-col') : -1, top = ci > 0 ? head + body.slice(0, ci) : null, main = root.querySelector(':scope > .pl-main');
+  if (top !== null && main && root.__top === top && main.querySelector(':scope > .pl-col')) {   /* one click: si la cabecera no cambia, solo se cambia la caja. La foto y el fondo no se vuelven a crear (antes parpadeaban a oscuro y el zoom daba saltos) */
+    var oc0 = main.querySelector(':scope > .pl-col'); while (oc0.nextSibling) main.removeChild(oc0.nextSibling); main.removeChild(oc0);
+    main.insertAdjacentHTML('beforeend', body.slice(ci));
+    while (main.nextSibling) root.removeChild(main.nextSibling);
+    root.insertAdjacentHTML('beforeend', sh);
+  } else {
+    root.innerHTML = head + '<main class="pl-main">' + body + '</main>' + sh; root.__top = top;
+  }
+  var kb = -((Date.now() - KB0) / 1000) + 's'; [].forEach.call(root.querySelectorAll('.pl-ocm .pl-gh>img,.pl-w13 .pl-w11bg'), function(im){ if (im.__kb) return; im.__kb = 1; im.style.animationDelay = kb; });   /* el zoom en bucle sigue donde iba: solo se coloca en las fotos nuevas (tocarlo en las que ya están hacía saltar el zoom) */
   document.body.style.overflow = S.sheet ? 'hidden' : '';
   fit();
 }
@@ -905,20 +1101,20 @@ window.__plSuggest = suggest; window.__plSetSug = function(sg){ if (sg === S.sug
 render();
 
 /* textos del panel: en español en local (:7794) y en inglés en la versión publicada */
-var PEN = {"W5 · Tarjeta de embarque": "W5 · Boarding pass", "W6 · Conversación": "W6 · Conversation", "W7 · El viaje": "W7 · The journey", "W8 · Elige y verás": "W8 · Choose and see", "W9 · Un botón": "W9 · One button", "W10 · Los huéspedes": "W10 · The guests", "W11 · Decidir después": "W11 · Decide later", "W13 · Azul + tu estancia": "W13 · Blue + your stay", "T1 · Actual": "T1 · Current", "T2 · Progreso": "T2 · Progress", "T3 · Puntos": "T3 · Dots", "T4 · Baldosas": "T4 · Tiles", "W13 · Línea del viaje": "W13 · Journey line", "C1 · Directo": "C1 · Direct", "C2 · Beneficio": "C2 · Benefit", "C3 · Obligatorio": "C3 · Required", "C4 · Cercano": "C4 · Friendly", "W13 · Copy del check-in (escritorio)": "W13 · Check-in copy (desktop)", "W12 · Interruptor": "W12 · Switch", "W1 · Billete": "W1 · Ticket", "W2 · Ficha + desplegable": "W2 · Details + expandable", "W3 · Dos caminos": "W3 · Two paths", "W4 · La reserva en la foto": "W4 · Booking on the photo", "Entrada (sin sesión)": "Entry (signed out)", "Pantalla": "Screen", "Sesión iniciada al entrar": "Signed in on arrival", "Huéspedes guardados": "Saved guests", "Ninguno": "None", "4, todos completos": "4, all complete", "4, uno con un dato pendiente": "4, one missing a detail", "Huéspedes en la reserva": "Guests in the booking", "C4.1 · Dónde + descripción": "C4.1 · Where + description", "Actual": "Current", "C1 · Recomendada": "C1 · Recommended", "C2 · Lo que vas a escribir": "C2 · What you'll type", "C3 · Ayuda primero": "C3 · Help first", "C4 · Dónde encontrarlo": "C4 · Where to find it", "Tarjetas de método": "Method cards", "Tipo de enlace": "Link type", "Cómo buscan la reserva (una o varias, mín. 1)": "How guests find their booking (one or more, min. 1)", "Nombre + fecha": "Name + date", "Código": "Code", "Email + fecha": "Email + date", "Pedir la propiedad": "Ask for the property", "Crear la reserva si no aparece": "Create booking if not found", "Sí": "Yes", "Resultado de la búsqueda": "Search result", "Encontrada": "Found", "Varias → con salida": "Several → departure date", "Varias → sin resolver": "Several → still ambiguous", "No encontrada": "Not found", "Sin conexión": "Connection error", "Demasiados intentos": "Too many attempts", "Elegir cómo buscar": "Method picker", "V1 · Pestañas": "V1 · Tabs", "V2 · Tarjetas": "V2 · Cards", "Foto de la propiedad": "Property photo", "Con foto de la propiedad": "With property photo", "Sin foto (imagen genérica)": "No photo (generic image)", "Duración de la reserva (prueba)": "Stay length (test)", "2 noches": "2 nights", "7 noches": "7 nights", "15 noches": "15 nights"};
+var PEN = {"W5 · Tarjeta de embarque": "W5 · Boarding pass", "W6 · Conversación": "W6 · Conversation", "W7 · El viaje": "W7 · The journey", "W8 · Elige y verás": "W8 · Choose and see", "W9 · Un botón": "W9 · One button", "W10 · Los huéspedes": "W10 · The guests", "W11 · Decidir después": "W11 · Decide later", "W13 · Azul + tu estancia": "W13 · Blue + your stay", "T1 · Actual": "T1 · Current", "T2 · Progreso": "T2 · Progress", "T3 · Puntos": "T3 · Dots", "T4 · Baldosas": "T4 · Tiles", "W13 · Línea del viaje": "W13 · Journey line", "C1 · Directo": "C1 · Direct", "C2 · Beneficio": "C2 · Benefit", "C3 · Obligatorio": "C3 · Required", "C4 · Cercano": "C4 · Friendly", "W13 · Copy del check-in (escritorio)": "W13 · Check-in copy (desktop)", "W12 · Interruptor": "W12 · Switch", "W1 · Billete": "W1 · Ticket", "W2 · Ficha + desplegable": "W2 · Details + expandable", "W3 · Dos caminos": "W3 · Two paths", "W4 · La reserva en la foto": "W4 · Booking on the photo", "Entrada (sin sesión)": "Entry (signed out)", "Pantalla": "Screen", "Sesión iniciada al entrar": "Signed in on arrival", "Huéspedes guardados": "Saved guests", "Ninguno": "None", "4, todos completos": "4, all complete", "4, dos con datos pendientes": "4, two missing details", "4, dos pendientes (Tom con 5 datos)": "4, two pending (Tom missing 5)", "V2 · Componentes de la Gestap": "V2 · Guest app components", "V3 · Fichas": "V3 · Tiles", "Paso 1 · Entrada": "Step 1 · Entry", "Paso 2 · Who's coming?": "Step 2 · Who's coming?", "Paso": "Step", "Menores": "Minors", "Pagos (ninguno = solo registro de huéspedes)": "Payments (none = guest registration only)", "Depósito": "Deposit", "Tasas": "Taxes", "Pago reserva": "Reservation payment", "Tipo de depósito": "Deposit type", "Retención": "Hold", "Tarjeta guardada": "Saved card", "Remote access (llaves)": "Remote access (keys)", "A · Fundido": "A · Fade", "B · Deslizar": "B · Slide", "C · Subida escalonada": "C · Staggered rise", "D · Barrido": "D · Sweep", "E · Tarjeta que sube": "E · Card rises", "Transición entre pasos": "Step transition", "Por edad": "By age", "Huéspedes (paso 2)": "Guest count (step 2)", "Paso 2 · Huéspedes": "Step 2 · Guest count", "Paso 3 · Who's coming?": "Step 3 · Who's coming?", "V1.1 · Líder con corona": "V1.1 · Lead guest crown", "V1.2 · V1.1 con delineado": "V1.2 · V1.1 with outline", "V4 · Huecos de la reserva": "V4 · Booking slots", "V5 · Progreso arriba": "V5 · Progress on top", "V6 · Adultos y menores": "V6 · Adults and minors", "Elegir huéspedes (con sesión)": "Pick guests (signed in)", "Huéspedes en la reserva": "Guests in the booking", "C4.1 · Dónde + descripción": "C4.1 · Where + description", "Actual": "Current", "C1 · Recomendada": "C1 · Recommended", "C2 · Lo que vas a escribir": "C2 · What you'll type", "C3 · Ayuda primero": "C3 · Help first", "C4 · Dónde encontrarlo": "C4 · Where to find it", "Tarjetas de método": "Method cards", "Tipo de enlace": "Link type", "Cómo buscan la reserva (una o varias, mín. 1)": "How guests find their booking (one or more, min. 1)", "Nombre + fecha": "Name + date", "Código": "Code", "Email + fecha": "Email + date", "Pedir la propiedad": "Ask for the property", "Crear la reserva si no aparece": "Create booking if not found", "Sí": "Yes", "Resultado de la búsqueda": "Search result", "Encontrada": "Found", "Varias → con salida": "Several → departure date", "Varias → sin resolver": "Several → still ambiguous", "No encontrada": "Not found", "Sin conexión": "Connection error", "Demasiados intentos": "Too many attempts", "Elegir cómo buscar": "Method picker", "V1 · Pestañas": "V1 · Tabs", "V2 · Tarjetas": "V2 · Cards", "Foto de la propiedad": "Property photo", "Con foto de la propiedad": "With property photo", "Sin foto (imagen genérica)": "No photo (generic image)", "Duración de la reserva (prueba)": "Stay length (test)", "2 noches": "2 nights", "7 noches": "7 nights", "15 noches": "15 nights"};
 var T = function(x){ return location.port === '7794' ? x : (PEN[x] || x); };
 /* ---------- panel ---------- */
 var seg = function(list, cur, attr, onPick){ var d = document.createElement('div'); d.className = 'rail-switch';
   d.innerHTML = list.map(function(o){ return '<button type="button" class="rs-chip' + (o[0] === cur ? ' on' : '') + '" ' + attr + '="' + o[0] + '">' + o[1] + '</button>'; }).join('');
   d.addEventListener('click', function(e){ var b = e.target.closest('[' + attr + ']'); if (!b) return; e.preventDefault(); e.stopPropagation(); onPick(b.getAttribute(attr)); [].forEach.call(d.querySelectorAll('[' + attr + ']'), function(c){ c.classList.toggle('on', c === b); }); }, true);
   return d; };
-var multi = function(list, cur, attr, onPick){ var d = document.createElement('div'); d.className = 'rail-switch';
+var multi = function(list, cur, attr, onPick, any){   /* any: se pueden desmarcar todos y onPick recibe la lista */ var d = document.createElement('div'); d.className = 'rail-switch';
   d.innerHTML = list.map(function(o){ return '<button type="button" class="rs-chip' + (cur.indexOf(o[0]) >= 0 ? ' on' : '') + '" ' + attr + '="' + o[0] + '" aria-pressed="' + (cur.indexOf(o[0]) >= 0) + '">' + o[1] + '</button>'; }).join('');
   d.addEventListener('click', function(e){ var b = e.target.closest('[' + attr + ']'); if (!b) return; e.preventDefault(); e.stopPropagation();
     var on = [].filter.call(d.querySelectorAll('[' + attr + ']'), function(c){ return c === b ? !c.classList.contains('on') : c.classList.contains('on'); });
-    if (!on.length) return;   /* siempre al menos un método */
+    if (!on.length && !any) return;   /* siempre al menos un método (salvo any) */
     [].forEach.call(d.querySelectorAll('[' + attr + ']'), function(c){ var x = on.indexOf(c) >= 0; c.classList.toggle('on', x); c.setAttribute('aria-pressed', x); });
-    onPick(on.map(function(c){ return c.getAttribute(attr); }).join('')); }, true);
+    var ks = on.map(function(c){ return c.getAttribute(attr); }); onPick(any ? ks : ks.join('')); }, true);
   return d; };
 var rows = {};
 function relevance(){
@@ -938,12 +1134,25 @@ var tries = 0, tm = setInterval(function(){
   scr.innerHTML = [['property-link', 'Property link'], ['one-click', 'One click check-in']].map(function(x){ return '<a class="rs-chip' + (S0.id === x[0] ? ' on' : '') + '" href="' + x[0] + '.' + (DESK ? 'd' : 'm') + '.html">' + x[1] + '</a>'; }).join('');
   window.__repPanel.add(T('Pantalla'), scr, 0.5);
   if (OC) {
-    rows.ocs = seg([['0', 'No'], ['1', T('Sí')]], C.ocs, 'data-ocs', function(k){ C.ocs = k; LSset('replica-oc-s', k); changed(); });
-    rows.ocv = seg([['none', T('Ninguno')], ['ok', T('4, todos completos')], ['miss', T('4, uno con un dato pendiente')]], C.ocv, 'data-ocv', function(k){ C.ocv = k; LSset('replica-oc-v', k); changed(); });
-    rows.ocg = seg([['1', '1'], ['2', '2'], ['3', '3'], ['4', '4']], C.ocg, 'data-ocg', function(k){ C.ocg = k; LSset('replica-oc-g', k); changed(); });
+    rows.ocs = seg([['0', 'No'], ['1', T('Sí')]], C.ocs, 'data-ocs', function(k){ C.ocs = k; LSset('replica-oc-s', k); if (rows.ocstep) [].forEach.call(rows.ocstep.querySelectorAll('[data-ocstep]'), function(c){ c.classList.toggle('on', c.getAttribute('data-ocstep') === k); }); changed(); });
+    rows.ocv = seg([['none', T('Ninguno')], ['ok', T('4, todos completos')], ['miss', T('4, dos pendientes (Tom con 5 datos)')]], C.ocv, 'data-ocv', function(k){ C.ocv = k; LSset('replica-oc-v', k); changed(); });
+    rows.ocg = seg([['2', '2'], ['4', '4'], ['6', '6'], ['9', '9'], ['14', '14']], C.ocg, 'data-ocg', function(k){ C.ocg = k; LSset('replica-oc-g', k); changed(); });
+    rows.bmin = seg([['1', T('Sí')], ['0', 'No']], C.bmin, 'data-bmin', function(k){ C.bmin = k; LSset('replica-oc-min', k); changed(); });
+    rows.bpay = multi([['deposit', T('Depósito')], ['taxes', T('Tasas')], ['reservation', T('Pago reserva')]], ocPays(), 'data-bpay', function(v){ C.bpay = v.join(','); LSset('replica-oc-pay', C.bpay); render(); }, true);   /* ninguno = solo registro de huéspedes */
+    rows.bdep = seg([['hold', T('Retención')], ['token', T('Tarjeta guardada')]], C.bdep, 'data-bdep', function(k){ C.bdep = k; LSset('replica-oc-dep', k); render(); });
+    rows.bra = seg([['1', T('Sí')], ['0', 'No']], C.bra, 'data-bra', function(k){ C.bra = k; LSset('replica-oc-ra', k); render(); });
+    /* navegar entre pasos (no hay «atrás» en la pantalla): 1 entrada sin sesión · 2 elegir huéspedes con sesión */
+    rows.ocstep = seg([['0', T('Paso 1 · Entrada')], ['c', T('Paso 2 · Huéspedes')], ['1', T('Paso 3 · Who\'s coming?')]], C.ocs, 'data-ocstep', function(k){ C.ocs = k; LSset('replica-oc-s', k); if (k === '1' && C.ocv === 'none') { C.ocv = 'miss'; LSset('replica-oc-v', 'miss'); } [].forEach.call(rows.ocs.querySelectorAll('[data-ocs]'), function(c){ c.classList.toggle('on', c.getAttribute('data-ocs') === k); }); changed(); });
+    window.__repPanel.add(T('Paso'), rows.ocstep, 18.7);
+    rows.gcm = seg([['ages', T('Por edad')], ['total', 'Total']], C.gcm, 'data-gcm', function(k){ C.gcm = k; LSset('replica-oc-gcm', k); render(); });
+    window.__repPanel.add(T('Huéspedes (paso 2)'), rows.gcm, 18.75);   /* versiones: en «Controls», no en «Booking settings» */
     window.__repPanel.add(T('Sesión iniciada al entrar'), rows.ocs, 1.1);
     window.__repPanel.add(T('Huéspedes guardados'), rows.ocv, 1.2);
     window.__repPanel.add(T('Huéspedes en la reserva'), rows.ocg, 1.3);
+    window.__repPanel.add(T('Menores'), rows.bmin, 1.31);
+    window.__repPanel.add(T('Pagos (ninguno = solo registro de huéspedes)'), rows.bpay, 1.32);
+    window.__repPanel.add(T('Tipo de depósito'), rows.bdep, 1.33);
+    window.__repPanel.add(T('Remote access (llaves)'), rows.bra, 1.34);
   } else {
   window.__repPanel.add(T('Tipo de enlace'), rows.type, 1.1);
   window.__repPanel.add(T('Cómo buscan la reserva (una o varias, mín. 1)'), rows.m, 1.2);

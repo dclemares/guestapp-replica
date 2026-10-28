@@ -1559,3 +1559,321 @@ html.pl-pat .pl-fx>img{opacity:.22!important;animation:none!important}
 .pl-tl2 .next .pl-w7dot{width:28px;height:28px;margin:0;background:#fff;box-shadow:inset 0 0 0 1px #b9c1e2}
 .pl-tl2 .next .pl-w7dot::after{content:"";width:10px;height:10px;border-radius:99px;background:#9aa3c7}
 .pl-tl2 .next .pl-w7dot{box-shadow:inset 0 0 0 1px #d5dbf2}   /* delineado en el mismo gris que la línea punteada */
+
+/* ===== OC-17 · «Who's coming?» V1.1: la V1 con iniciales en cuadrado (azul sin elegir, verde elegido; tamaño de la V1) y «Lead guest» con corona en lugar de «Ready» ===== */
+.pl-g11av{flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:#eff6ff;color:#2c48d6;font-size:14px;font-weight:700;transition:background .15s,color .15s}
+.pl-g11av.on{background:rgba(55,224,143,.26);color:#0b5c37}
+.pl-g11lead{flex:none;display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:99px;background:#fff;color:var(--pl-blue);font-style:normal;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.pl-g11lead svg{flex:none;stroke-width:2.2;fill:rgba(56,91,248,.15)}
+/* V1.2 · la V1.1 con un delineado fino en los cuadrados de iniciales: azul (sin elegir) y verde (elegido), cada uno en un tono algo más oscuro que su fondo */
+.pl-g11av.ol{box-shadow:inset 0 0 0 1px #b9c8ff}
+.pl-g11av.ol.on{box-shadow:inset 0 0 0 1px #8fdcb7}
+
+/* ===== OC-21 · one click: misma cabecera y misma caja que el property link en todos los pasos ===== */
+@media (max-width:1023px){
+  /* la cabecera siempre igual (la del property link: 210 px); si el contenido no cabe, se compacta dentro de la caja y, en último caso, la caja hace scroll por dentro */
+  .pl-ocm .pl-gh{flex:0 0 210px!important;min-height:210px}
+  .pl-ocm .pl-gh .pl-gh-m{bottom:40px!important}
+  .pl-ocm .pl-gh .pl-gh-m .pl-wel{display:block!important}
+  .pl-ocm .pl-gh .pl-gh-m .pl-gh-name{font-size:30px!important}
+  .pl-ocm .pl-gh-row{margin-top:8px!important}
+  .pl-ocm .pl-col{flex:1 1 0;min-height:0}
+  .pl-ocm .pl-col>.pl-card{flex:1 1 0;min-height:0;overflow:auto;overscroll-behavior:contain}
+}
+.pl-ocm .pl-gh>img{animation:plKenLoop 20s ease-in-out infinite}   /* el zoom en bucle de la W13, en la cabecera de todos los pasos (móvil y escritorio) */
+@media (prefers-reduced-motion:reduce){.pl-ocm .pl-gh>img{animation:none}}
+/* «Your stay» dentro de la caja del property link */
+.pl-w13m .pl-w7tl{margin:0}
+@media (min-width:1024px){.pl-w13m .pl-w7h{margin:0 0 10px;font-size:24px}}
+
+/* ===== OC-22 · paso 2: cuántos sois (contenido del modal de la Gestap dentro de la caja) ===== */
+.pl-gcsteps{list-style:none;margin:14px 0 6px;padding:12px 14px;border-radius:18px;background:var(--pl-bg);display:flex;flex-direction:column;gap:10px}
+.pl-gcsteps li{display:flex;gap:10px;align-items:flex-start}
+.pl-gcsteps li>span{flex:none;display:grid;place-items:center;width:22px;height:22px;margin-top:1px;border-radius:99px;background:#fff;color:var(--pl-blue);font-size:12px;font-weight:700}
+.pl-gcsteps b{display:block;font-size:14px;line-height:1.3}
+.pl-gcsteps small{display:block;font-size:12.5px;color:var(--pl-sub)}
+.pl-gcr{display:flex;align-items:center;gap:12px;padding:12px 2px}
+.pl-gcr+.pl-gcr{padding-top:4px}
+.pl-gcr-ic{flex:none;display:grid;place-items:center;width:32px;color:#161643}
+.pl-gcr-ic svg{fill:currentColor}
+.pl-gcr-ic.mi{color:#6f86f7}
+.pl-gcr-ic.mi svg{width:15px;height:15px}
+.pl-gcr-tx{flex:1;min-width:0}
+.pl-gcr-tx b{display:block;font-size:15px}
+.pl-gcr-tx small{display:block;font-size:12.5px;line-height:1.35;color:var(--pl-sub)}
+.pl-gcr-ctl{flex:none;display:flex;align-items:center;gap:12px}
+.pl-gcr-ctl output{min-width:22px;text-align:center;font-size:17px;font-weight:700;font-variant-numeric:tabular-nums}
+.pl-gcb{display:grid;place-items:center;width:36px;height:36px;padding:0;border:1.5px solid #c9cde3;border-radius:12px;background:#fff;color:var(--pl-ink);font-size:20px;line-height:1;cursor:pointer}
+.pl-gcb.add{border-color:var(--pl-blue);background:var(--pl-blue);color:#fff}
+.pl-gcb:disabled{opacity:.4;cursor:default}
+.pl-gcnote{display:flex;gap:8px;margin:10px 0 0;font-size:12.5px;line-height:1.45;color:var(--pl-sub)}
+.pl-gcnote svg{flex:none;margin-top:2px}
+@media (max-width:1023px){
+  .pl-fit1 .pl-gc .pl-lead{display:none}
+  .pl-fit2 .pl-gcsteps small{display:none}
+  .pl-fit3 .pl-gcnote{display:none}
+  .pl-fit4 .pl-gcr-tx small{display:none}
+}
+/* escritorio: la caja empieza siempre a la misma altura que la del property link (allí se centra un bloque de unos 522 px → arriba = 50vh − 261 px), en lugar de centrarse según su contenido; si no cabe, hace scroll por dentro */
+@media (min-width:1024px){
+  html.pl-d2 .pl-ocm .pl-col{justify-content:flex-start;padding-top:max(40px,calc(50vh - 261px));padding-bottom:32px;box-sizing:border-box}
+  html.pl-d2 .pl-ocm .pl-col>.pl-card{flex:0 1 auto;min-height:0;max-height:none;overflow:auto}
+}
+@media (min-width:1024px){html.pl-d2 .pl-ocm .pl-col{padding-bottom:var(--pl-lb,64px);min-height:0;height:100vh}}   /* la caja (con su botón) termina como mucho a la altura del borde inferior de «English»; si no cabe, hace scroll por dentro */
+
+/* ===== OC-23 · transiciones entre pasos (paso 1 → huéspedes → Who's coming?) · la cabecera no se mueve; solo cambia la caja ===== */
+.pl-ocm .pl-col>.pl-card{position:relative}
+/* A · Fundido: la caja se apaga y la nueva aparece con un leve ascenso */
+.pl-out-a{animation:plOutA .18s ease forwards}
+.pl-in-a>.pl-card,.pl-in-a>.pl-dock{animation:plInA .33s cubic-bezier(.2,.8,.3,1) both}
+@keyframes plOutA{to{opacity:0;transform:scale(.985)}}
+@keyframes plInA{from{opacity:0;transform:translateY(8px)}}
+/* B · Deslizar: como pasar de pantalla, la actual sale a la izquierda y la nueva entra por la derecha */
+.pl-out-b{animation:plOutB .22s cubic-bezier(.4,0,1,1) forwards}
+.pl-in-b>.pl-card,.pl-in-b>.pl-dock{animation:plInB .4s cubic-bezier(.2,.9,.3,1) both}
+@keyframes plOutB{to{opacity:0;transform:translateX(-28px)}}
+@keyframes plInB{from{opacity:0;transform:translateX(36px)}}
+/* C · Subida escalonada: cada bloque de la caja nueva sube uno detrás de otro */
+.pl-out-c{animation:plOutA .16s ease forwards}
+.pl-in-c>.pl-card>*{animation:plInC .42s cubic-bezier(.2,.9,.3,1) both}
+.pl-in-c>.pl-card>*:nth-child(2){animation-delay:.05s}.pl-in-c>.pl-card>*:nth-child(3){animation-delay:.1s}.pl-in-c>.pl-card>*:nth-child(4){animation-delay:.15s}.pl-in-c>.pl-card>*:nth-child(5){animation-delay:.2s}.pl-in-c>.pl-card>*:nth-child(6){animation-delay:.25s}.pl-in-c>.pl-card>*:nth-child(n+7){animation-delay:.3s}
+.pl-in-c>.pl-dock{animation:plInC .42s cubic-bezier(.2,.9,.3,1) .3s both}
+@keyframes plInC{from{opacity:0;transform:translateY(16px)}}
+/* D · Barrido: una cortina azul cruza la caja, la tapa y se retira dejando el paso nuevo */
+.pl-out-d.pl-card::after,.pl-in-d>.pl-card::after{content:"";position:absolute;inset:0;z-index:5;border-radius:inherit;background:linear-gradient(120deg,#385bf8,#7a8cff);pointer-events:none}
+.pl-out-d.pl-card::after{transform-origin:left;animation:plSweepIn .32s cubic-bezier(.7,0,.3,1) both}
+.pl-in-d>.pl-card::after{transform-origin:right;animation:plSweepOut .42s cubic-bezier(.7,0,.3,1) both}
+.pl-out-d.pl-dock{animation:plOutA .2s ease forwards}
+.pl-in-d>.pl-dock{animation:plInA .3s ease .2s both}
+@keyframes plSweepIn{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes plSweepOut{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+@media (prefers-reduced-motion:reduce){.pl-in-a>*,.pl-in-b>*,.pl-in-c>*,.pl-in-c>.pl-card>*,.pl-in-d>*,.pl-in-d>.pl-card::after{animation:none!important}}
+/* móvil: detrás de la caja continúa el azul de la cabecera (antes era blanco), así en las transiciones no asoma un hueco blanco al apagarse o moverse la caja */
+@media (max-width:1023px){
+  .pl-ocm>.pl-main{position:relative;isolation:isolate;background:linear-gradient(135deg,#15153f 0%,#2e4bd0 100%)}
+  /* donde termina la foto de la cabecera (210 px) empieza otra vez la misma imagen: arriba con el mismo ancho y, hacia abajo, cada vez más grande (trapecio en perspectiva), con el mismo tratamiento azul */
+  .pl-ocm>.pl-main::before{content:"";position:absolute;z-index:0;left:0;right:0;top:210px;bottom:0;background:var(--pl-photo) center top/cover no-repeat;mix-blend-mode:luminosity;opacity:.6;transform-origin:50% 0;transform:perspective(520px) rotateX(28deg);pointer-events:none}
+  .pl-ocm>.pl-main::after{content:"";position:absolute;z-index:0;left:0;right:0;top:210px;bottom:0;background:linear-gradient(180deg,rgba(21,21,63,.35),rgba(21,21,63,.15) 40%,rgba(21,21,63,.45));pointer-events:none}
+  .pl-ocm .pl-gh,.pl-ocm .pl-col{position:relative;z-index:1}
+  .pl-ocm .pl-col{background:transparent}
+  .pl-ocm .pl-col>.pl-dock{background:#fff}
+}
+/* E · Tarjeta que sube: la caja actual se queda en su sitio y se vuelve translúcida e ilegible, mientras la nueva sube desde abajo por encima, con su sombra, hasta taparla (la cabecera no se mueve) */
+.pl-in-e{position:relative}
+.pl-ghost{position:absolute!important;left:0;right:0;z-index:0!important;margin:0!important;pointer-events:none;overflow:hidden!important;animation:plGhost .6s ease forwards}
+.pl-in-e>.pl-card:not(.pl-ghost),.pl-in-e>.pl-dock:not(.pl-ghost){position:relative;z-index:2;animation:plInE .6s cubic-bezier(.2,.95,.25,1) both}
+@keyframes plGhost{to{opacity:.35;filter:blur(2px);transform:scale(.97)}}
+@keyframes plInE{from{transform:translateY(100%);box-shadow:0 -14px 34px rgba(21,21,63,.22)}70%{box-shadow:0 -14px 34px rgba(21,21,63,.18)}to{box-shadow:0 -14px 34px rgba(21,21,63,0)}}   /* la sombra acompaña la subida y se apaga al llegar */
+.pl-in-e>.pl-dock:not(.pl-ghost){z-index:3;animation-name:plInEd}   /* la barra del botón sube igual, pero acaba con su sombrita de siempre (antes se quedaba sin sombra y por debajo de la caja) */
+@keyframes plInEd{from{transform:translateY(100%);box-shadow:0 -14px 34px rgba(21,21,63,.22)}to{box-shadow:0 -4px 14px rgba(22,22,67,.06)}}
+@media (prefers-reduced-motion:reduce){.pl-in-e>*{animation:none!important}}
+/* móvil: sin la línea fina entre la caja y la barra del botón (asomaba el fondo por una fracción de píxel) */
+@media (max-width:1023px){.pl-ocm .pl-col>.pl-dock{position:relative;z-index:3;margin-top:-1px}}   /* la barra del botón por encima de la caja (que ahora tiene scroll propio y la tapaba): así se ve su sombrita hacia arriba, el componente que separa el CTA de la página */
+
+/* ===== OC-24 · «Who's coming?»: etiqueta y «Add someone new» con las piezas de la Gestap ===== */
+/* «1 detail missing» con la etiqueta de la Gestap (.v1-chip: amarillo, mayúsculas, 10 px, negrita) */
+.pl-gchip{flex:none;padding:1px 8px;border-radius:9999px;background:#ffc233;color:#0b0b0f;font-style:normal;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;line-height:1.5;white-space:nowrap}
+@media (max-width:1023px){#pl-root.pl-ocm>.pl-main{overflow:hidden;overflow:clip}}   /* la foto en perspectiva del fondo no puede crear scroll: la pantalla queda fija y solo la caja hace scroll si hace falta */
+
+/* registrando (paso del one click): la animación de la Gestap (registered.css · .rg-pring/.rg-steps) dentro de la caja */
+.pl-reg{display:flex;flex-direction:column;align-items:center;text-align:center}
+.pl-reg h2{margin-top:6px}
+.pl-reg-ring{position:relative;display:grid;place-items:center;width:132px;height:132px;margin:18px auto 10px}
+.pl-reg-ring>svg{position:absolute;inset:0;width:100%;height:100%}
+.pl-reg-ring .trk{fill:none;stroke:#e5e6ee;stroke-width:8}
+.pl-reg-ring .arc{fill:none;stroke:var(--pl-blue);stroke-width:8;stroke-linecap:round;stroke-dasharray:110 267;transform-origin:70px 70px;animation:pl-reg-spin 1.1s linear infinite;transition:stroke .3s}
+.pl-reg-ring[data-st="ok"] .arc{stroke:#37e08f;stroke-dasharray:377 0;animation:none;transform:rotate(-90deg)}
+.pl-reg-i{position:absolute;inset:0;display:grid;place-items:center;opacity:0;transform:scale(.7);transition:opacity .25s,transform .25s}
+.pl-reg-i.u{opacity:1;transform:none;color:var(--pl-blue)}
+.pl-reg-i.k{color:var(--pl-green)}.pl-reg-i.k svg{stroke-width:2.6}
+.pl-reg-ring[data-st="ok"] .u{opacity:0;transform:scale(.7)}
+.pl-reg-ring[data-st="ok"] .k{opacity:1;transform:none}
+@keyframes pl-reg-spin{to{transform:rotate(360deg)}}
+.pl-reg-steps{display:flex;width:100%;max-width:300px;margin:22px auto 0;padding:0;list-style:none}
+.pl-reg-steps li{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;gap:6px}
+.pl-reg-steps li+li::before{content:"";position:absolute;top:13px;right:50%;width:100%;height:2px;background:#e5e6ee;transition:background .3s}
+.pl-reg-steps li.done+li::before{background:#37e08f}
+.pl-reg-sd{position:relative;z-index:1;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#eceef6;color:#fff;transition:background .25s}
+.pl-reg-sd>*{position:absolute;opacity:0;transition:opacity .2s}
+.pl-reg-sd i{width:14px;height:14px;border-radius:50%;border:2.5px solid #cdd3f5;border-top-color:var(--pl-blue);animation:pl-reg-spin .8s linear infinite}
+.pl-reg-sd svg{stroke-width:3}
+.pl-reg-steps li.act .pl-reg-sd{background:#eef2ff}.pl-reg-steps li.act .pl-reg-sd i{opacity:1}
+.pl-reg-steps li.done .pl-reg-sd{background:#2fd27f}.pl-reg-steps li.done .pl-reg-sd svg{opacity:1}
+.pl-reg-sl{font-size:12px;line-height:16px;font-weight:600;color:var(--pl-mute)}
+.pl-reg-steps li.act .pl-reg-sl,.pl-reg-steps li.done .pl-reg-sl{color:var(--pl-ink)}
+.pl-reg-note{display:flex;align-items:center;justify-content:center;gap:8px;max-width:300px;margin:22px auto 4px;text-align:left;font-size:12.5px;line-height:17px;font-weight:500;color:var(--pl-sub)}.pl-reg-note svg{flex:none;color:#37a974}
+@media (prefers-reduced-motion:reduce){.pl-reg-ring .arc,.pl-reg-sd i{animation-duration:2.5s}}
+.pl-oc-chip.left{padding:0 12px;background:var(--pl-soft);color:var(--pl-sub)}
+.pl-almost h2{margin:18px 0 12px}
+
+/* «Almost done»: tres versiones (Controls → Almost done). Etiquetas como las de la Gestap (hub.css .v1-chip) */
+.pl-alm h2{margin-top:4px}
+.pl-achip{display:inline-flex;align-items:center;gap:3px;width:max-content;margin-top:4px;padding:1px 8px;border-radius:99px;background:#ffc233;color:#0b0b0f;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-style:normal;line-height:1.5}
+.pl-achip.ok{background:#37e08f;color:#04331f}.pl-achip.ok svg{stroke-width:3.5}
+.pl-achip.na{background:#e9ebf6;color:#4a5072}
+.pl-alma .pl-oc-gt b{display:block}
+.pl-alma-bar{display:flex;gap:4px;margin:14px 0 4px}
+.pl-alma-bar i{flex:1;height:6px;border-radius:99px;background:#e5e6ee}.pl-alma-bar i.on{background:#37e08f}
+.pl-alma-list{display:flex;flex-direction:column;gap:6px;margin-top:14px}
+.pl-alma-r{display:flex;align-items:center;gap:12px;min-height:60px;padding:10px 12px;border-radius:16px;background:var(--pl-bg)}
+.pl-alma-r .pl-oc-gt{display:flex;flex-direction:column}
+.pl-alma-e{background:#fff!important;color:#9aa3c7!important;box-shadow:inset 0 0 0 1px #d6dbef}
+.pl-alma-b{flex:none;height:34px;padding:0 14px;border:0;border-radius:10px;background:var(--pl-blue);color:#fff;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.pl-almb{text-align:center}
+.pl-almb-ring{position:relative;display:grid;place-items:center;width:120px;height:120px;margin:14px auto 8px}
+.pl-almb-ring svg{position:absolute;inset:0;width:100%;height:100%}
+.pl-almb-ring b{font-size:24px;font-weight:700;color:var(--pl-ink)}
+.pl-almb-left{display:flex;flex-direction:column;gap:6px;margin-top:18px;text-align:left}
+.pl-almb-left>div{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;background:var(--pl-bg)}
+.pl-almb-left b{display:block;font-size:14px;font-weight:700}.pl-almb-left small{display:block;font-size:12.5px;color:var(--pl-sub)}
+.pl-almb-ic{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#fff;color:var(--pl-blue)}
+.pl-almc-ok{display:flex;align-items:center;gap:10px;margin:4px 0 16px;padding:8px 12px 8px 8px;border-radius:14px;background:#e6f7ef;font-size:13px;color:var(--pl-ink)}
+.pl-almc-ok>span:nth-child(2){flex:1;min-width:0}
+.pl-almc-ok>svg{flex:none;color:var(--pl-green);stroke-width:3}
+.pl-almc-avs{display:flex}.pl-almc-avs .pl-g11av{width:30px;height:30px;border-radius:9px;font-size:11px;box-shadow:0 0 0 2px #e6f7ef}.pl-almc-avs .pl-g11av+.pl-g11av{margin-left:-8px}
+.pl-almc-avs .pl-g11av.on{background:#c5f3dc}
+.pl-almc-tasks{margin-top:14px;border-radius:18px;overflow:hidden}   /* contenedor de las filas de tarea de la Gestap (sin delineado) */
+
+/* «What's left»: la fila de huésped de Guest summary (réplica hub.css .v1-row/.v1-av/.v1-tx/.v1-chip/.v1-btn y .v5s-row), sobre la caja blanca → fondo suave en vez de blanco y sin delineado */
+.pl-gs{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.pl-gs-row{display:flex;align-items:center;gap:12px;width:100%;padding:12px;border:0;border-radius:18px;background:var(--pl-bg);text-align:left;color:var(--pl-ink);font:inherit}
+.pl-gs-av{flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:rgba(255,194,51,.3);color:#7a5200;font-size:13px;font-weight:700}
+.pl-gs-tx{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start}
+.pl-gs-tx b{font-size:15px;line-height:20px;font-weight:600}
+.pl-gs-tx>span{font-size:12.5px;line-height:17px;color:#6b6b95}
+.pl-gs-chip{margin-top:5px;padding:1px 8px;border-radius:9999px;background:#ffc233;color:#0b0b0f;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-style:normal;line-height:1.5;white-space:nowrap}
+.pl-gs-btn{flex:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:36px;padding:0 14px;border:0;border-radius:12px;background:var(--pl-blue);color:#fff;font:inherit;font-size:13px;font-weight:600;white-space:nowrap;cursor:pointer}
+.pl-gs-btn:hover{background:#294df1}
+.pl-gs-tap{cursor:pointer;transition:background .15s}.pl-gs-tap:hover{background:#eef1fb}
+.pl-gs-tap>svg{flex:none;color:#9aa0c3;transition:transform .15s,color .15s}.pl-gs-tap:hover>svg{transform:translateX(3px);color:var(--pl-blue)}
+.pl-gs-warm{flex-direction:column;align-items:stretch;gap:10px;background:rgba(255,194,51,.14)}
+.pl-gs-top{display:flex;align-items:center;gap:12px}
+.pl-gs-warm>p{margin:0;font-size:13px;line-height:18px;color:#6b4a00}
+.pl-gs-wide{width:100%;min-height:42px}
+.pl-gs-add{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;padding:0 14px;border:1.5px dashed #b7bcd6;border-radius:18px;background:transparent;color:var(--pl-blue);font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.pl-gs-add:hover{background:#eff6ff;border-color:var(--pl-blue)}
+.pl-gs-warm .pl-gs-av{background:#fff}
+
+/* pantalla final (abriendo la reserva): 3 versiones. La barra de «Opening your booking» dura lo mismo que la pantalla (5,5 s) */
+.pl-fin .pl-x-open i::after{animation-duration:4.5s;animation-delay:var(--fa,1.5s)}   /* la barra de carga dura 4,5 s desde que aparece «Opening your booking» */
+.pl-fin h2{margin:0}
+.pl-fin-todo{width:100%;max-width:340px;margin-top:18px;padding:14px 16px;border-radius:18px;background:rgba(255,255,255,.12);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);text-align:left}
+.pl-fin-todo>p{margin:0 0 8px;font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#c7d0ff}
+.pl-fin-todo>div{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:14px;font-weight:600;color:#fff}
+.pl-fin-todo>div>span{flex:none;display:grid;place-items:center;width:28px;height:28px;border-radius:9px;background:rgba(255,194,51,.28);color:#ffd36b}
+.pl-fin1 .pl-fin-todo{animation:plUpIn .55s cubic-bezier(.2,.9,.3,1) 1.45s both}
+.pl-fin1 .pl-x-open{animation:plUpIn .4s ease 1.7s both}
+.pl-fin2 h2{max-width:340px;animation:plUpIn .5s ease 1s both}
+.pl-fin2 .pl-x-eye{animation:plUpIn .45s ease .9s both}
+.pl-fin-list{width:100%;max-width:320px;margin:20px 0 0;padding:0;list-style:none;text-align:left}
+.pl-fin-list li{display:flex;align-items:center;gap:12px;padding:9px 0;font-size:15px;font-weight:600;color:#fff;animation:plUpIn .4s ease var(--d) both}
+.pl-fin-list li+li{border-top:1px solid rgba(255,255,255,.12)}
+.pl-fin-list li.ok>svg{flex:none;width:24px;height:24px;padding:5px;border-radius:99px;background:#6be0a8;color:#15153f;stroke-width:3;box-sizing:border-box}
+.pl-fin-list li.ok>span{color:#e3e8ff}
+.pl-fin-list li.to>i{flex:none;position:relative;width:24px;height:24px;border-radius:99px;background:rgba(255,194,51,.25)}
+.pl-fin-list li.to>i::after{content:"";position:absolute;inset:8px;border-radius:99px;background:#ffc233;animation:plFinDot 1.6s ease-in-out infinite}
+@keyframes plFinDot{50%{transform:scale(.6);opacity:.6}}
+.pl-fin2 .pl-x-open{animation:plUpIn .4s ease calc(1.35s + var(--n,4) * .32s) both}
+.pl-fin3 .pl-fin-key{width:100%;max-width:340px;margin-top:20px;padding:16px;border-radius:20px;background:rgba(255,255,255,.12);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);text-align:left;animation:plUpIn .55s cubic-bezier(.2,.9,.3,1) 1.4s both}
+.pl-fin-kh{display:flex;align-items:center;gap:12px}
+.pl-fin-ki{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,.16);color:#fff}
+.pl-fin-kh>span:nth-child(2){flex:1;min-width:0}
+.pl-fin-kh b{display:block;font-size:15px;color:#fff}.pl-fin-kh small{display:block;font-size:12.5px;color:#c7d0ff}
+.pl-fin-kh em{flex:none;padding:3px 10px;border-radius:99px;background:#ffc233;color:#0b0b0f;font-size:11px;font-weight:800;font-style:normal;letter-spacing:.04em;text-transform:uppercase}
+.pl-fin-kbar{display:flex;gap:4px;margin:14px 0 12px}
+.pl-fin-kbar i{flex:1;height:5px;border-radius:99px;background:rgba(255,255,255,.22)}.pl-fin-kbar i.on{background:#6be0a8}
+.pl-fin-kc{display:flex;flex-wrap:wrap;gap:6px}
+.pl-fin-kc span{display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 10px;border-radius:99px;background:rgba(255,194,51,.22);color:#ffe3a1;font-size:12.5px;font-weight:600}
+.pl-fin3 .pl-x-open{animation:plUpIn .4s ease 1.7s both}
+.pl-fin .pl-fin-todo{border:0;box-shadow:none}
+
+/* «Complete the missing details»: piezas del formulario de huésped de la Gestap (réplica form.css y g2-form-empty) */
+.pl-ffx .pl-ffh{margin-top:6px}
+.pl-ffs{margin:6px 0 16px;font-size:14px;line-height:20px;color:var(--chekin-text-secondary,#6b6b95)}
+.pl-ffsec{overflow:visible}
+.pl-ff{position:relative}
+.pl-ff .input__control{color:var(--chekin-color-brand-navy,#161643)}
+.pl-ff .input:has(.input__control:focus) .input__label,.pl-ff .input:has(.input__control:not(:placeholder-shown)) .input__label{top:-9px;padding:0 4px;left:10px;background:#fff;color:var(--chekin-color-gray-1)}
+.pl-ff .input:has(.input__control:focus) .input__label label,.pl-ff .input:has(.input__control:not(:placeholder-shown)) .input__label label{font-size:12px}
+.pl-ff .input:has(.input__control:focus) .input__fieldset{border-color:var(--chekin-color-brand-blue,#385bf8);border-width:1.5px}
+.pl-ff .input:has([aria-invalid="true"]) .input__fieldset{border-color:#e5565b}
+.pl-ff.pl-ro .input__control{color:#6b6b95;cursor:default}
+.pl-ffgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.pl-ffchip{position:absolute;right:14px;top:49px;transform:translateY(-50%);z-index:2;padding:1px 9px;border-radius:9999px;background:#e9ebf6;color:#4a5072;font:800 10px/1.5 Poppins,system-ui,sans-serif;font-style:normal;letter-spacing:.08em;text-transform:uppercase;box-shadow:0 0 0 2px #fff;pointer-events:none}   /* como el chip OPT. (a caballo del borde inferior derecho) */
+.pl-ffchip.ok{background:#37e08f;color:#04331f}
+.pl-ffchip.miss{background:#ffc233;color:#0b0b0f}
+.pl-ffhint{margin:8px 2px 0;font-size:12.5px;line-height:17px;color:var(--chekin-text-secondary,#6b6b95)}
+.pl-fferr{margin:8px 2px 0;font-size:12.5px;line-height:17px;color:#c8323c}
+.pl-ffrow{margin-bottom:14px}
+.pl-ffx .pl-gs{margin-top:0}
+.pl-as1{position:relative;overflow:hidden;display:flex;flex-direction:column;gap:14px;margin-top:6px;padding:18px;border-radius:18px;color:#fff;background:linear-gradient(135deg,#15153f 0%,#23235d 44%,#2e46c8 100%)}
+.pl-as1::before{content:"";position:absolute;right:50px;top:-110px;width:230px;height:230px;border-radius:50%;background:rgba(171,186,252,.18);pointer-events:none}
+.pl-as1>*{position:relative}
+.pl-as-t{display:flex;flex-direction:column;gap:4px}.pl-as-t b{font-size:16px;line-height:22px;font-weight:600;color:#fff}.pl-as-t span{font-size:13.5px;line-height:19px;color:rgba(255,255,255,.82)}
+.pl-ffdiv{display:flex;align-items:center;gap:12px;margin:18px 0 14px;color:#8a8ca6;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.pl-ffdiv::before,.pl-ffdiv::after{content:"";flex:1;height:1px;background:#e5e6ee}
+
+/* hay más contenido debajo en la caja: sombra hacia arriba en la barra del botón (en escritorio la barra no tenía sombra) */
+html:not(.pl-nomore) .pl-ocm .pl-col.pl-more>.pl-dock:not(.pl-ghost){box-shadow:0 -10px 18px -8px rgba(22,22,67,.16)!important;position:relative;z-index:3}
+.pl-ocm .pl-col>.pl-dock{transition:box-shadow .2s}
+/* etiqueta elevada: el borde se abre a su paso (el hueco del legend, como en el campo real), sin fondo blanco encima */
+.pl-ff .input:has(.input__control:focus) .input__label,.pl-ff .input:has(.input__control:not(:placeholder-shown)) .input__label{background:none}
+.pl-ff .input:has(.input__control:focus) legend,.pl-ff .input:has(.input__control:not(:placeholder-shown)) legend{max-width:100%}
+.pl-ff .input:has(.input__control:focus) legend>span,.pl-ff .input:has(.input__control:not(:placeholder-shown)) legend>span{font-size:12px}
+.pl-ffx4 [data-slot="form-section-body"]{gap:24px}
+.pl-ffx4 .pl-ffgrid{gap:14px}
+.pl-ffx4 .pl-ffhint,.pl-ffx4 .pl-fferr{margin-top:16px}
+.pl-ff:has(.input__control:not(:placeholder-shown)) .pl-ffchip.miss{display:none}   /* ya escrito: deja de faltar */
+
+/* escritorio: ajuste sin scroll de la caja del one click (ocDFit) */
+@media (min-width:1024px){
+  html.pl-d2 .pl-ocm .pl-col>.pl-card>*{zoom:var(--dz,1)}
+  .pl-dfit1 .pl-col>.pl-card{padding-top:24px!important;padding-bottom:20px!important}
+  .pl-dfit1 .pl-col>.pl-card h2{margin-top:2px}
+  .pl-dfit1 .pl-oc-list,.pl-dfit1 .pl-gs,.pl-dfit1 .pl-gcsteps{margin-top:10px}
+  .pl-dfit1 .pl-oc-g{min-height:52px;padding-top:7px;padding-bottom:7px}
+  .pl-dfit1 .pl-gcsteps{gap:6px;padding-top:10px;padding-bottom:10px}
+  .pl-dfit1 .pl-reg-ring{width:108px;height:108px;margin-top:8px}
+  .pl-dfit1 .pl-reg-steps{margin-top:14px}
+  .pl-dfit2 .pl-c13tip,.pl-dfit2 .pl-c13ret,.pl-dfit2 .pl-gcnote,.pl-dfit2 .pl-reg-note,.pl-dfit2 .pl-ffs,.pl-dfit2 .pl-oc-cnt{display:none}
+  .pl-dfit2 .pl-lead{margin-bottom:0}
+}
+.pl-ffx5 .pl-oc-fix{margin-top:0}
+.pl-ffx0 .pl-mbar{margin-top:6px}
+
+/* completar datos de varios huéspedes: en cuál vas */
+.pl-ffstep{display:flex;align-items:center;gap:5px;margin:4px 0 12px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b6b95}
+.pl-ffstep span{margin-right:6px}
+.pl-ffstep i{width:22px;height:5px;border-radius:99px;background:#e5e6ee}.pl-ffstep i.on{background:var(--pl-blue)}.pl-ffstep i.ok{background:#37e08f}
+.pl-ffx5 .pl-oc-fix>.pl-f:first-child{margin-top:0}
+.pl-ffback{display:inline-flex;align-items:center;gap:2px;margin-left:auto;padding:0;border:0;background:none;color:var(--pl-blue);font:inherit;font-size:12.5px;font-weight:600;letter-spacing:0;text-transform:none;cursor:pointer}
+.pl-oc-fix .pl-f+.pl-f{margin-top:12px}
+.pl-ffx [data-slot="form-section-body"] .pl-ffgrid .pl-ffhint{display:none}
+
+/* tarjeta del huésped pendiente («What's left»): gris, naranja o amarillo con los tokens de la Gestap */
+.pl-gsc-g .pl-gs-warm{background:var(--chekin-neutral-50,#f4f6f8)}.pl-gsc-g .pl-gs-warm>p{color:var(--chekin-neutral-600,#6b6b95)}
+.pl-gsc-o .pl-gs-warm{background:var(--chekin-warning-surface,#fff4e5)}.pl-gsc-o .pl-gs-warm>p{color:var(--chekin-amber-700,#b86a00)}
+.pl-gsc-y .pl-gs-warm{background:var(--chekin-amber-50,#fff9db)}.pl-gsc-y .pl-gs-warm>p{color:var(--chekin-amber-700,#b86a00)}
+.pl-gsc-g .pl-gs-warm .pl-gs-av{background:rgba(255,194,51,.3)}
+
+/* escritorio, escalón 3 del ajuste: con varios datos pendientes, los campos van en dos columnas y sin ayudas */
+@media (min-width:1024px){
+  .pl-dfit3 .pl-ffx [data-slot="form-section-body"]{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .pl-dfit3 .pl-ffx [data-slot="form-section-body"] .pl-ffgrid{display:contents}
+  .pl-dfit3 .pl-ffx [data-slot="form-section-header"]{padding-top:10px;padding-bottom:10px}
+  .pl-dfit3 .pl-ffhint,.pl-dfit3 .pl-oc-fix .pl-hint,.pl-dfit3 .pl-as-l{display:none}   /* la tarjeta oscura no pierde la frase: solo se recorta a «Only what's missing is asked here.» */
+  .pl-dfit3 .pl-oc-fix{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}
+  .pl-dfit3 .pl-oc-fix>.pl-oc-fixh{grid-column:1/-1}
+  .pl-dfit3 .pl-oc-fix .pl-f+.pl-f{margin-top:0}
+  .pl-dfit3 .pl-ffdiv{margin:10px 0 8px}
+  .pl-dfit3 .pl-as1{padding:14px 16px}
+  .pl-dfit3 .pl-ffx4 [data-slot="form-section-body"]{gap:20px 12px}
+}
+
+/* cajita de iniciales del huésped con datos pendientes: azul, como en la Gestap (azul de marca al 16 %, iniciales en azul) */
+.pl-gs-av,.pl-gsc-g .pl-gs-warm .pl-gs-av{background:rgba(56,91,248,.16);color:#385bf8}
+.pl-as-l{font-style:normal}
+/* «Signing in…»: cada botón conserva su color (Google blanco con letras negras, Apple negro con letras blancas); antes los dos se volvían azules y el de Google quedaba blanco sobre blanco */
+.pl-soc.g.pl-looking,.pl-w7box .pl-soc.g.pl-looking,.pl-soc.g.lt.pl-looking{background:#fff;color:var(--pl-ink)}
+.pl-soc.g.pl-looking::after{background:linear-gradient(100deg,transparent 20%,rgba(22,22,67,.09) 50%,transparent 80%)}   /* brillo gris: en blanco, el brillo blanco no se ve */
+.pl-soc.a.pl-looking{background:#000;color:#fff}
