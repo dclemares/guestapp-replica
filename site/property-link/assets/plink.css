@@ -1580,8 +1580,8 @@ html.pl-pat .pl-fx>img{opacity:.22!important;animation:none!important}
   .pl-ocm .pl-col{flex:1 1 0;min-height:0}
   .pl-ocm .pl-col>.pl-card{flex:1 1 0;min-height:0;overflow:auto;overscroll-behavior:contain}
 }
-.pl-ocm .pl-gh>img{animation:plKenLoop 20s ease-in-out infinite}   /* el zoom en bucle de la W13, en la cabecera de todos los pasos (móvil y escritorio) */
-@media (prefers-reduced-motion:reduce){.pl-ocm .pl-gh>img{animation:none}}
+.pl-gh>img{animation:plKenLoop 20s ease-in-out infinite}   /* el zoom en bucle de la W13, muy sutil, en la cabecera del one click y también del property link (móvil y escritorio) */
+@media (prefers-reduced-motion:reduce){.pl-gh>img{animation:none}}
 /* «Your stay» dentro de la caja del property link */
 .pl-w13m .pl-w7tl{margin:0}
 @media (min-width:1024px){.pl-w13m .pl-w7h{margin:0 0 10px;font-size:24px}}

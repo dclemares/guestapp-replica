@@ -958,7 +958,7 @@ function render(){
   } else {
     root.innerHTML = head + '<main class="pl-main">' + body + '</main>' + sh; root.__top = top;
   }
-  var kb = -((Date.now() - KB0) / 1000) + 's'; [].forEach.call(root.querySelectorAll('.pl-ocm .pl-gh>img,.pl-w13 .pl-w11bg'), function(im){ if (im.__kb) return; im.__kb = 1; im.style.animationDelay = kb; });   /* el zoom en bucle sigue donde iba: solo se coloca en las fotos nuevas (tocarlo en las que ya están hacía saltar el zoom) */
+  var kb = -((Date.now() - KB0) / 1000) + 's'; [].forEach.call(root.querySelectorAll('.pl-gh>img,.pl-w13 .pl-w11bg'), function(im){ if (im.__kb) return; im.__kb = 1; im.style.animationDelay = kb; });   /* el zoom en bucle sigue donde iba: solo se coloca en las fotos nuevas (tocarlo en las que ya están hacía saltar el zoom) */
   document.body.style.overflow = S.sheet ? 'hidden' : '';
   fit();
 }
