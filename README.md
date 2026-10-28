@@ -29,6 +29,14 @@ The root page opens the **mobile + desktop mockup** side by side (`split.html`):
 - When a booking is found, the header expands to full screen, shows the stay and opens the replica home.
 - Sources: `plink.html`, `assets/plink.js`, `assets/plink.css`; `python3 build.py` (run inside `site/property-link/`) regenerates `screens/`. Property and generic images are loaded from Unsplash (Unsplash License).
 
+### One click check-in
+
+The same prototype also contains the **one click check-in** screen (switch screens from the controls panel, or open `property-link/split.html?s=one-click`). Unlike the property link, the booking is already known.
+
+- Desktop: full-screen property photo in the brand blue with a slow looping zoom, the "Welcome to" block bottom-left and a floating **Your stay** card on the right: a journey line (Booked → Online check-in → Arrival → Departure) where the current step holds the check-in box: "0 of 3 guests checked in", Continue with Google / Apple (recommended, to save guests for next time), "Been here before?" and "Continue without an account".
+- Mobile: same structure as the property link (photo header with "Welcome to"), with the **Your stay** card as the white body. No scroll.
+- Signed-in states: pick saved guests, add a missing detail, first check-in with an account. Booking data is sample data.
+
 ## Rebuild
 
 ```bash

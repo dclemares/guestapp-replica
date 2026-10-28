@@ -24,8 +24,13 @@ var C = {
   ph: LSget('replica-pl-ph', '1'),
   gi: 't2',                                     /* sin foto de la propiedad: patrón «Curvas de papel» (definitivo) */              /* imagen genérica elegida (sin foto) */              /* foto de la propiedad en la cabecera y en las animaciones: 1 = con foto · 0 = sin foto */
   av: '8',                                      /* animación definitiva: V8 (las demás quedan en el código como referencia) */              /* animación de búsqueda: 1 = hoja · 2 = pantalla completa */
-  nn: LSget('replica-pl-nn', '2'),              /* noches de la reserva de prueba */
+  nn: LSget('replica-pl-nn', '2'),
+  ocs: LSget('replica-oc-s', '0'),              /* one click: sesión iniciada al entrar (0 no · 1 sí) */
+  ocv: LSget('replica-oc-v', 'miss'),           /* one click: huéspedes guardados (none · ok · miss = uno con un dato pendiente) */
+  ocg: LSget('replica-oc-g', '3'),
+  ocw: '13',                                     /* one click: entrada definitiva W13 (decidida 2026-10-28); W1–W12 quedan solo en el código como referencia */
   dv: '2',                                      /* escritorio definitivo: D2 · Tarjeta flotante (las demás quedan en el código como referencia) */              /* maquetación de escritorio: 0 = actual · 1 mitad y mitad · 2 tarjeta flotante · 3 banner panorámico · 4 minimal centrado */
+  cv: '41',                                     /* tarjetas definitivas: C4.1 · Dónde + descripción (las demás quedan en el código como referencia) */              /* tarjetas de elección de método (V2): 0 actual · 1 recomendada · 2 lo que vas a escribir · 3 ayuda primero · 4 dónde encontrarlo */
   mv: LSget('replica-pl-mv', '1')               /* cómo se elige el método: 1 = pestañas · 2 = tarjetas de selección */
 };
 if (!/^[nce]+$/.test(C.methods)) C.methods = 'nce';
@@ -88,7 +93,11 @@ var P = {
   clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
   pin: '<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/>',
   arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
-  hash: '<path d="M5 9h14M5 15h14M10 4 8 20M16 4l-2 16"/>'
+  hash: '<path d="M5 9h14M5 15h14M10 4 8 20M16 4l-2 16"/>',
+  bolt: '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
+  shield: '<path d="M12 3 5 6v5.5c0 4.2 2.9 8 7 9.5 4.1-1.5 7-5.3 7-9.5V6z"/><path d="m9 12 2 2 4-4"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6"/>'
 };
 var ic = function(n, s){ s = s || 18; return '<svg viewBox="0 0 24 24" width="' + s + '" height="' + s + '" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + P[n] + '</svg>'; };
 
@@ -96,7 +105,8 @@ var LANGS = [['EN', 'English'], ['ES', 'Español'], ['FR', 'Français'], ['DE', 
 /* ---------- estado del flujo (solo en memoria) ---------- */
 var S;
 function reset(){
-  S = { phase: 'form', method: methods()[0], f: { name: '', prop: '', cin: '', cout: '', code: '', email: '', cName: '', cEmail: '', guests: 1, cCin: '', cCout: '' },
+  S = { phase: 'form', method: methods()[0], f: { name: '', prop: '', cin: '', cout: '', code: '', email: '', cName: '', cEmail: '', guests: 1, cCin: '', cCout: '', bd: '' },
+        oc: { why: false, save: null, step: C.ocs === '1' ? (C.ocv === 'none' ? 'new' : 'pick') : 'welcome', sel: ['g1'], count: +C.ocg, busy: '', signed: C.ocs === '1' },
         lang: 0, tip: null, picked: false, fails: 0, sug: '', until: 0, needCout: false, notice: null, err: {}, busy: false, sheet: null, cal: null, q: '' };
 }
 reset();
@@ -119,12 +129,19 @@ function heroHint(){ var ms = methods(); return ms.length > 1 ? NEED[ms[0]].char
 function hero(){
   var c = S.phase === 'create', hint = heroHint();
   var eye = c ? 'New check-in · ' + esc(prop(BOOKING.prop).name) : 'Welcome to ' + esc(HOST().name);
-  var ti = c ? 'Tell us about your stay' : 'Let\'s find your booking';
-  var ds = c ? 'Your dates and how many of you are coming.' : hint;
+  var ti = c ? 'Tell us about your stay' : OC ? 'Let\'s check you in' : 'Let\'s find your booking';
+  var ds = c ? 'Your dates and how many of you are coming.' : OC ? fmt(BOOKING.cin) + ' – ' + fmt(BOOKING.cout) + ' · ' + S.oc.count + (S.oc.count === 1 ? ' guest' : ' guests') : hint;
   var lang = '<button type="button" class="pl-gh-lang" data-a="lang" aria-label="Language: ' + LANGS[S.lang][1] + '">' + ic('globe', 15) + LANGS[S.lang][1] + ic('down', 14) + '</button>';
+  if (OC && C.ocw === '4' && S.oc.step === 'welcome') {   /* W4: la reserva sobre la foto */
+    var nn = nights(BOOKING.cin, BOOKING.cout);
+    var w4 = '<div class="pl-gh-m pl-w4h"><div class="pl-gh-row" style="margin:0 0 10px"><p class="pl-wel">Your stay at</p>' + lang + '</div><p class="pl-gh-name">' + esc(prop(BOOKING.prop).name) + '</p>'
+      + '<div class="pl-w4tl"><div><small>Check-in</small><b>' + fmt(BOOKING.cin) + '</b><span>from ' + BK.tin + '</span></div><i><em>' + nn + (nn === 1 ? ' night' : ' nights') + '</em></i><div class="r"><small>Check-out</small><b>' + fmt(BOOKING.cout) + '</b><span>by ' + BK.tout + '</span></div></div>'
+      + '<p class="pl-w4f"><span>' + ic('users', 14) + S.oc.count + (S.oc.count === 1 ? ' guest' : ' guests') + '</span><span>' + ic('hash', 14) + BK.ref + '</span><span>' + ic('pin', 14) + BK.city + '</span></p></div>';
+    return '<section class="pl-gh pl-w4"><img src="' + PHOTO() + '" alt="">' + w4 + '</section>';
+  }
   var welcome = c ? '' : '<div class="pl-gh-m"><p class="pl-wel">Welcome to</p><p class="pl-gh-name">' + esc(HOST().name) + '</p><div class="pl-gh-row"><p class="pl-loc">' + ic('pin', 15) + (isUser() ? '6 homes in Spain' : 'Albacete, Spain') + '</p>' + lang + '</div></div>';   /* solo móvil: bienvenida sobre la foto, con el idioma en la línea de la ubicación */
   return '<section class="pl-gh' + (c ? ' pl-dsk' : '') + '"><img src="' + PHOTO() + '" alt="">' + welcome
-    + '<div class="pl-gh-gl"><span class="pl-gh-ic">' + ic(c ? 'cal' : 'search', 24) + '</span><div class="pl-gh-tx"><span class="pl-gh-eye">' + eye + '</span><h1>' + ti + '</h1><p>' + ds + '</p></div></div></section>';
+    + '<div class="pl-gh-gl"><span class="pl-gh-ic">' + ic(c ? 'cal' : OC ? 'users' : 'search', 24) + '</span><div class="pl-gh-tx"><span class="pl-gh-eye">' + eye + '</span><h1>' + ti + '</h1><p>' + ds + '</p></div></div></section>';
 }
 function prop(id){ for (var i = 0; i < PROPS.length; i++) if (PROPS[i].id === id) return PROPS[i]; return null; }
 /* guías: dónde encontrar cada dato (icono «?» junto a la etiqueta; la burbuja flota y no mueve nada) */
@@ -201,11 +218,38 @@ var MO2 = {
 };
 /* bienvenida dentro de la tarjeta (solo la usan algunas maquetaciones de escritorio, p. ej. D4) */
 function dwel(){ return '<div class="pl-dwel"><span class="pl-dwel-t">Welcome to <b>' + esc(HOST().name) + '</b></span><span class="pl-dwel-l">' + ic('pin', 14) + (isUser() ? '6 homes in Spain' : 'Albacete, Spain') + '</span><button type="button" class="pl-gh-lang pl-dwel-lang" data-a="lang" aria-label="Language: ' + LANGS[S.lang][1] + '">' + ic('globe', 15) + LANGS[S.lang][1] + ic('down', 14) + '</button></div>'; }
+/* C1–C4: cuatro formas de elegir cómo buscar, pensadas para resolver las dudas de ese momento (cuál elijo, qué necesito, dónde está, y si no lo tengo) */
+var PRE = { n: [['user', 'Maria Lowe'], ['cal', '25 Nov']], c: [['hash', 'HMX4K2P9TR']], e: [['mail', 'maria@email.com'], ['cal', '25 Nov']] };
+var NEEDS = { n: ['Name', 'Arrival date'], c: ['Booking code'], e: ['Email', 'Arrival date'] };
+var WHERE = { n: ['Your booking confirmation'], c: ['Email', 'Airbnb', 'Booking.com'], e: ['Your confirmation email'] };
+var SHORT = { n: 'Name + arrival date', c: 'Booking code', e: 'Email + arrival date' };
+function chooserList(ms){
+  var cv = C.cv, go = '<span class="pl-mo-go">' + ic('right', 18) + '</span>';
+  if (cv === '1') {   /* recomendada + alternativas */
+    var main = ms[0], rest = ms.slice(1), o = MO2[main];
+    return '<button type="button" class="pl-c1-main" data-a="pickm" data-m="' + main + '"><span class="pl-mo-ic">' + ic(o.i, 24) + '</span><span class="pl-mo-tx"><em class="pl-rec">' + ic('check', 12) + (main === 'n' ? 'Recommended · always works' : 'Recommended') + '</em><b>' + o.t + '</b><span>' + o.d + '</span></span>' + go + '</button>'
+      + (rest.length ? '<p class="pl-c1-or">Or use</p><div class="pl-c1-rest">' + rest.map(function(m){ var r = MO2[m]; return '<button type="button" class="pl-c1-row" data-a="pickm" data-m="' + m + '"><span class="pl-mo-ic sm">' + ic(r.i, 18) + '</span><b>' + r.t + '</b>' + ic('right', 16) + '</button>'; }).join('') + '</div>' : '');
+  }
+  if (cv === '2') {   /* lo que vas a escribir */
+    return '<div class="pl-c2">' + ms.map(function(m){ var o = MO2[m]; return '<button type="button" class="pl-c2-b" data-a="pickm" data-m="' + m + '"><span class="pl-c2-top"><b>' + o.t + '</b>' + go + '</span><span class="pl-c2-pre">' + PRE[m].map(function(x){ return '<span class="pl-c2-f">' + ic(x[0], 15) + x[1] + '</span>'; }).join('') + '</span></button>'; }).join('') + '</div>';
+  }
+  if (cv === '3') {   /* ayuda primero + lista compacta */
+    var hasN = ms.indexOf('n') >= 0;
+    return '<div class="pl-c3-help">' + ic('info', 18) + '<span><b>Not sure which?</b> ' + (hasN ? 'Your name and arrival date always work.' : 'Any option finds the same booking.') + '</span></div>'
+      + '<div class="pl-c3">' + ms.map(function(m){ var o = MO2[m]; return '<button type="button" class="pl-c3-b" data-a="pickm" data-m="' + m + '"><span class="pl-mo-ic sm">' + ic(o.i, 18) + '</span><span class="pl-c3-tx"><b>' + o.t + '</b><span class="pl-c3-need">You\'ll need ' + NEEDS[m].map(function(x){ return '<i>' + x + '</i>'; }).join('') + '</span></span>' + ic('right', 18) + '</button>'; }).join('') + '</div>';
+  }
+  if (cv === '4' || cv === '41') {   /* dónde encontrarlo (C4.1: + la descripción de las tarjetas actuales) */
+    return '<div class="pl-c4' + (cv === '41' ? ' pl-c41' : '') + '">' + ms.map(function(m){ var o = MO2[m]; return '<button type="button" class="pl-c4-b" data-a="pickm" data-m="' + m + '"><span class="pl-c4-top"><span class="pl-mo-ic sm">' + ic(o.i, 18) + '</span><span class="pl-c4-tt"><b>' + o.t + '</b>' + (cv === '41' ? '<span class="pl-c4-d">' + o.d + '</span>' : '') + '</span>' + go + '</span><span class="pl-c4-where"><small>Find it in</small>' + WHERE[m].map(function(x){ return '<i>' + x + '</i>'; }).join('') + '</span></button>'; }).join('') + '</div>';
+  }
+  return null;
+}
 function vChooser(){
   var ms = methods();
   var list = '<div class="pl-mo" role="list">' + ms.map(function(m){ var o = MO2[m];
     return '<button type="button" role="listitem" class="pl-mo-b" data-a="pickm" data-m="' + m + '"><span class="pl-mo-ic">' + ic(o.i, 22) + '</span><span class="pl-mo-tx"><b>' + o.t + (o.k ? '<em>' + o.k + '</em>' : '') + '</b><span>' + o.d + '</span><small>' + ic(o.meta[0], 13) + o.meta[1] + '</small></span><span class="pl-mo-go">' + ic('right', 18) + '</span></button>'; }).join('') + '</div>';
-  var card = '<section class="pl-card pl-main-card" aria-labelledby="pl-h">' + dwel() + '<h2 id="pl-h">Let\'s find your booking</h2><p class="pl-lead pl-keep">How would you like to search? Choose the one you have to hand.</p>' + list + '</section>';
+  var alt = chooserList(ms); if (alt) list = alt;
+  var lead = { '1': 'Pick the option you have to hand.', '2': 'What do you have to hand? Tap the one you recognise.', '3': 'Choose one. You only need what\'s shown.', '4': 'Choose the one you can find most easily.', '41': 'Choose the one you can find most easily.' }[C.cv] || 'How would you like to search? Choose the one you have to hand.';
+  var card = '<section class="pl-card pl-main-card pl-cv' + C.cv + '" aria-labelledby="pl-h">' + dwel() + '<h2 id="pl-h">Let\'s find your booking</h2><p class="pl-lead pl-keep">' + lead + '</p>' + list + '</section>';
   return hero() + '<div class="pl-col">' + card + '</div>';
 }
 function mbar(){
@@ -268,8 +312,9 @@ function hhmm(d){ return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinu
 /* ---------- hojas ---------- */
 function sheet(){
   if (!S.sheet) return '';
+  if (S.sheet === 'ocdone') return sOcDone();
   if (S.sheet === 'search') return ({ '2': sSearchFull, '3': sV3, '4': sV4, '5': sV5, '6': sV6, '7': sV7, '8': sV8 }[C.av] || sSearch)();
-  var inner = S.sheet === 'prop' ? sProp() : S.sheet === 'lang' ? sLang() : S.sheet === 'contact' ? sContact() : /^tip:/.test(S.sheet) ? sTip(S.sheet.slice(4)) : sCal();
+  var inner = S.sheet === 'ochow' ? sOcHow() : S.sheet === 'ocwhy' ? sOcWhy() : S.sheet === 'ocmiss' ? sOcMiss() : S.sheet === 'occount' ? sOcCount() : S.sheet === 'prop' ? sProp() : S.sheet === 'lang' ? sLang() : S.sheet === 'contact' ? sContact() : /^tip:/.test(S.sheet) ? sTip(S.sheet.slice(4)) : sCal();
   return '<div class="pl-sheet" data-a="close" role="presentation"><div class="pl-pane" role="dialog" aria-modal="true" aria-labelledby="pl-sh">' + '<div class="pl-grab"></div>' + inner + '</div></div>';
 }
 function sSearch(){
@@ -433,13 +478,289 @@ function fit(){
   for (var i = 0; i < FIT.length && m.scrollHeight - m.clientHeight > 0; i++) root.classList.add(FIT[i]);
 }
 window.addEventListener('resize', function(){ if (root) fit(); });
+window.matchMedia('(max-width:1023px)').addEventListener('change', function(){ if (root && OC) render(); });   /* W13 cambia de estructura entre móvil y escritorio */
+/* ============ ONE CLICK CHECK-IN (screens/one-click.*) — mismas piezas que el property link ============
+   IT-3894: el huésped que vuelve (con sesión) elige sus huéspedes guardados y se registran en un toque; si a alguno le falta un dato, solo se pide ese dato.
+   Sin sesión: se registra a mano (formulario de la réplica), con la invitación a iniciar sesión para la próxima vez. Sin estado: nada se guarda. */
+var OC = S0.id === 'one-click';
+var SAVED = [
+  { id: 'g1', n: 'Maria Lowe', you: true, adult: true, doc: 'Passport ··· 4821', bg: 'linear-gradient(135deg,#385bf8,#7a8cff)' },
+  { id: 'g2', n: 'James Lowe', adult: true, doc: 'ID card ··· 1093', bg: 'linear-gradient(135deg,#0f766e,#34d399)' },
+  { id: 'g3', n: 'Lucía Lowe', adult: false, age: 8, doc: 'Passport ··· 7740', bg: 'linear-gradient(135deg,#b45309,#fbbf24)' },
+  { id: 'g4', n: 'Tom Baker', adult: true, doc: 'Passport ··· 3317', bg: 'linear-gradient(135deg,#7a3cf0,#c86bfa)' }
+];
+var ocG = function(id){ for (var i = 0; i < SAVED.length; i++) if (SAVED[i].id === id) return SAVED[i]; return null; };
+var ocMiss = function(g){ return C.ocv === 'miss' && g.id === 'g3'; };   /* a Lucía le falta la fecha de nacimiento */
+var ocFirst = function(n){ return n.split(' ')[0]; };
+var ocInit = function(g, s){ s = s || 40; return '<span class="pl-oc-av" style="width:' + s + 'px;height:' + s + 'px;background:' + g.bg + '">' + g.n.charAt(0) + '</span>'; };
+function ocLead(){ for (var i = 0; i < S.oc.sel.length; i++) { var g = ocG(S.oc.sel[i]); if (g && g.adult) return g.id; } return ''; }
+function ocNames(list){ var n = list.map(function(g){ return '<b>' + esc(ocFirst(g.n)) + '</b>'; }); return n.length < 2 ? n.join('') : n.slice(0, -1).join(', ') + ' and ' + n[n.length - 1]; }
+function ocStay(){ return '<div class="pl-oc-stay"><span>' + ic('cal', 15) + fmt(BOOKING.cin) + ' – ' + fmt(BOOKING.cout) + '</span><span>' + ic('users', 15) + S.oc.count + (S.oc.count === 1 ? ' guest' : ' guests') + '</span></div>'; }
+function ocAcc(){ return '<div class="pl-oc-acc">' + ocInit(SAVED[0], 28) + '<span>Signed in as <b>maria.lowe@gmail.com</b></span><button type="button" class="pl-link" data-a="ocout">Not you?</button></div>'; }
+var GSVG = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.4h6.5a5.6 5.6 0 0 1-2.4 3.6v3h3.9c2.3-2.1 3.5-5.2 3.5-8.7z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-2.9l-3.9-3c-1.1.7-2.5 1.2-4.1 1.2-3.1 0-5.8-2.1-6.7-5H1.3v3.1A12 12 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.3 14.3a7.2 7.2 0 0 1 0-4.6V6.6h-4a12 12 0 0 0 0 10.8z"/><path fill="#EA4335" d="M12 4.8c1.8 0 3.3.6 4.6 1.8l3.4-3.4A11.9 11.9 0 0 0 1.3 6.6l4 3.1c.9-2.9 3.6-4.9 6.7-4.9z"/></svg>';
+var ASVG = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="currentColor"><path d="M16.4 12.7c0-2.6 2.1-3.8 2.2-3.9a4.8 4.8 0 0 0-3.8-2c-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9a5 5 0 0 0-4.2 2.6c-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8s2 .8 3.4.8c1.4 0 2.3-1.3 3.1-2.5a10.6 10.6 0 0 0 1.4-2.9 4.5 4.5 0 0 1-2.6-4.1zM13.9 5.1a4.5 4.5 0 0 0 1-3.3 4.6 4.6 0 0 0-3 1.6 4.3 4.3 0 0 0-1.1 3.1 3.8 3.8 0 0 0 3.1-1.4z"/></svg>';
+/* W13 · copy del paso «Online check-in» (el «cercano», elegido por Dani) */
+var COPY13 = { t: '0 of {g} checked in', d: 'Do it before you arrive. Tip: sign up with Google or Apple and next time it\'s just one tap.', r: 'Been here before? Sign in to use your saved guests.', s: 'No thanks, continue without an account' };
+/* datos de la reserva que sí conocemos en el one click (al contrario que en el property link) */
+var BK = { ref: 'HMX4K2P9TR', by: 'Maria Lowe', via: 'Airbnb', tin: '15:00', tout: '11:00', addr: 'Calle Mayor 12, Albacete', city: 'Albacete' };
+/* qué hace iniciar sesión y qué no (sin prometer de más) */
+var SIGN_YES = [['Saves your guests\' details', 'for your next stays'], ['One tap next time', 'just pick who\'s coming'], ['Edit your guests anytime', 'from your account']];
+var SIGN_NO = [['Not needed to check in today', 'you can continue without it'], ['Doesn\'t change your booking', 'dates, price and host stay the same'], ['Never posts anything', 'on your Google or Apple account']];
+var SHORT_YES = ['Saves your guests', 'One tap next time', 'Edit them anytime'], SHORT_NO = ['Not needed today', 'Doesn\'t change your booking', 'Never posts for you'];
+/* feedback U1–U3: el camino sin cuenta se lee como camino; estado del check-in y qué hará falta, en todas las entradas */
+var SKIP = 'Check in without an account';
+function ocState(dark){ var g = S.oc.count; return '<div class="pl-oc-state' + (dark ? ' dk' : '') + '"><span class="pl-oc-st miss">Check-in pending</span><b>0 of ' + g + (g === 1 ? ' guest' : ' guests') + '</b><span class="pl-oc-due">Before you arrive</span><p>' + ic('clock', 13) + 'About 2 min per guest · have their ID or passport ready</p></div>'; }
+function ocNeed(cls){ return '<p class="pl-oc-need' + (cls ? ' ' + cls : '') + '">' + ic('clock', 14) + '<span>About 2 min per guest · have their ID or passport ready</span></p>'; }
+function ocWelcome(){
+  var b = BOOKING, nn = nights(b.cin, b.cout), p = prop(b.prop), g = S.oc.count + (S.oc.count === 1 ? ' guest' : ' guests');
+  var yes = function(t){ return '<li class="y">' + ic('check', 13) + '<span>' + t + '</span></li>'; }, no = function(t){ return '<li class="n">' + ic('shield', 13) + '<span>' + t + '</span></li>'; }, con = function(t){ return '<li class="c">' + ic('x', 13) + '<span>' + t + '</span></li>'; };
+  var full = function(list, cls){ return list.map(function(x){ return '<li class="' + cls + '">' + ic(cls === 'y' ? 'check' : 'shield', 13) + '<span><b>' + x[0] + '</b> <i>' + x[1] + '</i></span></li>'; }).join(''); };
+  if (C.ocw === '1') {   /* W1 · billete + dos columnas */
+    return '<h2 id="pl-h">Your booking</h2>'
+      + '<div class="pl-w1tk"><div class="pl-w1top"><b>' + esc(p.name) + '</b><span>' + ic('pin', 13) + BK.addr + '</span></div>'
+      + '<div class="pl-w1d"><div><small>Check-in</small><strong>' + fmt(b.cin) + '</strong><span>from ' + BK.tin + '</span></div><span class="pl-w1n"><i></i>' + nn + (nn === 1 ? ' night' : ' nights') + '<i></i></span><div class="r"><small>Check-out</small><strong>' + fmt(b.cout) + '</strong><span>by ' + BK.tout + '</span></div></div>'
+      + '<div class="pl-w1cut"></div><div class="pl-w1f"><div><small>Guests</small><b>' + S.oc.count + '</b></div><div><small>' + BK.via + ' code</small><b>' + BK.ref + '</b></div><div><small>Booked by</small><b>' + BK.by + '</b></div></div></div>'
+      + ocState() + '<p class="pl-w1q">Why sign in? <em>It\'s optional</em></p><div class="pl-w1cols"><ul>' + SHORT_YES.map(yes).join('') + '</ul><ul>' + SHORT_NO.map(no).join('') + '</ul></div>';
+  }
+  if (C.ocw === '2') {   /* W2 · ficha + desplegable */
+    var row = function(i, l, v, s2){ return '<div class="pl-w2r"><span class="pl-w2i">' + ic(i, 17) + '</span><span class="pl-w2l">' + l + '</span><span class="pl-w2v">' + v + (s2 ? '<small>' + s2 + '</small>' : '') + '</span></div>'; };
+    return '<h2 id="pl-h">Your booking at ' + esc(p.name) + '</h2>'
+      + '<div class="pl-w2">' + row('cal', 'Check-in', fmt(b.cin), 'from ' + BK.tin) + row('cal', 'Check-out', fmt(b.cout), 'by ' + BK.tout) + row('users', 'Guests', g, nn + (nn === 1 ? ' night' : ' nights')) + row('hash', 'Booking', BK.ref, 'via ' + BK.via) + row('user', 'Booked by', BK.by) + '</div>' + ocState()
+      + '<button type="button" class="pl-w2why' + (S.oc.why ? ' on' : '') + '" data-a="ocwhy" aria-expanded="' + S.oc.why + '"><span class="pl-oc-ben-ic">' + ic('bolt', 18) + '</span><span><b>Why sign in?</b><small>Optional · not needed to check in today</small></span>' + ic('down', 18) + '</button>'
+      + (S.oc.why ? '<div class="pl-w2more"><ul>' + full(SIGN_YES, 'y') + full(SIGN_NO, 'n') + '</ul></div>' : '');
+  }
+  if (C.ocw === '3') {   /* W3 · dos caminos */
+    return '<h2 id="pl-h">How do you want to check in?</h2>'
+      + '<div class="pl-w3stay"><b>' + esc(p.name) + '</b><span>' + fmt(b.cin) + ' ' + BK.tin + ' → ' + fmt(b.cout) + ' ' + BK.tout + '</span><span>' + nn + (nn === 1 ? ' night' : ' nights') + ' · ' + g + ' · ' + BK.via + ' ' + BK.ref + '</span><span>Booked by ' + BK.by + '</span></div>'
+      + '<div class="pl-w3"><div class="pl-w3c on"><em>Faster next time</em><b>With an account</b><ul>' + SHORT_YES.map(yes).join('') + '</ul></div>'
+      + '<div class="pl-w3c"><em>Just today</em><b>Without an account</b><ul>' + ['Fill in each guest now', 'Nothing is saved', 'Same check-in for the host'].map(function(t, i){ return i === 2 ? yes(t) : con(t); }).join('') + '</ul></div></div>'
+      + '<p class="pl-w3n">' + ic('shield', 14) + 'Signing in never changes your booking or posts on your account.</p>' + ocState();
+  }
+  /* W4 · la reserva va en la foto; aquí solo iniciar sesión y su para qué */
+  return '<h2 id="pl-h">Check in for your stay</h2><p class="pl-lead pl-keep">Booked by ' + BK.by + ' via ' + BK.via + '. Sign in to save your guests for next time, or continue without it.</p>'
+    + '<div class="pl-w4l"><p>' + ic('bolt', 15) + 'Signing in</p><ul>' + full(SIGN_YES, 'y') + '</ul><p class="n">' + ic('shield', 15) + 'Good to know</p><ul>' + full(SIGN_NO, 'n') + '</ul></div>' + ocState();
+}
+/* ---------- W5–W8: entradas libres (fuera de la estructura foto + tarjeta) ---------- */
+function ocWx(btn){
+  var b = BOOKING, nn = nights(b.cin, b.cout), p = prop(b.prop), g = S.oc.count, gs = g + (g === 1 ? ' guest' : ' guests'), N = nn + (nn === 1 ? ' night' : ' nights');
+  var lang = '<button type="button" class="pl-gh-lang pl-wx-lang" data-a="lang" aria-label="Language: ' + LANGS[S.lang][1] + '">' + ic('globe', 15) + LANGS[S.lang][1] + ic('down', 14) + '</button>';
+  var auth = function(light){ return btn('ocgoogle', 'pl-soc g' + (light ? ' lt' : ''), GSVG + 'Continue with Google', 'Signing in…') + btn('ocapple', 'pl-soc a', ASVG + 'Continue with Apple', 'Signing in…'); };
+  var skip = function(t){ return '<button type="button" class="pl-btn txt pl-oc-skip" data-a="ocskip">' + (t || SKIP) + ic('arrow', 16) + '</button>'; };
+  var why = '<button type="button" class="pl-link pl-wx-why" data-a="ocwhy2">What does signing in do?</button>';
+  if (C.ocw === '5') {   /* W5 · tarjeta de embarque sobre fondo azul */
+    return '<div class="pl-wx pl-w5"><img class="pl-w5bg" src="' + PHOTO() + '" alt=""><div class="pl-w5in"><div class="pl-w5top"><span class="pl-w5brand">Online check-in</span>' + lang + '</div>'
+      + '<div class="pl-w5pass"><div class="pl-w5ph"><img src="' + PHOTO() + '" alt=""><span><b>' + esc(p.name) + '</b>' + ic('pin', 12) + BK.addr + '</span></div>'
+      + '<div class="pl-w5d"><div><small>Check-in</small><strong>' + fmt(b.cin) + '</strong><span>from ' + BK.tin + '</span></div><span class="pl-w5n">' + ic('right', 14) + N + '</span><div class="r"><small>Check-out</small><strong>' + fmt(b.cout) + '</strong><span>by ' + BK.tout + '</span></div></div>'
+      + '<div class="pl-w5g"><div><small>Guests</small><b>' + g + '</b></div><div><small>' + BK.via + ' code</small><b>' + BK.ref + '</b></div><div><small>Booked by</small><b>' + BK.by + '</b></div></div>'
+      + '<div class="pl-w5cut"></div><div class="pl-w5st"><span class="pl-oc-st miss">Check-in pending</span><span>0 of ' + gs + ' · before you arrive</span></div></div>'
+      + '<div class="pl-w5gl"><b>Save your guests for next time?</b><span>Optional. You can check in today without it.</span><div class="pl-oc-auth">' + auth(true) + skip() + '</div>' + ocNeed('lt') + why + '</div></div></div>';
+  }
+  if (C.ocw === '6') {   /* W6 · conversación con el alojamiento */
+    var bub = function(i, html, cls){ return '<div class="pl-w6b' + (cls ? ' ' + cls : '') + '" style="animation-delay:' + (i * 90) + 'ms">' + html + '</div>'; };
+    return '<div class="pl-wx pl-w6"><div class="pl-w6top"><img src="' + PHOTO() + '" alt=""><span><b>' + esc(p.name) + '</b><small>Online check-in · via Chekin</small></span>' + lang + '</div>'
+      + '<div class="pl-w6chat">' + bub(0, 'Hello! Your stay at ' + esc(p.name) + ' is confirmed.')
+      + bub(1, '<div class="pl-w6card"><div class="pl-w6d"><div><small>Check-in</small><b>' + fmt(b.cin) + '</b><span>from ' + BK.tin + '</span></div><em>' + N + '</em><div class="r"><small>Check-out</small><b>' + fmt(b.cout) + '</b><span>by ' + BK.tout + '</span></div></div><div class="pl-w6f"><span>' + ic('users', 13) + gs + '</span><span>' + ic('hash', 13) + BK.via + ' ' + BK.ref + '</span><span>' + ic('user', 13) + 'Booked by ' + BK.by + '</span></div></div>', 'card')
+      + bub(2, ocState() + 'Each guest needs to check in before you arrive. It takes about 2 min each, with their ID or passport.')
+      + bub(3, 'Want us to remember them for your next stays? It\'s optional and never changes your booking.') + '</div>'
+      + '<div class="pl-w6rep"><div class="pl-oc-auth">' + auth() + skip() + '</div></div></div>';
+  }
+  if (C.ocw === '7') {   /* W7 · el viaje: la estancia como línea de tiempo */
+    var stp = function(cls, icn, t, d, extra){ return '<li class="' + cls + '"><span class="pl-w7dot">' + icn + '</span><div><b>' + t + '</b>' + (d ? '<span>' + d + '</span>' : '') + (extra || '') + '</div></li>'; };
+    return '<div class="pl-wx pl-w7"><div class="pl-w7top"><img src="' + PHOTO() + '" alt=""><span><b>' + esc(p.name) + '</b><small>' + BK.addr + '</small></span>' + lang + '</div>'
+      + '<h2 class="pl-w7h">Your stay</h2><ol class="pl-w7tl">'
+      + stp('done', ic('check', 13), 'Booked', BK.ref + ' · via ' + BK.via + ' · by ' + BK.by)
+      + stp('now', '<i></i>', 'Online check-in', 'You\'re here · 0 of ' + gs + ' checked in', '<div class="pl-w7box"><p><b>Save your guests for next time?</b> Optional: you can check in without it, and it never changes your booking.</p><div class="pl-oc-auth">' + auth() + skip() + '</div>' + ocNeed() + '</div>')
+      + stp('next', ic('pin', 13), 'Arrival', fmt(b.cin) + ' · from ' + BK.tin)
+      + stp('next', ic('cal', 13), 'Departure', fmt(b.cout) + ' · by ' + BK.tout + ' · ' + N) + '</ol></div>';
+  }
+  /* W8 · elige y verás: la consecuencia de cada opción, antes de decidir */
+  var sv = S.oc.save, tile = function(l, v, s2){ return '<div class="pl-w8t"><small>' + l + '</small><b>' + v + '</b>' + (s2 ? '<span>' + s2 + '</span>' : '') + '</div>'; };
+  var yes = function(t){ return '<li class="y">' + ic('check', 13) + '<span>' + t + '</span></li>'; }, no = function(t){ return '<li class="n">' + ic('shield', 13) + '<span>' + t + '</span></li>'; }, con = function(t){ return '<li class="c">' + ic('x', 13) + '<span>' + t + '</span></li>'; };
+  return '<div class="pl-wx pl-w8"><div class="pl-w7top"><img src="' + PHOTO() + '" alt=""><span><b>' + esc(p.name) + '</b><small>' + fmt(b.cin) + ' – ' + fmt(b.cout) + '</small></span>' + lang + '</div>'
+    + '<div class="pl-w8grid">' + tile('Check-in', fmt(b.cin), 'from ' + BK.tin) + tile('Check-out', fmt(b.cout), 'by ' + BK.tout) + tile('Nights', nn) + tile('Guests', g) + tile(BK.via + ' code', BK.ref) + tile('Booked by', BK.by) + '</div>' + '<div class="pl-w8st">' + ocState() + '</div>'
+    + '<h2 class="pl-w8h">Save your guests for next time?</h2><div class="pl-w8seg" role="radiogroup">'
+    + '<button type="button" role="radio" aria-checked="' + (sv === true) + '" class="' + (sv === true ? 'on' : '') + '" data-a="ocsave1">' + ic('bolt', 18) + '<b>Yes, save them</b><span>Sign in</span></button>'
+    + '<button type="button" role="radio" aria-checked="' + (sv === false) + '" class="' + (sv === false ? 'on' : '') + '" data-a="ocsave0">' + ic('user', 18) + '<b>Just this time</b><span>No account</span></button></div>'
+    + (sv === null ? '<p class="pl-w8hint">' + ic('shield', 14) + 'Both options check you in today. Pick one to see what changes.</p>'
+      : '<div class="pl-w8ex pl-ocw" key="' + sv + '"><ul>' + (sv ? yes('Next time, check in with one tap') + yes('Edit your guests anytime') + no('Never changes your booking or posts for you') : con('Fill in each guest now') + con('Nothing is saved for next time') + yes('Your check-in is just as complete')) + '</ul></div>')
+    + '<div class="pl-w8cta">' + (sv === null ? '<p class="pl-w8wait">' + ic('right', 15) + 'Choose an option to continue</p>' : sv ? '<div class="pl-oc-auth">' + auth() + '</div>' : '<button type="button" class="pl-btn pri" data-a="ocskip">Check in without an account' + ic('arrow', 18) + '</button>') + '</div></div>';
+}
+/* ---------- W9–W12: el check-in manda; guardar huéspedes es un detalle ---------- */
+function ocWy(btn){
+  var b = BOOKING, nn = nights(b.cin, b.cout), p = prop(b.prop), g = S.oc.count, gs = g + (g === 1 ? ' guest' : ' guests'), N = nn + (nn === 1 ? ' night' : ' nights');
+  var lang = '<button type="button" class="pl-gh-lang pl-wx-lang" data-a="lang" aria-label="Language: ' + LANGS[S.lang][1] + '">' + ic('globe', 15) + LANGS[S.lang][1] + ic('down', 14) + '</button>';
+  var go = function(t, cls){ return '<button type="button" class="pl-btn pri pl-wy-go' + (cls ? ' ' + cls : '') + '" data-a="ocskip">' + (t || 'Start check-in') + ic('arrow', 18) + '</button>'; };
+  var mini = '<span class="pl-wy-mini">' + btn('ocgoogle', 'pl-wy-ic g', GSVG, '…').replace('class="pl-btn ', 'aria-label="Sign in with Google" class="pl-btn ') + btn('ocapple', 'pl-wy-ic a', ASVG, '…').replace('class="pl-btn ', 'aria-label="Sign in with Apple" class="pl-btn ') + '</span>';
+  var d0 = new Date(); d0.setHours(0, 0, 0, 0); var left = Math.max(0, Math.round((b.cin - d0) / 864e5));
+  var dd = function(d){ return d.getDate(); }, mo = function(d){ return d.toLocaleDateString('en-GB', { month: 'short' }); }, wd = function(d){ return d.toLocaleDateString('en-GB', { weekday: 'short' }); };
+  var big = '<div class="pl-wy-big"><div><small>' + wd(b.cin) + ' · from ' + BK.tin + '</small><strong>' + dd(b.cin) + ' ' + mo(b.cin) + '</strong></div><span>' + ic('arrow', 18) + '</span><div class="r"><small>' + wd(b.cout) + ' · by ' + BK.tout + '</small><strong>' + dd(b.cout) + ' ' + mo(b.cout) + '</strong></div></div>';
+  var facts = '<div class="pl-wy-facts"><span>' + ic('cal', 14) + N + '</span><span>' + ic('users', 14) + gs + '</span><span>' + ic('hash', 14) + BK.via + ' ' + BK.ref + '</span><span>' + ic('user', 14) + 'Booked by ' + BK.by + '</span></div>';
+  if (C.ocw === '9') {   /* W9 · un botón: la foto, las fechas y empezar; guardar huéspedes, en pequeño */
+    return '<div class="pl-wx pl-wy pl-w9"><div class="pl-w9ph"><img src="' + PHOTO() + '" alt=""><div class="pl-w9top">' + lang + '</div><div class="pl-w9t"><small>Online check-in</small><b>' + esc(p.name) + '</b><span>' + ic('pin', 13) + BK.addr + '</span></div></div>'
+      + '<div class="pl-w9in">' + big + facts
+      + '<div class="pl-w9cta">' + go() + '<p class="pl-wy-sub">About 2 min per guest · have their ID or passport ready</p>'
+      + '<div class="pl-w9saved"><span><b>Stayed with us before?</b>Use your saved guests</span>' + mini + '</div></div></div></div>';
+  }
+  if (C.ocw === '10') {   /* W10 · los huéspedes: la tarea se ve (3 huecos que llenar) */
+    var slot = function(i){ var lead = i === 0; return '<button type="button" class="pl-w10s' + (lead ? ' lead' : '') + '" data-a="ocskip"><span class="pl-w10av">' + (lead ? esc(BK.by.charAt(0)) : ic('plus', 16)) + '</span><span class="pl-w10t"><b>' + (lead ? esc(BK.by) : 'Guest ' + (i + 1)) + '</b><small>' + (lead ? 'Lead guest · booked it' : (i === 2 ? 'Children included' : 'Name and ID')) + '</small></span><em>' + (lead ? 'Start' : 'Add') + '</em></button>'; };
+    var slots = ''; for (var i = 0; i < Math.min(g, 4); i++) slots += slot(i);
+    return '<div class="pl-wx pl-wy pl-w10"><div class="pl-w7top"><img src="' + PHOTO() + '" alt=""><span><b>' + esc(p.name) + '</b><small>' + BK.addr + '</small></span>' + lang + '</div>'
+      + '<div class="pl-w10bk"><img class="pl-w10img" src="' + PHOTO() + '" alt=""><div>' + big + facts + '</div></div>'
+      + '<div class="pl-w10h"><h2>' + g + ' guests to check in</h2><span class="pl-oc-st miss">0 of ' + g + '</span></div><p class="pl-wy-sub l">Before you arrive · about 2 min each, with their ID or passport</p>'
+      + '<div class="pl-w10l">' + slots + (g > 4 ? '<p class="pl-wy-sub l">+ ' + (g - 4) + ' more</p>' : '') + '</div>'
+      + '<div class="pl-w10saved"><span>' + ic('bolt', 16) + '<span><b>Fill them in one tap</b>Sign in to use guests you saved before</span></span>' + mini + '</div></div>';
+  }
+  if (C.ocw === '13') {   /* W13 · foto azul en bucle; «Your stay at» a la izquierda (como W1) y, en lugar del botón, la línea de tiempo de la W7 */
+    var auth = btn('ocgoogle', 'pl-soc g', GSVG + 'Continue with Google', 'Signing in…') + btn('ocapple', 'pl-soc a', ASVG + 'Continue with Apple', 'Signing in…');
+    var stp = function(cls, icn, t, d, extra){ return '<li class="' + cls + '"><span class="pl-w7dot">' + icn + '</span><div><b>' + t + '</b>' + (d ? '<span>' + d + '</span>' : '') + (extra || '') + '</div></li>'; };
+    /* copy del paso «Online check-in» (mismo cuadro, 4 textos): qué hay que hacer (antes de llegar), por qué conviene la cuenta, qué pasa si ya la tienes y que se puede seguir sin ella */
+    var cp = COPY13;
+    var nowBox = '<div class="pl-w7box pl-c13"><p><b>' + cp.t.replace('{g}', gs) + '</b>' + cp.d + '</p>'
+      + '<div class="pl-oc-auth">' + auth + '</div><p class="pl-c13ret">' + cp.r + '</p>'
+      + '<button type="button" class="pl-btn txt pl-oc-skip" data-a="ocskip">' + cp.s + ic('arrow', 16) + '</button></div>';
+    var stay = '<h2 class="pl-w7h" id="pl-w13t">Your stay</h2><ol class="pl-w7tl">'
+      + stp('done', ic('check', 13), 'Booked', BK.ref + ' · via ' + BK.via + ' · by ' + BK.by)
+      + stp('now', '<i></i>' + ic('users', 14), 'Online check-in', 'Required before arrival', nowBox)
+      + stp('next', ic('pin', 13), 'Arrival', fmt(b.cin) + ' · from ' + BK.tin)
+      + stp('next', ic('cal', 13), 'Departure', fmt(b.cout) + ' · by ' + BK.tout + ' · ' + N) + '</ol>';
+    /* móvil: como la W1 (foto con «Welcome to» arriba) y la caja blanca es «Your stay» entera */
+    if (isMob()) return hero() + '<div class="pl-col"><section class="pl-card pl-main-card pl-w13m pl-tl2" aria-labelledby="pl-w13t">' + stay + '</section></div>';
+    return '<div class="pl-wx pl-wy pl-w11 pl-w13"><img class="pl-w11bg" src="' + PHOTO() + '" alt=""><div class="pl-w11in"><div class="pl-w11top"><span>Online check-in</span>' + lang + '</div>'
+      + '<div class="pl-w11b pl-w13l"><p class="pl-w11eye">Welcome to</p><h2>' + esc(p.name) + '</h2><p class="pl-w11addr">' + ic('pin', 13) + BK.addr + '<span class="pl-w13lang">' + lang + '</span></p>' + big + facts
+      + '<button type="button" class="pl-btn pl-w11go" data-a="ochow">Check in now' + ic('arrow', 18) + '</button><p class="pl-wy-sub lt">' + gs + ' · about 2 min each</p></div>'   /* móvil: igual que la W11.1; en escritorio el botón cede el sitio a la tarjeta «Your stay» */
+      + '<div class="pl-w13w"><p class="pl-wel">Welcome to</p><p class="pl-gh-name">' + esc(HOST().name) + '</p><div class="pl-gh-row"><p class="pl-loc">' + ic('pin', 15) + (isUser() ? '6 homes in Spain' : 'Albacete, Spain') + '</p><button type="button" class="pl-gh-lang" data-a="lang" aria-label="Language: ' + LANGS[S.lang][1] + '">' + ic('globe', 15) + LANGS[S.lang][1] + ic('down', 14) + '</button></div></div>'   /* escritorio: la bienvenida de la W1, idéntica */
+      + '<section class="pl-w13card pl-tl2" aria-labelledby="pl-w13t">' + stay + '</section></div></div>';
+  }
+  if (C.ocw === '11') {   /* W11 · decidir después: foto a sangre, un solo botón; el «cómo» llega al pulsar */
+    return '<div class="pl-wx pl-wy pl-w11"><img class="pl-w11bg" src="' + PHOTO() + '" alt=""><div class="pl-w11in"><div class="pl-w11top"><span>Online check-in</span>' + lang + '</div>'
+      + '<div class="pl-w11b"><p class="pl-w11eye">Your stay at</p><h2>' + esc(p.name) + '</h2><p class="pl-w11addr">' + ic('pin', 13) + BK.addr + '</p>' + big + facts
+      + '<button type="button" class="pl-btn pl-w11go" data-a="ochow">Check in now' + ic('arrow', 18) + '</button><p class="pl-wy-sub lt">' + gs + ' · about 2 min each</p></div></div></div>';
+  }
+  /* W12 · interruptor: guardar huéspedes es un ajuste (apagado), no una pregunta */
+  var on = !!S.oc.rem;
+  return '<div class="pl-wx pl-wy pl-w12"><div class="pl-w7top"><img src="' + PHOTO() + '" alt=""><span><b>' + esc(p.name) + '</b><small>' + BK.addr + '</small></span>' + lang + '</div>'
+    + '<div class="pl-w12hero"><img src="' + PHOTO() + '" alt=""><small>Your stay starts in</small><strong>' + left + (left === 1 ? ' day' : ' days') + '</strong>' + big + '</div>'
+    + '<dl class="pl-w12dl"><div><dt>Guests</dt><dd>' + gs + '</dd></div><div><dt>Nights</dt><dd>' + nn + '</dd></div><div><dt>' + BK.via + ' code</dt><dd>' + BK.ref + '</dd></div><div><dt>Booked by</dt><dd>' + BK.by + '</dd></div></dl>'
+    + '<div class="pl-w12todo"><span class="pl-oc-st miss">To do</span><b>Check in ' + gs + ' before you arrive</b></div>'
+    + '<div class="pl-w12cta"><button type="button" class="pl-w12sw" role="switch" aria-checked="' + on + '" data-a="ocrem"><span><b>Remember my guests</b><small>' + (on ? 'Sign in below · next time is one tap' : 'Optional · for your next stays') + '</small></span><i></i></button>'
+    + (on ? '<div class="pl-oc-auth pl-w12auth">' + btn('ocgoogle', 'pl-soc g', GSVG + 'Continue with Google', 'Signing in…') + btn('ocapple', 'pl-soc a', ASVG + 'Continue with Apple', 'Signing in…') + '</div>' : go()) + '</div></div>';
+}
+function sOcHow(){
+  return '<div class="pl-ph"><h3 id="pl-sh">How do you want to check in?</h3><button type="button" class="pl-x" data-a="close" aria-label="Close">' + ic('x', 18) + '</button></div>'
+    + '<p class="pl-sp" style="text-align:left;margin:0 0 14px">Both check you in today. Your booking stays the same.</p>'
+    + '<button type="button" class="pl-w11o" data-a="ocskip"><span class="pl-oc-ben-ic">' + ic('user', 20) + '</span><span><b>Fill in each guest now</b><small>No account · about 2 min per guest</small></span>' + ic('right', 18) + '</button>'
+    + '<div class="pl-w11o s"><span class="pl-oc-ben-ic">' + ic('bolt', 20) + '</span><span><b>Use saved guests</b><small>Sign in · next time it\'s one tap</small></span></div>'
+    + '<div class="pl-oc-auth" style="margin-top:8px"><button type="button" class="pl-btn pl-soc g" data-a="ocgoogle">' + GSVG + 'Continue with Google</button><button type="button" class="pl-btn pl-soc a" data-a="ocapple">' + ASVG + 'Continue with Apple</button></div>';
+}
+function vOc(){
+  var st = S.oc.step, card = '', dock = '', busy = S.oc.busy;
+  var btn = function(a, cls, label, b){ return '<button type="button" class="pl-btn ' + cls + (busy === a ? ' pl-looking' : '') + '" data-a="' + a + '"' + (busy === a ? ' aria-busy="true"' : '') + '>' + (busy === a ? '<span>' + b + '</span>' : label) + '</button>'; };
+  if (st === 'welcome' && +C.ocw >= 9) return ocWy(btn);   /* W9–W12 */
+  if (st === 'welcome' && +C.ocw >= 5) return ocWx(btn);   /* W5–W8: maquetaciones libres */
+  if (st === 'welcome') {
+    card = '<section class="pl-card pl-main-card pl-ocw pl-ocw' + C.ocw + '" aria-labelledby="pl-h">' + dwel() + ocWelcome() + '</section>';
+    dock = '<div class="pl-dock"><div class="pl-oc-auth">' + btn('ocgoogle', 'pl-soc g', GSVG + 'Continue with Google', 'Signing in…') + btn('ocapple', 'pl-soc a', ASVG + 'Continue with Apple', 'Signing in…')
+      + '<button type="button" class="pl-btn txt pl-oc-skip" data-a="ocskip">' + SKIP + ic('arrow', 16) + '</button></div></div>';
+  } else if (st === 'new') {
+    card = '<section class="pl-card pl-main-card" aria-labelledby="pl-h">' + dwel() + ocAcc() + '<h2 id="pl-h">You\'re signed in</h2><p class="pl-lead pl-keep">It\'s your first check-in with us. Add each guest once and next time it\'s one tap.</p>' + ocStay()
+      + '<div class="pl-oc-ben"><span class="pl-oc-ben-ic">' + ic('check', 20) + '</span><div><b>We\'ll save them for you</b><span>Every guest you add today will be ready for your next stays.</span></div></div></section>';
+    dock = '<div class="pl-dock"><div><button type="button" class="pl-btn pri" data-a="ocform">' + ic('plus', 18) + 'Add your first guest</button></div></div>';
+  } else if (st === 'pick') {
+    var n = S.oc.sel.length, full = n >= S.oc.count, lead = ocLead();
+    var rows = SAVED.map(function(g){
+      var on = S.oc.sel.indexOf(g.id) >= 0, dis = !on && full, miss = ocMiss(g);
+      var sub = (g.you ? 'You · ' : '') + (g.adult ? '' : 'Child, ' + g.age + ' · ') + g.doc;
+      return '<button type="button" class="pl-oc-g' + (on ? ' on' : '') + (dis ? ' dis' : '') + '" data-a="ocsel" data-g="' + g.id + '" role="checkbox" aria-checked="' + on + '"' + (dis ? ' aria-disabled="true"' : '') + '><span class="pl-oc-ck">' + ic('check', 14) + '</span>' + ocInit(g)
+        + '<span class="pl-oc-gt"><b>' + esc(g.n) + '</b><span>' + (on && g.id === lead ? '<em class="pl-oc-lead">Lead guest</em>' : '') + sub + '</span></span>'
+        + (miss ? '<i class="pl-oc-st miss">1 detail missing</i>' : '<i class="pl-oc-st ok">' + ic('check', 11) + 'Ready</i>') + '</button>';
+    }).join('');
+    var err = S.oc.err ? '<p class="pl-errt" role="alert">' + S.oc.err + '</p>' : '';
+    card = '<section class="pl-card pl-main-card" aria-labelledby="pl-h">' + dwel() + ocAcc() + '<h2 id="pl-h">Who\'s coming?</h2>'
+      + '<p class="pl-oc-cnt">This booking is for <b>' + S.oc.count + (S.oc.count === 1 ? ' guest' : ' guests') + '</b> <button type="button" class="pl-link" data-a="occount">Change</button></p>'
+      + '<div class="pl-oc-list" role="group" aria-label="Your saved guests">' + rows + '<button type="button" class="pl-oc-g pl-oc-add" data-a="ocform"><span class="pl-oc-addic">' + ic('plus', 18) + '</span><span class="pl-oc-gt"><b>Add someone new</b><span>Not in your list yet</span></span></button></div>' + err + '</section>';
+    var left = S.oc.count - n;
+    dock = '<div class="pl-dock"><div>' + (n && left > 0 ? '<p class="pl-oc-cap">You can add the other ' + (left === 1 ? 'guest' : left + ' guests') + ' later.</p>' : '')
+      + btn('ocgo', 'pri' + (n ? '' : ' pl-oc-off'), n ? 'Check in ' + n + (n === 1 ? ' guest' : ' guests') : 'Choose who\'s coming', 'Checking in your guests…') + '</div></div>';
+  } else if (st === 'fix') {
+    var miss2 = S.oc.sel.map(ocG).filter(ocMiss);
+    card = '<section class="pl-card pl-main-card" aria-labelledby="pl-h">' + dwel() + '<div class="pl-mbar"><span class="pl-mo-ic sm">' + ic('users', 18) + '</span><span class="pl-mbar-tx"><small>Almost done</small><b>' + (S.oc.sel.length - miss2.length) + ' of ' + S.oc.sel.length + ' guests checked in</b></span></div>'
+      + '<h2 id="pl-h">Just one more detail</h2><p class="pl-lead pl-keep">We only ask for what\'s missing. Everything else is saved.</p>'
+      + miss2.map(function(g){ return '<div class="pl-oc-fix"><div class="pl-oc-fixh">' + ocInit(g, 32) + '<b>' + esc(g.n) + '</b><i class="pl-oc-st miss">Date of birth</i></div>'
+        + textField('bd', 'Date of birth', 'DD / MM / YYYY', 'As it appears on ' + esc(ocFirst(g.n)) + '\'s passport.', 'inputmode="numeric" autocomplete="bday"') + '</div>'; }).join('') + '</section>';
+    dock = '<div class="pl-dock"><div>' + btn('ocsave', 'pri', 'Save and finish', 'Saving…') + '</div></div>';
+  }
+  return hero() + '<div class="pl-col">' + card + dock + '</div>';
+}
+function sOcWhy(){
+  var full = function(list, cls){ return list.map(function(x){ return '<li class="' + cls + '">' + ic(cls === 'y' ? 'check' : 'shield', 13) + '<span><b>' + x[0] + '</b> <i>' + x[1] + '</i></span></li>'; }).join(''); };
+  return '<div class="pl-ph"><h3 id="pl-sh">Why sign in?</h3><button type="button" class="pl-x" data-a="close" aria-label="Close">' + ic('x', 18) + '</button></div>'
+    + '<div class="pl-ocw pl-whys"><p>' + ic('bolt', 15) + 'Signing in</p><ul>' + full(SIGN_YES, 'y') + '</ul><p class="n">' + ic('shield', 15) + 'Good to know</p><ul>' + full(SIGN_NO, 'n') + '</ul></div>'
+    + '<button type="button" class="pl-btn pri" data-a="close">Got it</button>';
+}
+function sOcMiss(){
+  var sel = S.oc.sel.map(ocG), done = sel.filter(function(g){ return !ocMiss(g); }), miss = sel.filter(ocMiss);
+  return '<div class="pl-ph"><h3 id="pl-sh">Almost done</h3><button type="button" class="pl-x" data-a="oclater" aria-label="Close">' + ic('x', 18) + '</button></div>'
+    + '<div class="pl-oc-res">' + done.map(function(g){ return '<span class="pl-oc-chip ok">' + ocInit(g, 22) + esc(ocFirst(g.n)) + ic('check', 13) + '</span>'; }).join('') + miss.map(function(g){ return '<span class="pl-oc-chip miss">' + ocInit(g, 22) + esc(ocFirst(g.n)) + '</span>'; }).join('') + '</div>'
+    + '<p class="pl-sp" style="text-align:left;margin:12px 0 16px">' + (done.length ? ocNames(done) + (done.length === 1 ? ' is' : ' are') + ' checked in. ' : '') + ocNames(miss) + ' just needs 1 more detail: date of birth.</p>'
+    + '<button type="button" class="pl-btn pri" data-a="ocfix">Add ' + esc(ocFirst(miss[0].n)) + '\'s date of birth</button><button type="button" class="pl-btn txt" data-a="oclater">I\'ll do it later</button>';
+}
+function sOcCount(){
+  return '<div class="pl-ph"><h3 id="pl-sh">How many guests?</h3><button type="button" class="pl-x" data-a="close" aria-label="Close">' + ic('x', 18) + '</button></div>'
+    + '<p class="pl-sp" style="text-align:left;margin:0 0 14px">Everyone staying, children included.</p><div class="pl-step"><span>Guests</span><div class="ctl"><button type="button" data-a="ocm" aria-label="One guest less"' + (S.oc.count <= 1 ? ' disabled' : '') + '>−</button><output aria-live="polite">' + S.oc.count + '</output><button type="button" class="add" data-a="ocp" aria-label="One guest more"' + (S.oc.count >= 8 ? ' disabled' : '') + '>+</button></div></div>'
+    + '<button type="button" class="pl-btn pri" data-a="close" style="margin-top:16px">Done</button>';
+}
+/* registrados: la misma apertura que la V8 (la cabecera crece a pantalla completa) con los huéspedes registrados */
+function sOcDone(){
+  var h = S.hr || { t: 0, l: 0, r: 0, b: Math.round(innerHeight * .7) }, sel = S.oc.sel.map(ocG), done = sel.filter(function(g){ return !ocMiss(g) || S.oc.fixed; }), pend = sel.length - done.length, left = S.oc.count - sel.length + pend;
+  var title = left > 0 ? done.length + ' of ' + S.oc.count + ' checked in' : 'You\'re all set, ' + esc(ocFirst(SAVED[0].n)) + '!';
+  var sub = left > 0 ? 'You can add the rest from your stay page.' : 'Everyone is checked in for ' + esc(prop(BOOKING.prop).name) + '.';
+  return '<div class="pl-fx pl-v8" style="--t:' + h.t + 'px;--l:' + h.l + 'px;--r:' + h.r + 'px;--b:' + h.b + 'px" role="dialog" aria-modal="true" aria-labelledby="pl-sh" aria-live="polite"><img src="' + PHOTO() + '" alt="">'
+    + '<div class="pl-x-c"><span class="pl-draw">' + CHECK_SVG + '</span><p class="pl-x-eye">Check-in done</p><h2 id="pl-sh">' + title + '</h2><p class="pl-oc-dsub">' + sub + '</p>'
+    + '<div class="pl-oc-donel">' + done.map(function(g){ return '<span class="pl-oc-chip lt">' + ocInit(g, 24) + esc(ocFirst(g.n)) + ic('check', 13) + '</span>'; }).join('') + '</div>' + openTxt() + '</div></div>';
+}
+function ocDoneNow(){
+  var gh = document.querySelector('.pl-gh'); if (gh) { var r = gh.getBoundingClientRect(); S.hr = { t: Math.max(0, Math.round(r.top)), l: Math.round(r.left), r: Math.round(innerWidth - r.right), b: Math.round(innerHeight - r.bottom) }; }
+  S.sheet = 'ocdone'; render(); clearTimeout(timer); timer = setTimeout(goApp, 3800);
+}
+function goForm(){ if (/[?&]hold=1/.test(location.search)) return; location.href = (location.port === '7794' ? 'http://localhost:7791/screens/' : '../../screens/') + (DESK ? 'form-empty.d.html' : 'g2-form-empty.m.html'); }   /* registro manual: el formulario de la réplica */
+function ocAction(a, t){
+  var oc = S.oc;
+  switch (a) {
+    case 'ocgoogle': case 'ocapple': if (oc.busy) return true; S.sheet = null; oc.busy = a; render(); setTimeout(function(){ oc.busy = ''; oc.signed = true; oc.step = C.ocv === 'none' ? 'new' : 'pick'; render(); }, 900); return true;
+    case 'ocskip': case 'ocform': goForm(); return true;
+    case 'ocout': oc.step = 'welcome'; oc.signed = false; break;
+    case 'ocsel': var id = t.getAttribute('data-g'), i = oc.sel.indexOf(id); oc.err = ''; if (i >= 0) oc.sel.splice(i, 1); else if (oc.sel.length < oc.count) oc.sel.push(id); else return true; break;
+    case 'occount': S.sheet = 'occount'; break;
+    case 'ocwhy2': S.sheet = 'ocwhy'; break;
+    case 'ochow': S.sheet = 'ochow'; break;
+    case 'ocrem': oc.rem = !oc.rem; break;
+    case 'ocsave1': oc.save = true; break;
+    case 'ocsave0': oc.save = false; break;
+    case 'ocwhy': if (isMob()) S.sheet = 'ocwhy'; else oc.why = !oc.why; break;   /* en móvil, en una hoja (no mueve la pantalla) */
+    case 'ocm': oc.count = Math.max(1, oc.count - 1); if (oc.sel.length > oc.count) oc.sel = oc.sel.slice(0, oc.count); break;
+    case 'ocp': oc.count = Math.min(8, oc.count + 1); break;
+    case 'ocgo':
+      if (!oc.sel.length || oc.busy) return true;
+      if (!ocLead()) { oc.err = 'Choose at least one adult: someone has to be the lead guest.'; break; }
+      oc.busy = 'ocgo'; render();
+      setTimeout(function(){ oc.busy = ''; if (oc.sel.map(ocG).some(ocMiss)) { S.sheet = 'ocmiss'; render(); } else ocDoneNow(); }, 1000);
+      return true;
+    case 'ocfix': S.sheet = null; oc.step = 'fix'; break;
+    case 'oclater': S.sheet = null; ocDoneNow(); return true;
+    case 'ocsave':
+      if (!/^\d{1,2}\s*\/?\s*\d{1,2}\s*\/?\s*\d{4}$/.test((S.f.bd || '').replace(/\s/g, '')) && !/^\d{8}$/.test((S.f.bd || '').replace(/\D/g, ''))) { S.err.bd = 'Enter the date of birth, e.g. 14 / 03 / 2018.'; break; }
+      oc.busy = 'ocsave'; render(); setTimeout(function(){ oc.busy = ''; oc.fixed = true; ocDoneNow(); }, 800); return true;
+    default: return false;
+  }
+  render(); return true;
+}
 function render(){
   document.documentElement.classList.remove('pl-nophoto');
   ['pl-dx', 'pl-d1', 'pl-d2', 'pl-d22', 'pl-d3', 'pl-d4'].forEach(function(c){ document.documentElement.classList.remove(c); });
   if (C.dv !== '0') document.documentElement.classList.add('pl-dx', 'pl-d' + (C.dv === '22' ? '2' : C.dv));
   if (C.dv === '22') document.documentElement.classList.add('pl-d22');   /* D2.2: como D2, pero la parte blanca es la hoja del móvil pegada al borde derecho */   /* maquetación de escritorio (solo afecta a ≥ 1024 px) */
   document.documentElement.classList.toggle('pl-pat', C.ph === '0' && /^t/.test(C.gi));   /* patrones: más suaves para que el texto se lea */   /* sin foto de la propiedad: ahora se usa una imagen genérica (PHOTO), no el degradado solo */
-  var body = S.phase === 'blocked' ? vBlocked() : S.phase === 'create' ? vCreate() : vForm();
+  var body = OC ? vOc() : S.phase === 'blocked' ? vBlocked() : S.phase === 'create' ? vCreate() : vForm();
   root.className = (S.notice ? 'pl-has-note ' : '') + (S.needCout ? 'pl-has-cout' : '');   /* sin modo compacto: al fallar no cambia el tamaño de nada (el aviso va junto al botón y el error de cada campo sustituye a su ayuda) */
   root.innerHTML = header() + '<main class="pl-main">' + body + '</main>' + sheet();
   document.body.style.overflow = S.sheet ? 'hidden' : '';
@@ -528,7 +849,9 @@ function goApp(){ if (/[?&]hold=1/.test(location.search)) return; location.href 
 /* ---------- eventos ---------- */
 document.addEventListener('click', function(ev){
   var t = ev.target.closest('[data-a]'); if (!t || !root.contains(t)) return;
-  if (S.sheet === 'search' && t.getAttribute('data-a') !== 'cancel') return;   /* mientras busca, solo vale «Go back» */
+  if (S.sheet === 'search' && t.getAttribute('data-a') !== 'cancel') return;
+  if (S.sheet === 'ocdone') return;
+  if (OC && /^oc/.test(t.getAttribute('data-a'))) { ev.preventDefault(); ocAction(t.getAttribute('data-a'), t); return; }   /* mientras busca, solo vale «Go back» */
   var a = t.getAttribute('data-a');
   if (a === 'close' && t.classList.contains('pl-sheet') && ev.target !== t) return;   /* pulsar dentro de la hoja no la cierra */
   ev.preventDefault();
@@ -582,7 +905,7 @@ window.__plSuggest = suggest; window.__plSetSug = function(sg){ if (sg === S.sug
 render();
 
 /* textos del panel: en español en local (:7794) y en inglés en la versión publicada */
-var PEN = {"Tipo de enlace": "Link type", "Cómo buscan la reserva (una o varias, mín. 1)": "How guests find their booking (one or more, min. 1)", "Nombre + fecha": "Name + date", "Código": "Code", "Email + fecha": "Email + date", "Pedir la propiedad": "Ask for the property", "Crear la reserva si no aparece": "Create booking if not found", "Sí": "Yes", "Resultado de la búsqueda": "Search result", "Encontrada": "Found", "Varias → con salida": "Several → departure date", "Varias → sin resolver": "Several → still ambiguous", "No encontrada": "Not found", "Sin conexión": "Connection error", "Demasiados intentos": "Too many attempts", "Elegir cómo buscar": "Method picker", "V1 · Pestañas": "V1 · Tabs", "V2 · Tarjetas": "V2 · Cards", "Foto de la propiedad": "Property photo", "Con foto de la propiedad": "With property photo", "Sin foto (imagen genérica)": "No photo (generic image)", "Duración de la reserva (prueba)": "Stay length (test)", "2 noches": "2 nights", "7 noches": "7 nights", "15 noches": "15 nights"};
+var PEN = {"W5 · Tarjeta de embarque": "W5 · Boarding pass", "W6 · Conversación": "W6 · Conversation", "W7 · El viaje": "W7 · The journey", "W8 · Elige y verás": "W8 · Choose and see", "W9 · Un botón": "W9 · One button", "W10 · Los huéspedes": "W10 · The guests", "W11 · Decidir después": "W11 · Decide later", "W13 · Azul + tu estancia": "W13 · Blue + your stay", "T1 · Actual": "T1 · Current", "T2 · Progreso": "T2 · Progress", "T3 · Puntos": "T3 · Dots", "T4 · Baldosas": "T4 · Tiles", "W13 · Línea del viaje": "W13 · Journey line", "C1 · Directo": "C1 · Direct", "C2 · Beneficio": "C2 · Benefit", "C3 · Obligatorio": "C3 · Required", "C4 · Cercano": "C4 · Friendly", "W13 · Copy del check-in (escritorio)": "W13 · Check-in copy (desktop)", "W12 · Interruptor": "W12 · Switch", "W1 · Billete": "W1 · Ticket", "W2 · Ficha + desplegable": "W2 · Details + expandable", "W3 · Dos caminos": "W3 · Two paths", "W4 · La reserva en la foto": "W4 · Booking on the photo", "Entrada (sin sesión)": "Entry (signed out)", "Pantalla": "Screen", "Sesión iniciada al entrar": "Signed in on arrival", "Huéspedes guardados": "Saved guests", "Ninguno": "None", "4, todos completos": "4, all complete", "4, uno con un dato pendiente": "4, one missing a detail", "Huéspedes en la reserva": "Guests in the booking", "C4.1 · Dónde + descripción": "C4.1 · Where + description", "Actual": "Current", "C1 · Recomendada": "C1 · Recommended", "C2 · Lo que vas a escribir": "C2 · What you'll type", "C3 · Ayuda primero": "C3 · Help first", "C4 · Dónde encontrarlo": "C4 · Where to find it", "Tarjetas de método": "Method cards", "Tipo de enlace": "Link type", "Cómo buscan la reserva (una o varias, mín. 1)": "How guests find their booking (one or more, min. 1)", "Nombre + fecha": "Name + date", "Código": "Code", "Email + fecha": "Email + date", "Pedir la propiedad": "Ask for the property", "Crear la reserva si no aparece": "Create booking if not found", "Sí": "Yes", "Resultado de la búsqueda": "Search result", "Encontrada": "Found", "Varias → con salida": "Several → departure date", "Varias → sin resolver": "Several → still ambiguous", "No encontrada": "Not found", "Sin conexión": "Connection error", "Demasiados intentos": "Too many attempts", "Elegir cómo buscar": "Method picker", "V1 · Pestañas": "V1 · Tabs", "V2 · Tarjetas": "V2 · Cards", "Foto de la propiedad": "Property photo", "Con foto de la propiedad": "With property photo", "Sin foto (imagen genérica)": "No photo (generic image)", "Duración de la reserva (prueba)": "Stay length (test)", "2 noches": "2 nights", "7 noches": "7 nights", "15 noches": "15 nights"};
 var T = function(x){ return location.port === '7794' ? x : (PEN[x] || x); };
 /* ---------- panel ---------- */
 var seg = function(list, cur, attr, onPick){ var d = document.createElement('div'); d.className = 'rail-switch';
@@ -610,13 +933,28 @@ var tries = 0, tm = setInterval(function(){
   rows.askp = seg([['1', T('Sí')], ['0', 'No']], C.askProp, 'data-pa', function(k){ C.askProp = k; LSset('replica-pl-askp', k); changed(); });
   rows.create = seg([['1', T('Sí')], ['0', 'No']], C.create, 'data-pc', function(k){ C.create = k; LSset('replica-pl-create', k); changed(); });
   rows.out = seg([['found', T('Encontrada')], ['multi', T('Varias → con salida')], ['ambig', T('Varias → sin resolver')], ['none', T('No encontrada')], ['net', T('Sin conexión')], ['block', T('Demasiados intentos')]], C.out, 'data-po', function(k){ C.out = k; LSset('replica-pl-out', k); changed(); });
+  /* pantalla: property link u one click check-in (enlaces: navegan dentro del marco y el escritorio la sigue) */
+  var scr = document.createElement('div'); scr.className = 'rail-switch';
+  scr.innerHTML = [['property-link', 'Property link'], ['one-click', 'One click check-in']].map(function(x){ return '<a class="rs-chip' + (S0.id === x[0] ? ' on' : '') + '" href="' + x[0] + '.' + (DESK ? 'd' : 'm') + '.html">' + x[1] + '</a>'; }).join('');
+  window.__repPanel.add(T('Pantalla'), scr, 0.5);
+  if (OC) {
+    rows.ocs = seg([['0', 'No'], ['1', T('Sí')]], C.ocs, 'data-ocs', function(k){ C.ocs = k; LSset('replica-oc-s', k); changed(); });
+    rows.ocv = seg([['none', T('Ninguno')], ['ok', T('4, todos completos')], ['miss', T('4, uno con un dato pendiente')]], C.ocv, 'data-ocv', function(k){ C.ocv = k; LSset('replica-oc-v', k); changed(); });
+    rows.ocg = seg([['1', '1'], ['2', '2'], ['3', '3'], ['4', '4']], C.ocg, 'data-ocg', function(k){ C.ocg = k; LSset('replica-oc-g', k); changed(); });
+    window.__repPanel.add(T('Sesión iniciada al entrar'), rows.ocs, 1.1);
+    window.__repPanel.add(T('Huéspedes guardados'), rows.ocv, 1.2);
+    window.__repPanel.add(T('Huéspedes en la reserva'), rows.ocg, 1.3);
+  } else {
   window.__repPanel.add(T('Tipo de enlace'), rows.type, 1.1);
   window.__repPanel.add(T('Cómo buscan la reserva (una o varias, mín. 1)'), rows.m, 1.2);
   window.__repPanel.add(T('Pedir la propiedad'), rows.askp, 1.3);
   window.__repPanel.add(T('Crear la reserva si no aparece'), rows.create, 1.4);
   window.__repPanel.add(T('Resultado de la búsqueda'), rows.out, 20);
+  }
   rows.mv = seg([['1', T('V1 · Pestañas')], ['2', T('V2 · Tarjetas')]], C.mv, 'data-pv', function(k){ C.mv = k; LSset('replica-pl-mv', k); changed(); });
-  window.__repPanel.add(T('Elegir cómo buscar'), rows.mv, 19);
+  if (!OC) window.__repPanel.add(T('Elegir cómo buscar'), rows.mv, 19);
+  rows.cv = seg([['0', T('Actual')], ['1', T('C1 · Recomendada')], ['2', T('C2 · Lo que vas a escribir')], ['3', T('C3 · Ayuda primero')], ['4', T('C4 · Dónde encontrarlo')], ['41', T('C4.1 · Dónde + descripción')]], C.cv, 'data-pcv', function(k){ C.cv = k; LSset('replica-pl-cv', k); if (k !== '0' && C.mv !== '2') { C.mv = '2'; LSset('replica-pl-mv', '2'); } changed(); });
+  /* «Tarjetas de método» ya no se elige: C4.1 definitiva */
   rows.av = seg([['1', 'V1 · Hoja'], ['2', 'V2 · Pantalla completa'], ['3', 'V3 · Desde el botón'], ['4', 'V4 · Se abre la foto'], ['5', 'V5 · Tarjeta de reserva'], ['6', 'V6 · Puertas'], ['7', 'V7 · Tus datos encajan'], ['8', 'V8 · V3 abriéndose como V4']], C.av, 'data-pz', function(k){ C.av = k; LSset('replica-pl-av', k); changed(); });
   /* «Animación de búsqueda» ya no se elige: V8 definitiva */
   rows.ph = seg([['1', T('Con foto de la propiedad')], ['0', T('Sin foto (imagen genérica)')]], C.ph, 'data-pf', function(k){ C.ph = k; LSset('replica-pl-ph', k); changed(); });
@@ -626,7 +964,7 @@ var tries = 0, tm = setInterval(function(){
   rows.gi = seg([['f1', 'Foto · Llaves en la entrada'], ['f2', 'Foto · Llave en mano'], ['f3', 'Foto · Puertas al balcón'], ['f4', 'Foto · Maleta'], ['f5', 'Foto · Maleta abierta'], ['t1', 'Patrón · Geométrico'], ['t2', 'Patrón · Curvas de papel'], ['t3', 'Patrón · Pliegues'], ['t4', 'Patrón · Azulejos'], ['t5', 'Patrón · Terrazo'], ['r', 'Recepcionista (la tuya)']], C.gi, 'data-pg', function(k){ C.gi = k; LSset('replica-pl-gi', k); changed(); });
   /* «Imagen genérica» ya no se elige: curvas de papel */
   rows.nn = seg([['2', T('2 noches')], ['7', T('7 noches')], ['15', T('15 noches')]], C.nn, 'data-pn', function(k){ C.nn = k; LSset('replica-pl-nn', k); setNights(k); changed(); });
-  window.__repPanel.add(T('Duración de la reserva (prueba)'), rows.nn, 20.5);
+  if (!OC) window.__repPanel.add(T('Duración de la reserva (prueba)'), rows.nn, 20.5);
   setTimeout(relevance, 0);
 }, 50);
 })();
