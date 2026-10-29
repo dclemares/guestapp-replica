@@ -1755,7 +1755,7 @@ html.pl-pat .pl-fx>img{opacity:.22!important;animation:none!important}
 .pl-gs-warm .pl-gs-av{background:#fff}
 
 /* pantalla final (abriendo la reserva): 3 versiones. La barra de «Opening your booking» dura lo mismo que la pantalla (5,5 s) */
-.pl-fin .pl-x-open i::after{animation-duration:4.5s;animation-delay:var(--fa,1.5s)}   /* la barra de carga dura 4,5 s desde que aparece «Opening your booking» */
+.pl-fin .pl-x-open i::after{animation-duration:3.75s;animation-delay:var(--fa,1.5s)}   /* la barra de carga dura 3,75 s desde que aparece «Opening your booking» */
 .pl-fin h2{margin:0}
 .pl-fin-todo{width:100%;max-width:340px;margin-top:18px;padding:14px 16px;border-radius:18px;background:rgba(255,255,255,.12);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);text-align:left}
 .pl-fin-todo>p{margin:0 0 8px;font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#c7d0ff}
@@ -1877,3 +1877,166 @@ html:not(.pl-nomore) .pl-ocm .pl-col.pl-more>.pl-dock:not(.pl-ghost){box-shadow:
 .pl-soc.g.pl-looking,.pl-w7box .pl-soc.g.pl-looking,.pl-soc.g.lt.pl-looking{background:#fff;color:var(--pl-ink)}
 .pl-soc.g.pl-looking::after{background:linear-gradient(100deg,transparent 20%,rgba(22,22,67,.09) 50%,transparent 80%)}   /* brillo gris: en blanco, el brillo blanco no se ve */
 .pl-soc.a.pl-looking{background:#000;color:#fff}
+
+/* paso 0 · precarga de la reserva: la foto a pantalla completa (como la pantalla final) mientras aparecen los datos de la reserva; después se encoge hasta la cabecera y sube la caja del paso 1 */
+
+.pl-pre>img{mix-blend-mode:luminosity;opacity:.6;animation:plKenLoop 20s ease-in-out infinite}
+.pl-pre .pl-x-c{transition:opacity .25s ease}
+.pl-pre-logo{display:grid;place-items:center;width:56px;height:56px;margin:0 0 18px;border-radius:18px;background:rgba(255,255,255,.16);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);font-size:24px;font-weight:700;color:#fff;animation:plPrePop .5s cubic-bezier(.3,1.4,.5,1) .15s both}
+.pl-pre .pl-x-eye{animation:plUpIn .45s ease .3s both}
+.pl-pre h2{animation:plUpIn .5s ease .4s both}
+.pl-pre-list li>span:last-child{display:flex;flex-direction:column;color:#fff}
+.pl-pre-list small{margin-top:1px;font-size:12.5px;font-weight:500;color:#c7d0ff}
+.pl-pre-ic{flex:none;position:relative;width:24px;height:24px}
+.pl-pre-ic::before{content:"";position:absolute;inset:2px;border-radius:99px;border:2px solid rgba(255,255,255,.22);border-top-color:#fff;animation:plPreSpin .7s linear infinite,plPreOff .15s ease calc(var(--d) + 1.05s) both}
+.pl-pre-ic svg{position:absolute;inset:0;width:24px;height:24px;padding:5px;border-radius:99px;background:#6be0a8;color:#15153f;stroke-width:3;box-sizing:border-box;animation:plPrePop .35s cubic-bezier(.3,1.4,.5,1) calc(var(--d) + 1.1s) both}
+.pl-pre .pl-x-open{animation:plUpIn .4s ease .9s both}
+.pl-pre .pl-x-open i::after{animation-duration:2.6s;animation-delay:1s}
+@keyframes plPreSpin{to{transform:rotate(360deg)}}
+@keyframes plPreOff{to{opacity:0}}
+@keyframes plPrePop{from{opacity:0;transform:scale(.4)}}
+.pl-fx.pl-pre.out{clip-path:inset(var(--t) var(--r) var(--b) var(--l) round var(--rad,22px));opacity:0}
+.pl-pre.out .pl-x-c{opacity:0}
+html.pl-pre-hold .pl-col>.pl-card,html.pl-pre-hold .pl-col>.pl-dock{opacity:0}
+
+
+@media (prefers-reduced-motion:reduce){.pl-pre *,.pl-pre-ic::before{animation:none!important}.pl-fx.pl-pre{transition:opacity .3s}html.pl-pre-out .pl-col>*,html.pl-pre-out .pl-gh{animation:none!important}}
+
+/* precarga · V2–V5 (V1 es la lista de arriba). Solo transform, opacity, filter, clip-path y máscara: todo va por la GPU */
+.pl-pre .pl-x-c{transition:opacity .35s ease,transform .6s cubic-bezier(.22,1,.36,1),filter .35s ease}
+.pl-pre.out .pl-x-c{transform:scale(.97);filter:blur(6px)}
+.pl-pw{display:inline-block;overflow:hidden;vertical-align:top;padding:0 .02em .1em}
+.pl-pw>span{display:inline-block;animation:plPW 1s cubic-bezier(.22,1,.36,1) var(--d) both}
+@keyframes plPW{from{opacity:0;transform:translateY(105%);filter:blur(8px)}}
+.pl-ptick{position:relative;width:100%;max-width:360px;height:26px;margin:18px 0 0}
+.pl-ptick>span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px;font-weight:600;color:#e3e8ff;white-space:nowrap;opacity:0;animation:plTIn .65s cubic-bezier(.22,1,.36,1) var(--d) forwards,plTOut .45s cubic-bezier(.55,0,1,.45) var(--o) forwards}
+.pl-ptick>span.last{animation:plTIn .65s cubic-bezier(.22,1,.36,1) var(--d) forwards}
+.pl-ptick svg{flex:none;color:#6be0a8}
+@keyframes plTIn{from{opacity:0;transform:translateY(14px);filter:blur(6px)}to{opacity:1;transform:none;filter:blur(0)}}
+@keyframes plTOut{from{opacity:1;transform:none;filter:blur(0)}to{opacity:0;transform:translateY(-14px);filter:blur(6px)}}
+
+/* V2 · revelado */
+.pl-pre2>img{animation:plP2img 2.8s cubic-bezier(.22,1,.36,1) both,plKenLoop 20s ease-in-out 2.8s infinite}
+@keyframes plP2img{from{opacity:0;transform:scale(1.32);filter:blur(30px)}to{opacity:.6;transform:scale(1.12);filter:blur(0)}}
+.pl-pre2 .pl-x-eye{animation:plUpIn .8s cubic-bezier(.22,1,.36,1) .35s both}
+.pl-pre2 h2{font-size:40px}
+.pl-pbar{position:absolute;left:0;right:0;bottom:0;z-index:3;height:3px;background:rgba(255,255,255,.12);transition:opacity .3s}
+.pl-pbar::after{content:"";position:absolute;inset:0;background:#fff;box-shadow:0 0 14px rgba(170,190,255,.9);transform-origin:left;animation:plFill 3.4s cubic-bezier(.65,0,.35,1) .2s both}
+.pl-pre.out .pl-pbar{opacity:0}
+
+/* V3 · tarjeta que se monta y se convierte en la caja */
+.pl-fx.pl-pre3{background:none}
+
+.pl-pbg>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;mix-blend-mode:luminosity;opacity:.6;animation:plKenLoop 20s ease-in-out infinite}
+.pl-pbg::after{content:"";position:absolute;inset:0;background:rgba(21,21,63,.3)}
+.pl-pcard{position:relative;z-index:2;width:100%;max-width:340px;padding:18px;border-radius:24px;background:rgba(255,255,255,.13);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);box-shadow:0 30px 70px rgba(10,10,40,.35);text-align:left;transform-origin:0 0;animation:plPC 1s cubic-bezier(.22,1,.36,1) .15s both}
+.pl-pcard::after{content:"";position:absolute;inset:0;border-radius:inherit;background:#fff;opacity:0;pointer-events:none;transition:opacity .4s ease .2s}
+.pl-pcard>*{transition:opacity .2s ease}
+@keyframes plPC{from{opacity:0;transform:perspective(900px) translateY(50px) rotateX(18deg) scale(.94);filter:blur(10px)}}
+.pl-pch{display:flex;align-items:center;gap:12px}
+.pl-pch .pl-pre-logo{width:46px;height:46px;margin:0;border-radius:14px;font-size:20px;animation-delay:.45s}
+.pl-pch b{display:block;font-size:19px;line-height:1.2;color:#fff;animation:plTIn .6s cubic-bezier(.22,1,.36,1) .55s both}
+.pl-pch small{display:flex;align-items:center;gap:4px;margin-top:2px;font-size:12.5px;color:#c7d0ff;animation:plTIn .6s cubic-bezier(.22,1,.36,1) .65s both}
+.pl-pcl{display:block;height:1px;margin:16px 0;background:rgba(255,255,255,.2);transform-origin:left;animation:plFill .9s cubic-bezier(.65,0,.35,1) .75s both}
+.pl-pcg{display:grid;grid-template-columns:auto 1fr;gap:14px 22px}
+.pl-pcf{position:relative;min-height:42px}
+.pl-pcf small{display:block;font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#aab6ff;animation:plUpIn .5s ease calc(var(--d) - .3s) both}
+.pl-psk{position:absolute;left:0;top:21px;width:82%;height:14px;border-radius:6px;background:linear-gradient(90deg,rgba(255,255,255,.1),rgba(255,255,255,.32),rgba(255,255,255,.1));background-size:200% 100%;animation:plUpIn .4s ease calc(var(--d) - .3s) both,plShim 1.1s linear infinite,plPreOff .3s ease calc(var(--d) + .8s) forwards}
+@keyframes plShim{from{background-position:100% 0}to{background-position:-100% 0}}
+.pl-pcf b{display:block;margin-top:4px;font-size:15px;font-weight:600;color:#fff;white-space:nowrap;animation:plTIn .55s cubic-bezier(.22,1,.36,1) calc(var(--d) + .85s) both}
+.pl-pre3 .pl-x-open{justify-content:center;margin:18px 0 0;animation:plUpIn .4s ease 1.2s both}
+.pl-pre3 .pl-x-open i::after{animation-duration:2.4s;animation-delay:1.2s}
+.pl-fx.pl-pre3.out{clip-path:none;opacity:1}
+.pl-pre3.out .pl-x-c{opacity:1;transform:none;filter:none}
+.pl-pre3.out .pl-pbg{clip-path:inset(var(--t) var(--r) var(--b) var(--l) round var(--rad,22px));opacity:0}
+
+
+
+
+
+/* V4 · persianas */
+.pl-fx.pl-pre4{background:#15153f}
+.pl-psts{position:absolute;inset:0;display:flex}
+.pl-pst{position:relative;flex:1;margin-right:-1px;overflow:hidden;background:linear-gradient(135deg,#15153f 0%,#2e4bd0 100%);background-size:500% 100%;background-position:calc(var(--k) * 25%) 0;animation:plPst 1.1s cubic-bezier(.76,0,.24,1) calc(var(--k) * .07s) both}
+.pl-pst>img{position:absolute;top:0;left:calc(var(--k) * -100%);width:500%;max-width:none;height:100%;object-fit:cover;mix-blend-mode:luminosity;opacity:.6;animation:plKenLoop 20s ease-in-out infinite}
+@keyframes plPst{from{transform:translateY(101%)}}
+.pl-pre4 .pl-pre-logo{animation-delay:.75s}
+.pl-pre4 .pl-x-eye{animation:plUpIn .7s cubic-bezier(.22,1,.36,1) .85s both}
+.pl-pre4 h2{font-size:38px}
+.pl-pchips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;max-width:340px;margin-top:20px}
+.pl-pchips>span{display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border-radius:99px;background:rgba(255,255,255,.15);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);font-size:13.5px;font-weight:600;color:#fff;animation:plPrePop .6s cubic-bezier(.3,1.4,.5,1) var(--d) both}
+.pl-pre4 .pl-x-open{animation:plUpIn .4s ease 1.75s both}
+.pl-pre4 .pl-x-open i::after{animation-duration:1.8s;animation-delay:1.8s}
+.pl-fx.pl-pre4.out{clip-path:none;opacity:1;background:transparent}
+.pl-pre4.out .pl-x-c{transform:translateY(-40px);filter:blur(8px)}
+.pl-pre4.out .pl-pst{animation:plPstOut 1s cubic-bezier(.76,0,.24,1) calc(.1s + var(--k) * .06s) both}
+@keyframes plPstOut{from{transform:none}to{transform:translateY(-101%)}}
+
+/* V5 · anillo e iris */
+@property --pl-h{syntax:'<length>';inherits:false;initial-value:-80px}
+.pl-fx.pl-pre5{background:#12123a;-webkit-mask:radial-gradient(circle at var(--cx,50%) var(--cy,50%),transparent var(--pl-h),#000 calc(var(--pl-h) + 70px));mask:radial-gradient(circle at var(--cx,50%) var(--cy,50%),transparent var(--pl-h),#000 calc(var(--pl-h) + 70px));transition:--pl-h 1.15s cubic-bezier(.76,0,.24,1)}
+.pl-pre5>img{opacity:.2}
+.pl-pau{position:absolute;width:75vmax;height:75vmax;border-radius:50%;filter:blur(70px);opacity:.6;pointer-events:none}
+.pl-pau.a{left:-25vmax;top:-25vmax;background:#2e4bd0;animation:plAu1 9s ease-in-out infinite alternate}
+.pl-pau.b{right:-30vmax;top:5vmax;background:#5b3df5;opacity:.45;animation:plAu2 11s ease-in-out infinite alternate}
+.pl-pau.c{left:0;bottom:-40vmax;background:#3d7bff;opacity:.4;animation:plAu3 10s ease-in-out infinite alternate}
+@keyframes plAu1{to{transform:translate(18vmax,14vmax) scale(1.15)}}
+@keyframes plAu2{to{transform:translate(-14vmax,18vmax) scale(.9)}}
+@keyframes plAu3{to{transform:translate(12vmax,-16vmax) scale(1.2)}}
+.pl-pring{position:relative;width:108px;height:108px;margin:0 auto 24px;animation:plPrePop .8s cubic-bezier(.3,1.4,.5,1) .1s both}
+.pl-pring svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg);overflow:visible}
+.pl-pring circle{fill:none;stroke:rgba(255,255,255,.14);stroke-width:2.5}
+.pl-pring circle.on{stroke:#fff;stroke-linecap:round;filter:drop-shadow(0 0 6px rgba(160,180,255,.95));animation:plRing 3.1s cubic-bezier(.65,0,.35,1) .35s forwards}
+@keyframes plRing{to{stroke-dashoffset:0}}
+.pl-pring>span{position:absolute;inset:13px;display:grid;place-items:center;border-radius:50%;background:rgba(255,255,255,.12);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);font-size:32px;font-weight:700;color:#fff;animation:plBreath 2.4s ease-in-out .9s infinite}
+@keyframes plBreath{50%{transform:scale(1.05)}}
+.pl-pre5 h2{font-size:34px}
+.pl-fx.pl-pre5.out{clip-path:none;opacity:1;--pl-h:var(--pl-hmax,160vmax)}
+.pl-pre5.out .pl-x-c{transform:scale(1.18);filter:blur(10px)}
+@media (min-width:1024px){.pl-pre2 h2,.pl-pre4 h2{font-size:56px}.pl-pre5 h2{font-size:48px}.pl-pcard{max-width:420px;padding:22px}}
+@media (prefers-reduced-motion:reduce){.pl-pst,.pl-pcard,.pl-pbg{transition:none!important}.pl-fx.pl-pre5{transition:none}}
+
+/* ===== OC-54 · salidas de la precarga, rehechas: un solo movimiento continuo, la misma curva para todo lo que se mueve junto ===== */
+.pl-fx.pl-pre{clip-path:inset(0 0 0 0 round 0);transition:clip-path .9s cubic-bezier(.7,0,.2,1) .15s,opacity .4s ease 1.02s}
+.pl-pre .pl-x-c{transition:opacity .28s ease,transform .5s cubic-bezier(.4,0,.2,1),filter .28s ease}
+.pl-pre.out .pl-x-c{transform:translateY(-18px) scale(.98)}
+/* la caja: en móvil sube pegada al borde de la foto (telón); en escritorio entra suave mientras la foto se encoge */
+html.pl-pre-v1 .pl-col>.pl-card,html.pl-pre-v1 .pl-col>.pl-dock,html.pl-pre-v2 .pl-col>.pl-card,html.pl-pre-v2 .pl-col>.pl-dock{position:relative;z-index:2;animation:plCur .9s cubic-bezier(.7,0,.2,1) .15s both}
+@keyframes plCur{from{transform:translateY(var(--pl-rise,100vh))}}
+@media (min-width:1024px){html.pl-pre-v1 .pl-col>.pl-card,html.pl-pre-v2 .pl-col>.pl-card,html.pl-pre-v4 .pl-col>.pl-card{animation:plDin .8s cubic-bezier(.22,1,.36,1) .45s both}}
+@keyframes plDin{from{opacity:0;transform:translateY(28px)}}
+/* V3: el fondo hace de telón igual y la hoja blanca crece hasta la caja; la caja de verdad aparece debajo justo antes de que la hoja se desvanezca */
+.pl-pbg{position:absolute;inset:0;background:linear-gradient(135deg,#15153f 0%,#2e4bd0 100%);clip-path:inset(0 0 0 0 round 0);transition:clip-path .9s cubic-bezier(.7,0,.2,1) .15s,opacity .4s ease 1.02s}
+.pl-pre3.out .pl-pcard{animation:none;opacity:0;transition:opacity .3s ease}
+.pl-pwh{position:absolute;z-index:3;display:block;background:#fff;opacity:0;pointer-events:none;box-shadow:0 30px 70px rgba(10,10,40,.3)}
+.pl-pwh.on{opacity:1;box-shadow:0 -6px 24px rgba(10,10,40,.08);transition:top .9s cubic-bezier(.7,0,.2,1) .08s,left .9s cubic-bezier(.7,0,.2,1) .08s,width .9s cubic-bezier(.7,0,.2,1) .08s,height .9s cubic-bezier(.7,0,.2,1) .08s,border-radius .9s cubic-bezier(.7,0,.2,1) .08s,box-shadow .9s ease,opacity .25s ease}
+.pl-pwh.on.gone{opacity:0;transition:opacity .35s ease}
+html.pl-pre-v3 .pl-col>.pl-card,html.pl-pre-v3 .pl-col>.pl-dock{animation:plFade .01s linear .97s both}
+/* V4: las franjas se recogen y la caja sube con ellas, con la misma curva */
+html.pl-pre-v4 .pl-col>.pl-card,html.pl-pre-v4 .pl-col>.pl-dock{position:relative;z-index:2;animation:plCur 1.05s cubic-bezier(.76,0,.24,1) .12s both}
+/* V5: mientras se abre el iris, la página se asienta desde un poco más cerca */
+html.pl-pre-v5 .pl-gh,html.pl-pre-v5 .pl-col>.pl-card,html.pl-pre-v5 .pl-col>.pl-dock{animation:plSettle 1.3s cubic-bezier(.22,1,.36,1) both}
+@keyframes plSettle{from{transform:scale(1.07);opacity:.4}}
+@media (max-width:1023px){html.pl-pre-v5 .pl-col>.pl-card{transform-origin:50% 0}}
+.pl-fx.pl-pre5{transition:--pl-h 1.2s cubic-bezier(.65,0,.2,1)}
+.pl-pre1>img,.pl-pre2>img,.pl-pbg>img{transition:top .9s cubic-bezier(.7,0,.2,1) .15s,left .9s cubic-bezier(.7,0,.2,1) .15s,width .9s cubic-bezier(.7,0,.2,1) .15s,height .9s cubic-bezier(.7,0,.2,1) .15s}
+.pl-pre1.out>img,.pl-pre2.out>img,.pl-pre3.out .pl-pbg>img{top:var(--ht);left:var(--hl);width:var(--hw);height:var(--hh);bottom:auto;right:auto}
+/* escritorio: la cabecera ocupa toda la pantalla (la caja flota encima), así que la foto de la precarga se funde en ella en lugar de encogerse y la caja entra a la vez */
+@media (min-width:1024px){
+  .pl-fx.pl-pre,.pl-pbg{transition:clip-path .9s cubic-bezier(.7,0,.2,1) .15s,opacity .7s cubic-bezier(.4,0,.2,1) .2s}
+  html.pl-pre-v1 .pl-col>.pl-card,html.pl-pre-v2 .pl-col>.pl-card,html.pl-pre-v4 .pl-col>.pl-card{animation:plDin .9s cubic-bezier(.22,1,.36,1) .3s both}
+}
+/* precarga: el logo de la propiedad (símbolo de Villa Calypso) sobre blanco, en lugar de la inicial */
+.pl-pre-logo:has(.pl-pre-mk),.pl-pring>span:has(.pl-pre-mk){background:#fff;-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:0 10px 30px rgba(10,10,40,.25)}
+.pl-pre-logo:has(.pl-pre-mk){width:68px;height:68px;border-radius:20px}
+.pl-pch .pl-pre-logo:has(.pl-pre-mk){width:48px;height:48px;border-radius:14px}
+.pl-pre-mk{display:block;width:68%;height:auto}
+.pl-pring>span .pl-pre-mk{width:56%}
+/* pantalla final en móvil: mientras el azul crece desde la cabecera hasta abajo, todo el contenido (caja y barra del botón) baja con su borde, con el mismo tiempo y la misma curva, en lugar de quedarse quieto y parecer cortado */
+@media (max-width:1023px){
+  .pl-findone .pl-col{animation:plFinPush .9s cubic-bezier(.65,0,.25,1) both}
+  @keyframes plFinPush{to{transform:translateY(var(--fin-b,100vh))}}
+}
+@media (max-width:1023px) and (prefers-reduced-motion:reduce){.pl-findone .pl-col{animation:none}}
+/* pantalla final en móvil: lo que baja se desenfoca poco a poco mientras entra el azul */
+@media (max-width:1023px){@keyframes plFinPush{to{transform:translateY(var(--fin-b,100vh));filter:blur(6px)}}}
