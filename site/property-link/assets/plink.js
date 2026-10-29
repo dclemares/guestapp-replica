@@ -37,7 +37,7 @@ var C = {
   ocf: '2',                                      /* pantalla final (abriendo la reserva): definitiva 2 · Lista animada (2026-10-28); 1 resumen y 3 llaves quedan solo en el código */
   ocl: '4',                                      /* «What's left»: huésped con datos pendientes = V4 · Destacada (definitiva 2026-10-28); V1–V3 quedan solo en el código */
   oca: 'c',                                      /* «Almost done»: definitiva C · Lo que falta (2026-10-28); A lista y B anillo quedan solo en el código */
-  opre: LSget('replica-oc-pre', '1'),            /* paso 0 · precarga de la reserva: V1 lista · V2 revelado · V3 tarjeta que se monta · V4 persianas · V5 anillo e iris */
+  opre: '3',                                     /* paso 0 · precarga de la reserva: V3 · Tarjeta que se monta (decidida 2026-10-29); V1, V2, V4 y V5 quedan solo en el código */
   gcm: LSget('replica-oc-gcm', 'ages'),         /* modal de huéspedes entre el paso 1 y el 2: «Por edad» (adultos + menores) o «Total», como en la Gestap */
   ocw: '13',                                     /* one click: entrada definitiva W13 (decidida 2026-10-28); W1–W12 quedan solo en el código como referencia */
   dv: '2',                                      /* escritorio definitivo: D2 · Tarjeta flotante (las demás quedan en el código como referencia) */              /* maquetación de escritorio: 0 = actual · 1 mitad y mitad · 2 tarjeta flotante · 3 banner panorámico · 4 minimal centrado */
@@ -1213,8 +1213,6 @@ var tries = 0, tm = setInterval(function(){
     /* navegar entre pasos (no hay «atrás» en la pantalla): 1 entrada sin sesión · 2 elegir huéspedes con sesión */
     rows.ocstep = seg([['p', T('Paso 0 · Precarga')], ['0', T('Paso 1 · Entrada')], ['c', T('Paso 2 · Huéspedes')], ['1', T('Paso 3 · Who\'s coming?')]], C.ocs, 'data-ocstep', function(k){ C.ocs = k; LSset('replica-oc-s', k); if (k === '1' && C.ocv === 'none') { C.ocv = 'miss'; LSset('replica-oc-v', 'miss'); } [].forEach.call(rows.ocs.querySelectorAll('[data-ocs]'), function(c){ c.classList.toggle('on', c.getAttribute('data-ocs') === k); }); changed(); });
     window.__repPanel.add(T('Paso'), rows.ocstep, 18.7);
-    rows.opre = seg([['1', 'V1 · Lista'], ['2', T('V2 · Revelado')], ['3', T('V3 · Tarjeta que se monta')], ['4', T('V4 · Persianas')], ['5', T('V5 · Anillo e iris')]], C.opre, 'data-opre', function(k){ C.opre = k; LSset('replica-oc-pre', k); if (C.ocs !== 'p') { C.ocs = 'p'; LSset('replica-oc-s', 'p'); [rows.ocstep, rows.ocs].forEach(function(r){ [].forEach.call(r.querySelectorAll('[data-ocstep],[data-ocs]'), function(c){ c.classList.toggle('on', (c.getAttribute('data-ocstep') || c.getAttribute('data-ocs')) === 'p'); }); }); } changed(); });
-    window.__repPanel.add(T('Precarga (paso 0)'), rows.opre, 18.72);
     rows.gcm = seg([['ages', T('Por edad')], ['total', 'Total']], C.gcm, 'data-gcm', function(k){ C.gcm = k; LSset('replica-oc-gcm', k); render(); });
     window.__repPanel.add(T('Huéspedes (paso 2)'), rows.gcm, 18.75);   /* versiones: en «Controls», no en «Booking settings» */
     window.__repPanel.add(T('Sesión iniciada al entrar'), rows.ocs, 1.1);
