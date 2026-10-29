@@ -7,7 +7,8 @@ var pgx = function(id){ return want === 'd' && id === 'g2-form-empty' ? 'form-em
 function url(id, v){ var has = (id === S.id ? S.has : null); return id + '.' + v + '.html'; }
 var NAV = null;
 /* cadena de «atrás» del registro: formulario / verificación → resumen de huéspedes → Home */
-var BACK = { 'iv-intro-f': 'hub-after-1', 'iv-intro-h': 'hub-after-1', 'g2-form-empty': 'hub-after-1', 'g2-form-filled': 'hub-after-1', 'g2-register-failed': 'g2-form-filled', 'g2-registered': 'hub-after-1', 'hub-after-1': 'home', 'pay-0-sheet': 'cart', 'pay-1-protection': 'cart', 'pay-1b-protection-scrolled': 'cart', 'pay-1b-scrolled': 'cart', 'pay-1c-covered-sheet': 'cart', 'pay-1d-deposit-sheet': 'cart', 'pay-1e-deposit-selected': 'cart', 'pay-1f-bottom': 'cart' };   /* el paso del depósito vuelve a Pagos */
+var BACK = { 'keys': 'home', 'cart': 'home', 'hub-after-1': 'home',   /* secciones principales: «←» siempre a la Home (en el marco del móvil el historial puede repetir la misma pantalla al tocar el cuadro) */
+  'iv-intro-f': 'hub-after-1', 'iv-intro-h': 'hub-after-1', 'g2-form-empty': 'hub-after-1', 'g2-form-filled': 'hub-after-1', 'g2-register-failed': 'g2-form-filled', 'g2-registered': 'hub-after-1', 'hub-after-1': 'home', 'pay-0-sheet': 'cart', 'pay-1-protection': 'cart', 'pay-1b-protection-scrolled': 'cart', 'pay-1b-scrolled': 'cart', 'pay-1c-covered-sheet': 'cart', 'pay-1d-deposit-sheet': 'cart', 'pay-1e-deposit-selected': 'cart', 'pay-1f-bottom': 'cart' };   /* el paso del depósito vuelve a Pagos */
 /* Menú lateral: tocar fuera lo cierra y vuelve a la pantalla desde la que se abrió (no siempre la Home) */
 if (S.id === 'menu') document.addEventListener('click', function(e){
   var ov = e.target.closest && e.target.closest('[class*="bg-black/50"]'); if (!ov || e.target.closest('[role="dialog"]')) return;
@@ -28,7 +29,7 @@ if (S.has && S.has.indexOf(want) > -1 && S.v !== want) { location.replace(S.id +
 
 /* things every screen shares: sidebar / bottom bar */
 var GLOBAL = { 'home':'home', 'registration':'hub-after-1', 'stay':'nav-stay', 'discover':'offers-all', 'recommendations':'offers-all',
-  'payments':'cart', 'faqs':'faqs', 'guest details':'hub-after-1' };
+  'payments':'cart', 'virtual keys':'keys', 'faqs':'faqs', 'guest details':'hub-after-1' };
 
 /* Menú hamburguesa: el cajón se desliza sobre la propia pantalla (sin cargar otra página). Se toma de menu.*.html y se inyecta. */
 var MENU = { tpl: null, el: null };

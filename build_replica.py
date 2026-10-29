@@ -31,6 +31,7 @@ for _n in ('home-sheet-ages','home-sheet-fixed','home-sheet-ages-fixed'): screen
 for _n in ('iv-intro-f', 'iv-intro-h'): screens[_n] = dict(screens['iv-1-intro'])   # intro de la verificación de identidad: con IV activa va antes del Step 1
 for _n in ('g2-registered', 'g2-registering', 'g2-register-failed'): screens[_n] = {'m': screens['hub-after-1']['m'], 'd': screens['hub-after-1']['d']}
 for _n in ('g2-iv', 'g2-ivh', 'g2-ivf'): screens[_n] = {'m': screens['hub-after-1']['m'], 'd': screens['hub-after-1']['d']}   # verificación de identidad: móvil y escritorio (iv.js)   # página "huésped registrado" (solo móvil): parte del resumen y la sustituye registered.js
+screens['keys'] = {'m': screens['cart']['m'], 'd': screens['cart']['d']}   # «Virtual keys»: pantalla de la app con la estructura de Pagos (access.js rellena el hueco)
 print(len(screens), 'screens')
 
 # ---------- css ----------
@@ -93,7 +94,7 @@ MANUAL = {
  'home': [('Guest details','hub-after-1'),('Payments','cart'),('See all','offers-all'),('Menu','menu'),('Registration','hub-after-1'),('Stay','nav-stay'),('Discover','offers-all')],
  'home-scrolled': [('Guest details','hub-after-1'),('Payments','cart'),('See all','offers-all')],
  'home-after-1': [('Guest details','hub-after-1'),('Payments','cart'),('See all','offers-all'),('Menu','menu')],
- 'menu': [('Home','home'),('Registration','hub-after-1'),('Payments','cart'),('Recommendations','offers-all'),('Language','language'),('FAQs','faqs')],
+ 'menu': [('Home','home'),('Registration','hub-after-1'),('Payments','cart'),('Virtual keys','keys'),('Recommendations','offers-all'),('Language','language'),('FAQs','faqs')],
  'hub-after-1': [('Add guest','g2-form-empty'),('Verify ID','iv-1-intro'),('Finish verification','iv-1-intro'),('Change guest count','home-sheet')],
  'g2-form-empty': [('Scan document to autofill','scan-1-country'),('Submit','form-errors-sheet')],
  'g2-form-filled': [('Submit','g2-submit-c')],
@@ -173,6 +174,7 @@ for sid, vs in screens.items():
         if sid == 'cart-exemptions': h = h.replace('>Edit Tourist taxes</span>', '>Tourist taxes</span>')   # cabecera móvil de Tasas: solo «Tourist taxes»
         h = changes.home_center(h, v)
         h = changes.hero_access(h)
+        if sid == 'keys': h = changes.keys_screen(h, v)
         h = changes.checkin_variants(h)
         if sid == 'hub-after-1': h = changes.hub_style(h, v)
         h = changes.form_assets(h)
@@ -182,7 +184,7 @@ for sid, vs in screens.items():
         if v == 'd': h = changes.home_rail(h)
         # vista Pagos: cuatro propuestas (pay-views.css / pay-views.js). Los controles salen en todas las pantallas; el rediseño, solo en «cart»
         h = h.replace('</head>', '<link rel="stylesheet" href="../assets/pay-views.css"><link rel="stylesheet" href="../assets/taxes.css"><link rel="stylesheet" href="../assets/deposit.css"><link rel="stylesheet" href="../assets/checkout.css"><link rel="stylesheet" href="../assets/own.css"></head>', 1)
-        h = h.replace('<script src="../replica.js">', '<script src="../assets/pay-views.js"></script><script src="../assets/taxes.js"></script><script src="../assets/deposit.js"></script><script src="../assets/checkout.js"></script><script src="../assets/own.js"></script><script src="../assets/titles.js"></script><script src="../replica.js">', 1)
+        h = h.replace('<script src="../replica.js">', '<script src="../assets/pay-views.js"></script><script src="../assets/taxes.js"></script><script src="../assets/deposit.js"></script><script src="../assets/checkout.js"></script><script src="../assets/own.js"></script><script src="../assets/titles.js"></script><script src="../assets/vkeys-nav.js"></script><script src="../replica.js">', 1)
         if sid.startswith('home-sheet'):
             # UI B (people pictograms) is the chosen design for the guest-count step
             h = changes_ui.guest_count_ui(h, 'ages' if '-ages' in sid else 'total', not sid.endswith('-fixed'), 'b')
@@ -190,7 +192,7 @@ for sid, vs in screens.items():
         open(os.path.join(SITE, 'screens', '%s.%s.html' % (sid, v)), 'w', encoding='utf-8').write(h)
         # thumbnail
         png = p[:-5] + '.png'
-        if os.path.exists(png) and not sid.startswith('home-sheet'):
+        if os.path.exists(png) and not sid.startswith('home-sheet') and sid != 'keys':
             out = os.path.join(SITE, 'thumbs', '%s.%s.jpg' % (sid, v))
             subprocess.run(['sips', '-Z', '520', '-s', 'format', 'jpeg', '-s', 'formatOptions', '60', png, '--out', out], capture_output=True)
 print('images', len([v for v in img_map.values() if v]))
@@ -213,6 +215,7 @@ shutil.copy(os.path.join(HERE, 'checkin.css'), os.path.join(SITE, 'assets', 'che
 shutil.copy(os.path.join(HERE, 'checkin.js'), os.path.join(SITE, 'assets', 'checkin.js'))
 shutil.copy(os.path.join(HERE, 'access.css'), os.path.join(SITE, 'assets', 'access.css'))
 shutil.copy(os.path.join(HERE, 'access.js'), os.path.join(SITE, 'assets', 'access.js'))
+shutil.copy(os.path.join(HERE, 'vkeys-nav.js'), os.path.join(SITE, 'assets', 'vkeys-nav.js'))   # «Virtual keys» en «Your stay» (#1005)
 shutil.copy(os.path.join(HERE, 'hub.css'), os.path.join(SITE, 'assets', 'hub.css'))
 shutil.copy(os.path.join(HERE, 'logo-check.jpg'), os.path.join(SITE, 'assets', 'logo-check.jpg'))
 shutil.copy(os.path.join(HERE, 'form.css'), os.path.join(SITE, 'assets', 'form.css'))
@@ -261,7 +264,7 @@ shutil.copy(os.path.join(HERE, 'hub.js'), os.path.join(SITE, 'assets', 'hub.js')
 
 # ---------- index ----------
 GROUPS = [
- ('Home y navegación', ('home', 'menu', 'language', 'faqs', 'offers', 'offer', 'nav-')),
+ ('Home y navegación', ('home', 'menu', 'language', 'faqs', 'offers', 'offer', 'nav-', 'keys')),
  ('Registro de huéspedes', ('hub', 'g2-iv', 'form-', 'submit', 'g2-')),
  ('Autofill: escaneo de documento', ('scan-',)),
  ('Verificación de identidad', ('iv-', 'pay-iv')),
@@ -281,7 +284,7 @@ for g in order:
     for sid in by[g]:
         v = 'm' if 'm' in screens[sid] else 'd'
         has = ''.join('<a href="screens/%s.%s.html">%s</a>' % (sid, x, 'Móvil' if x == 'm' else 'Escritorio') for x in ('m', 'd') if x in screens[sid])
-        cards += ('<figure><a href="screens/%s.%s.html"><img loading="lazy" src="thumbs/%s.%s.jpg" alt=""></a>'
+        cards += ('<figure><a href="screens/%s.%s.html"><img loading="lazy" src="thumbs/%s.%s.jpg" alt="" onerror="this.style.visibility=\'hidden\'"></a>'
                   '<figcaption><b>%s</b><div>%s</div></figcaption></figure>') % (sid, v, sid, v, sid, has)
     cards += '</div>'
 index = '''<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">

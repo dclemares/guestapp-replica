@@ -522,3 +522,21 @@ def ivintro_assets(html):
     html = html.replace('</head>', '<link rel="stylesheet" href="../assets/ivskip.css"><link rel="stylesheet" href="../assets/ivintro.css"></head>', 1)
     html = html.replace('<script src="../replica.js">', '<script src="../assets/ivskip.js"></script><script src="../assets/ivintro.js"></script><script src="../replica.js">', 1)
     return html
+
+
+def keys_screen(html, v):
+    """#1006: pantalla «Virtual keys». Se parte de Pagos (misma estructura: cabecera móvil, barra lateral, «Back to Home», etiqueta, titular, subtítulo, tarjetas y dock) y access.js rellena el hueco."""
+    html = html.replace('payments-view', 'keys-view').replace('class="my-cart ', 'class="vk-old ')
+    html = html.replace('Your Payments', 'Virtual keys')
+    html = html.replace('Review &amp; <span class="text-[var(--chekin-color-brand-blue)]">pay</span>', 'How to get <span class="text-[var(--chekin-color-brand-blue)]">in</span>')
+    html = re.sub(r'(<p class="m-0 max-w-\[480px\][^>]*>)Everything for your stay[^<]*</p>', r'\1Your keys and everything you need to get into Villa Calipso.</p>', html, count=1)
+    for old, new in (("Money should never be a surprise — here's what is charged, what is only reserved, and what is already settled.", 'Your keys are personal and only work during your stay. Ask me anything about getting in.'),
+                     ("What's a card authorisation?", "My code doesn't work"),
+                     ('Your card is registered, not charged. No money is blocked and your card limit stays available.', "Check you're typing the right door's code and press ✓. Still stuck? Call your host."),
+                     ('Not sure about an extra?', 'When do my keys work?'),
+                     ('Move it to "pay later" from the ⋯ menu — it stays one tap away and is never charged.', "From check-in time on your arrival day until check-out. If your dates change, you'll get new keys.")):
+        html = html.replace(old, new)   # panel de Vela: ayuda sobre las llaves, no sobre pagos
+    html = html.replace('data-active="true"', 'data-active="false"')   # ninguna entrada de la barra queda marcada (la de llaves la marca vkeys-nav.js)
+    html = html.replace('</head>', '<link rel="stylesheet" href="../assets/access.css"><style>.vk-old{display:none!important}html:not(.vk-tabs-on) .keys-view [role="tablist"]{display:none}</style></head>', 1)
+    html = html.replace('<script src="../replica.js">', '<script src="../assets/access.js"></script><script src="../replica.js">', 1)
+    return html
