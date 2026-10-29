@@ -594,6 +594,7 @@ html.pl-nophoto .pl-fx.pl-v8{background:var(--pl-glow);background-size:140% 140%
 /* patrones genéricos: más suaves detrás del texto */
 html.pl-pat .pl-gh>img{opacity:.38}
 html.pl-pat .pl-fx>img{opacity:.22!important;animation:none!important}
+html.pl-pat .pl-pbg>img{opacity:.38}   /* precarga: el fondo con patrón con la misma intensidad que la cabecera y sin parar su zoom (antes iba a .6 o quieto a .22 y cambiaba de tono al pasar al paso 1) */
 
 /* móvil: el contenedor principal siempre a todo el ancho (con margin:auto en una columna flex se encogía al ancho del contenido, p. ej. con un solo método) */
 @media (max-width:1023px){#pl-root>.pl-main{width:100%;margin:0;align-self:stretch}}
@@ -1674,6 +1675,22 @@ html.pl-pat .pl-fx>img{opacity:.22!important;animation:none!important}
 /* «1 detail missing» con la etiqueta de la Gestap (.v1-chip: amarillo, mayúsculas, 10 px, negrita) */
 .pl-gchip{flex:none;padding:1px 8px;border-radius:9999px;background:#ffc233;color:#0b0b0f;font-style:normal;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;line-height:1.5;white-space:nowrap}
 @media (max-width:1023px){#pl-root.pl-ocm>.pl-main{overflow:hidden;overflow:clip}}   /* la foto en perspectiva del fondo no puede crear scroll: la pantalla queda fija y solo la caja hace scroll si hace falta */
+/* tablet vertical: un solo fondo (la foto de la cabecera ocupa toda la pantalla, sin la segunda foto en perspectiva) y la caja flota con aire abajo, en vez de llegar al borde inferior. Property link e instant check-in */
+@media (min-width:700px) and (max-width:1023px) and (min-height:700px){
+  #pl-root>.pl-main{position:relative;isolation:isolate;overflow:hidden;overflow:clip;background:linear-gradient(135deg,#15153f 0%,#2e4bd0 100%)}
+  #pl-root>.pl-main::before,#pl-root>.pl-main::after{display:none}
+  #pl-root .pl-gh{position:relative;z-index:1;flex:0 0 210px!important;min-height:210px;overflow:visible;background:none}   /* la cabecera de siempre (210 px) también en el property link: así la caja no cambia de sitio al terminar la precarga */
+  #pl-root .pl-gh>img{height:100vh}
+  #pl-root .pl-gh::after{bottom:auto;height:100vh;background:linear-gradient(180deg,rgba(21,21,63,.1) 0%,rgba(21,21,63,0) 30%,rgba(21,21,63,.45) 100%)}
+  #pl-root .pl-col{position:relative;z-index:2;justify-content:flex-start;padding-bottom:48px;box-sizing:border-box;background:transparent}
+  #pl-root .pl-col>.pl-card{flex:0 1 auto;min-height:0;border-radius:26px;box-shadow:0 30px 70px rgba(10,10,40,.28)}
+  #pl-root .pl-col>.pl-card:not(:last-child){border-radius:26px 26px 0 0}
+  #pl-root .pl-col>.pl-dock{border-radius:0 0 26px 26px;box-shadow:0 30px 70px rgba(10,10,40,.28)}
+  /* precarga: como en escritorio, la foto no se recorta (ya es la de toda la pantalla) y la caja entra suave */
+  .pl-fx.pl-pre,.pl-pbg{transition:clip-path .9s cubic-bezier(.7,0,.2,1) .15s,opacity .7s cubic-bezier(.4,0,.2,1) .2s}
+  html.pl-pre-v1 #pl-root .pl-col>.pl-card,html.pl-pre-v2 #pl-root .pl-col>.pl-card,html.pl-pre-v4 #pl-root .pl-col>.pl-card,
+  html.pl-pre-v1 #pl-root .pl-col>.pl-dock,html.pl-pre-v2 #pl-root .pl-col>.pl-dock,html.pl-pre-v4 #pl-root .pl-col>.pl-dock{animation:plDin .9s cubic-bezier(.22,1,.36,1) .3s both}
+}
 
 /* registrando (paso del one click): la animación de la Gestap (registered.css · .rg-pring/.rg-steps) dentro de la caja */
 .pl-reg{display:flex;flex-direction:column;align-items:center;text-align:center}
@@ -1916,8 +1933,7 @@ html.pl-pre-hold .pl-col>.pl-card,html.pl-pre-hold .pl-col>.pl-dock{opacity:0}
 @keyframes plTOut{from{opacity:1;transform:none;filter:blur(0)}to{opacity:0;transform:translateY(-14px);filter:blur(6px)}}
 
 /* V2 · revelado */
-.pl-pre2>img{animation:plP2img 2.8s cubic-bezier(.22,1,.36,1) both,plKenLoop 20s ease-in-out 2.8s infinite}
-@keyframes plP2img{from{opacity:0;transform:scale(1.32);filter:blur(30px)}to{opacity:.6;transform:scale(1.12);filter:blur(0)}}
+/* el fondo es el mismo de la V3 (.pl-pbg): sin revelado propio de la foto */
 .pl-pre2 .pl-x-eye{animation:plUpIn .8s cubic-bezier(.22,1,.36,1) .35s both}
 .pl-pre2 h2{font-size:40px}
 .pl-pbar{position:absolute;left:0;right:0;bottom:0;z-index:3;height:3px;background:rgba(255,255,255,.12);transition:opacity .3s}
@@ -1925,7 +1941,7 @@ html.pl-pre-hold .pl-col>.pl-card,html.pl-pre-hold .pl-col>.pl-dock{opacity:0}
 .pl-pre.out .pl-pbar{opacity:0}
 
 /* V3 · tarjeta que se monta y se convierte en la caja */
-.pl-fx.pl-pre3{background:none}
+.pl-fx.pl-pre2,.pl-fx.pl-pre3{background:none}
 
 .pl-pbg>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;mix-blend-mode:luminosity;opacity:.6;animation:plKenLoop 20s ease-in-out infinite}
 .pl-pbg::after{content:"";position:absolute;inset:0;background:rgba(21,21,63,.3)}
@@ -1946,9 +1962,9 @@ html.pl-pre-hold .pl-col>.pl-card,html.pl-pre-hold .pl-col>.pl-dock{opacity:0}
 .pl-pcf b{display:block;margin-top:4px;font-size:15px;font-weight:600;color:#fff;white-space:nowrap;animation:plTIn .55s cubic-bezier(.22,1,.36,1) calc(var(--d) + .85s) both}
 .pl-pre3 .pl-x-open{justify-content:center;margin:18px 0 0;animation:plUpIn .4s ease 1.2s both}
 .pl-pre3 .pl-x-open i::after{animation-duration:2.4s;animation-delay:1.2s}
-.pl-fx.pl-pre3.out{clip-path:none;opacity:1}
+.pl-fx.pl-pre2.out,.pl-fx.pl-pre3.out{clip-path:none;opacity:1}
 .pl-pre3.out .pl-x-c{opacity:1;transform:none;filter:none}
-.pl-pre3.out .pl-pbg{clip-path:inset(var(--t) var(--r) var(--b) var(--l) round var(--rad,22px));opacity:0}
+.pl-pre2.out .pl-pbg,.pl-pre3.out .pl-pbg{clip-path:inset(var(--t) var(--r) var(--b) var(--l) round var(--rad,22px));opacity:0}
 
 
 
@@ -2020,11 +2036,12 @@ html.pl-pre-v5 .pl-gh,html.pl-pre-v5 .pl-col>.pl-card,html.pl-pre-v5 .pl-col>.pl
 @media (max-width:1023px){html.pl-pre-v5 .pl-col>.pl-card{transform-origin:50% 0}}
 .pl-fx.pl-pre5{transition:--pl-h 1.2s cubic-bezier(.65,0,.2,1)}
 .pl-pre1>img,.pl-pre2>img,.pl-pbg>img{transition:top .9s cubic-bezier(.7,0,.2,1) .15s,left .9s cubic-bezier(.7,0,.2,1) .15s,width .9s cubic-bezier(.7,0,.2,1) .15s,height .9s cubic-bezier(.7,0,.2,1) .15s}
-.pl-pre1.out>img,.pl-pre2.out>img,.pl-pre3.out .pl-pbg>img{top:var(--ht);left:var(--hl);width:var(--hw);height:var(--hh);bottom:auto;right:auto}
+.pl-pre1.out>img,.pl-pre2.out .pl-pbg>img,.pl-pre3.out .pl-pbg>img{top:var(--ht);left:var(--hl);width:var(--hw);height:var(--hh);bottom:auto;right:auto}
 /* escritorio: la cabecera ocupa toda la pantalla (la caja flota encima), así que la foto de la precarga se funde en ella en lugar de encogerse y la caja entra a la vez */
 @media (min-width:1024px){
   .pl-fx.pl-pre,.pl-pbg{transition:clip-path .9s cubic-bezier(.7,0,.2,1) .15s,opacity .7s cubic-bezier(.4,0,.2,1) .2s}
-  html.pl-pre-v1 .pl-col>.pl-card,html.pl-pre-v2 .pl-col>.pl-card,html.pl-pre-v4 .pl-col>.pl-card{animation:plDin .9s cubic-bezier(.22,1,.36,1) .3s both}
+  html.pl-pre-v1 .pl-col>.pl-card,html.pl-pre-v2 .pl-col>.pl-card,html.pl-pre-v4 .pl-col>.pl-card,
+  html.pl-pre-v1 .pl-col>.pl-dock,html.pl-pre-v2 .pl-col>.pl-dock,html.pl-pre-v4 .pl-col>.pl-dock{animation:plDin .9s cubic-bezier(.22,1,.36,1) .3s both}   /* la barra del botón entra junto a la caja (en escritorio va dentro de ella); antes heredaba la subida del móvil y se separaba */
 }
 /* precarga: el logo de la propiedad (símbolo de Villa Calypso) sobre blanco, en lugar de la inicial */
 .pl-pre-logo:has(.pl-pre-mk),.pl-pring>span:has(.pl-pre-mk){background:#fff;-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:0 10px 30px rgba(10,10,40,.25)}
@@ -2040,3 +2057,5 @@ html.pl-pre-v5 .pl-gh,html.pl-pre-v5 .pl-col>.pl-card,html.pl-pre-v5 .pl-col>.pl
 @media (max-width:1023px) and (prefers-reduced-motion:reduce){.pl-findone .pl-col{animation:none}}
 /* pantalla final en móvil: lo que baja se desenfoca poco a poco mientras entra el azul */
 @media (max-width:1023px){@keyframes plFinPush{to{transform:translateY(var(--fin-b,100vh));filter:blur(6px)}}}
+/* property link, salida de la precarga en móvil: la caja y la barra del botón van por encima de la foto, que llega hasta debajo de las esquinas redondeadas */
+

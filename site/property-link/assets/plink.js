@@ -28,6 +28,7 @@ var C = {
   ocs: LSget('replica-oc-s', '0'),              /* one click: sesión iniciada al entrar (0 no · 1 sí) */
   ocv: (function(v){ return v === 'miss5' ? 'miss' : v; })(LSget('replica-oc-v', 'miss')),           /* one click: huéspedes guardados (none · ok · miss = uno con un dato pendiente) */
   ocg: (function(v){ return ['2', '4', '6', '9', '14'].indexOf(v) >= 0 ? v : '4'; })(LSget('replica-oc-g', '4')),   /* ajustes de la reserva (como en la Gestap): número de huéspedes */
+  bkd: LSget('replica-oc-bk', 'ref,via,by,tin,tout'),   /* instant check-in: qué datos trae la reserva (ref = booking ID · via = plataforma · by = responsable · tin/tout = horas de entrada y salida); vacío = ninguno */
   bmin: LSget('replica-oc-min', '1'),             /* hay menores en la reserva */
   bpay: LSget('replica-oc-pay', 'reservation'),   /* pagos pendientes, separados por comas (vacío = solo registro de huéspedes): deposit, taxes, reservation */
   bdep: LSget('replica-oc-dep', 'hold'),          /* tipo de depósito: retención (hold) o tarjeta guardada (token) */
@@ -37,12 +38,12 @@ var C = {
   ocf: '2',                                      /* pantalla final (abriendo la reserva): definitiva 2 · Lista animada (2026-10-28); 1 resumen y 3 llaves quedan solo en el código */
   ocl: '4',                                      /* «What's left»: huésped con datos pendientes = V4 · Destacada (definitiva 2026-10-28); V1–V3 quedan solo en el código */
   oca: 'c',                                      /* «Almost done»: definitiva C · Lo que falta (2026-10-28); A lista y B anillo quedan solo en el código */
-  opre: '3',                                     /* paso 0 · precarga de la reserva: V3 · Tarjeta que se monta (decidida 2026-10-29); V1, V2, V4 y V5 quedan solo en el código */
+  opre: '3',                                     /* paso 0 · precarga: one click = V3 · Tarjeta que se monta; property link = V2 · Revelado (decidido 2026-10-29) */
   gcm: LSget('replica-oc-gcm', 'ages'),         /* modal de huéspedes entre el paso 1 y el 2: «Por edad» (adultos + menores) o «Total», como en la Gestap */
   ocw: '13',                                     /* one click: entrada definitiva W13 (decidida 2026-10-28); W1–W12 quedan solo en el código como referencia */
   dv: '2',                                      /* escritorio definitivo: D2 · Tarjeta flotante (las demás quedan en el código como referencia) */              /* maquetación de escritorio: 0 = actual · 1 mitad y mitad · 2 tarjeta flotante · 3 banner panorámico · 4 minimal centrado */
   cv: '41',                                     /* tarjetas definitivas: C4.1 · Dónde + descripción (las demás quedan en el código como referencia) */              /* tarjetas de elección de método (V2): 0 actual · 1 recomendada · 2 lo que vas a escribir · 3 ayuda primero · 4 dónde encontrarlo */
-  mv: LSget('replica-pl-mv', '1')               /* cómo se elige el método: 1 = pestañas · 2 = tarjetas de selección */
+  mv: '1'                                       /* cómo se elige el método: V1 · Pestañas (decidida 2026-10-29); las tarjetas (V2) quedan solo en el código */
 };
 if (!/^[nce]+$/.test(C.methods)) C.methods = 'nce';
 var ORDER = ['n', 'c', 'e'];
@@ -514,6 +515,8 @@ var OC = S0.id === 'one-click';
 /* ajustes de la reserva (como en la Gestap): reparto adultos/menores por número de huéspedes y pagos pendientes */
 function ocSplit(){ var a = ({ 2: [2, 0], 4: [3, 1], 6: [4, 2], 9: [6, 3], 14: [10, 4] })[+C.ocg] || [+C.ocg, 0];   /* mismo reparto que la Gestap (GCA) */ return C.bmin === '1' ? [a[0], a[1]] : [a[0] + a[1], 0]; }
 var PAYS = { deposit: ['Security deposit', 'Held on your card, released after your stay.'], taxes: ['Tourist tax', 'Per guest and night.'], reservation: ['Reservation payment', 'Pending amount for your booking.'] };
+function bkHas(k){ return (',' + C.bkd + ',').indexOf(',' + k + ',') >= 0; }
+function bkLine(){ var p = []; if (bkHas('ref')) p.push(BK.ref); if (bkHas('via')) p.push('via ' + BK.via); if (bkHas('by')) p.push('by ' + BK.by); return p.length ? p.join(' · ') : 'Confirmed'; }   /* «Booked»: solo los datos que trae la reserva */
 function ocPays(){ return (C.bpay || '').split(',').filter(function(k){ return PAYS[k]; }); }
 var SAVED = [
   { id: 'g1', n: 'Maria Lowe', you: true, adult: true, doc: 'Passport ··· 4821', bg: 'linear-gradient(135deg,#385bf8,#7a8cff)' },
@@ -662,10 +665,10 @@ function ocWy(btn){
       + '<div class="pl-oc-auth">' + auth + '</div><p class="pl-c13ret">' + cp.r + '</p>'
       + '<button type="button" class="pl-btn txt pl-oc-skip" data-a="ocskip">' + cp.s + ic('arrow', 16) + '</button></div>';
     var stay = '<h2 class="pl-w7h" id="pl-w13t">Your stay</h2><ol class="pl-w7tl">'
-      + stp('done', ic('check', 13), 'Booked', BK.ref + ' · via ' + BK.via + ' · by ' + BK.by)
+      + stp('done', ic('check', 13), 'Booked', bkLine())
       + stp('now', '<i></i>' + ic('users', 14), 'Online check-in', 'Required before arrival', nowBox)
-      + stp('next', ic('pin', 13), 'Arrival', fmt(b.cin) + ' · from ' + BK.tin)
-      + stp('next', ic('cal', 13), 'Departure', fmt(b.cout) + ' · by ' + BK.tout + ' · ' + N) + '</ol>';
+      + stp('next', ic('pin', 13), 'Arrival', fmt(b.cin) + (bkHas('tin') ? ' · from ' + BK.tin : ''))
+      + stp('next', ic('cal', 13), 'Departure', fmt(b.cout) + (bkHas('tout') ? ' · by ' + BK.tout : '') + ' · ' + N) + '</ol>';   /* horas solo si la reserva las trae */
     /* móvil: como la W1 (foto con «Welcome to» arriba) y la caja blanca es «Your stay» entera */
     return hero() + '<div class="pl-col"><section class="pl-card pl-main-card pl-w13m pl-tl2" aria-labelledby="pl-w13t">' + dwel() + stay + '</section></div>';   /* misma cabecera y misma caja que el property link, en móvil y en escritorio */
     return '<div class="pl-wx pl-wy pl-w11 pl-w13"><img class="pl-w11bg" src="' + PHOTO() + '" alt=""><div class="pl-w11in"><div class="pl-w11top"><span>Online check-in</span>' + lang + '</div>'
@@ -841,7 +844,7 @@ function sOcDone(){
 }
 /* paso 0 · precarga: al abrir el enlace, la foto a pantalla completa mientras se encuentra la reserva (lo mismo que la pantalla final, al revés); al terminar, la foto se encoge hasta la cabecera y sube la caja del paso 1 */
 function sOcPre(){
-  var b = BOOKING, nn = nights(b.cin, b.cout), g = S.oc.count, v = C.opre, H = HOST();
+  var b = BOOKING, nn = nights(b.cin, b.cout), g = S.oc ? S.oc.count : b.guests, v = OC ? C.opre : '2', H = HOST();   /* property link: la V2 · Revelado (sin datos de reserva: solo el alojamiento y lo que se está preparando) */
   var LG = isUser() ? H.logo : '<img class="pl-pre-mk" src="../assets/villa-calypso-mark.png" alt="">';   /* el logo de Villa Calypso (solo el símbolo: el nombre ya va debajo) */
   var gs = g + (g === 1 ? ' guest' : ' guests'), ns = nn + (nn === 1 ? ' night' : ' nights'), dts = fmt(b.cin) + ' – ' + fmt(b.cout);
   var wrap = function(inner, pre){ return '<div class="pl-fx pl-pre pl-pre' + v + '" role="dialog" aria-modal="true" aria-labelledby="pl-sh" aria-live="polite">' + (pre === undefined ? '<img src="' + PHOTO() + '" alt="">' : pre) + inner + '</div>'; };
@@ -849,13 +852,17 @@ function sOcPre(){
   var tick = function(items, d0, step){ var ex = .5; return '<p class="pl-ptick">' + items.map(function(t, k){ var last = k === items.length - 1; return '<span class="' + (last ? 'last' : '') + '" style="--d:' + (d0 + k * step + (k ? ex : 0)).toFixed(2) + 's;--o:' + (d0 + (k + 1) * step - .3 + ex).toFixed(2) + 's">' + t + '</span>'; }).join('') + '</p>'; };
   if (v === '2') {   /* V2 · revelado: la foto pasa de desenfocada a nítida, el nombre sube palabra a palabra y los datos se relevan en una sola línea */
     return wrap('<div class="pl-x-c"><p class="pl-x-eye">Welcome to</p><h2 id="pl-sh">' + words(H.name, .55) + '</h2>'
-      + tick(['Finding your booking…', ic('check', 14) + 'Booking ' + BK.ref + ' · ' + BK.via, ic('cal', 14) + dts + ' · ' + ns, ic('users', 14) + gs + ' to check in'], 1.0, .55) + '</div><i class="pl-pbar"></i>');
+      + tick(OC ? ['Finding your booking…', ic('check', 14) + 'Booking ' + BK.ref + ' · ' + BK.via, ic('cal', 14) + dts + ' · ' + ns, ic('users', 14) + gs + ' to check in']
+        : ['Opening ' + esc(H.name) + '…', ic('pin', 14) + (isUser() ? '6 homes in Spain' : BK.addr), 'Preparing your online check-in…', ic('check', 14) + 'Ready to find your booking'], 1.0, .55) + '</div><i class="pl-pbar"></i>', '<div class="pl-pbg"><img src="' + PHOTO() + '" alt=""></div>');   /* el fondo es el de la V3 del instant check-in: la foto con el mismo zoom en bucle que la cabecera desde el primer fotograma (sin revelado propio), así nunca se para ni cambia de encuadre al pasar al paso 1 */   /* property link: lo que se está cargando del alojamiento, nada de una reserva */
   }
   if (v === '3') {   /* V3 · tarjeta que se monta: la ficha de la reserva se construye en cristal y al final se convierte en la caja «Your stay» */
     var fld = function(l, t, k){ return '<div class="pl-pcf" style="--d:' + (1.05 + k * .3).toFixed(2) + 's"><small>' + l + '</small><span class="pl-psk"></span><b>' + t + '</b></div>'; };
-    return wrap('<div class="pl-x-c"><div class="pl-pcard"><div class="pl-pch"><span class="pl-pre-logo">' + LG + '</span><span><b id="pl-sh">' + esc(H.name) + '</b><small>' + ic('pin', 12) + 'Albacete, Spain</small></span></div><i class="pl-pcl"></i>'
-      + '<div class="pl-pcg">' + fld('Booking', BK.ref, 0) + fld('Stay', dts, 1) + fld('Guests', gs, 2) + fld('Nights', ns, 3) + '</div>'
-      + '<p class="pl-x-open">Opening your booking<i></i></p></div></div><i class="pl-pwh"></i>', '<div class="pl-pbg"><img src="' + PHOTO() + '" alt=""></div>');
+    var first = bkHas('ref') ? fld('Booking', BK.ref, 0) : bkHas('via') ? fld('Booked via', BK.via, 0) : bkHas('by') ? fld('Booked by', BK.by, 0) : '';   /* el primer dato, según lo que traiga la reserva */
+    var cells = OC ? first + fld('Stay', dts, 1) + fld('Guests', gs, 2) + fld('Nights', ns, 3)   /* property link: aún no hay reserva; la ficha es la del alojamiento y el check-in online */
+      : fld('Address', BK.addr.split(',')[0], 0) + fld('Check-in', 'Online, before you arrive', 1) + fld('Arrivals', 'From ' + BK.tin, 2) + fld('Departures', 'Until ' + BK.tout, 3);   /* solo datos del alojamiento (dirección, cómo es el check-in y sus horarios), nada de una reserva: aún no sabemos cuál es */
+    return wrap('<div class="pl-x-c"><div class="pl-pcard"><div class="pl-pch"><span class="pl-pre-logo">' + LG + '</span><span><b id="pl-sh">' + esc(H.name) + '</b><small>' + ic('pin', 12) + (isUser() ? '6 homes in Spain' : 'Albacete, Spain') + '</small></span></div><i class="pl-pcl"></i>'
+      + '<div class="pl-pcg">' + cells + '</div>'
+      + '<p class="pl-x-open">' + (OC ? 'Opening your booking' : 'Preparing your online check-in') + '<i></i></p></div></div><i class="pl-pwh"></i>', '<div class="pl-pbg"><img src="' + PHOTO() + '" alt=""></div>');
   }
   if (v === '4') {   /* V4 · persianas: la foto entra en cinco franjas escalonadas y al terminar se recogen hacia arriba descubriendo el paso 1 */
     var strips = [0, 1, 2, 3, 4].map(function(k){ return '<div class="pl-pst" style="--k:' + k + '"><img src="' + PHOTO() + '" alt=""></div>'; }).join('');
@@ -876,18 +883,23 @@ function sOcPre(){
 var PRE_T = 3.6;   /* segundos que se ve la precarga antes de encogerse a la cabecera (3,1 + medio segundo más de carga: spinners, esqueletos y barras; las animaciones van a la misma velocidad) */
 function ocPre(){
   var html = document.documentElement; html.className = html.className.replace(/\s*pl-pre-\S+/g, '');
-  if (!OC || C.ocs !== 'p') return;
+  if (OC ? C.ocs !== 'p' : !S.plPre) return;   /* property link: solo al abrir el enlace (o al pedirla desde el panel), no en cada cambio de ajustes */
+  if (!OC) S.plPre = false;
   S.sheet = 'ocpre'; html.classList.add('pl-pre-hold'); render();
-  var v = C.opre, reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var v = OC ? C.opre : '2', reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   clearTimeout(timer); timer = setTimeout(function(){
     var fx = root.querySelector('.pl-pre'), gh = root.querySelector('.pl-gh'), cd = root.querySelector('.pl-col>.pl-card'); if (!fx || /[?&]hold=1/.test(location.search)) return;   /* ?hold=1: se queda en la precarga (para revisarla) */
     /* salida: en móvil la foto sube como un telón y su borde inferior arrastra la caja del paso 1 (mismo tiempo y misma curva); en escritorio la foto se encoge hasta la cabecera */
+    /* el zoom en bucle de la foto de la cabecera se pone en la misma fase que el de la foto de la precarga: así, al acabar, la foto se acomoda sin salto (en la V3 ya iban sincronizadas; en la V2 el bucle de la precarga arranca por su cuenta) */
+    var pim = fx.querySelector(':scope>img') || fx.querySelector('.pl-pbg>img'), pa = pim && pim.getAnimations().filter(function(x){ return x.animationName === 'plKenLoop'; })[0], him = gh && gh.querySelector('img'), ha = him && him.getAnimations().filter(function(x){ return x.animationName === 'plKenLoop'; })[0];
+    if (pa && ha && pa.currentTime != null) { var ph = pa.currentTime - (pa.effect.getTiming().delay || 0); if (ph >= 0) { KB0 = Date.now() - ph; ha.currentTime = ph + (ha.effect.getTiming().delay || 0); } }
     var ct = cd ? Math.round(cd.getBoundingClientRect().top) : innerHeight, rise = Math.max(0, innerHeight - ct), h = gh ? gh.getBoundingClientRect() : null;
     var px = function(n){ return Math.round(n) + 'px'; };
-    if (isMob()) fx.style.cssText = '--t:0px;--l:0px;--r:0px;--b:' + rise + 'px;--rad:0px';
+    if (isTab()) fx.style.cssText = '--t:0px;--l:0px;--r:0px;--b:0px;--rad:0px';   /* tablet vertical: la foto de la cabecera ya ocupa toda la pantalla, así que no se recorta (como en escritorio) */
+    else if (isMob()) fx.style.cssText = '--t:0px;--l:0px;--r:0px;--b:' + rise + 'px;--rad:0px';
     else if (h) fx.style.cssText = '--t:' + px(Math.max(0, h.top)) + ';--l:' + px(h.left) + ';--r:' + px(innerWidth - h.right) + ';--b:' + px(Math.max(0, innerHeight - h.bottom)) + ';--rad:' + getComputedStyle(gh).borderTopLeftRadius;
     html.style.setProperty('--pl-rise', rise + 'px');
-    if (h) fx.style.cssText += ';--ht:' + px(h.top) + ';--hl:' + px(h.left) + ';--hw:' + px(h.width) + ';--hh:' + px(h.height);   /* la foto acaba con el mismo encuadre que la de la cabecera */
+    if (h && him) fx.style.cssText += ';--ht:' + px(h.top + him.offsetTop) + ';--hl:' + px(h.left + him.offsetLeft) + ';--hw:' + px(him.offsetWidth) + ';--hh:' + px(him.offsetHeight);   /* la foto acaba con el mismo encuadre que la de la cabecera (su caja, que en tablet es más alta que la cabecera) */
     if (v === '3' && cd && !reduce) {   /* una hoja blanca sale de la ficha de cristal y crece, sin deformarse, hasta ser la caja «Your stay» */
       var pc = fx.querySelector('.pl-pcard'), wh = fx.querySelector('.pl-pwh'); pc.style.animation = 'none';
       var a = pc.getBoundingClientRect(), z = cd.getBoundingClientRect();
@@ -898,7 +910,7 @@ function ocPre(){
     if (v === '5' && !reduce) { var lg = fx.querySelector('.pl-pring').getBoundingClientRect(); fx.style.setProperty('--cx', px(lg.left + lg.width / 2)); fx.style.setProperty('--cy', px(lg.top + lg.height / 2)); var cx = lg.left + lg.width / 2, cy = lg.top + lg.height / 2; fx.style.setProperty('--pl-hmax', px(Math.hypot(Math.max(cx, innerWidth - cx), Math.max(cy, innerHeight - cy)) + 10)); }   /* el iris acaba justo al salir de la esquina más lejana: todo su recorrido se ve */
     fx.classList.add('out'); html.classList.remove('pl-pre-hold'); html.classList.add('pl-pre-out', 'pl-pre-v' + v);
     if (/[?&]hold=out/.test(location.search)) { requestAnimationFrame(function(){ document.getAnimations().forEach(function(x){ x.pause(); }); }); window.__preSeek = function(ms){ document.getAnimations().forEach(function(x){ x.currentTime = (x instanceof CSSTransition || /^plCur|^plSettle|^plPstOut|^plFade|^plUpIn/.test(x.animationName) && x.effect.target.closest && !x.effect.target.closest('.pl-x-c') ? 0 : PRE_T * 1000) + ms; }); }; return; }   /* ?hold=out: la salida congelada, para revisarla fotograma a fotograma */
-    timer = setTimeout(function(){ S.sheet = null; fx.remove(); document.body.style.overflow = ''; timer = setTimeout(function(){ html.className = html.className.replace(/\s*pl-pre-\S+/g, ''); }, 900); }, 1450);
+    timer = setTimeout(function(){ S.sheet = null; fx.remove(); document.body.style.overflow = ''; if (!OC) root.classList.remove('pl-ocm');   /* property link: vuelve a su maquetación al terminar (los niveles de ajuste ya están calculados con ella) */ timer = setTimeout(function(){ html.className = html.className.replace(/\s*pl-pre-\S+/g, ''); if (!OC) fit(); }, 900); }, 1450);
   }, PRE_T * 1000);
 }
 function ocDoneNow(){
@@ -907,6 +919,15 @@ function ocDoneNow(){
   S.sheet = 'ocdone';
   if (OC && root.querySelector('.pl-main')) { root.insertAdjacentHTML('beforeend', sheet()); root.classList.add('pl-findone'); if (S.hr) root.style.setProperty('--fin-b', S.hr.b + 'px'); document.body.style.overflow = 'hidden'; }   /* sin volver a pintar lo de debajo: así el registro (spinner, anillo, checks) sigue tal cual mientras entra la pantalla final */
   else render();
+  /* móvil: la foto de la cabecera crece hasta ocupar la pantalla, al revés de como se encoge del paso 0 al 1 (mismo encuadre de partida, mismo tiempo y misma curva) */
+  var fx = OC && isMob() && root.querySelector('.pl-fx'), im = fx && (fx.querySelector(':scope>img') || fx.querySelector('.pl-pbg>img')), him = gh && gh.querySelector('img');
+  if (im && gh && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    var hb = gh.getBoundingClientRect(), tf = him ? getComputedStyle(him).transform : 'none', ez = ' .9s cubic-bezier(.65,0,.25,1)';
+    im.style.cssText = 'position:absolute;top:' + hb.top + 'px;left:' + hb.left + 'px;width:' + hb.width + 'px;height:' + hb.height + 'px;right:auto;bottom:auto;object-fit:cover;animation:none;opacity:.6;transform:' + tf + ';transition:none';
+    im.offsetWidth;
+    im.style.transition = 'top' + ez + ',left' + ez + ',width' + ez + ',height' + ez + ',opacity 1.2s ease .35s';
+    im.style.top = '0px'; im.style.left = '0px'; im.style.width = '100%'; im.style.height = '100%'; im.style.opacity = '.32';
+  }
   clearTimeout(timer); timer = setTimeout(goApp, Math.round(((S.finAt || 1.5) + OC_LOAD) * 1000) + 150);   /* «Opening your booking» carga como mínimo 6 s desde que aparece */
 }
 /* cambio de paso con transición (A fundido · B deslizar · C subida escalonada · D barrido): sale la caja actual, cambia el paso y entra la nueva */
@@ -1015,9 +1036,9 @@ function render(){
   if (C.dv === '22') document.documentElement.classList.add('pl-d22');   /* D2.2: como D2, pero la parte blanca es la hoja del móvil pegada al borde derecho */   /* maquetación de escritorio (solo afecta a ≥ 1024 px) */
   document.documentElement.classList.toggle('pl-pat', C.ph === '0' && /^t/.test(C.gi));   /* patrones: más suaves para que el texto se lea */   /* sin foto de la propiedad: ahora se usa una imagen genérica (PHOTO), no el degradado solo */
   var body = OC ? vOc() : S.phase === 'blocked' ? vBlocked() : S.phase === 'create' ? vCreate() : vForm();
-  root.className = (S.notice ? 'pl-has-note ' : '') + (S.needCout ? 'pl-has-cout' : '') + (OC ? ' pl-ocm' : '');
+  root.className = (S.notice ? 'pl-has-note ' : '') + (S.needCout ? 'pl-has-cout' : '') + (OC || S.sheet === 'ocpre' ? ' pl-ocm' : '');   /* property link: durante la precarga, la misma maquetación que el instant check-in (para que la animación sea idéntica) */
   if (OC && S.sheet === 'ocdone' && S.hr) { root.classList.add('pl-findone'); root.style.setProperty('--fin-b', S.hr.b + 'px'); }   /* pantalla final: la caja baja a la vez que entra el azul (no se queda cortada) */
-  if (OC) root.style.setProperty('--pl-photo', 'url("' + PHOTO() + '")');   /* móvil: la misma foto continúa por detrás de la caja, cada vez más grande hacia abajo */   /* sin modo compacto: al fallar no cambia el tamaño de nada (el aviso va junto al botón y el error de cada campo sustituye a su ayuda) */
+  root.style.setProperty('--pl-photo', 'url("' + PHOTO() + '")');   /* móvil: la misma foto continúa por detrás de la caja, cada vez más grande hacia abajo */   /* sin modo compacto: al fallar no cambia el tamaño de nada (el aviso va junto al botón y el error de cada campo sustituye a su ayuda) */
   var head = header(), sh = sheet(), ci = OC ? body.indexOf('<div class="pl-col') : -1, top = ci > 0 ? head + body.slice(0, ci) : null, main = root.querySelector(':scope > .pl-main');
   if (top !== null && main && root.__top === top && main.querySelector(':scope > .pl-col')) {   /* one click: si la cabecera no cambia, solo se cambia la caja. La foto y el fondo no se vuelven a crear (antes parpadeaban a oscuro y el zoom daba saltos) */
     var oc0 = main.querySelector(':scope > .pl-col'); while (oc0.nextSibling) main.removeChild(oc0.nextSibling); main.removeChild(oc0);
@@ -1029,7 +1050,8 @@ function render(){
   }
   var kb = -((Date.now() - KB0) / 1000) + 's'; [].forEach.call(root.querySelectorAll('.pl-gh>img,.pl-w13 .pl-w11bg,.pl-pre1>img,.pl-pbg>img,.pl-pst>img'), function(im){ if (im.__kb) return; im.__kb = 1; im.style.animationDelay = kb; });   /* el zoom en bucle sigue donde iba: solo se coloca en las fotos nuevas (tocarlo en las que ya están hacía saltar el zoom) */
   document.body.style.overflow = S.sheet ? 'hidden' : '';
-  fit();
+  if (!OC && S.sheet === 'ocpre') { root.classList.remove('pl-ocm'); fit(); root.classList.add('pl-ocm'); }   /* property link en la precarga: los niveles de ajuste se calculan con su maquetación (así al terminar no cambia nada) */
+  else fit();
 }
 
 /* ---------- validar y buscar ---------- */
@@ -1064,6 +1086,7 @@ function validate(){
 }
 var timer = 0;
 var isMob = function(){ return window.matchMedia('(max-width:1023px)').matches; };
+var isTab = function(){ return window.matchMedia('(min-width:700px) and (max-width:1023px) and (min-height:700px)').matches; };   /* tablet vertical: maquetación de móvil, pero con un solo fondo y la caja flotante */
 /* «Looking for your booking…» va en el propio botón (en móvil siempre desde V2; en escritorio desde V3): dura menos de un segundo y no merece otra pantalla */
 var inCta = function(){ return C.av !== '1' && (isMob() || C.av !== '2'); };
 function search(){
@@ -1167,10 +1190,11 @@ document.addEventListener('keydown', function(ev){
 window.addEventListener('scroll', function(){ if (window.scrollY > 4) document.documentElement.setAttribute('data-hscroll', ''); else document.documentElement.removeAttribute('data-hscroll'); }, { passive: true });
 
 window.__plSuggest = suggest; window.__plSetSug = function(sg){ if (sg === S.sug) return; S.sug = sg; render(); };
+S.plPre = !OC;   /* property link: precarga al abrir el enlace */
 render(); ocPre();
 
 /* textos del panel: en español en local (:7794) y en inglés en la versión publicada */
-var PEN = {"W5 · Tarjeta de embarque": "W5 · Boarding pass", "W6 · Conversación": "W6 · Conversation", "W7 · El viaje": "W7 · The journey", "W8 · Elige y verás": "W8 · Choose and see", "W9 · Un botón": "W9 · One button", "W10 · Los huéspedes": "W10 · The guests", "W11 · Decidir después": "W11 · Decide later", "W13 · Azul + tu estancia": "W13 · Blue + your stay", "T1 · Actual": "T1 · Current", "T2 · Progreso": "T2 · Progress", "T3 · Puntos": "T3 · Dots", "T4 · Baldosas": "T4 · Tiles", "W13 · Línea del viaje": "W13 · Journey line", "C1 · Directo": "C1 · Direct", "C2 · Beneficio": "C2 · Benefit", "C3 · Obligatorio": "C3 · Required", "C4 · Cercano": "C4 · Friendly", "W13 · Copy del check-in (escritorio)": "W13 · Check-in copy (desktop)", "W12 · Interruptor": "W12 · Switch", "W1 · Billete": "W1 · Ticket", "W2 · Ficha + desplegable": "W2 · Details + expandable", "W3 · Dos caminos": "W3 · Two paths", "W4 · La reserva en la foto": "W4 · Booking on the photo", "Entrada (sin sesión)": "Entry (signed out)", "Pantalla": "Screen", "Sesión iniciada al entrar": "Signed in on arrival", "Huéspedes guardados": "Saved guests", "Ninguno": "None", "4, todos completos": "4, all complete", "4, dos con datos pendientes": "4, two missing details", "4, dos pendientes (Tom con 5 datos)": "4, two pending (Tom missing 5)", "V2 · Componentes de la Gestap": "V2 · Guest app components", "V3 · Fichas": "V3 · Tiles", "Paso 0 · Precarga": "Step 0 · Preload", "Precarga (paso 0)": "Preload (step 0)", "V2 · Revelado": "V2 · Reveal", "V3 · Tarjeta que se monta": "V3 · Card builds up", "V4 · Persianas": "V4 · Blinds", "V5 · Anillo e iris": "V5 · Ring and iris", "Paso 1 · Entrada": "Step 1 · Entry", "Paso 2 · Who's coming?": "Step 2 · Who's coming?", "Paso": "Step", "Menores": "Minors", "Pagos (ninguno = solo registro de huéspedes)": "Payments (none = guest registration only)", "Depósito": "Deposit", "Tasas": "Taxes", "Pago reserva": "Reservation payment", "Tipo de depósito": "Deposit type", "Retención": "Hold", "Tarjeta guardada": "Saved card", "Remote access (llaves)": "Remote access (keys)", "A · Fundido": "A · Fade", "B · Deslizar": "B · Slide", "C · Subida escalonada": "C · Staggered rise", "D · Barrido": "D · Sweep", "E · Tarjeta que sube": "E · Card rises", "Transición entre pasos": "Step transition", "Por edad": "By age", "Huéspedes (paso 2)": "Guest count (step 2)", "Paso 2 · Huéspedes": "Step 2 · Guest count", "Paso 3 · Who's coming?": "Step 3 · Who's coming?", "V1.1 · Líder con corona": "V1.1 · Lead guest crown", "V1.2 · V1.1 con delineado": "V1.2 · V1.1 with outline", "V4 · Huecos de la reserva": "V4 · Booking slots", "V5 · Progreso arriba": "V5 · Progress on top", "V6 · Adultos y menores": "V6 · Adults and minors", "Elegir huéspedes (con sesión)": "Pick guests (signed in)", "Huéspedes en la reserva": "Guests in the booking", "C4.1 · Dónde + descripción": "C4.1 · Where + description", "Actual": "Current", "C1 · Recomendada": "C1 · Recommended", "C2 · Lo que vas a escribir": "C2 · What you'll type", "C3 · Ayuda primero": "C3 · Help first", "C4 · Dónde encontrarlo": "C4 · Where to find it", "Tarjetas de método": "Method cards", "Tipo de enlace": "Link type", "Cómo buscan la reserva (una o varias, mín. 1)": "How guests find their booking (one or more, min. 1)", "Nombre + fecha": "Name + date", "Código": "Code", "Email + fecha": "Email + date", "Pedir la propiedad": "Ask for the property", "Crear la reserva si no aparece": "Create booking if not found", "Sí": "Yes", "Resultado de la búsqueda": "Search result", "Encontrada": "Found", "Varias → con salida": "Several → departure date", "Varias → sin resolver": "Several → still ambiguous", "No encontrada": "Not found", "Sin conexión": "Connection error", "Demasiados intentos": "Too many attempts", "Elegir cómo buscar": "Method picker", "V1 · Pestañas": "V1 · Tabs", "V2 · Tarjetas": "V2 · Cards", "Foto de la propiedad": "Property photo", "Con foto de la propiedad": "With property photo", "Sin foto (imagen genérica)": "No photo (generic image)", "Duración de la reserva (prueba)": "Stay length (test)", "2 noches": "2 nights", "7 noches": "7 nights", "15 noches": "15 nights"};
+var PEN = {"W5 · Tarjeta de embarque": "W5 · Boarding pass", "W6 · Conversación": "W6 · Conversation", "W7 · El viaje": "W7 · The journey", "W8 · Elige y verás": "W8 · Choose and see", "W9 · Un botón": "W9 · One button", "W10 · Los huéspedes": "W10 · The guests", "W11 · Decidir después": "W11 · Decide later", "W13 · Azul + tu estancia": "W13 · Blue + your stay", "T1 · Actual": "T1 · Current", "T2 · Progreso": "T2 · Progress", "T3 · Puntos": "T3 · Dots", "T4 · Baldosas": "T4 · Tiles", "W13 · Línea del viaje": "W13 · Journey line", "C1 · Directo": "C1 · Direct", "C2 · Beneficio": "C2 · Benefit", "C3 · Obligatorio": "C3 · Required", "C4 · Cercano": "C4 · Friendly", "W13 · Copy del check-in (escritorio)": "W13 · Check-in copy (desktop)", "W12 · Interruptor": "W12 · Switch", "W1 · Billete": "W1 · Ticket", "W2 · Ficha + desplegable": "W2 · Details + expandable", "W3 · Dos caminos": "W3 · Two paths", "W4 · La reserva en la foto": "W4 · Booking on the photo", "Entrada (sin sesión)": "Entry (signed out)", "Pantalla": "Screen", "Sesión iniciada al entrar": "Signed in on arrival", "Huéspedes guardados": "Saved guests", "Ninguno": "None", "4, todos completos": "4, all complete", "4, dos con datos pendientes": "4, two missing details", "4, dos pendientes (Tom con 5 datos)": "4, two pending (Tom missing 5)", "V2 · Componentes de la Gestap": "V2 · Guest app components", "V3 · Fichas": "V3 · Tiles", "Paso 0 · Precarga": "Step 0 · Preload", "Precarga (paso 0)": "Preload (step 0)", "V2 · Revelado": "V2 · Reveal", "V3 · Tarjeta que se monta": "V3 · Card builds up", "V4 · Persianas": "V4 · Blinds", "V5 · Anillo e iris": "V5 · Ring and iris", "Paso 1 · Entrada": "Step 1 · Entry", "Paso 2 · Who's coming?": "Step 2 · Who's coming?", "Paso": "Step", "Plataforma (via)": "Platform (via)", "Responsable de la reserva": "Booked by", "Datos de la reserva": "Booking data", "Hora de entrada": "Check-in time", "Hora de salida": "Check-out time", "Ver precarga": "Play preload", "Menores": "Minors", "Pagos (ninguno = solo registro de huéspedes)": "Payments (none = guest registration only)", "Depósito": "Deposit", "Tasas": "Taxes", "Pago reserva": "Reservation payment", "Tipo de depósito": "Deposit type", "Retención": "Hold", "Tarjeta guardada": "Saved card", "Remote access (llaves)": "Remote access (keys)", "A · Fundido": "A · Fade", "B · Deslizar": "B · Slide", "C · Subida escalonada": "C · Staggered rise", "D · Barrido": "D · Sweep", "E · Tarjeta que sube": "E · Card rises", "Transición entre pasos": "Step transition", "Por edad": "By age", "Huéspedes (paso 2)": "Guest count (step 2)", "Paso 2 · Huéspedes": "Step 2 · Guest count", "Paso 3 · Who's coming?": "Step 3 · Who's coming?", "V1.1 · Líder con corona": "V1.1 · Lead guest crown", "V1.2 · V1.1 con delineado": "V1.2 · V1.1 with outline", "V4 · Huecos de la reserva": "V4 · Booking slots", "V5 · Progreso arriba": "V5 · Progress on top", "V6 · Adultos y menores": "V6 · Adults and minors", "Elegir huéspedes (con sesión)": "Pick guests (signed in)", "Huéspedes en la reserva": "Guests in the booking", "C4.1 · Dónde + descripción": "C4.1 · Where + description", "Actual": "Current", "C1 · Recomendada": "C1 · Recommended", "C2 · Lo que vas a escribir": "C2 · What you'll type", "C3 · Ayuda primero": "C3 · Help first", "C4 · Dónde encontrarlo": "C4 · Where to find it", "Tarjetas de método": "Method cards", "Tipo de enlace": "Link type", "Cómo buscan la reserva (una o varias, mín. 1)": "How guests find their booking (one or more, min. 1)", "Nombre + fecha": "Name + date", "Código": "Code", "Email + fecha": "Email + date", "Pedir la propiedad": "Ask for the property", "Crear la reserva si no aparece": "Create booking if not found", "Sí": "Yes", "Resultado de la búsqueda": "Search result", "Encontrada": "Found", "Varias → con salida": "Several → departure date", "Varias → sin resolver": "Several → still ambiguous", "No encontrada": "Not found", "Sin conexión": "Connection error", "Demasiados intentos": "Too many attempts", "Elegir cómo buscar": "Method picker", "V1 · Pestañas": "V1 · Tabs", "V2 · Tarjetas": "V2 · Cards", "Foto de la propiedad": "Property photo", "Con foto de la propiedad": "With property photo", "Sin foto (imagen genérica)": "No photo (generic image)", "Duración de la reserva (prueba)": "Stay length (test)", "2 noches": "2 nights", "7 noches": "7 nights", "15 noches": "15 nights"};
 var T = function(x){ return location.port === '7794' ? x : (PEN[x] || x); };
 /* ---------- panel ---------- */
 var seg = function(list, cur, attr, onPick){ var d = document.createElement('div'); d.className = 'rail-switch';
@@ -1219,6 +1243,8 @@ var tries = 0, tm = setInterval(function(){
     window.__repPanel.add(T('Huéspedes guardados'), rows.ocv, 1.2);
     window.__repPanel.add(T('Huéspedes en la reserva'), rows.ocg, 1.3);
     window.__repPanel.add(T('Menores'), rows.bmin, 1.31);
+    rows.bkd = multi([['ref', 'Booking ID'], ['via', T('Plataforma (via)')], ['by', T('Responsable de la reserva')], ['tin', T('Hora de entrada')], ['tout', T('Hora de salida')]], C.bkd.split(','), 'data-bkd', function(v){ C.bkd = v.join(','); LSset('replica-oc-bk', C.bkd); render(); }, true);
+    window.__repPanel.add(T('Datos de la reserva'), rows.bkd, 1.305);
     window.__repPanel.add(T('Pagos (ninguno = solo registro de huéspedes)'), rows.bpay, 1.32);
     window.__repPanel.add(T('Tipo de depósito'), rows.bdep, 1.33);
     window.__repPanel.add(T('Remote access (llaves)'), rows.bra, 1.34);
@@ -1229,8 +1255,6 @@ var tries = 0, tm = setInterval(function(){
   window.__repPanel.add(T('Crear la reserva si no aparece'), rows.create, 1.4);
   window.__repPanel.add(T('Resultado de la búsqueda'), rows.out, 20);
   }
-  rows.mv = seg([['1', T('V1 · Pestañas')], ['2', T('V2 · Tarjetas')]], C.mv, 'data-pv', function(k){ C.mv = k; LSset('replica-pl-mv', k); changed(); });
-  if (!OC) window.__repPanel.add(T('Elegir cómo buscar'), rows.mv, 19);
   rows.cv = seg([['0', T('Actual')], ['1', T('C1 · Recomendada')], ['2', T('C2 · Lo que vas a escribir')], ['3', T('C3 · Ayuda primero')], ['4', T('C4 · Dónde encontrarlo')], ['41', T('C4.1 · Dónde + descripción')]], C.cv, 'data-pcv', function(k){ C.cv = k; LSset('replica-pl-cv', k); if (k !== '0' && C.mv !== '2') { C.mv = '2'; LSset('replica-pl-mv', '2'); } changed(); });
   /* «Tarjetas de método» ya no se elige: C4.1 definitiva */
   rows.av = seg([['1', 'V1 · Hoja'], ['2', 'V2 · Pantalla completa'], ['3', 'V3 · Desde el botón'], ['4', 'V4 · Se abre la foto'], ['5', 'V5 · Tarjeta de reserva'], ['6', 'V6 · Puertas'], ['7', 'V7 · Tus datos encajan'], ['8', 'V8 · V3 abriéndose como V4']], C.av, 'data-pz', function(k){ C.av = k; LSset('replica-pl-av', k); changed(); });
@@ -1243,6 +1267,7 @@ var tries = 0, tm = setInterval(function(){
   /* «Imagen genérica» ya no se elige: curvas de papel */
   rows.nn = seg([['2', T('2 noches')], ['7', T('7 noches')], ['15', T('15 noches')]], C.nn, 'data-pn', function(k){ C.nn = k; LSset('replica-pl-nn', k); setNights(k); changed(); });
   if (!OC) window.__repPanel.add(T('Duración de la reserva (prueba)'), rows.nn, 20.5);
+  if (!OC) { rows.plpre = seg([['go', T('Ver precarga')]], '', 'data-plpre', function(){ S.plPre = true; ocPre(); }); window.__repPanel.add(T('Precarga (paso 0)'), rows.plpre, 18.7); }
   setTimeout(relevance, 0);
 }, 50);
 })();
