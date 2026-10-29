@@ -1962,6 +1962,7 @@ html.pl-pre-hold .pl-col>.pl-card,html.pl-pre-hold .pl-col>.pl-dock{opacity:0}
 .pl-pcf b{display:block;margin-top:4px;font-size:15px;font-weight:600;color:#fff;white-space:nowrap;animation:plTIn .55s cubic-bezier(.22,1,.36,1) calc(var(--d) + .85s) both}
 .pl-pre3 .pl-x-open{justify-content:center;margin:18px 0 0;animation:plUpIn .4s ease 1.2s both}
 .pl-pre3 .pl-x-open i::after{animation-duration:2.4s;animation-delay:1.2s}
+html.pl-rl .pl-pre3 .pl-x-open i::after{animation-duration:3.6s}   /* reservation link: la barra acompaña también la carga de la home */
 .pl-fx.pl-pre2.out,.pl-fx.pl-pre3.out{clip-path:none;opacity:1}
 .pl-pre3.out .pl-x-c{opacity:1;transform:none;filter:none}
 .pl-pre2.out .pl-pbg,.pl-pre3.out .pl-pbg{clip-path:inset(var(--t) var(--r) var(--b) var(--l) round var(--rad,22px));opacity:0}
@@ -2027,6 +2028,11 @@ html.pl-pre-v1 .pl-col>.pl-card,html.pl-pre-v1 .pl-col>.pl-dock,html.pl-pre-v2 .
 .pl-pwh{position:absolute;z-index:3;display:block;background:#fff;opacity:0;pointer-events:none;box-shadow:0 30px 70px rgba(10,10,40,.3)}
 .pl-pwh.on{opacity:1;box-shadow:0 -6px 24px rgba(10,10,40,.08);transition:top .9s cubic-bezier(.7,0,.2,1) .08s,left .9s cubic-bezier(.7,0,.2,1) .08s,width .9s cubic-bezier(.7,0,.2,1) .08s,height .9s cubic-bezier(.7,0,.2,1) .08s,border-radius .9s cubic-bezier(.7,0,.2,1) .08s,box-shadow .9s ease,opacity .25s ease}
 .pl-pwh.on.gone{opacity:0;transition:opacity .35s ease}
+/* reservation link: la home de la Gestap a pantalla completa; aparece al terminar la precarga. La salida va con Web Animations en rlExit */
+.pl-rlf{position:fixed;inset:0;z-index:50;width:100%;height:100%;border:0;background:#fff;opacity:0;pointer-events:none}
+.pl-rlf.on{opacity:1;pointer-events:auto}
+.pl-fx.pl-rlx{clip-path:none;opacity:1;background:none;pointer-events:none}
+.pl-rlx .pl-x-c{opacity:1;transform:none;filter:none}
 html.pl-pre-v3 .pl-col>.pl-card,html.pl-pre-v3 .pl-col>.pl-dock{animation:plFade .01s linear .97s both}
 /* V4: las franjas se recogen y la caja sube con ellas, con la misma curva */
 html.pl-pre-v4 .pl-col>.pl-card,html.pl-pre-v4 .pl-col>.pl-dock{position:relative;z-index:2;animation:plCur 1.05s cubic-bezier(.76,0,.24,1) .12s both}

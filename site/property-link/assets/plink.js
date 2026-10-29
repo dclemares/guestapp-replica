@@ -511,7 +511,9 @@ window.matchMedia('(max-width:1023px)').addEventListener('change', function(){ i
 /* ============ ONE CLICK CHECK-IN (screens/one-click.*) — mismas piezas que el property link ============
    IT-3894: el huésped que vuelve (con sesión) elige sus huéspedes guardados y se registran en un toque; si a alguno le falta un dato, solo se pide ese dato.
    Sin sesión: se registra a mano (formulario de la réplica), con la invitación a iniciar sesión para la próxima vez. Sin estado: nada se guarda. */
-var OC = S0.id === 'one-click';
+var RL = S0.id === 'reservation-link';   /* reservation link: la reserva ya se conoce; la misma precarga V3 del one click y, al terminar, la home de la Gestap */
+var OC = S0.id === 'one-click' || RL;
+if (RL) document.documentElement.classList.add('pl-rl');
 /* ajustes de la reserva (como en la Gestap): reparto adultos/menores por número de huéspedes y pagos pendientes */
 function ocSplit(){ var a = ({ 2: [2, 0], 4: [3, 1], 6: [4, 2], 9: [6, 3], 14: [10, 4] })[+C.ocg] || [+C.ocg, 0];   /* mismo reparto que la Gestap (GCA) */ return C.bmin === '1' ? [a[0], a[1]] : [a[0] + a[1], 0]; }
 var PAYS = { deposit: ['Security deposit', 'Held on your card, released after your stay.'], taxes: ['Tourist tax', 'Per guest and night.'], reservation: ['Reservation payment', 'Pending amount for your booking.'] };
@@ -844,7 +846,7 @@ function sOcDone(){
 }
 /* paso 0 · precarga: al abrir el enlace, la foto a pantalla completa mientras se encuentra la reserva (lo mismo que la pantalla final, al revés); al terminar, la foto se encoge hasta la cabecera y sube la caja del paso 1 */
 function sOcPre(){
-  var b = BOOKING, nn = nights(b.cin, b.cout), g = S.oc ? S.oc.count : b.guests, v = OC ? C.opre : '2', H = HOST();   /* property link: la V2 · Revelado (sin datos de reserva: solo el alojamiento y lo que se está preparando) */
+  var b = BOOKING, nn = nights(b.cin, b.cout), g = S.oc ? S.oc.count : b.guests, v = RL ? '3' : OC ? C.opre : '2', H = HOST();   /* property link: la V2 · Revelado (sin datos de reserva: solo el alojamiento y lo que se está preparando) */
   var LG = isUser() ? H.logo : '<img class="pl-pre-mk" src="../assets/villa-calypso-mark.png" alt="">';   /* el logo de Villa Calypso (solo el símbolo: el nombre ya va debajo) */
   var gs = g + (g === 1 ? ' guest' : ' guests'), ns = nn + (nn === 1 ? ' night' : ' nights'), dts = fmt(b.cin) + ' – ' + fmt(b.cout);
   var wrap = function(inner, pre){ return '<div class="pl-fx pl-pre pl-pre' + v + '" role="dialog" aria-modal="true" aria-labelledby="pl-sh" aria-live="polite">' + (pre === undefined ? '<img src="' + PHOTO() + '" alt="">' : pre) + inner + '</div>'; };
@@ -880,15 +882,56 @@ function sOcPre(){
     + '<ul class="pl-fin-list pl-pre-list">' + rows.map(function(r, k){ return '<li style="--d:' + (.8 + k * .45).toFixed(2) + 's"><span class="pl-pre-ic">' + ic('check', 14) + '</span><span>' + r[0] + '<small>' + r[1] + '</small></span></li>'; }).join('') + '</ul>'
     + '<p class="pl-x-open">Opening your booking<i></i></p></div>');
 }
+/* reservation link: la home de la Gestap (la de la réplica) en un marco a pantalla completa, del mismo origen para poder medir su tarjeta de la reserva */
+var RLF = null;
+function rlFrame(hide){
+  if (!RLF) { RLF = document.createElement('iframe'); RLF.className = 'pl-rlf'; RLF.title = 'Guest app'; RLF.src = (location.port === '7794' ? '../rep/screens/' : '../../screens/') + 'home.' + (DESK ? 'd' : 'm') + '.html'; RLF.onload = function(){ try { var st = RLF.contentDocument.createElement('style'); st.textContent = '#rep-panel{display:none!important}'; RLF.contentDocument.head.appendChild(st); } catch (e) {} RLF.__ok = Date.now(); RLF.classList.add('on');   /* ya pintada debajo de la foto (que la tapa entera): así al salir no hay que pintarla de golpe */
+     if (RLF.__go) { var g = RLF.__go; RLF.__go = null; rlSettled(g); } }; document.body.appendChild(RLF); }   /* la home normal (el modo embed de la réplica es para hojas sobre otra pantalla y oculta la página); sin su panel de controles, que ya está el nuestro */   /* en local, la réplica enlazada en ../rep (mismo origen); publicado, la réplica del mismo sitio */
+  if (hide) { try { RLF.contentWindow.scrollTo(0, 0); } catch (e) {} }   /* al repetir la precarga, la home sigue pintada debajo de la foto, que la tapa entera */
+}
+/* la home se recoloca sola durante ~1 s tras cargar (p. ej. el margen de la tarjeta de la reserva): la salida espera a que su tarjeta lleve quieta 250 ms, y como mínimo 0,6 s desde la carga (máx. 2,2 s) */
+function rlSettled(cb){
+  var last = '', same = 0, pos = function(){ try { var z = [].filter.call(RLF.contentDocument.querySelectorAll('section'), function(s){ return /CHECK-OUT/i.test(s.textContent); })[0], b = z && z.getBoundingClientRect(); return b ? [b.top, b.left, b.width, b.height].map(Math.round).join() : ''; } catch (e) { return ''; } };
+  (function tick(){ var t = Date.now() - RLF.__ok, p = pos(); same = p && p === last ? same + 1 : 0; last = p; if ((t >= 600 && same >= 5) || t > 2200) cb(); else setTimeout(tick, 50); })();
+}
+/* salida (misma curva y duración que la V3 del one click): la tarjeta de verdad de la home sale del sitio de la ficha de cristal y llega a su sitio, mientras la ficha se funde en ella y la foto se aparta. Solo transform y opacity (Web Animations, sin tocar el estilo de la home: la réplica la recoloca si cambia) */
+function rlExit(fx, reduce){
+  var E = 'cubic-bezier(.7,0,.2,1)', DUR = 900, pc = fx.querySelector('.pl-pcard'), pbg = fx.querySelector('.pl-pbg'), z = null;
+  try { RLF.contentWindow.scrollTo(0, 0); [].forEach.call(RLF.contentDocument.querySelectorAll('*'), function(x){ if (x.scrollTop) x.scrollTop = 0; }); } catch (e) {}   /* la home siempre arriba del todo (la réplica a veces la deja desplazada al cargar) */
+  try { z = [].filter.call(RLF.contentDocument.querySelectorAll('section'), function(s){ return /CHECK-OUT/i.test(s.textContent) && s.getBoundingClientRect().height > 80; })[0] || null; } catch (e) {}
+  var rw = RLF.contentWindow; try { rw.scrollY = 99; } catch (e) {}   /* mientras vuela, el ajuste automático de la réplica (mide la primera tarjeta y le cambia el margen) se salta: solo actúa con la página arriba del todo, y mediría la tarjeta en pleno vuelo */
+  RLF.classList.add('on'); fx.classList.add('pl-rlx'); document.documentElement.classList.remove('pl-pre-hold');
+  pbg.animate([{ opacity: 1 }, { opacity: 0 }], { duration: reduce ? 300 : 520, delay: reduce ? 0 : 260, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' });   /* la foto se aparta mientras la tarjeta viaja */
+  [].forEach.call(fx.querySelectorAll('.pl-pbar'), function(b){ b.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 200, fill: 'forwards' }); });
+  if (z && pc && !reduce) {
+    pc.style.animation = 'none';
+    var a = pc.getBoundingClientRect(), r = z.getBoundingClientRect(), f = RLF.getBoundingClientRect(), s = a.width / r.width;
+    var dx = a.left - f.left - r.left, dy = a.top - f.top + (a.height - r.height * s) / 2 - r.top;   /* la tarjeta de la home empieza encima de la ficha (mismo ancho, centrada en alto) */
+    z.animate([{ transformOrigin: '0 0', transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + s + ')', zIndex: 30, opacity: 0 }, { opacity: 0, offset: .14 }, { opacity: 1, offset: .5 }, { transformOrigin: '0 0', transform: 'none', zIndex: 30, opacity: 1 }], { duration: DUR, easing: E });   /* por encima del resto de la home mientras viaja */
+    var sib = z.parentNode ? [].filter.call(z.parentNode.children, function(x){ return x !== z; }) : [];   /* el resto de la home entra suave detrás de la tarjeta, escalonado (como la caja del one click) */
+    sib.forEach(function(x, i){ x.animate([{ opacity: 0, transform: 'translateY(18px)' }, { opacity: 1, transform: 'none' }], { duration: 560, delay: 380 + Math.min(i, 4) * 60, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'backwards' }); });
+    var k = 1 / s, tx = f.left + r.left - a.left, ty = f.top + r.top + (r.height - a.height * k) / 2 - a.top;   /* y la ficha hace el mismo viaje: primero se apaga la ficha y después aparece la tarjeta de la home, sin que se lean las dos a la vez */
+    pc.animate([{ transform: 'none', opacity: 1 }, { opacity: 1, offset: .08 }, { opacity: 0, offset: .32 }, { transform: 'translate(' + tx + 'px,' + ty + 'px) scale(' + k + ')', opacity: 0 }], { duration: DUR, easing: E, fill: 'forwards' });
+  } else if (pc) pc.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 250, fill: 'forwards' });
+  if (/[?&]hold=out/.test(location.search)) { var all = document.getAnimations().concat(RLF.contentDocument.getAnimations()).filter(function(x){ return !(x instanceof CSSAnimation) && !(x instanceof CSSTransition); }); all.forEach(function(x){ x.pause(); }); window.__preSeek = function(ms){ all.forEach(function(x){ x.currentTime = ms; }); }; return; }   /* ?hold=out: la salida congelada, para revisarla fotograma a fotograma */
+  timer = setTimeout(function(){ S.sheet = null; fx.remove(); document.body.style.overflow = ''; try { delete rw.scrollY; } catch (e) {} }, DUR + 120);
+}
 var PRE_T = 3.6;   /* segundos que se ve la precarga antes de encogerse a la cabecera (3,1 + medio segundo más de carga: spinners, esqueletos y barras; las animaciones van a la misma velocidad) */
 function ocPre(){
   var html = document.documentElement; html.className = html.className.replace(/\s*pl-pre-\S+/g, '');
-  if (OC ? C.ocs !== 'p' : !S.plPre) return;   /* property link: solo al abrir el enlace (o al pedirla desde el panel), no en cada cambio de ajustes */
-  if (!OC) S.plPre = false;
+  if (OC && !RL ? C.ocs !== 'p' : !S.plPre) return;   /* property link y reservation link: solo al abrir el enlace (o al pedirla desde el panel), no en cada cambio de ajustes */
+  if (!OC || RL) S.plPre = false;
+  if (RL && RLF) rlFrame(true);   /* al repetirla: la home ya cargada se oculta hasta la salida */
+  if (RL && !RLF) setTimeout(function(){ if (S.sheet === 'ocpre') rlFrame(false); }, 3350);   /* la home empieza a cargarse al final del montaje de la ficha: sus tareas pesadas (~0,5 s después) caen cuando la ficha ya está quieta */
   S.sheet = 'ocpre'; html.classList.add('pl-pre-hold'); render();
-  var v = OC ? C.opre : '2', reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var v = RL ? '3' : OC ? C.opre : '2', reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   clearTimeout(timer); timer = setTimeout(function(){
     var fx = root.querySelector('.pl-pre'), gh = root.querySelector('.pl-gh'), cd = root.querySelector('.pl-col>.pl-card'); if (!fx || /[?&]hold=1/.test(location.search)) return;   /* ?hold=1: se queda en la precarga (para revisarla) */
+    if (RL) {   /* la home se empieza a cargar cuando la ficha ya está montada (cargarla a la vez bloqueaba el navegador ~180 ms y la ficha iba a trompicones); la salida espera a que esté lista y asentada (350 ms) */
+      var go = function(){ rlExit(fx, reduce); };
+      if (RLF && RLF.__ok) rlSettled(go); else { rlFrame(false); RLF.__go = go; }
+      return;
+    }
     /* salida: en móvil la foto sube como un telón y su borde inferior arrastra la caja del paso 1 (mismo tiempo y misma curva); en escritorio la foto se encoge hasta la cabecera */
     /* el zoom en bucle de la foto de la cabecera se pone en la misma fase que el de la foto de la precarga: así, al acabar, la foto se acomoda sin salto (en la V3 ya iban sincronizadas; en la V2 el bucle de la precarga arranca por su cuenta) */
     var pim = fx.querySelector(':scope>img') || fx.querySelector('.pl-pbg>img'), pa = pim && pim.getAnimations().filter(function(x){ return x.animationName === 'plKenLoop'; })[0], him = gh && gh.querySelector('img'), ha = him && him.getAnimations().filter(function(x){ return x.animationName === 'plKenLoop'; })[0];
@@ -1190,7 +1233,7 @@ document.addEventListener('keydown', function(ev){
 window.addEventListener('scroll', function(){ if (window.scrollY > 4) document.documentElement.setAttribute('data-hscroll', ''); else document.documentElement.removeAttribute('data-hscroll'); }, { passive: true });
 
 window.__plSuggest = suggest; window.__plSetSug = function(sg){ if (sg === S.sug) return; S.sug = sg; render(); };
-S.plPre = !OC;   /* property link: precarga al abrir el enlace */
+S.plPre = !OC || RL;   /* property link y reservation link: precarga al abrir el enlace */
 render(); ocPre();
 
 /* textos del panel: en español en local (:7794) y en inglés en la versión publicada */
@@ -1224,9 +1267,12 @@ var tries = 0, tm = setInterval(function(){
   rows.out = seg([['found', T('Encontrada')], ['multi', T('Varias → con salida')], ['ambig', T('Varias → sin resolver')], ['none', T('No encontrada')], ['net', T('Sin conexión')], ['block', T('Demasiados intentos')]], C.out, 'data-po', function(k){ C.out = k; LSset('replica-pl-out', k); changed(); });
   /* pantalla: property link u one click check-in (enlaces: navegan dentro del marco y el escritorio la sigue) */
   var scr = document.createElement('div'); scr.className = 'rail-switch';
-  scr.innerHTML = [['property-link', 'Property link'], ['one-click', 'One click check-in']].map(function(x){ return '<a class="rs-chip' + (S0.id === x[0] ? ' on' : '') + '" href="' + x[0] + '.' + (DESK ? 'd' : 'm') + '.html">' + x[1] + '</a>'; }).join('');
+  scr.innerHTML = [['property-link', 'Property link'], ['one-click', 'One click check-in'], ['reservation-link', 'Reservation link']].map(function(x){ return '<a class="rs-chip' + (S0.id === x[0] ? ' on' : '') + '" href="' + x[0] + '.' + (DESK ? 'd' : 'm') + '.html">' + x[1] + '</a>'; }).join('');
   window.__repPanel.add(T('Pantalla'), scr, 0.5);
-  if (OC) {
+  if (RL) {
+    rows.bkd = multi([['ref', 'Booking ID'], ['via', T('Plataforma (via)')], ['by', T('Responsable de la reserva')], ['tin', T('Hora de entrada')], ['tout', T('Hora de salida')]], C.bkd.split(','), 'data-bkd', function(v){ C.bkd = v.join(','); LSset('replica-oc-bk', C.bkd); }, true);
+    window.__repPanel.add(T('Datos de la reserva'), rows.bkd, 1.305);
+  } else if (OC) {
     rows.ocs = seg([['0', 'No'], ['1', T('Sí')]], C.ocs, 'data-ocs', function(k){ C.ocs = k; LSset('replica-oc-s', k); if (rows.ocstep) [].forEach.call(rows.ocstep.querySelectorAll('[data-ocstep]'), function(c){ c.classList.toggle('on', c.getAttribute('data-ocstep') === k); }); changed(); });
     rows.ocv = seg([['none', T('Ninguno')], ['ok', T('4, todos completos')], ['miss', T('4, dos pendientes (Tom con 5 datos)')]], C.ocv, 'data-ocv', function(k){ C.ocv = k; LSset('replica-oc-v', k); changed(); });
     rows.ocg = seg([['2', '2'], ['4', '4'], ['6', '6'], ['9', '9'], ['14', '14']], C.ocg, 'data-ocg', function(k){ C.ocg = k; LSset('replica-oc-g', k); changed(); });
@@ -1267,7 +1313,7 @@ var tries = 0, tm = setInterval(function(){
   /* «Imagen genérica» ya no se elige: curvas de papel */
   rows.nn = seg([['2', T('2 noches')], ['7', T('7 noches')], ['15', T('15 noches')]], C.nn, 'data-pn', function(k){ C.nn = k; LSset('replica-pl-nn', k); setNights(k); changed(); });
   if (!OC) window.__repPanel.add(T('Duración de la reserva (prueba)'), rows.nn, 20.5);
-  if (!OC) { rows.plpre = seg([['go', T('Ver precarga')]], '', 'data-plpre', function(){ S.plPre = true; ocPre(); }); window.__repPanel.add(T('Precarga (paso 0)'), rows.plpre, 18.7); }
+  if (!OC || RL) { rows.plpre = seg([['go', T('Ver precarga')]], '', 'data-plpre', function(){ S.plPre = true; ocPre(); }); window.__repPanel.add(T('Precarga (paso 0)'), rows.plpre, 18.7); }
   setTimeout(relevance, 0);
 }, 50);
 })();
