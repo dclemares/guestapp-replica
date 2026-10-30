@@ -5,7 +5,7 @@ var D = {
  'Controles': 'Controls', 'Ajustes de la reserva': 'Booking settings', 'Cómo está configurada la propiedad y la reserva': 'How the property and the booking are set up',
  'Cómo está configurada la reserva': 'How the booking is set up', 'Componentes': 'Components', 'Pagos': 'Payments', 'Depósito': 'Deposit', 'Tasas': 'Taxes',
  'Pago reserva': 'Reservation payment', 'Tipo de depósito': 'Deposit type', 'Retención': 'Hold', 'Solo tokenizar': 'Tokenize only', 'Comisiones externas': 'External fees',
- 'Sí': 'Yes', 'Número de huéspedes': 'Number of guests', 'Antes': 'Before', 'Ahora': 'Now', 'Vela sombreado': 'Vela shadow', 'Ask Vela tradicional': 'Ask Vela classic',
+ 'Sí': 'Yes', 'Nº de puertas (V8.1)': 'Number of doors (V8.1)', 'Puertas': 'Doors', 'Pasos': 'Steps', 'Mensaje del anfitrión': 'Host message', 'Nº de pasos': 'Number of steps', 'Fotos en los pasos': 'Step photos', 'Abrir puerta': 'Open door', 'Se abre': 'Opens', 'Falla': 'Fails', 'Número de huéspedes': 'Number of guests', 'Antes': 'Before', 'Ahora': 'Now', 'Vela sombreado': 'Vela shadow', 'Ask Vela tradicional': 'Ask Vela classic',
  'Bordes': 'Borders', 'Con borde': 'With border', 'Sin borde total': 'No border at all', 'Solo documento': 'Document only', 'Biometría': 'Biometrics',
  'Vista': 'View', 'Qué pantalla y qué estado estás viendo': 'Which screen and state you are viewing', 'Skip de la verificación': 'Verification skip',
  'Obligatoria': 'Required', 'Opcional': 'Optional', 'Sin skip': 'No skip', 'Tipos de documento': 'Document types', 'Resultado de la foto': 'Photo result',
