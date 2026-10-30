@@ -186,6 +186,11 @@ function slide(d){
   return '<div class="vk-slide' + (pro ? ' vk-slide--pro' : '') + '"' + (dis ? ' data-dis' : '') + '><span class="vk-slide__fill"></span><span class="vk-slide__lbl" data-l="' + lb + '">' + lb + '</span>' + (pro && !dis ? '<span class="vk-slide__chev" aria-hidden="true"><i></i><i></i><i></i></span>' : '') +
     '<button type="button" class="vk-slide__thumb" role="slider" aria-label="Slide to open ' + d.n.toLowerCase() + '" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"' + (dis ? ' disabled' : '') + '>' + th + '</button></div>';
 }
+/* códigos de distinta longitud: todas las casillas miden como las del código más largo y se alinean a la izquierda */
+function mixD81(ds){
+  var ls = ds.filter(function(d){ return d.ty === 'pin'; }).map(function(d){ return d.code.length; }), mx = Math.max.apply(null, ls.concat(0));
+  return ls.some(function(l){ return l !== mx; }) ? ' data-mixd style="--dg:' + mx + '"' : '';
+}
 function pin81(d){
   var dig = d.code.split('').map(function(c){ return '<i>' + c + '</i>'; }).join('');
   return '<div class="vk-pin vk-cp" data-cp="c2" data-show="1" data-code="' + d.code + '"><button type="button" class="vk-digits vk-cp__tap" data-vk="copy" aria-label="Copy code ' + d.code + '">' + dig + '</button></div>';
@@ -332,10 +337,11 @@ function place81(){
 /* foto a pantalla completa (toca o Esc para cerrar) */
 function zoomPhoto(src){
   var o = document.createElement('div'); o.className = 'vk-lb'; o.setAttribute('role', 'dialog'); o.setAttribute('aria-label', 'Photo');
-  o.innerHTML = '<img src="' + src + '" alt=""><button type="button" class="vk-lb__x" aria-label="Close">\u00d7</button>';
+  o.innerHTML = '<div class="vk-lb__m"><img src="' + src + '" alt=""><button type="button" class="vk-lb__x" aria-label="Close">\u00d7</button></div>';
   var close = function(){ o.classList.add('is-out'); document.removeEventListener('keydown', esc); setTimeout(function(){ if (o.parentNode) o.parentNode.removeChild(o); }, 200); };
   var esc = function(e){ if (e.key === 'Escape') close(); };
-  o.addEventListener('click', close); document.addEventListener('keydown', esc); document.body.appendChild(o);
+  /* en escritorio es un modal: se cierra con la ×, con Esc o tocando fuera (no sobre la foto) */
+  o.addEventListener('click', function(e){ if (desk && e.target.tagName === 'IMG') return; close(); }); document.addEventListener('keydown', esc); document.body.appendChild(o);
 }
 /* ---------- Ayuda: preguntas frecuentes (pestaña «Help» en móvil; en escritorio van en Vela) ---------- */
 function qa(){
@@ -387,7 +393,17 @@ function velaPanel(){
   var cardTitle = { locked: 'Your check-in', soon: 'Your arrival', gen: 'Your keys', err: 'Need a hand now?', expired: 'Your stay', revoked: 'Your booking' }[state] || 'Your keys';
   var cardTxt = state === 'locked' ? leftN() + (leftN() === 1 ? ' step' : ' steps') + ' left before your keys appear.' : (live() ? 'Valid until ' + depD() + ' at 11:00. Need a hand at the door?' : s.t + '.');
   var cb = p ? '<button type="button" class="pv7-vp" data-vk="' + p.a + '"' + (p.step ? ' data-step="' + p.step + '"' : '') + '>' + p.l + '</button>' : '<button type="button" class="pv7-vp" data-vk="host">Message your host</button>';
-  var c1 = sec(cardTitle); c1.insertAdjacentHTML('beforeend', '<div class="pv7-vc"><strong>' + s.t + '</strong><span>' + cardTxt + '</span><div>' + cb + '</div></div>'); parts.push(c1);
+  var c1;
+  if (live()) {   /* llaves listas: en lugar de «Your keys», la sección de Summary, para compartir las llaves */
+    c1 = sec('Quick actions'); c1.insertAdjacentHTML('beforeend', '<div class="vk-inv"><strong>Share the keys</strong><span>Send this link to your group so everyone can open the doors from their own phone.</span><div><button type="button" class="vk-inv__p pri" data-inv="copy">Copy link</button><button type="button" class="vk-inv__p" data-inv="share">Share</button></div></div>');
+    c1.addEventListener('click', function(e){
+      var b = e.target.closest('[data-inv]'); if (!b) return; e.preventDefault(); e.stopPropagation();
+      var url = location.origin + '/k/CHK-4829', say = function(t){ var o = b.getAttribute('data-l') || b.textContent; b.setAttribute('data-l', o); b.textContent = t; clearTimeout(b._t); b._t = setTimeout(function(){ b.textContent = o; }, 1400); };
+      if (b.getAttribute('data-inv') === 'share' && navigator.share) { navigator.share({ title: 'Your keys · Villa Calypso', url: url }).catch(function(){}); return; }
+      try { navigator.clipboard.writeText(url); } catch (_) {} say('Copied');
+    });
+  } else { c1 = sec(cardTitle); c1.insertAdjacentHTML('beforeend', '<div class="pv7-vc"><strong>' + s.t + '</strong><span>' + cardTxt + '</span><div>' + cb + '</div></div>'); }
+  parts.push(c1);
   var q = qa().slice(0, 5);
   if (!trad) {
     var chat = function(o){ return '<div class="vc-q">' + o.t + '</div><div class="vc-a"><span class="vc-av">' + spark + '</span><div>' + o.a + '</div></div>'; };
@@ -684,11 +700,11 @@ function k81(){
   var lockV2 = state === 'locked' && lk === 'v2', waitK = ['soon', 'gen', 'err', 'expired', 'revoked'].indexOf(state) > -1;   /* llaves sin usar: hueco fantasma + píldora de estado */
   var toast = false ?   /* sin aviso de llaves regeneradas: Fechas cambiadas se ve igual que Lista */ '<div class="vk-toast" role="status"><span class="vk-toast__i">' + ic('alert', 16) + '</span><div><b>Your keys were regenerated</b><span>These are your new keys.</span></div><button type="button" class="vk-toast__x" data-vk="toastx" aria-label="Dismiss">\u00d7</button></div>' : '';
   var cards = lockV2 ? steps81() : lay81 !== 'cards' ? list81(ds, waitK, lay81 === 'listS') : ds.map(function(d, i){ return '<div class="vk-ag" data-i="' + i + '" data-ty="' + d.ty + '"><div class="vk-ag__h"><span class="vk-ag__i">' + ic(d.ic || DI[d.ty], 18) + '</span><div><b>' + d.n + '</b><span>' + d.s + '</span></div>' + (d.ty === 'pin' && live() && !waitK ? '<button type="button" class="vk-cp__ic" data-vk="copy" aria-label="Copy code"><span class="vk-cp__a">' + ic('copy', 17) + '</span><span class="vk-cp__ok">' + ic('tick', 17) + '</span><em>Copied</em></button>' : '') + '</div>' + (waitK ? pw81(d) : keyBody(d)) + '</div>'; }).join('');
-  return (ready ? '' : movedNote()) + toast + '<div class="vk-au vk-au--home" data-tone="' + s.tone + '" data-s="' + state + '"' + (desk && ready ? ' data-dk="' + dk + '"' : '') + ' data-lb="' + lb81 + '"><i class="vk-au__bl vk-au__bl--1"></i><i class="vk-au__bl vk-au__bl--2"></i><div class="vk-au__in">' + hero + '<div class="vk-au__cards" data-n="' + ds.length + '" data-lay="' + (lockV2 ? 'cards' : lay81) + '">' + cards + '</div>' + (desk && ready && offW81 ? offer81() : '') + '</div></div>' + (lockV2 ? '' : below()) + inline();
+  return (ready ? '' : movedNote()) + toast + '<div class="vk-au vk-au--home" data-tone="' + s.tone + '" data-s="' + state + '"' + (desk && ready ? ' data-dk="' + dk + '"' : '') + ' data-lb="' + lb81 + '"><i class="vk-au__bl vk-au__bl--1"></i><i class="vk-au__bl vk-au__bl--2"></i><div class="vk-au__in">' + hero + '<div class="vk-au__cards" data-n="' + ds.length + '" data-lay="' + (lockV2 ? 'cards' : lay81) + '"' + mixD81(ds) + '>' + cards + '</div>' + (desk && ready && offW81 ? offer81() : '') + '</div></div>' + (lockV2 ? '' : below()) + inline();
 }
 /* ---------- montaje ---------- */
 var KEYS = { v1: k1, v2: k2, v3: k3, v4: k4, v5: k5, v6: k6, v7: k7, v8: k8, v81: k81, v9: k9, v10: k10, v11: k11, v12: k12 }, THERE = { v1: t1, v2: t1, v3: t3, v4: t4, v5: t1, v6: t3, v7: t4, v8: t3, v81: there81, v9: t3, v10: t1, v11: t4, v12: t1 };
-var TABS = [['keys', 'Keys', 'key'], ['there', 'How to get in', 'pin'], ['help', 'Help', 'help']];   /* en móvil, «How to get in» */
+var TABS = [['keys', 'Keys', 'key'], ['there', desk ? 'Getting there' : 'How to get in', 'pin'], ['help', 'Help', 'help']];   /* en móvil, «How to get in» */
 function prep(){
   var root = document.querySelector('.keys-view'), old = root && root.querySelector('.vk-old'); if (!old) return false;
   grab();
@@ -770,7 +786,7 @@ function render(){
   mount.setAttribute('data-kv', kv); mount.setAttribute('data-state', state); document.documentElement.setAttribute('data-vkv', kv);
   if (!raOn()) { mount.innerHTML = '<div class="vk-note" data-tone="off">' + ic('off', 18) + '<span><b>Remote access is off.</b> This property doesn’t offer virtual keys.</span></div>'; if (dockEl) dockEl.style.display = 'none'; paintTabs(); return; }
   if (kv === 'v81') fit81();
-  mount.innerHTML = '<div class="vk-panels" data-tab="' + tab + '"><section class="vk-p vk-p--keys">' + KEYS[kv]() + '</section><section class="vk-p vk-p--there"><div class="vk-dtop">' + label('How to get in', 'pin') + '</div>' + THERE[kv]() + '</section><section class="vk-p vk-p--help">' + helpP() + '</section></div>';
+  mount.innerHTML = '<div class="vk-panels" data-tab="' + tab + '"><section class="vk-p vk-p--keys">' + KEYS[kv]() + '</section><section class="vk-p vk-p--there"><div class="vk-dtop">' + label('Getting in', 'pin') + '</div>' + THERE[kv]() + '</section><section class="vk-p vk-p--help">' + helpP() + '</section></div>';
   var p = primary();
   if (dockEl) { var w = dockEl.querySelector('.contents'); dockEl.style.display = p ? '' : 'none'; if (w) w.innerHTML = p ? btn(p) : ''; }
   paintTabs(); velaPanel(); startCountdown(); startStories();

@@ -1027,3 +1027,38 @@
   .vk-p--there .vk-rt4__k{max-width:420px}
   .vk-p--there .vk-host7{max-width:860px}
 }
+/* cita del anfitrión sin sombra */
+.vk-host7{box-shadow:none}
+/* escritorio: la dirección, los pasos y la cita ocupan todo el ancho, como el panel de llaves */
+@media (min-width:1024px){.vk-p--there .vk-place3,.vk-p--there .vk-rt4,.vk-p--there .vk-host7{max-width:none}}
+/* fotos: en móvil, a pantalla completa; en escritorio, modal grande centrado */
+.vk-lb__m{position:static;display:contents}
+@media (min-width:1024px){
+  .vk-lb{padding:4vh 4vw;background:rgba(10,12,48,.62);cursor:default}
+  .vk-lb__m{position:relative;display:block;width:min(1180px,84vw);height:84vh;border-radius:24px;overflow:hidden;background:#fff;box-shadow:0 30px 70px -20px rgba(10,12,48,.6);animation:vkUp .3s cubic-bezier(.2,.8,.2,1) both}
+  .vk-lb__m img{display:block;width:100%;height:100%;max-width:none;max-height:none;border-radius:0;object-fit:cover}
+  .vk-lb__x{position:absolute;top:14px;right:14px;background:#fff;color:#161643;box-shadow:0 6px 16px -6px rgba(10,12,48,.5)}
+  .vk-lb__x:hover{background:#eef1ff}
+}
+/* Ask Vela: burbuja de respuesta sin sombra */
+.vk-av__a p{box-shadow:none}
+/* escritorio: botón de abrir puerta con sus colores de estado también en la tarjeta grande (mientras está desactivado) */
+@media (min-width:1024px){
+  .vk-au--home .vk-ag[data-ty="link"] [data-door="busy"] .vk-open[disabled]{background:#6f86ff;color:#fff;cursor:progress}
+  .vk-au--home .vk-ag[data-ty="link"] [data-door="done"] .vk-open[disabled]{background:#16a06a;color:#fff}
+  .vk-au--home .vk-ag[data-ty="link"] [data-door="fail"] .vk-open[disabled]{background:#e5484d;color:#fff}
+}
+/* al abrirse la puerta, los botones «Open» hacen el mismo halo verde que el deslizador */
+.vk-mc--o.is-copied,.vk-linkbox[data-door="done"] .vk-open{animation:vkDoneRing 1s ease-out}
+@media (prefers-reduced-motion:reduce){.vk-mc--o.is-copied,.vk-linkbox[data-door="done"] .vk-open{animation:none}}
+/* Vela (escritorio): «Invite the guests», igual que en Summary */
+.vk-inv{display:flex;flex-direction:column;gap:4px;padding:14px;border-radius:14px;background:#eef1ff}
+.vk-inv strong{font-size:13px;line-height:18px;font-weight:700;color:#161643}
+.vk-inv>span{font-size:12px;line-height:17px;color:#6b6b95}
+.vk-inv>div{display:flex;gap:8px;margin-top:8px}
+.vk-inv__p{flex:none;height:32px;padding:0 14px;border:1.5px solid #dfe2f1;border-radius:9999px;background:#fff;color:#161643;font:600 12.5px/1 Poppins,system-ui,sans-serif;cursor:pointer}
+.vk-inv__p:hover{background:#eff6ff;border-color:#385bf8}
+.vk-inv__p.pri{background:#385bf8;border-color:#385bf8;color:#fff}.vk-inv__p.pri:hover{background:#294df1}
+/* códigos de distinta longitud entre puertas: mismas casillas, alineadas a la izquierda */
+.vk-au__cards[data-mixd] .vk-digits{justify-content:flex-start}
+.vk-au__cards[data-mixd] .vk-digits i{flex:0 0 calc((100% - (var(--dg) - 1)*6px)/var(--dg))}
