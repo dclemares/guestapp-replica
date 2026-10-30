@@ -159,7 +159,9 @@ function primary(){
   return null;
 }
 function btn(p){ return '<button type="button" class="' + C.primary + ' vk-cta' + (p.done ? ' is-done' : '') + '" data-vk="' + p.a + '"' + (p.step ? ' data-step="' + p.step + '"' : '') + '>' + (p.i ? ic(p.i, 18) : '') + '<span>' + p.l + '</span></button>'; }
-function inline(){ var p = primary(); return p ? '<div class="vk-inline">' + btn(p) + '</div>' : ''; }
+/* V8.1: la pantalla nunca lleva CTA principal (ni barra inferior en móvil ni botón bajo el panel en escritorio); la acción de cada estado solo queda en Vela */
+function mainCta(){ return kv === 'v81' ? null : primary(); }
+function inline(){ var p = mainCta(); return p ? '<div class="vk-inline">' + btn(p) + '</div>' : ''; }
 function soft(a, l, i){ return '<button type="button" class="vk-soft" data-vk="' + a + '">' + (i ? ic(i, 16) : '') + '<span>' + l + '</span></button>'; }
 function label(t, i){ return '<h2 class="' + C.label + '">' + (i ? ic(i, 16) : '') + t + '</h2>'; }
 function pill(tone, t){ return '<span class="vk-chip" data-tone="' + tone + '">' + t + '</span>'; }
@@ -757,7 +759,7 @@ function paintTabs(){
 function fit81(){
   var probe = document.createElement('div');
   probe.className = 'vk-panels vk-probe'; probe.setAttribute('data-tab', 'keys'); mount.style.position = 'relative'; mount.insertBefore(probe, mount.firstChild);
-  var avail = window.innerHeight - (primary() ? 96 : 0) - 16, ready = state === 'open' || state === 'moved';
+  var avail = window.innerHeight - (mainCta() ? 96 : 0) - 16, ready = state === 'open' || state === 'moved';
   var paint = function(){ probe.innerHTML = '<section class="vk-p vk-p--keys">' + k81() + '</section>'; return probe.querySelector('.vk-au'); };
   offW81 = false;
   if (desk && ready) {
@@ -788,7 +790,7 @@ function render(){
   if (!raOn()) { mount.innerHTML = '<div class="vk-note" data-tone="off">' + ic('off', 18) + '<span><b>Remote access is off.</b> This property doesn’t offer virtual keys.</span></div>'; if (dockEl) dockEl.style.display = 'none'; paintTabs(); return; }
   if (kv === 'v81') fit81();
   mount.innerHTML = '<div class="vk-panels" data-tab="' + tab + '"><section class="vk-p vk-p--keys">' + KEYS[kv]() + '</section><section class="vk-p vk-p--there"><div class="vk-dtop">' + label('Getting in', 'pin') + '</div>' + THERE[kv]() + '</section><section class="vk-p vk-p--help">' + helpP() + '</section></div>';
-  var p = primary();
+  var p = mainCta();
   if (dockEl) { var w = dockEl.querySelector('.contents'); dockEl.style.display = p ? '' : 'none'; if (w) w.innerHTML = p ? btn(p) : ''; }
   paintTabs(); velaPanel(); startCountdown(); startStories();
 }
