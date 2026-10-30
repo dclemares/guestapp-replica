@@ -1068,3 +1068,16 @@
 /* escritorio: la puerta con enlace en fila no debe aplastar el hueco fantasma, que sacaba la píldora de la tarjeta */
 .vk-au--home[data-lb="row"] .vk-ag[data-ty="link"] .vk-pw{flex:0 0 100%;margin-top:14px}
 @media (min-width:1024px) and (max-width:1180px){.vk-au--home .vk-pwc{font-size:11.5px;padding:0 10px}}
+/* V8.1 · escritorio con llaves listas: una vez elegida la disposición (fit81 mide en .vk-probe, por eso aquí no se aplica), se estira lo necesario para que las dos columnas acaben a la misma altura */
+@media (min-width:1024px){
+  .vk-panels:not(.vk-probe) .vk-au[data-dk] .vk-au__in{align-items:stretch}
+  .vk-panels:not(.vk-probe) .vk-au[data-dk] .vk-au__hero--r{display:flex;flex-direction:column}
+  .vk-panels:not(.vk-probe) .vk-au[data-dk] .vk-dk2{flex:1;display:flex;flex-direction:column}
+  .vk-panels:not(.vk-probe) .vk-au[data-dk] .vk-dk2 li{flex:1;align-items:center}
+  .vk-panels:not(.vk-probe) .vk-au[data-dk] .vk-au__cards{display:flex;flex-direction:column}
+  .vk-panels:not(.vk-probe) .vk-au[data-dk] .vk-au__cards>.vk-ag{flex:1 1 auto;display:flex;flex-direction:column;justify-content:space-between}
+  .vk-panels:not(.vk-probe) .vk-au[data-dk][data-lb="row"] .vk-au__cards>.vk-ag[data-ty="link"]{flex-direction:row;align-content:center;justify-content:flex-start}
+  .vk-panels:not(.vk-probe) .vk-au[data-dk]:not([data-lb="row"]) .vk-ag[data-ty="link"] .vk-open{width:100%!important}
+  .vk-panels:not(.vk-probe) .vk-au[data-dk] .vk-mr{flex:1;display:flex;flex-direction:column}
+  .vk-panels:not(.vk-probe) .vk-au[data-dk] .vk-mr li{flex:1}
+}
