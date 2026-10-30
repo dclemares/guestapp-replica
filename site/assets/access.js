@@ -901,7 +901,7 @@ function onKeysClick(e){
     try { navigator.clipboard.writeText(d); } catch (_) {} kpType(pc);
     var host = a.closest('.vk-cp') || (a.closest('.vk-ag') && a.closest('.vk-ag').querySelector('.vk-cp')) || a, icb = a.closest('.vk-ag') && a.closest('.vk-ag').querySelector('.vk-cp__ic');
     host.classList.add('is-copied'); a.classList.add('is-copied'); if (icb) icb.classList.add('is-copied');
-    var s = a.querySelector('span[data-l]') || host.querySelector('span[data-l]') || (a.closest('.vk-cp') ? null : a.querySelector('span'));
+    var s = a.querySelector('span[data-l]') || host.querySelector('span[data-l]') || (a.closest('.vk-cp') || a.classList.contains('vk-cp__ic') ? null : a.querySelector('span'));   /* el botón de icono cambia de icono, no de texto: escribir aquí borraba el dibujo */
     var o = s && (s.getAttribute('data-l') || s.textContent); if (s) s.textContent = 'Copied';
     clearTimeout(a._cpT); a._cpT = setTimeout(function(){ host.classList.remove('is-copied'); a.classList.remove('is-copied'); if (icb) icb.classList.remove('is-copied'); if (s) s.textContent = o; }, 1400);
   }
