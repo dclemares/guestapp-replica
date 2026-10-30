@@ -30,6 +30,7 @@
     if (!e.isTrusted) return;   /* solo lo que hace la persona, no lo que se replica */
     var el = e.target && e.target.closest ? e.target.closest(TARGET) : null; if (!el || el.closest('#rep-panel,#rep-panel-set,[data-rep-bar],.rep-switch,.rail-switch')) return;
     if (el.tagName === 'A' && el.target === '_blank') return;
+    if (el.matches('[data-vk="open"],[data-vk="mopen"]')) return;   /* abrir puerta: lo replica access.js, que sabe qué puerta es */
     if (el.getAttribute('data-a') === 'gallery' || (el.tagName === 'INPUT' && el.type === 'file')) return;   /* abre el selector de archivos: la imagen elegida se comparte aparte */
     var sg = { tag: el.tagName, text: txt(el), attrs: attrs(el) }, list = cands(sg);
     send({ rep: 'ui-click', sig: sg, idx: Math.max(0, list.indexOf(el)) });

@@ -230,6 +230,7 @@ function hostBlock(){ return '<div class="vk-note vk-note--host" data-tone="bad"
 function howBlock(){ return '<div class="vk-note" data-tone="info">' + ic('door', 18) + '<span>' + (desk ? HOW[kt] : HOW[kt].replace('stand at the door and tap <b>Open door</b>', 'stand at the door and slide the button to the end').replace('then tap <b>Open door</b>', 'then slide to open the door')) + ((kt === 'pin' || kt === 'mix') ? ' Codes are personal, so please don’t share them.' : '') + '</span></div>'; }
 function below(){
   if (state === 'locked') return todo();
+  if (kv === 'v81' && !live()) return '';   /* en V8.1, sin los avisos de email y del anfitrión debajo del panel */
   if (state === 'soon' || state === 'gen') return mailBlock();
   if (state === 'err') return hostBlock();
   if (live()) return kv === 'v81' ? '' : howBlock();   /* en V8.1, «How to enter» va en Help */
@@ -523,7 +524,7 @@ function k8(){
   return movedNote() + panel + below() + inline();
 }
 function startCountdown(){
-  clearInterval(cdTimer); if (kv !== 'v8' || (state !== 'soon' && state !== 'wait')) return;
+  clearInterval(cdTimer); if ((kv !== 'v8' && kv !== 'v81') || (state !== 'soon' && state !== 'wait')) return;
   cdTimer = setInterval(function(){ var e = mount && mount.querySelector('.vk-cd'); if (!e) { clearInterval(cdTimer); return; } CDS[state] = Math.max(0, CDS[state] - 1); e.textContent = fmtCd(CDS[state]); }, 1000);
 }
 /* una puerta se ha abierto: confeti y reacción de cada versión */
@@ -799,9 +800,26 @@ function selectTab(t){
 
 /* acciones */
 function doorDone(c){ return c.getAttribute('data-door'); }
+/* vista «Móvil + escritorio»: abrir una puerta se repite en la otra pantalla. En móvil se desliza y en escritorio se pulsa, así que panel.js no puede emparejarlos: se envía qué puerta es (su orden dentro de la sección) */
+var doorMirror = false;
+function doorEls(sec){ return sec.querySelectorAll('.vk-open,[data-vk="mopen"]'); }
+function sendDoor(el){
+  if (doorMirror) return;
+  try { var T = window.top, sec = el.closest('.vk-p'); if (T === window || !T.__phoneSplit || !sec) return; T.postMessage({ rep: 'ui-door', w: sec.classList.contains('vk-p--there') ? 'there' : 'keys', i: [].indexOf.call(doorEls(sec), el) }, '*'); } catch (_) {}
+}
+window.addEventListener('message', function(ev){
+  var m = ev.data, sec = m && m.rep === 'ui-door' && mount ? mount.querySelector('.vk-p--' + m.w) : null, el = sec ? doorEls(sec)[m.i] : null; if (!el) return;
+  doorMirror = true;
+  try {
+    if (el.getAttribute('data-vk') === 'mopen') el.click();
+    else { var sl = el.closest('[data-door]').querySelector('.vk-slide'); if (sl && sl.offsetParent) finishSlide(sl); else openDoor(el); }
+  } catch (_) {}
+  doorMirror = false;
+});
 function openDoor(b){
   var c = b.closest('[data-door]'), s = b.querySelector('span'), lbl = c.querySelector('.vk-slide__lbl');
   if (c.getAttribute('data-door') !== 'idle') return;
+  sendDoor(b);
   var oldF = c.querySelector('.vk-fail'); if (oldF) oldF.parentNode.removeChild(oldF);
   c.setAttribute('data-door', 'busy'); s.textContent = 'Opening…'; if (lbl) lbl.textContent = 'Opening…'; b.disabled = true;
   setTimeout(function(){
@@ -865,7 +883,7 @@ function onKeysClick(e){
   else if (k === 'zoom') zoomPhoto(a.getAttribute('data-src'));
   else if (k === 'copyaddr') { try { navigator.clipboard.writeText('Calle Mayor 12, 3º B, 02001 Albacete, Spain'); } catch (_) {} a.classList.add('is-copied'); a.setAttribute('aria-label', 'Copied'); clearTimeout(a._cpT); a._cpT = setTimeout(function(){ a.classList.remove('is-copied'); a.setAttribute('aria-label', 'Copy address'); }, 1400); }   /* el icono pasa a check verde; no se cambia el contenido */
 
-  else if (k === 'mopen') { if (a._busy) return; a._busy = true; a.classList.remove('is-fail'); var kr = a.closest('.vk-rt4__k'), row = kr ? null : a.closest('li'), oldF = kr ? (kr.nextElementSibling && kr.nextElementSibling.classList.contains('vk-fail') ? kr.nextElementSibling : null) : (row && row.querySelector('.vk-fail')); if (oldF) oldF.parentNode.removeChild(oldF); a.querySelector('span').textContent = 'Opening…'; setTimeout(function(){ var bad = op === 'fail'; a.classList.add(bad ? 'is-fail' : 'is-copied'); a.querySelector('span').textContent = bad ? 'Failed' : 'Opened';
+  else if (k === 'mopen') { if (a._busy) return; a._busy = true; sendDoor(a); a.classList.remove('is-fail'); var kr = a.closest('.vk-rt4__k'), row = kr ? null : a.closest('li'), oldF = kr ? (kr.nextElementSibling && kr.nextElementSibling.classList.contains('vk-fail') ? kr.nextElementSibling : null) : (row && row.querySelector('.vk-fail')); if (oldF) oldF.parentNode.removeChild(oldF); a.querySelector('span').textContent = 'Opening…'; setTimeout(function(){ var bad = op === 'fail'; a.classList.add(bad ? 'is-fail' : 'is-copied'); a.querySelector('span').textContent = bad ? 'Failed' : 'Opened';
       var fh = '<div class="vk-fail" role="alert">' + ic('alert', 16) + '<span><b>The door didn’t open.</b> Make sure you’re at the door and your phone is online, then try again. Still stuck? Message your host.</span></div>';
       if (bad && kr) kr.insertAdjacentHTML('afterend', fh); else if (bad && row) row.insertAdjacentHTML('beforeend', fh);   /* el motivo, debajo de la fila */ setTimeout(function(){ a.classList.remove('is-copied'); a._busy = false; a.querySelector('span').textContent = bad ? 'Retry' : 'Open'; }, 3200); }, 1200); }
   else if (k === 'maps') { if (a.classList.contains('vk-place3__m')) { a.classList.add('is-on'); setTimeout(function(){ a.classList.remove('is-on'); }, 900); } else flash(a, 'Opening Maps…'); }   /* el botón pequeño «Maps» no cambia de texto (se saldría) */
@@ -899,8 +917,8 @@ var swK = document.createElement('div'); swK.className = 'acc-switch';
 var swC = document.createElement('div'); swC.className = 'acc-switch acc-switch--cfg';
 var swN = document.createElement('div'); swN.className = 'acc-switch';
 var swO = document.createElement('div'); swO.className = 'acc-switch';
-var swX = document.createElement('div'); swX.className = 'acc-switch';
-var swT = document.createElement('div'); swT.className = 'acc-switch';
+var swX = document.createElement('div'); swX.className = 'acc-switch vk-sw-lb';
+var swT = document.createElement('div'); swT.className = 'acc-switch vk-sw-lb';
 var ALL = [swN, swT, sw, swK, swO, swX, swC];
 function paintSwitch(){
   var TN = { cur: 'Actual', t1: 'T1 · Segmentado', t2: 'T2 · Píldoras', t3: 'T3 · Iconos', t4: 'T4 · Subrayado', t5: 'T5 · Cápsula' };

@@ -686,7 +686,6 @@
 /* Preparada / Generando: píldora con el estado centrada sobre el hueco fantasma de la llave */
 .vk-pw{position:relative}
 .vk-pwc{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border-radius:99px;white-space:nowrap;font-style:normal;font-size:12.5px;font-weight:700;background:#fff;color:#23235d;box-shadow:0 8px 18px -8px rgba(10,11,39,.6)}
-.vk-pwc[data-s="soon"]{background:#ffc233;color:#2a1600}
 .vk-pwc[data-s="gen"] svg{animation:vkSpinCW 1.4s linear infinite}
 @media (prefers-reduced-motion:reduce){.vk-pw *::after,.vk-pw__ic svg,.vk-pwc svg,.vk-toast{animation:none!important}}
 /* Caducada y Cancelada: el anillo sigue gris, el centro en rojo como en Error */
@@ -705,7 +704,7 @@
 .vk-toast__x{border-radius:6px;background:rgba(42,22,0,.1);color:#2a1600}
 /* píldora de estado en Error, Caducada y Cancelada */
 .vk-pwc[data-s="err"] svg{color:#e5484d}
-.vk-pwc[data-s="expired"],.vk-pwc[data-s="revoked"]{background:rgba(255,255,255,.88);color:#4a4a6e}
+.vk-pwc[data-s="soon"],.vk-pwc[data-s="expired"],.vk-pwc[data-s="revoked"]{background:rgba(255,255,255,.88);color:#4a4a6e}
 /* aviso de llaves regeneradas: blanco con aro amarillo por fuera; el icono centrado */
 .vk-toast{background:#fff;box-shadow:0 0 0 3px rgba(255,194,51,.55),0 10px 24px -12px rgba(22,22,67,.45)}
 .vk-toast .vk-toast__i{display:grid;margin:0;place-items:center;background:#fff3d1;color:#8a5a00}
@@ -768,7 +767,7 @@
 .vk-mc.is-copied{background:rgba(95,224,166,.28);letter-spacing:.02em;font-size:13px}
 .vk-mc--o{padding:0 14px;letter-spacing:0;font-size:13px;background:#385bf8}.vk-mc--o:hover{background:#4a6bff}.vk-mc--o[disabled]{background:rgba(255,255,255,.12);color:rgba(255,255,255,.6);cursor:default}
 .vk-mc--g{height:26px;padding:0 10px;border-radius:99px;font-style:normal;font-size:11.5px;letter-spacing:0;background:rgba(255,255,255,.1);color:rgba(255,255,255,.75);cursor:default}
-.vk-mc--g[data-s="soon"]{background:#ffc233;color:#2a1600}.vk-mc--g[data-s="err"]{color:#ffb3b3}
+.vk-mc--g[data-s="soon"]{height:34px;padding:0 14px;border-radius:10px;font-size:13px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.6)}.vk-mc--g[data-s="err"]{color:#ffb3b3}
 .vk-more .vk-cp__hint{margin-top:6px}
 /* con 3 o más puertas, «Tap the code to copy» solo en la primera tarjeta con código */
 .vk-au__cards:not([data-n="1"]):not([data-n="2"]) .vk-ag~.vk-ag .vk-cp__hint{display:none}
@@ -1062,3 +1061,10 @@
 /* códigos de distinta longitud entre puertas: mismas casillas, alineadas a la izquierda */
 .vk-au__cards[data-mixd] .vk-digits{justify-content:flex-start}
 .vk-au__cards[data-mixd] .vk-digits i{flex:0 0 calc((100% - (var(--dg) - 1)*6px)/var(--dg))}
+/* controles con varias filas: la primera fila también lleva su título (el panel lo oculta por defecto) */
+#rep-panel .acc-switch.vk-sw-lb>span:first-child{display:block!important}
+/* V8.1 · Bloqueada: los botones de los pasos miden lo mismo */
+.vk-s81 .vk-mini{min-width:116px;justify-content:center;text-align:center}
+/* escritorio: la puerta con enlace en fila no debe aplastar el hueco fantasma, que sacaba la píldora de la tarjeta */
+.vk-au--home[data-lb="row"] .vk-ag[data-ty="link"] .vk-pw{flex:0 0 100%;margin-top:14px}
+@media (min-width:1024px) and (max-width:1180px){.vk-au--home .vk-pwc{font-size:11.5px;padding:0 10px}}

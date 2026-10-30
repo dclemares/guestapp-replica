@@ -89,7 +89,7 @@ function nav(href, noPush, from){
 function within(win, frame){ try { for (var w = win, n = 0; w && n < 5; w = w.parent, n++) { if (w === frame.contentWindow) return true; if (w === w.parent) break; } } catch (e) {} return false; }
 window.addEventListener('message', function(ev){
   var m = ev.data;
-  if (m && (m.rep === 'ui-click' || m.rep === 'ui-input' || m.rep === 'iv-gallery')) {   /* lo que se hace en un marco se replica en el otro (pulsaciones, escritura y la imagen elegida de la galería) */
+  if (m && (m.rep === 'ui-click' || m.rep === 'ui-input' || m.rep === 'ui-door' || m.rep === 'iv-gallery')) {   /* lo que se hace en un marco se replica en el otro (pulsaciones, escritura y la imagen elegida de la galería) */
     var other = within(ev.source, fr) ? frD : (within(ev.source, frD) ? fr : null);   /* el origen puede ser el marco o un modal en un iframe dentro de él */
     try { if (other) other.contentWindow.postMessage(m, '*'); } catch (e) {}
     return;
