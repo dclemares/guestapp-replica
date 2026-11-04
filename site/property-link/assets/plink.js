@@ -875,7 +875,7 @@ function boxGo(apply){
 function fgFound(){
   S.cta = null;
   if (C.fg === '1' && +C.gq >= 6 && !isMob()) { hFound(); return; }   /* escritorio: G1.2c. Móvil (decidido 4-nov): la V8 a pantalla completa con «Welcome!» y la hoja blanca que sube (G1); mFound queda solo en el código */   /* G1.2: sin pasar por la pantalla completa (móvil: la cabecera cambia en su sitio y la caja pasa a ser el paso) */
-  if (C.fg === '1') { var snap = null;   /* «Let's find your booking» → «Welcome, Maria!»: la V8 de siempre en móvil y escritorio (Dani, 4-nov); v8dSnap/v8dIn quedan solo en el código */ S.v8d = !!snap; S.sheet = 'search'; S.sr = 'found'; render(); if (snap) v8dIn(snap); if (!RLF) homeLoad(); if (+C.gq >= 6 && !isMob()) return; if (!/[?&]hold=found/.test(location.search)) timer = setTimeout(C.gq !== '0' ? gqIn : f1Exit, C.gq !== '0' ? (RM() ? 1200 : C.ux === '1' ? 2350 : 2750) : (RM() ? 1800 : 2700));   /* la tarjeta blanca sube cuando la ficha ya ha cargado (y se ha visto el destello) */ return; }   /* ?hold=found: se queda en «Booking found» para revisarla */
+  if (C.fg === '1') { var snap = null;   /* «Let's find your booking» → «Welcome, Maria!»: la V8 de siempre en móvil y escritorio (Dani, 4-nov); v8dSnap/v8dIn quedan solo en el código */ S.v8d = !!snap; S.sheet = 'search'; S.sr = 'found'; render(); if (isMob()) v8Grow(); if (snap) v8dIn(snap); if (!RLF) homeLoad(); if (+C.gq >= 6 && !isMob()) return; if (!/[?&]hold=found/.test(location.search)) timer = setTimeout(C.gq !== '0' ? gqIn : f1Exit, C.gq !== '0' ? (RM() ? 1200 : C.ux === '1' ? 2350 : 2750) : (RM() ? 1800 : 2700));   /* la tarjeta blanca sube cuando la ficha ya ha cargado (y se ha visto el destello) */ return; }   /* ?hold=found: se queda en «Booking found» para revisarla */
   if (C.fg === '4') { f4Go(); return; }
   if (C.fg === '3') { boxGo(function(){ S.phase = 'f3'; S.f3open = false; S.f3anim = true; }); return; }
   boxGo(function(){ S.phase = 'found'; });
@@ -912,6 +912,16 @@ function v8dIn(sn){
   var flyers = [ws, old], tidy = function(){ flyers.forEach(function(x){ x.remove(); }); if (col) col.style.visibility = ''; };
   if (/[?&]hold=found/.test(location.search)) { window.__v8dSeek = function(ms){ document.getAnimations().forEach(function(x){ try { x.pause(); x.currentTime = ms; } catch (e) {} }); }; }
   wa.finished.then(function(){ setTimeout(tidy, 60); }, tidy);
+}
+/* móvil (PL-59): al encontrar la reserva, la foto del fondo crece desde el encuadre exacto de la cabecera (posición, tamaño, zoom e intensidad del momento) hasta la pantalla entera:
+   lo contrario de cómo se encoge al terminar la precarga. Es la misma técnica que la pantalla final del one click (OC-60). Solo cambia el fondo; lo demás de la V8 sigue igual */
+function v8Grow(){
+  var fx = root.querySelector('.pl-fx.pl-v8'), im = fx && fx.querySelector(':scope>img'), gh = root.querySelector('.pl-gh'), him = gh && gh.querySelector('img'); if (!im || !gh || RM()) return;
+  var hb = gh.getBoundingClientRect(), tf = him ? getComputedStyle(him).transform : 'none', op = him ? getComputedStyle(him).opacity : '.6', ez = ' .9s cubic-bezier(.65,0,.25,1)';
+  im.style.cssText = 'position:absolute;top:' + hb.top + 'px;left:' + hb.left + 'px;width:' + hb.width + 'px;height:' + hb.height + 'px;right:auto;bottom:auto;object-fit:cover;animation:none;opacity:' + op + ';transform:' + tf + ';transition:none';
+  im.offsetWidth;
+  im.style.transition = 'top' + ez + ',left' + ez + ',width' + ez + ',height' + ez + ',opacity 1.2s ease .35s';
+  im.style.top = '0px'; im.style.left = '0px'; im.style.width = '100%'; im.style.height = '100%'; im.style.opacity = '.32';
 }
 /* ---------- F1 · a la home con la ventana abierta ---------- */
 function homeLoad(){ if (!RLF) { rlFrame(false); RLF.__hold = true; } else { RLF.__hold = true; rlFrame(true); } RLF.classList.add('pl-hold'); }   /* la home de la réplica se carga oculta detrás (como en el reservation link) */
@@ -1159,6 +1169,36 @@ function hFound(){
   }
   gqFit(); if (C.ux === '1') { var h2d = fx.querySelector('#pl-gqh'); if (h2d) try { h2d.focus({ preventScroll: true }); } catch (e) {} }
   setTimeout(function(){ tidy.forEach(function(x){ x.remove(); }); }, D + 120);
+}
+/* ============ móvil (PL-57): la cabecera crece al buscar (V8) y, con la reserva encontrada, vuelve a encogerse hasta la cabecera
+   mientras la caja blanca sube con su borde, ya con «Confirm who's coming» (lo mismo que la salida de la precarga). Nunca cambia de pantalla ============ */
+function mContract(){
+  var fx = root.querySelector('.pl-fx.pl-v8'); if (!fx || S.sheet !== 'search') return;
+  var reduce = RM(), D = 900, E = 'cubic-bezier(.65,0,.25,1)', b = (S.hr && S.hr.b) || Math.round(innerHeight - 210);
+  fx.classList.add('pl-keepfx'); S.phase = 'g12'; S.sheet = null; render();   /* debajo, la página de siempre con la caja ya en el paso (el azul no se vuelve a pintar ni se reinicia) */
+  var d = stayData(), bk = BOOKING, nn = nights(bk.cin, bk.cout), m = root.querySelector('.pl-gh-m');
+  if (false && m) { var t = ['Booking found', hello(d), ic('cal', 15) + (bk.cin.getMonth() === bk.cout.getMonth() ? bk.cin.getDate() + '–' + bk.cout.getDate() + ' ' + MO[bk.cout.getMonth()] : fmt(bk.cin) + ' – ' + fmt(bk.cout)) + ' · ' + nn + (nn === 1 ? ' night' : ' nights')]; [m.querySelector('.pl-wel'), m.querySelector('.pl-gh-name'), m.querySelector('.pl-loc')].forEach(function(el, i){ if (el) el.innerHTML = t[i]; }); m.classList.add('pl-g12h'); }   /* la cabecera dice lo que ha pasado */
+  if (reduce) { fx.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 300, fill: 'forwards' }); setTimeout(function(){ fx.remove(); }, 320); return; }
+  var xc = fx.querySelector('.pl-x-c'); if (xc) xc.animate([{ opacity: 1 }, { opacity: 0, transform: 'translateY(-16px)' }], { duration: 300, easing: 'ease', fill: 'forwards' });
+  fx.animate([{ clipPath: 'inset(0 0 0 0 round 0)' }, { clipPath: 'inset(0 0 ' + b + 'px 0 round 0)' }], { duration: D, easing: E, fill: 'forwards' });   /* la cabecera se recoge: al revés de como ha crecido */
+  fx.animate([{ opacity: 1 }, { opacity: 1, offset: .75 }, { opacity: 0 }], { duration: D + 200, easing: 'linear', fill: 'forwards' });   /* y se funde con la de verdad (texto nuevo) */
+  var card = root.querySelector('.pl-col>.pl-card'), dock = root.querySelector('.pl-col>.pl-dock'), ct = card ? card.getBoundingClientRect().top : innerHeight, rise = Math.max(0, innerHeight - ct);
+  [card, dock].forEach(function(e){ if (e) e.animate([{ transform: 'translateY(' + rise + 'px)' }, { transform: 'none' }], { duration: D, easing: E, fill: 'backwards' }); });   /* la caja sube pegada al borde del azul, con la misma curva */
+  setTimeout(function(){ fx.remove(); }, D + 260);
+}
+/* T2 en la caja (móvil): la caja blanca crece hasta la pantalla entera y se funde en la home */
+function tBox(){
+  var card = root.querySelector('.pl-col>.pl-card'), dock = root.querySelector('.pl-col>.pl-dock'); if (!card) return ocDoneNow();
+  var go = function(){
+    if (RM()) { tHome(); RLF.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 300, fill: 'backwards' }); return; }
+    var r = card.getBoundingClientRect(), W = innerWidth, H = innerHeight;
+    [].forEach.call(card.children, function(k){ k.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 180, fill: 'forwards' }); });
+    if (dock) dock.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 180, fill: 'forwards' });
+    card.style.cssText += ';position:fixed;z-index:40;top:' + r.top + 'px;left:' + r.left + 'px;right:auto;bottom:auto;width:' + r.width + 'px;height:' + r.height + 'px;max-height:none;margin:0;transform-origin:0 0;overflow:hidden';
+    card.animate([{ transform: 'none', borderRadius: getComputedStyle(card).borderTopLeftRadius + ' ' + getComputedStyle(card).borderTopRightRadius + ' 0 0' }, { transform: 'translate(' + (-r.left) + 'px,' + (-r.top) + 'px) scale(' + (W / r.width) + ',' + (H / r.height) + ')', borderRadius: '0px' }], { duration: 700, delay: 120, easing: 'cubic-bezier(.65,0,.25,1)', fill: 'forwards' });
+    setTimeout(function(){ var rw = tHome(); RLF.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 420, easing: 'ease', fill: 'backwards' }); tRise(80); setTimeout(function(){ try { delete rw.scrollY; } catch (e) {} }, 900); }, 830);
+  };
+  if (RLF && RLF.__ok) rlSettled(go); else { homeLoad(); RLF.__go = go; }
 }
 /* ============ T2 / T3 · de «Confirm who's coming» a la guestapp ============ */
 function tHome(){   /* la home (ya cargada debajo), arriba del todo y sin el ajuste automático de la réplica mientras se anima */
@@ -1467,7 +1507,7 @@ function ocAction(a, t){
   switch (a) {
     case 'ocgoogle': case 'ocapple': if (oc.busy) return true; S.sheet = null; oc.busy = a; render(); setTimeout(function(){ oc.busy = ''; oc.signed = true; ocGo('count'); }, OC_WAIT); return true;   /* tras iniciar sesión: primero cuántos sois (en la misma caja) */
     case 'ocgc': if (oc.busy) return true; gcStep(t); break;
-    case 'ocgcok': if (oc.busy) return true; if (C.gcm !== 'total') oc.count = oc.ad + oc.mi; oc.sel = oc.sel.slice(0, oc.count); oc.busy = 'ocgcok'; render(); setTimeout(function(){ oc.busy = ''; if (PL && !(S.f4 && oc.signed)) ocDoneNow(); else ocGo(C.ocv === 'none' ? 'new' : 'pick'); }, OC_WAIT); return true;   /* misma cadencia que del paso 1 al 2 · property link (F2, y F4 sin sesión): a la home con la pantalla final */
+    case 'ocgcok': if (oc.busy) return true; if (C.gcm !== 'total') oc.count = oc.ad + oc.mi; oc.sel = oc.sel.slice(0, oc.count); oc.busy = 'ocgcok'; render(); setTimeout(function(){ oc.busy = ''; if (PL && !OC && S.phase === 'g12') { render(); tBox(); } else if (PL && !(S.f4 && oc.signed)) ocDoneNow(); else ocGo(C.ocv === 'none' ? 'new' : 'pick'); }, OC_WAIT);   /* móvil: T2 desde la caja */ return true;   /* misma cadencia que del paso 1 al 2 · property link (F2, y F4 sin sesión): a la home con la pantalla final */
     case 'ocskip': if (oc.busy) return true; S.sheet = null; oc.sel = []; oc.fixd = {}; ocDoneNow(); return true;   /* sin cuenta: a la home, con la misma pantalla final (lista animada + «Opening your booking»), sin nadie registrado */
     case 'ocform': goForm(); return true;
     case 'ocout': oc.step = 'welcome'; oc.signed = false; break;
@@ -1548,7 +1588,7 @@ function render(){
   if (top !== null && main && root.__top === top && main.querySelector(':scope > .pl-col')) {   /* one click: si la cabecera no cambia, solo se cambia la caja. La foto y el fondo no se vuelven a crear (antes parpadeaban a oscuro y el zoom daba saltos) */
     var oc0 = main.querySelector(':scope > .pl-col'); while (oc0.nextSibling) main.removeChild(oc0.nextSibling); main.removeChild(oc0);
     main.insertAdjacentHTML('beforeend', body.slice(ci));
-    while (main.nextSibling) root.removeChild(main.nextSibling);
+    for (var nx = main.nextSibling, n2; nx; nx = n2) { n2 = nx.nextSibling; if (!(nx.classList && nx.classList.contains('pl-keepfx'))) root.removeChild(nx); }   /* pl-keepfx: el azul que se está recogiendo no se toca (si se saca y se vuelve a meter, sus animaciones vuelven a empezar) */
     root.insertAdjacentHTML('beforeend', sh);
   } else {
     root.innerHTML = head + '<main class="pl-main">' + body + '</main>' + sh; var ci0 = body.indexOf('<div class="pl-col'); root.__top = ci0 > 0 ? head + body.slice(0, ci0) : null;   /* se recuerda siempre la cabecera pintada (así G1.2 en móvil cambia solo la caja) */
