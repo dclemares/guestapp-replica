@@ -2065,3 +2065,93 @@ html.pl-pre-v5 .pl-gh,html.pl-pre-v5 .pl-col>.pl-card,html.pl-pre-v5 .pl-col>.pl
 @media (max-width:1023px){@keyframes plFinPush{to{transform:translateY(var(--fin-b,100vh));filter:blur(6px)}}}
 /* property link, salida de la precarga en móvil: la caja y la barra del botón van por encima de la foto, que llega hasta debajo de las esquinas redondeadas */
 
+
+/* ===== PL-40 · Reserva encontrada → número de huéspedes (F1–F4) ===== */
+/* piezas de «reserva encontrada» en la caja blanca (F2, F3 y F4 sin sesión): sin delineados, fondos suaves */
+.pl-fok{display:flex;align-items:center;gap:6px;width:fit-content;max-width:100%;margin:0 0 12px;padding:6px 11px;border-radius:99px;background:#e8f8f0;color:var(--pl-green);font-size:12.5px;font-weight:600;line-height:1.3}
+.pl-fok svg{flex:none}
+.pl-fnd-top{display:flex;align-items:center;gap:14px}
+.pl-fnd-ic{flex:none;display:block}
+.pl-fnd-ic svg{display:block;width:52px;height:52px}
+.pl-fnd-ic .c{fill:#6be0a8;transform-origin:center;transform:scale(0);animation:plPopC .45s cubic-bezier(.2,1.4,.4,1) .2s both}
+.pl-fnd-ic.pl-found .mg{animation-delay:.3s}
+.pl-fnd-ic.pl-found .hs{animation-delay:.8s}
+.pl-fnd-ic.pl-found .dr{animation-delay:1.1s}
+.pl-still .pl-fnd-ic .c{animation:none;transform:none}
+.pl-still .pl-fnd-ic .mg{animation:none;opacity:0}
+.pl-still .pl-fnd-ic .hs,.pl-still .pl-fnd-ic .dr{animation:none;stroke-dashoffset:0}
+.pl-fnd-eye{margin:0 0 2px;font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--pl-green)}
+.pl-fnd .pl-fnd-top h2{margin:0}
+.pl-fstay{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:14px 0 0;padding:14px 16px;border-radius:16px;background:var(--pl-soft)}
+.pl-fstay small{display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--pl-sub)}
+.pl-fstay strong{display:block;font-size:15px;font-weight:700}
+.pl-fstay .r{text-align:right}
+.pl-fstay .pl-n{flex:none;padding:3px 10px;border-radius:99px;background:#fff;font-size:12px;font-weight:600;color:var(--pl-sub)}
+.pl-fnd-meta{display:flex;flex-wrap:wrap;gap:6px 16px;margin:12px 0 0;font-size:13px;color:var(--pl-sub)}
+.pl-fnd-meta span{display:inline-flex;align-items:center;gap:6px}
+.pl-f3 .pl-lead{margin-top:12px}
+.pl-f3rows{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.pl-f3rows>.pl-f3row,.pl-f3g{border-radius:16px;background:var(--pl-soft)}
+.pl-f3row{display:flex;align-items:center;gap:12px;padding:10px 14px}
+.pl-f3ic{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#fff;color:var(--pl-blue)}
+.pl-f3tx{flex:1;min-width:0}
+.pl-f3tx small{display:block;font-size:11.5px;color:var(--pl-sub)}
+.pl-f3tx b{display:block;font-size:15px}
+.pl-f3row .pl-link{flex:none;font-size:13.5px}
+.pl-f3ctl{padding:0 14px 12px}
+.pl-f3ctl .pl-gcr{padding-left:0;padding-right:0}
+.pl-f3ctl .pl-gcb{background:#fff}
+.pl-f3ctl .pl-gcb.add{background:var(--pl-blue)}
+.pl-f3in{animation:plUpIn .32s ease both}
+/* F1 · la ventana «Confirm who's coming» sobre la home: hoja inferior en móvil, ventana centrada en escritorio */
+.pl-f1v8 .pl-x-open i::after{animation-duration:2.1s}   /* la barra acaba cuando la cabecera se recoge */
+.pl-fgw{position:fixed;inset:0;z-index:70;display:flex;align-items:flex-end;justify-content:center}
+.pl-fgw-scrim{position:absolute;inset:0;background:rgba(21,21,63,.42)}
+.pl-fgw-sh{position:relative;display:flex;flex-direction:column;width:100%;max-height:calc(100% - 40px);border-radius:24px 24px 0 0;background:#fff;box-shadow:0 -12px 40px rgba(21,21,63,.16);overflow:hidden}
+.pl-fgw-sh::before{content:"";position:absolute;top:8px;left:50%;width:36px;height:4px;margin-left:-18px;border-radius:99px;background:#dcdfee}
+.pl-fgw-c{flex:1 1 auto;min-height:0;overflow:auto;padding:24px 16px 8px;color:var(--pl-ink)}
+.pl-fgw-c h2{margin:0;font-size:20px;font-weight:700;line-height:1.3}
+.pl-fgw-c .pl-lead{margin:4px 0 0;color:var(--pl-sub);font-size:13.5px}
+.pl-fgw-dock{flex:none;position:relative;z-index:1;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:#fff;box-shadow:0 -4px 14px rgba(22,22,67,.06)}
+@media (max-height:700px) and (max-width:1023px){.pl-fgw-c .pl-gcsteps small{display:none}.pl-fgw-c .pl-gcnote{display:none}}   /* móviles bajos: la hoja se recoge como la caja (sin textos secundarios) */
+@media (min-width:1024px){
+  .pl-fgw{align-items:center}
+  .pl-fgw-sh{width:480px;max-height:calc(100% - 96px);border-radius:24px;box-shadow:0 30px 70px rgba(21,21,63,.28)}
+  .pl-fgw-sh::before{display:none}
+  .pl-fgw-c{padding:28px 28px 8px}
+  .pl-fgw-c h2{font-size:22px}
+  .pl-fgw-dock{padding:14px 28px 24px;box-shadow:none}
+  .pl-fgw-sh.pl-more .pl-fgw-dock{box-shadow:0 -4px 14px rgba(22,22,67,.06)}
+}
+.pl-f1fly{color:#fff;font-family:inherit}   /* la ficha que viaja sobre la home conserva el texto blanco del azul */
+@media (prefers-reduced-motion:reduce){   /* reducir movimiento: el icono ya dibujado y el contador sin subida (las transiciones de F1–F4 pasan a fundidos cortos en plink.js) */
+  .pl-fnd-ic *,.pl-f3in{animation:none!important}
+  .pl-fnd-ic .c{transform:none}
+  .pl-fnd-ic .mg{opacity:0}
+  .pl-fnd-ic .hs,.pl-fnd-ic .dr{stroke-dashoffset:0}
+}
+@media (max-width:1023px){   /* F2/F3 en móviles bajos: se recogen por niveles dentro de la caja, como el resto (la cabecera no se toca) */
+  .pl-fit2 .pl-fstay{padding-top:10px;padding-bottom:10px}
+  .pl-fit3 .pl-f3row{padding-top:7px;padding-bottom:7px}
+  .pl-fit3 .pl-fnd-meta{margin-top:8px}
+  .pl-fit4 .pl-fnd-ic svg{width:42px;height:42px}
+  .pl-fit5 .pl-f3ctl .pl-gcr{padding-top:6px;padding-bottom:6px}
+}
+
+/* ===== PL-42 · F1 en escritorio: la caja del buscador se convierte en la tarjeta de la reserva ===== */
+.pl-fx.pl-v8.pl-v8d{clip-path:none;animation:none;opacity:0}   /* sin apertura desde la cabecera (en escritorio ya ocupa toda la pantalla): el azul entra fundiéndose sobre la foto */
+.pl-v8d>img{animation:plKenLoop 20s ease-in-out infinite;opacity:.32}   /* misma foto, mismo zoom en bucle y misma fase que el fondo */
+.pl-v8d .pl-x-glass{animation:none;opacity:0}
+.pl-v8d .pl-draw .c,.pl-v8d .pl-found .c{animation-delay:.86s}
+.pl-v8d .pl-found .mg{animation-delay:.92s}
+.pl-v8d .pl-found .hs{animation-delay:1.3s}
+.pl-v8d .pl-found .dr{animation-delay:1.6s}
+.pl-v8d .pl-x-eye{animation:plUpIn .45s ease .98s both}
+.pl-v8d h2{animation:plUpIn .5s ease 1.06s both}
+.pl-v8d .pl-x-open{animation:plUpIn .4s ease 1.2s both}
+.pl-v8d-fly{position:fixed;z-index:61;margin:0;pointer-events:none;transform-origin:0 0;will-change:transform,opacity}
+.pl-v8d-fly.w{background:#fff;box-shadow:0 30px 70px rgba(10,10,40,.28)}
+.pl-v8d-fly.g{border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.16);-webkit-backdrop-filter:blur(22px) saturate(1.5);backdrop-filter:blur(22px) saturate(1.5)}
+.pl-v8d-old{overflow:visible}
+@media (prefers-reduced-motion:reduce){.pl-v8d .pl-x-glass{opacity:1}.pl-v8d .pl-draw .c,.pl-v8d .pl-found .c{transform:none}.pl-v8d .pl-found .hs,.pl-v8d .pl-found .dr{stroke-dashoffset:0}}
+.pl-rlf.pl-hold:not(.on){visibility:hidden}   /* F1: la home cargada no se pinta mientras espera debajo (no gasta mientras se usa el buscador) */

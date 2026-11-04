@@ -222,6 +222,7 @@ function build(){
   /* enlaces del cuadro cuando vive fuera del teléfono: navegan DENTRO del teléfono */
   if (hosted) root.addEventListener('click', function(e){
     var a = e.target.closest('a[href]'); if (!a) return;
+    if (a.target === '_top') return;   /* «Mockup»: cambia la vista entera (phone.html, split.html o la pantalla sin marco) */
     e.preventDefault();
     try { window.location.href = new URL(a.getAttribute('href'), window.location.href).href; } catch (_) {}
   }, true);
