@@ -381,8 +381,8 @@ function sV3(){
 /* V4 · Se abre la foto: la foto de la cabecera crece hasta ocupar toda la pantalla y pasa del duotono al color real; la bienvenida y la reserva aparecen encima */
 /* V8 · V3 abriéndose como V4: la cabecera (foto en duotono) crece desde su sitio hasta llenar la pantalla y, dentro, el contenido de V3 (check que se dibuja, bienvenida y la reserva en cristal) */
 function sV8(){
-  var d = stayData(), h = S.hr || { t: 0, l: 0, r: 0, b: Math.round(innerHeight * .7) }, g = PL ? gcTot() : d.b.guests;
-  var open = '<div class="pl-fx pl-v8' + (PL && C.fg === '1' ? ' pl-f1v8' + (S.v8d ? ' pl-v8d' : '') : '') + '" style="--t:' + h.t + 'px;--l:' + h.l + 'px;--r:' + h.r + 'px;--b:' + h.b + 'px" role="dialog" aria-modal="true" aria-labelledby="pl-sh" aria-live="polite"><img src="' + PHOTO() + '" alt="">';
+  var d = stayData(), h = S.hr || { t: 0, l: 0, r: 0, b: Math.round(innerHeight * .7) }, g = d.b.guests;
+  var open = '<div class="pl-fx pl-v8' + (PL && C.fg === '1' ? '' : '') + '" style="--t:' + h.t + 'px;--l:' + h.l + 'px;--r:' + h.r + 'px;--b:' + h.b + 'px" role="dialog" aria-modal="true" aria-labelledby="pl-sh" aria-live="polite"><img src="' + PHOTO() + '" alt="">';
   if (S.sr === 'f4') return open + '<h2 id="pl-sh" class="pl-sr">Booking found</h2></div>';   /* F4: solo la apertura (la cabecera crece); el contenido lo pone la precarga del one click */
   return open
     + '<div class="pl-x-c"><span class="pl-draw pl-found">' + FOUND_SVG + '</span><p class="pl-x-eye">Booking found</p><h2 id="pl-sh">' + hello(d) + '</h2>'
@@ -869,7 +869,7 @@ function boxGo(apply){
 /* reserva encontrada: según la versión elegida en Controls («Found → guest count») */
 function fgFound(){
   S.cta = null;
-  if (C.fg === '1') { var snap = !isMob() ? v8dSnap() : null; S.v8d = !!snap; S.sheet = 'search'; S.sr = 'found'; render(); if (snap) v8dIn(snap); if (!RLF) homeLoad(); if (!/[?&]hold=found/.test(location.search)) timer = setTimeout(f1Exit, RM() ? 1800 : 2700); return; }   /* ?hold=found: se queda en «Booking found» para revisarla */
+  if (C.fg === '1') { var snap = null;   /* «Let's find your booking» → «Welcome, Maria!»: la V8 de siempre en móvil y escritorio (Dani, 4-nov); v8dSnap/v8dIn quedan solo en el código */ S.v8d = !!snap; S.sheet = 'search'; S.sr = 'found'; render(); if (snap) v8dIn(snap); if (!RLF) homeLoad(); if (!/[?&]hold=found/.test(location.search)) timer = setTimeout(f1Exit, RM() ? 1800 : 2700); return; }   /* ?hold=found: se queda en «Booking found» para revisarla */
   if (C.fg === '4') { f4Go(); return; }
   if (C.fg === '3') { boxGo(function(){ S.phase = 'f3'; S.f3open = false; S.f3anim = true; }); return; }
   boxGo(function(){ S.phase = 'found'; });
