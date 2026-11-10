@@ -8,6 +8,7 @@ var RV = Q.get('rv'); if (['1', '2', '3'].indexOf(RV) < 0) RV = '1';
 /* qué queda por hacer: both (huéspedes y pagos) · guests · payments · none (reserva completa); se recuerda */
 var WN = Q.get('wn'); try { if (!WN) WN = localStorage.getItem('rep-wn'); } catch (e) {}
 if (['both', 'guests', 'payments', 'none'].indexOf(WN) < 0) WN = 'both';
+(function(){ var sid = (window.__SCREEN && window.__SCREEN.id) || '', r = Q.get('ivreg'); if (/^ivqr-v3-a-registered$/.test(sid)) { if (r !== 'all' && r !== 'pend') { try { r = localStorage.getItem('replica-ivqa3-reg'); } catch (e) {} } WN = r === 'all' ? 'payments' : 'both'; } })();   /* #1142: IV con QR · registrado: todos registrados (?ivreg=all) o queda un huésped (?ivreg=pend); no se guarda */
 var ECI = Q.get('eci'), LCO = Q.get('lco'); try { if (ECI) localStorage.setItem('rep-eci', ECI); else ECI = localStorage.getItem('rep-eci'); if (LCO) localStorage.setItem('rep-lco', LCO); else LCO = localStorage.getItem('rep-lco'); } catch (e) {}
 ECI = ECI !== '0'; LCO = LCO !== '0';   /* el anfitrión ofrece early check-in / late check-out en esta reserva */
 var MN = Q.get('mn'); try { if (!MN) MN = localStorage.getItem('rep-mn'); } catch (e) {}

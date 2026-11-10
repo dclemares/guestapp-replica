@@ -304,3 +304,9 @@ button.ivq-un__row{cursor:pointer}
   .ivq-sc__acts .ivq-btn{width:auto;min-width:180px;height:40px;min-height:40px;font-size:13.5px}
   .ivq-sc__acts .ivq-btn--ghost{background:#fff}
 }
+/* #1142 · registrado con huéspedes pendientes: la línea de la IV en la caja translúcida dentro de la tarjeta oscura */
+.rg-hero p.ivq-pv1--rg{display:flex;align-items:flex-start;gap:10px;margin:14px auto 0;max-width:520px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.1);font-size:13px;line-height:1.45;color:rgba(255,255,255,.82);text-align:left}
+.rg-hero p.ivq-pv1--rg b{color:#fff;font-weight:600}
+.rg-hero p.ivq-pv1--rg svg{flex:none;margin-top:1px;color:rgba(255,255,255,.85)}
+@media (min-width:1024px){.rg-hero:has(.ivq-pv1--rg){flex-wrap:wrap}.rg-hero p.ivq-pv1--rg{flex:0 0 100%;max-width:none;margin:16px 0 0}}
+@media (min-width:1024px){.rg-hero p.ivq-pv1--rg{grid-column:1/-1}}

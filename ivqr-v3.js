@@ -171,8 +171,16 @@ var LIVE = function(t){ return '<span class="ivq-badge ivq-badge--ok"><i class="
 var BADGE = function(i, t){ return '<span class="ivq-badge">' + ic(i, 15) + t + '</span>'; };
 var GLYPH = '<div class="ivq-glyph">' + ic('qr', 30, 1.8) + '</div>';
 /* registrado fuera de plazo: «QR scan required at property» (producción: 3 puntos, sin fecha ni «Look for the QR code») */
-var BOX_REQ = function(){ return hero('info', '<div class="ivq-au__in"><div class="ivq-au__main">' + BADGE('qr', 'At the property') + '<h3>QR scan required at property</h3><p>When you arrive at the property, you must <b>scan the QR code located at the entrance</b>. This allows you to:</p></div>'
-  + '<div class="ivq-au__side">' + checks([['user', 'Verify your presence at the property', ''], ['id', 'Access identity verification', ''], ['check', 'Complete your check-in process', '']]) + '</div></div>'); };
+/* #1141 · huésped registrado fuera de plazo: la misma tarjeta que el resumen (titular a la izquierda + icono, pasos a la derecha) en vez de «QR scan required at property» con tres viñetas sueltas */
+var BOX_REQ = function(){
+  var gl = '<div class="ivq-glyph">' + ic('qr', 30, 1.8) + '<i>' + ic('clock', 14, 2.4) + '</i></div>';
+  var main = '<div class="ivq-au__main ivq-sau__main ivq-sau--h3"><div class="ivq-sau__row"><h3 class="ivq-sau__t3"><span>Next:</span> verify your identity at the property</h3><div class="ivq-sau__r">' + gl + '</div></div>'
+    + '<p>When you arrive, scan the QR code at the entrance and verify your identity on the spot. It takes about 2 minutes.</p></div>';
+  var st = '<ol class="ivq-steps ivq-steps--done"><li class="is-done"><i>' + ic('check', 14, 3) + '</i><div><b>Registration</b><span>Done</span></div></li>'
+    + '<li><i>2</i><div><b>Scan the QR code at the entrance</b><span>On the sign at the door, from ' + CIN + ' <button type="button" class="ivq-x__where" data-ivq="where">See where the sign is</button></span></div></li>'
+    + '<li><i>3</i><div><b>Verify your identity</b><span>A photo of your ID and a selfie, on your phone with internet access</span></div></li></ol>';
+  return '<div class="ivq-sau">' + hero('info', '<div class="ivq-au__in">' + main + '<div class="ivq-au__side"><p class="ivq-au__eye">At the property · from ' + CIN + '</p>' + st + '</div></div>') + '</div>';
+};
 var guests = function(){ return label('Guests · 2 of 2 registered') + '<div class="ivq-gl">' + GUESTS.map(function(g){ return '<button type="button" class="ivq-g ivq-g--btn" data-ivq="guest"><span class="ivq-g__a">' + g.a + '</span><span class="ivq-g__t"><b>' + g.n + '</b><span>' + g.r + '</span></span><span class="ivq-tag ivq-tag--warn"><i class="ivq-dot"></i>Verification pending</span><span class="ivq-row__c">' + ic('chev', 18, 2.4) + '</span></button>'; }).join('') + '</div>'; };
 var A = {};
 /* resumen: en producción la caja es la misma (azul) en los dos plazos; solo cambia el texto */
@@ -463,7 +471,10 @@ function render(){
 function registeredBox(){
   var n = 0, t = setInterval(function(){
     var hero = document.querySelector('.rg-hero'); if (!hero && ++n < 40) return; clearInterval(t); if (!hero || document.querySelector('.ivq-rgbox')) return;
-    var d = document.createElement('div'); d.className = 'ivq-rgbox'; d.innerHTML = BOX_REQ(); hero.insertAdjacentElement('afterend', d);
+    if (regK() === 'pend') {   /* #1142: queda algún huésped: lo primero es registrarlo; la IV, una línea en la caja translúcida (como en el resumen) */
+      var p = document.createElement('p'); p.className = 'ivq-pv ivq-pv1 ivq-pv1--rg'; p.innerHTML = ic('qr', 16, 2) + '<span><b>Then, when you arrive:</b> scan the QR code at the entrance to verify your identity.</span>'; hero.appendChild(p); return;
+    }
+    var d = document.createElement('div'); d.className = 'ivq-rgbox'; d.innerHTML = BOX_REQ(); hero.insertAdjacentElement('afterend', d); glyphFit(); addEventListener('resize', glyphFit);
   }, 120);
 }
 
@@ -562,7 +573,7 @@ function onSw(e){
   var t = e.target.closest('button'); if (!t) return; e.preventDefault(); e.stopPropagation();
   var g = t.getAttribute('data-g'), k = t.getAttribute('data-k');
   if (g === 'ivd') { ivdGo(k); return; }
-  if (g === 'reg') { LS.set('replica-ivqa3-reg', k); var rk = k; location.href = 'ivqr-v3-a-' + (/^sum-/.test(state) ? state : 'sum-before') + EXT + '?ivreg=' + rk; return; }   /* #1128: el caso va en la URL, así la página de flujos lo sigue */
+  if (g === 'reg') { LS.set('replica-ivqa3-reg', k); var rk = k; location.href = 'ivqr-v3-a-' + (/^sum-/.test(state) || state === 'registered' ? state : 'sum-before') + EXT + '?ivreg=' + rk; return; }   /* #1128: el caso va en la URL, así la página de flujos lo sigue */
   if (g === 'sum') { LS.set('replica-ivqa3-sum', k); LS.set('replica-ivqa3-reg', 'all'); location.href = 'ivqr-v3-a-' + (/^sum-/.test(state) ? state : 'sum-before') + EXT + '?ivreg=all'; return; }
   if (g === 'found') { if (flow === 'b') bFound(true); else location.href = 'ivqr-v3-b-landing' + EXT; return; }
   if (g === 'a' || g === 'b') { location.href = 'ivqr-v3-' + g + '-' + k + EXT; return; }
