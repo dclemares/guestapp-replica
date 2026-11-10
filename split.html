@@ -31,8 +31,18 @@ body{background:linear-gradient(180deg,#e9ecf9 0%,#dde1f3 100%);font:600 12px sy
 .stage{flex:1;min-height:0;width:100%;position:relative}
 .phone.desk{background:linear-gradient(145deg,#34365c 0%,#12132b 38%,#1c1d3b 100%)}
 .phone.desk .scr{border-radius:8px}
+/* #1124 · modo enfocado (split.html?fx=1, lo usa ivqr-flows.html): sin barra de vista (la página de flujos ya la tiene), el diseño ocupa todo el ancho
+   y el panel de controles se pliega a un botón (cerrado por defecto; se recuerda en replica-flows-panel) */
+html.fx .bar{display:none}
+.ptg{display:none}
+html.fx .ptg{display:none!important;position:fixed;top:12px;right:12px;z-index:60;display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 14px 0 12px;border:0;border-radius:99px;background:#161643;color:#fff;font:600 13px Poppins,system-ui,sans-serif;cursor:pointer;box-shadow:0 6px 18px rgba(22,22,67,.25)}
+html.fx .ptg:focus-visible{outline:2px solid #385bf8;outline-offset:2px}
+html.fx .ptg svg{transition:transform .2s}
+html.fx.po .ptg{right:324px;background:#fff;color:#161643}
+html.fx.po .ptg svg{transform:rotate(180deg)}
 </style></head><body>
 <div class="bar"><span>Vista</span><a href="#" id="lm">Mockup móvil</a><a href="#" id="lt">Mockup tablet</a><a href="#" id="ld">Mockup escritorio</a><a href="#" class="on" id="ls">Móvil + escritorio</a><a id="d" href="#">Sin mockup</a><a class="idx" href="index.html">Índice</a><i></i><span class="dim" id="dim"></span></div>
+<button type="button" class="ptg" id="ptg" aria-controls="rep-panel" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg><span>Controls</span></button>
 <div class="stage" id="stage">
   <div class="phone desk" id="pd"><div class="scr"><iframe id="frD" data-role="desk" name="desk" title="Réplica en escritorio"></iframe></div></div>
   <div class="phone" id="ph"><div class="scr" id="scr"><div class="sb" id="sb"><span class="tm">9:41</span><span class="ic" aria-hidden="true"><svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg width="17" height="12" viewBox="0 0 17 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1.5 4.2a10 10 0 0 1 14 0"/><path d="M4.2 7a6 6 0 0 1 8.6 0"/><circle cx="8.5" cy="10" r="1.3" fill="currentColor" stroke="none"/></svg><svg width="27" height="13" viewBox="0 0 27 13"><rect x=".5" y=".5" width="22" height="12" rx="3.8" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="19" height="9" rx="2.5" fill="currentColor"/><path d="M24 4.5v4c1-.3 1.8-1.1 1.8-2s-.8-1.7-1.8-2z" fill="currentColor" opacity=".45"/></svg></span></div><iframe id="fr" data-role="mob" name="phone" title="Réplica en móvil"></iframe><div class="di" id="di"></div><div class="hi"></div></div></div>
@@ -40,6 +50,20 @@ body{background:linear-gradient(180deg,#e9ecf9 0%,#dde1f3 100%);font:600 12px sy
 <script>
 /* Vista «Móvil + escritorio»: la mitad izquierda es el escritorio (1440×900), el cuarto siguiente el móvil (iPhone 15) y el último cuarto los ajustes (panel con tres pestañas: Controles · Ajustes de la reserva · Componentes, que monta el marco del móvil). Las dos pantallas navegan juntas. */
 var q = new URLSearchParams(location.search), id = q.get('s') || 'home', extra = q.get('q') || '';
+var FX = q.get('fx') === '1', PO = true; try { PO = localStorage.getItem('replica-flows-panel') !== '0'; } catch (e) {}   /* #1127: abierto por defecto (como estaba antes); solo se cierra si lo cierras */
+if (FX) document.documentElement.classList.add('fx');
+var PW = 300;   /* ancho del panel abierto */
+window.__panelDock = !FX ? null : function(root){
+  root.style.right = 'auto'; root.style.maxHeight = ''; root.style.width = PW + 'px';
+  root.style.left = (window.innerWidth - PW - 12) + 'px'; root.style.top = '12px'; root.style.height = (window.innerHeight - 24) + 'px';
+  root.style.display = PO ? '' : 'none';
+};
+window.__setPO = function(v){ setPO(v); }; window.__getPO = function(){ return PO; };   /* la página de flujos tiene el botón «Controls» en su cabecera */
+function setPO(v){
+  PO = v; try { localStorage.setItem('replica-flows-panel', v ? '1' : '0'); } catch (e) {}
+  document.documentElement.classList.toggle('po', v); try { parent.postMessage({ rep: 'flows-po', v: v }, '*'); } catch (e) {} var b = document.getElementById('ptg'); b.setAttribute('aria-expanded', String(v)); b.querySelector('span').textContent = v ? 'Hide controls' : 'Controls';
+  layout(); window.dispatchEvent(new Event('resize'));
+}
 var frD = document.getElementById('frD'), fr = document.getElementById('fr'), pd = document.getElementById('pd'), ph = document.getElementById('ph');
 var DW = 1440, DH = 900, DP = 14, MW = 390, MH = 844, MP = 12, SB = 54;
 /* pantallas que solo existen en una versión: el escritorio pide su equivalente (como hace la réplica con «g2-form-empty» → «form-empty») */
@@ -50,11 +74,13 @@ function url(v){ return new URL('screens/' + (v === 'd' ? didFor(id) : id) + '.'
 function layout(){
   var W = window.innerWidth, H = window.innerHeight, st = document.getElementById('stage').getBoundingClientRect(), sh = H - st.top;
   var c1 = W / 2, c2 = W / 4;
+  if (FX) { var av = W - (PO ? PW + 24 : 0); c1 = av * .68; c2 = av * .32; }   /* #1124: sin la columna fija del panel, el escritorio y el móvil se reparten todo el ancho */
   /* escritorio: marco con pantalla de 1440×900, reducido para caber en su mitad */
   pd.style.width = DW + 'px'; pd.style.height = DH + 'px'; pd.style.padding = DP + 'px'; pd.style.borderRadius = (8 + DP) + 'px';
   frD.style.cssText = 'top:0;left:0;width:' + DW + 'px;height:' + DH + 'px';
   var Wd = DW + 2 * DP, Hd = DH + 2 * DP + 54, kd = Math.max(.2, Math.min(1, (c1 - 32) / Wd, (sh - 24) / Hd));
   pd.style.transform = 'scale(' + kd + ')'; pd.style.left = Math.max(8, Math.round(c1 / 2 - Wd * kd / 2)) + 'px'; pd.style.top = '8px';
+  if (FX) pd.style.top = Math.max(8, Math.round((sh - Hd * kd) / 2)) + 'px';   /* #1124: centrado en vertical */
   /* móvil: iPhone 15 (390×844) */
   ph.style.width = MW + 'px'; ph.style.height = MH + 'px'; ph.style.padding = MP + 'px'; ph.style.borderRadius = (50 + MP) + 'px';
   var scr = document.getElementById('scr'), sb = document.getElementById('sb'), di = document.getElementById('di');
@@ -63,6 +89,7 @@ function layout(){
   di.style.display = 'block'; di.style.width = '122px'; di.style.height = '35px'; di.style.top = '11px';
   var Wm = MW + 2 * MP, Hm = MH + 2 * MP, km = Math.max(.2, Math.min(1, (c2 - 24) / Wm, (sh - 24) / Hm));
   ph.style.transform = 'scale(' + km + ')'; ph.style.left = Math.round(c1 + c2 / 2 - Wm * km / 2) + 'px'; ph.style.top = '8px';
+  if (FX) ph.style.top = Math.max(8, Math.round((sh - Hm * km) / 2)) + 'px';
   document.getElementById('dim').textContent = DW + '×' + DH + ' · ' + MW + '×' + MH;
 }
 var loadedAt = 0;
@@ -109,5 +136,6 @@ document.addEventListener('click', function(e){
 /* si el móvil acaba en otra pantalla distinta de la pedida (p. ej. una redirección de la réplica), el escritorio la sigue; solo se mira cuando el móvil ha terminado de cargar */
 fr.addEventListener('load', function(){ try { var m = /screens\/([^/]+)\.m\.html/.exec(fr.contentWindow.location.pathname); if (!m) return; var ex = (fr.contentWindow.location.search || '').slice(1); if (m[1] !== id || ex !== extra) { id = m[1]; extra = ex; go(frD, url('d')); links(); } } catch (e) {} });
 window.addEventListener('resize', layout);
+if (FX) { document.getElementById('ptg').addEventListener('click', function(){ setPO(!PO); }); document.documentElement.classList.toggle('po', PO); var _b = document.getElementById('ptg'); _b.setAttribute('aria-expanded', String(PO)); _b.querySelector('span').textContent = PO ? 'Hide controls' : 'Controls'; }
 layout(); loadBoth();
 </script></body></html>

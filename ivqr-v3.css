@@ -1,0 +1,306 @@
+/* #1102 · Old design v3 (flujos de producción): ajustes sobre ivqr.css + ivqr-v2.css */
+.ivq-checks span:empty,.ivq-steps span:empty{display:none}
+.ivq-au p b{color:#fff;font-weight:700}
+/* «Verification unavailable»: la nota de producción debajo de la tarjeta */
+.ivq-note3{display:flex;align-items:flex-start;gap:10px;padding:14px 16px;border-radius:18px;background:#eef1ff;color:#2e3a8c;font-size:13.5px;line-height:1.5}
+.ivq-note3 svg{flex:none;margin-top:1px;color:var(--q-blue)}
+.ivq-note3 b{font-weight:700}
+/* cámara bloqueada (producción): visor oscuro con el aviso en el centro y el modal encima */
+.ivq-cam__feed--off{background:#141416;filter:none;animation:none}
+.ivq-cam__sp{width:44px;height:44px}
+.ivq-cam__top2{position:absolute;left:0;right:0;top:calc(70px + env(safe-area-inset-top,0px));z-index:2;margin:0;text-align:center;font-size:13.5px;font-weight:600;color:rgba(255,255,255,.85)}
+.ivq-cam__blk{position:absolute;left:50%;top:44%;z-index:2;display:flex;flex-direction:column;align-items:center;gap:6px;width:min(320px,86%);transform:translate(-50%,-50%);text-align:center;color:#fff}
+.ivq-cam__blk b{font-size:16px;font-weight:700}
+.ivq-cam__blk span{font-size:13px;line-height:1.45;color:rgba(255,255,255,.75)}
+.ivq-cam__blk .ivq-cam__pill{margin-top:10px;background:#fff;color:var(--q-blue)}
+.ivq-cam__modal{position:absolute;inset:0;z-index:5;display:grid;place-items:center;padding:20px;background:rgba(5,6,26,.55)}
+.ivq-cam__modal>div{position:relative;width:min(360px,100%);padding:26px 22px 20px;border-radius:24px;background:#fff;color:var(--q-ink);text-align:center;animation:ivqUp .3s cubic-bezier(.2,.9,.3,1) both}
+.ivq-cam__modal h3{margin:12px 0 0;font-size:19px;font-weight:700}
+.ivq-cam__modal p{margin:6px 0 16px;font-size:13.5px;line-height:1.5;color:var(--q-sub)}
+.ivq-cam__modal .ivq-glyph{margin:0 auto}
+/* B: hojas «We couldn’t find your reservation» / «We need more information» sobre la búsqueda */
+.ivq-sheet--b3 .ivq-sheet__p{text-align:center}
+.ivq-sheet--b3 .ivq-bg{margin:8px auto 12px}
+.ivq-sheet--b3 h3{font-size:18px}
+.ivq-cam--d.ivq-cam--blocked{width:100%}
+/* la «Camera denied» de la v3 es el visor (en el nuevo era una rejilla de dos tarjetas) */
+html[data-ivq-state="v3-a-denied"] .ivq-wrap[data-s="denied"]{display:flex}
+/* ===== #1103 · B con el diseño del Property Link (plink.css, copiado sin cambios en vendor/plink) ===== */
+.ivq-plw{position:fixed;inset:0;z-index:100000;overflow:auto;background:var(--pl-bg,#f6f7fc);color:var(--pl-ink,#161643);font:400 15px/1.45 Poppins,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.ivq-plw .pl-main{min-height:100%}
+.ivq-plic{display:grid;place-items:center;width:52px;height:52px;margin:0 0 14px;border-radius:16px;background:var(--pl-soft2,#e9edff);color:var(--pl-blue,#385bf8)}
+.ivq-plw .pl-main-card>.pl-note{margin-top:16px}
+.ivq-plw .pl-link{padding:0;border:0;background:none;color:var(--pl-blue,#385bf8);font:inherit;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+@media (max-width:1023px){.ivq-plw{overflow:hidden}.ivq-plw #pl-root{height:100%}}
+/* ===== #1104 · B: portada y búsqueda en una sola pantalla ===== */
+.ivq-pleye{display:inline-flex!important;align-items:center;gap:6px;margin:0 0 6px!important;font-size:11px!important;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--pl-blue,#385bf8)}
+.ivq-plrow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ivq-plrow .pl-f{min-width:0}
+.ivq-plw .pl-field input{min-width:0}
+.ivq-plnext{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:18px;padding:12px 14px;border-radius:14px;background:var(--pl-soft,#f1f3fb);font-size:13px;font-weight:600;color:var(--pl-ink,#161643)}
+.ivq-plnext span{display:inline-flex;align-items:center;gap:6px}
+.ivq-plnext span svg{color:var(--pl-blue,#385bf8)}
+.ivq-plnext i{display:grid;color:#9aa1c4;font-style:normal}
+.ivq-plnext em{margin-left:auto;font-style:normal;font-weight:500;font-size:12px;color:var(--pl-sub,#5a6695)}
+.ivq-plw .pl-note ul{margin:6px 0 0;padding-left:18px}
+.ivq-plre{width:100%;margin-top:4px}
+@media (min-width:1024px){.ivq-plw .pl-main-card .pl-note{margin-top:16px}}
+.ivq-plw .pl-dock>div{display:flex;flex-direction:column;align-items:stretch}.ivq-plw .pl-dock .pl-btn.pri{width:100%}
+.ivq-plw .pl-dock .pl-btn.pri{width:100%!important;max-width:none!important}
+
+/* #1109 · Property QR v3: una sola pantalla con línea de pasos (antes V5.3; el resto de versiones se quitaron).
+   Los círculos (32 px) van centrados con la primera línea de su título: título y círculo comparten la misma altura de línea. */
+.ivq-plw .ivq-tl__h{margin:0 0 6px}
+.ivq-plw .ivq-tl__intro{margin:0 0 20px}
+.ivq-plw .ivq-tl__t{margin:0;font-size:17px;font-weight:700;line-height:32px;color:#161b33}
+.ivq-plw .ivq-tl>li.ivq-tl__mini{display:none}
+.ivq-plw .ivq-tl{list-style:none;margin:0;padding:0}
+.ivq-plw .ivq-tl>li{position:relative;display:flex;align-items:flex-start;gap:14px;padding-bottom:18px}
+/* #1112: la línea solo une 1→2 y 2→3 (el paso 3 y la línea corta no llevan); empieza 6 px bajo su círculo y acaba 6 px antes del siguiente */
+.ivq-plw .ivq-tl>li.on::before,.ivq-plw .ivq-tl>li.ivq-tl__full:nth-child(2)::before{content:"";position:absolute;left:15px;top:38px;bottom:6px;width:2px;border-radius:2px;background:#e6e9f2}
+.ivq-plw .ivq-tl>li.on::before{background:#c9d3fd}
+.ivq-plw .ivq-tl>li:last-child{padding-bottom:0}
+.ivq-plw .ivq-tl__n{flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:14px;line-height:1;background:#eef0f5;color:#8a90a6}
+.ivq-plw .ivq-tl>li.on .ivq-tl__n{background:#385bf8;color:#fff}
+.ivq-plw .ivq-tl__b{flex:1;min-width:0;padding:0}
+.ivq-plw .ivq-tl__s{margin:2px 0 12px;font-size:13.5px;line-height:1.4;color:#5b6176}
+.ivq-plw .ivq-tl>li:not(.on) .ivq-tl__b{display:flex;flex-direction:column;font-size:12.5px;line-height:1.35;color:#8a90a6}
+.ivq-plw .ivq-tl>li:not(.on) .ivq-tl__b b{font-size:15px;line-height:32px;color:#5b6176;font-weight:600}
+/* #1110 · reserva encontrada (V8 del Property Link) encima de la pantalla del QR y del dock */
+.pl-fx.ivq-found{z-index:100001;font-family:inherit}
+/* #1111 · nunca scroll: niveles propios de la línea de pasos (los demás son los pl-fitN del Property Link) */
+@media (max-width:1023px){
+  #pl-root.ivq-tf1 .ivq-tl>li:not(.on) .ivq-tl__b span{display:none}
+  #pl-root.ivq-tf1 .ivq-tl>li{padding-bottom:12px}
+  #pl-root.ivq-tf2 .ivq-tl>li.ivq-tl__full{display:none}
+  #pl-root.ivq-tf2 .ivq-tl>li.ivq-tl__mini{display:flex;padding-bottom:0}
+  #pl-root.pl-fit3 .ivq-tl__intro{margin-bottom:14px}
+  #pl-root.pl-fit3 .ivq-plrow{margin-top:-2px}
+  #pl-root.pl-fit5 .ivq-tl__h{font-size:19px}
+  #pl-root.pl-fit7 .pl-main-card .ivq-tl__h{font-size:18px}
+  #pl-root.pl-fit7 .ivq-tl__t{font-size:16px}
+  #pl-root.pl-fit7 .pl-note{padding:10px 12px}
+}
+@media (min-width:1024px){
+  #pl-root.pl-fit1 .pl-hint{display:none}
+  #pl-root.ivq-tf1 .ivq-tl>li:not(.on) .ivq-tl__b span{display:none}
+  #pl-root.ivq-tf2 .ivq-tl>li.ivq-tl__full{display:none}
+  #pl-root.ivq-tf2 .ivq-tl>li.ivq-tl__mini{display:flex;padding-bottom:0}
+}
+/* #1112 · reserva encontrada → resumen de la guestapp: la ficha sube y se desvanece; en el resumen, la cortina azul se recoge hacia arriba y el contenido entra */
+.pl-fx.ivq-found--out .pl-x-c{transition:transform .5s cubic-bezier(.6,0,.3,1),opacity .4s ease;transform:translateY(-40px) scale(.96);opacity:0}
+.ivq-curtain{position:fixed;inset:0;z-index:100001;background:linear-gradient(135deg,#15153f 0%,#2e4bd0 100%);animation:ivqCurt .75s cubic-bezier(.7,0,.2,1) .1s both;pointer-events:none}
+@keyframes ivqCurt{from{clip-path:inset(0 0 0 0)}to{clip-path:inset(0 0 100% 0)}}
+html.ivq-enter body>*:not(.ivq-curtain){animation:ivqIn .6s cubic-bezier(.2,.9,.3,1) .45s both}
+@keyframes ivqIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.ivq-curtain{animation-duration:.01s}html.ivq-enter body>*{animation:none!important}}
+html.ivq-pre::after{content:"";position:fixed;inset:0;z-index:100000;background:linear-gradient(135deg,#15153f 0%,#2e4bd0 100%)}   /* hasta que la guestapp está pintada; luego la cortina (.ivq-curtain) se recoge */
+/* #1113 · resumen v3 sobre la pantalla real: la sección azul entre la tarjeta de progreso y los huéspedes */
+.hv5c .ivq-sumbox{margin:16px 0 4px}
+.hv5c .ivq-sumbox .ivq-au{margin:0}
+/* #1116 · sección del resumen definitiva (V1.2 · Titular): dentro de la tarjeta de progreso, sin contornos */
+.ivq-sb{display:block;margin-top:14px;padding:14px;border-radius:16px;background:rgba(255,255,255,.08);color:#fff;font-family:inherit}
+.ivq-x__eye{display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--q-mint,#5fe0a6)}
+.v5-hero .ivq-sb p.ivq-x__big{margin:6px 0 0;font-size:19px;line-height:1.3;font-weight:700;letter-spacing:-.01em;color:#fff}   /* hub.css pisa los <p> de la tarjeta */
+.v5-hero .ivq-sb p.ivq-x__need{display:flex;align-items:center;gap:6px;margin:10px 0 0;font-size:12.5px;line-height:1.4;color:rgba(255,255,255,.75)}
+/* #1117 · Summary V5 · tarjeta Aurora: sustituye la tarjeta de progreso; registro hecho + verificación en la propiedad */
+.hv5c .ivq-sau{margin:0 0 6px}
+.hv5c .ivq-sau .ivq-au{margin:0}
+.ivq-sau .ivq-rows--v2{margin-top:10px}
+.ivq-sau__badges{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.ivq-sau .ivq-reg{display:inline-flex;align-items:center;gap:6px}
+.ivq-sau .ivq-glyph{margin-top:0}
+.ivq-steps--done li.is-done i{background:var(--q-mint,#5fe0a6);color:#12204f}
+.ivq-steps--done li.is-done span{color:var(--q-mint,#5fe0a6)}
+/* #1119 · paso 2 accionable: enlace azul justo después de la fecha; abre la hoja del cartel */
+.ivq-steps .ivq-x__where{display:inline;margin:0 0 0 4px;padding:0;border:0;background:none;color:#9db2ff;font:inherit;font-weight:600;text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px;cursor:pointer}
+.ivq-steps .ivq-x__where:hover{color:#c3d0ff}
+.ivq-steps .ivq-x__where:focus-visible{outline:2px solid #fff;outline-offset:2px;border-radius:4px}
+/* #1119 · hoja «On a sign next to the main door»: en escritorio la fila «Can't find it?» perdía su estilo (icono arriba y texto montado sobre «Got it») */
+.ivq-sheet .ivq-row{display:flex;flex-direction:row;align-items:center;gap:12px;width:100%;margin:16px 0 0;padding:13px 14px;border:0;border-radius:16px;background:var(--q-soft,#f1f3fb);text-align:left;font:inherit;cursor:pointer}
+.ivq-sheet .ivq-row__i{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:#fff;color:var(--q-blue,#385bf8)}
+.ivq-sheet .ivq-row__t{display:flex;flex-direction:column;gap:1px;flex:1;min-width:0}
+.ivq-sheet .ivq-row__t b{font-size:14.5px;font-weight:700;line-height:1.3;color:var(--q-ink,#161643)}
+.ivq-sheet .ivq-row__t span{font-size:12.5px;line-height:1.35;color:var(--q-sub,#5a6695)}
+.ivq-sheet .ivq-row__c{flex:none;margin-left:auto;color:var(--q-mute,#8a8ca6)}
+/* #1123 · tarjeta Aurora como en #1118 (misma tipografía y textos), pero «Last step:» sube a la derecha del icono */
+.ivq-sau__top{display:flex;align-items:center;gap:16px}
+.ivq-sau__top .ivq-glyph{flex:none;margin:0}
+.ivq-sau .ivq-sau__top h3.ivq-sau__lead{margin:0}
+.ivq-sau h3.ivq-sau__h{margin-top:8px}
+/* #1125 · resumen con huéspedes pendientes: aviso de IV con el mínimo peso (tres versiones) */
+.v5-hero p.ivq-pv1{display:flex;align-items:flex-start;gap:7px;margin:8px 0 0;font-size:12.5px;line-height:1.4;font-weight:500;color:rgba(255,255,255,.7)}
+.v5-hero p.ivq-pv1 svg{flex:none;margin-top:2px;opacity:.85}
+/* #1129 · escritorio, huéspedes pendientes (P1): el aviso de la IV en la caja translúcida de la tarjeta («Share a link» pasa a Vela) */
+.v5-hero--d .v5h-share.ivq-pvbox p{display:flex;align-items:flex-start;gap:10px;max-width:none}
+.v5-hero--d .v5h-share.ivq-pvbox svg{flex:none;margin-top:2px;color:rgba(255,255,255,.85)}
+/* #1130 · móvil: el aviso P1 va en la misma caja translúcida que en escritorio */
+.v5-hero p.ivq-pv1{gap:10px;margin:12px 0 0;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.1);font-size:13px;line-height:1.45;color:rgba(255,255,255,.82)}
+.v5-hero p.ivq-pv1 b{color:#fff;font-weight:600}
+.v5-hero p.ivq-pv1 svg{margin-top:1px;opacity:1;color:rgba(255,255,255,.85)}
+/* #1133 · tarjeta Aurora: tres cabeceras. Escala común: titular 24 px (móvil) / 30 px (escritorio), texto debajo con 12 px de aire */
+.ivq-sau__main h3{margin:0;font-size:24px;line-height:1.18;letter-spacing:-.015em;color:#fff;text-wrap:balance}
+.ivq-sau__main>p{margin-top:12px}
+.ivq-sau__main h3 span{color:var(--q-mint,#5fe0a6)}
+/* H3 · titular a la izquierda y el icono a la derecha (#1134: el icono es un cuadrado tan alto como el titular, centrado con sus líneas) */
+.ivq-sau__row{display:flex;align-items:center;gap:16px}
+.ivq-sau--h3 .ivq-sau__row h3{flex:1;min-width:0}
+.ivq-sau--h3 .ivq-sau__r{flex:none}
+.ivq-sau--h3 .ivq-sau__r .ivq-glyph{margin:0;width:var(--gs,64px);height:var(--gs,64px);border-radius:22%}
+.ivq-sau--h3 .ivq-sau__r .ivq-glyph>svg{width:46%;height:46%}
+@media (min-width:1024px){
+  .ivq-sau__main h3{font-size:30px}
+}
+@media (min-width:1024px){.ivq-sau--h3 .ivq-sau__row h3{font-size:26px}}   /* #1134: en la columna de escritorio el titular cabe en 3 líneas y el icono iguala su altura */
+/* ===== #1137 · escáner (9) y estados 10–13 con la UI de la cámara de la guestapp ===== */
+.ivq-sc{display:flex;flex-direction:column;gap:14px;font-family:inherit}
+.ivq-sc__head h2{margin:0;font-size:24px;line-height:1.2;font-weight:700;letter-spacing:-.015em;color:#161643}
+.ivq-sc__head h2 span{color:var(--q-blue,#385bf8)}
+.ivq-sc__head p{margin:6px 0 0;font-size:14px;line-height:1.45;color:#5a6695}
+/* visor oscuro redondeado, como el de la foto del documento */
+.ivq-sc__stage{position:relative;overflow:hidden;width:100%;aspect-ratio:4/5;max-height:56vh;border-radius:24px;cursor:pointer;
+  background:repeating-linear-gradient(135deg,rgba(255,255,255,.025) 0 2px,transparent 2px 9px),radial-gradient(120% 90% at 50% 40%,#2a2d58 0%,#15163a 70%)}
+.ivq-sc--wrong .ivq-sc__stage,.ivq-sc--outside .ivq-sc__stage,.ivq-sc--unreadable .ivq-sc__stage{aspect-ratio:6/5}
+.ivq-sc--denied .ivq-sc__stage{aspect-ratio:16/8;cursor:default}
+.ivq-sc__pst{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%) rotate(-2.5deg);transition:filter .3s,opacity .3s}
+.ivq-sc__pst .ivq-poster{width:168px;padding:12px 12px 10px;border-radius:16px}
+.ivq-sc__pst .ivq-poster__q{width:124px;margin:8px auto 6px}
+.ivq-sc__pst .ivq-poster__h{font-size:12px}.ivq-sc__pst .ivq-poster__t{font-size:11px}
+.ivq-sc__pst.is-blur{filter:blur(4px)}
+.ivq-sc__fr{position:absolute;left:50%;top:46%;width:62%;max-width:240px;aspect-ratio:1;transform:translate(-50%,-50%)}
+.ivq-sc__fr .ivq-corners b{width:34px;height:34px;color:#6d8bff}
+.ivq-sc__line{position:absolute;left:6%;right:6%;top:10%;height:2px;border-radius:2px;background:#7d97ff;box-shadow:0 0 14px 3px rgba(93,125,255,.7);animation:ivqScLine 2.2s ease-in-out infinite alternate}
+@keyframes ivqScLine{to{top:90%}}
+.ivq-sc__ok{position:absolute;left:50%;top:50%;width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:#5fe0a6;color:#0f3d2a;transform:translate(-50%,-50%) scale(0);transition:transform .35s cubic-bezier(.2,1.4,.4,1)}
+.ivq-sc__torch{position:absolute;top:12px;right:12px;width:40px;height:40px;border:0;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.14);color:#fff;cursor:pointer;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.ivq-sc.is-torch .ivq-sc__torch{background:#fff;color:#161643}
+.ivq-sc.is-torch .ivq-sc__stage{background:repeating-linear-gradient(135deg,rgba(255,255,255,.04) 0 2px,transparent 2px 9px),radial-gradient(120% 90% at 50% 40%,#4a4f86 0%,#24264f 70%)}
+.ivq-sc__chip{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);margin:0;max-width:calc(100% - 28px);padding:8px 14px;border-radius:99px;background:rgba(10,11,32,.72);color:#fff;font-size:12.5px;font-weight:600;white-space:nowrap;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.ivq-sc__chip span{display:none;align-items:center;gap:7px}
+.ivq-sc[data-st="look"] [data-h="look"],.ivq-sc[data-st="read"] [data-h="read"],.ivq-sc[data-st="done"] [data-h="done"],.ivq-sc[data-st="bad"] [data-h="bad"]{display:inline-flex}
+.ivq-sc__spin{width:12px;height:12px;border-radius:50%;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;animation:ivqSpin .8s linear infinite}
+@keyframes ivqSpin{to{transform:rotate(360deg)}}
+.ivq-sc[data-st="read"] .ivq-sc__fr .ivq-corners b{color:#fff}
+.ivq-sc[data-st="done"] .ivq-sc__fr .ivq-corners b{color:#5fe0a6}
+.ivq-sc[data-st="done"] .ivq-sc__line,.ivq-sc[data-st="bad"] .ivq-sc__line{display:none}
+.ivq-sc[data-st="done"] .ivq-sc__ok{transform:translate(-50%,-50%) scale(1)}
+.ivq-sc[data-st="done"] [data-h="done"]{color:#5fe0a6}
+.ivq-sc[data-st="bad"] .ivq-sc__pst{opacity:.55}
+.ivq-sc[data-st="bad"] .ivq-sc__fr .ivq-corners{animation:none}
+.ivq-sc--wrong .ivq-sc__fr .ivq-corners b,.ivq-sc--outside .ivq-sc__fr .ivq-corners b{color:#ff6b6b}
+.ivq-sc--unreadable .ivq-sc__fr .ivq-corners b{color:#ffc233}
+.ivq-sc--wrong [data-h="bad"],.ivq-sc--outside [data-h="bad"]{color:#ffb4b4}
+.ivq-sc--unreadable [data-h="bad"]{color:#ffd77a}
+/* cámara apagada */
+.ivq-sc__off{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:rgba(255,255,255,.7)}
+.ivq-sc__off b{font-size:14px;font-weight:600;color:#fff}
+/* qué ha pasado y qué hacer (fondos suaves, sin bordes) */
+.ivq-sc__res{display:flex;gap:12px;padding:14px 16px;border-radius:18px;background:#f3f4f8}
+.ivq-sc__res--bad{background:#fff1f1}.ivq-sc__res--warn{background:#fff7e6}.ivq-sc__res--info{background:#eef1fe}
+.ivq-sc__ri{flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:#fff}
+.ivq-sc__res--bad .ivq-sc__ri{color:#d93a2b}.ivq-sc__res--warn .ivq-sc__ri{color:#b77800}.ivq-sc__res--info .ivq-sc__ri{color:var(--q-blue,#385bf8)}
+.ivq-sc__rt{flex:1;min-width:0}
+.ivq-sc__rt>b{display:block;font-size:15px;line-height:1.3;font-weight:700;color:#161643}
+.ivq-sc__rt>p{margin:4px 0 0;font-size:13.5px;line-height:1.45;color:#40465e}
+.ivq-sc__rt>p b{color:#161643;font-weight:600}
+.ivq-sc__lk{all:unset;display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-size:13.5px;font-weight:600;color:var(--q-blue,#385bf8);cursor:pointer}
+.ivq-sc__tips{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
+.ivq-sc__tips li{display:flex;align-items:center;gap:8px;font-size:13px;color:#40465e}
+.ivq-sc__tips svg{flex:none;color:#b77800}
+.ivq-sc__seg{display:inline-flex!important;gap:2px;margin-top:10px;padding:3px;border-radius:10px;background:#fff}
+.ivq-sc__seg button{height:28px;padding:0 12px;border:0;border-radius:8px;background:none;color:#5a6695;font:600 12.5px inherit;font-family:inherit;cursor:pointer}
+.ivq-sc__seg button.on{background:var(--q-blue,#385bf8);color:#fff}
+.ivq-sc__how{margin:10px 0 0;padding:0;list-style:none;counter-reset:h;display:flex;flex-direction:column;gap:8px}
+.ivq-sc__how li{counter-increment:h;display:flex;align-items:center;gap:10px;font-size:13.5px;color:#40465e}
+.ivq-sc__how li::before{content:counter(h);flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:#fff;color:var(--q-blue,#385bf8);font-size:12px;font-weight:700}
+.ivq-sc__how b{color:#161643;font-weight:600}
+.ivq-sc__acts{display:flex;gap:10px;align-items:center}
+.ivq-sc__acts .ivq-btn{width:auto;min-width:220px}
+@media (min-width:1024px){
+  .ivq-sc{max-width:560px}
+  .ivq-sc__stage{aspect-ratio:16/10;max-height:none}
+  .ivq-sc--denied .ivq-sc__stage{aspect-ratio:16/7}
+}
+/* ===== #1137 · 7 · verificación aún no disponible ===== */
+.ivq-un__top{display:flex;align-items:center;gap:16px;text-align:left}
+.ivq-un__cal{flex:none;width:72px;border-radius:18px;overflow:hidden;background:#fff;color:#161643;text-align:center;line-height:1}
+.ivq-un__cal small{display:block;padding:6px 0 5px;background:#ff6b6b;color:#fff;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.ivq-un__cal b{display:block;padding:8px 0 2px;font-size:28px;font-weight:700}
+.ivq-un__cal span{display:block;padding-bottom:8px;font-size:11.5px;font-weight:600;color:#5a6695}
+.ivq-un .ivq-au__eye{margin:0 0 4px}
+.ivq-un h3{margin:0;font-size:21px;line-height:1.22}
+.ivq-un__p{margin:14px 0 0;font-size:14px;line-height:1.5;color:rgba(255,255,255,.8);text-align:left}
+.ivq-un__p b{color:#fff}
+.ivq-un__lb{margin:18px 4px 8px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8a8ca6}
+.ivq-un__list{display:flex;flex-direction:column;gap:8px}
+.ivq-un__row{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;border-radius:16px;background:#fff;font-family:inherit}
+button.ivq-un__row{cursor:pointer}
+.ivq-un__i{flex:none;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:#eef1fe;color:var(--q-blue,#385bf8)}
+.ivq-un__t{flex:1;min-width:0;display:flex;flex-direction:column;font-size:12.5px;line-height:1.35;color:#5a6695}
+.ivq-un__t b{font-size:14.5px;font-weight:600;color:#161643}
+.ivq-un__c{flex:none;color:#8a8ca6}
+@media (min-width:1024px){.ivq-un h3{font-size:26px}.ivq-un__cal{width:84px}.ivq-un__cal b{font-size:32px}}
+.ivq-sc__pst .ivq-poster{width:138px;padding:10px 10px 8px;border-radius:14px}
+.ivq-sc__pst .ivq-poster__q{width:100px;margin:6px auto 5px}
+.ivq-sc__pst .ivq-poster__h{font-size:11px}.ivq-sc__pst .ivq-poster__t{font-size:10px;line-height:1.2}
+.ivq-sc__how[hidden]{display:none}
+.ivq-sc__seg button{font-size:12.5px;font-weight:600}
+@media (min-width:1024px){.ivq-au__in.ivq-un{display:block;max-width:640px}.ivq-un .ivq-acts{margin-top:20px}.ivq-un__list{max-width:640px}}
+/* ===== #1138 · el visor con los MISMOS estilos que la cámara de la IV del rediseño (autofill/styles.css: .stage.cam, .cam-bg, .cam-card, .cam-frame .c, .scan, .cam-chip) ===== */
+.ivq-sc__stage{border-radius:14px;background:radial-gradient(ellipse 80% 70% at 50% 35%,#403d63 0%,#232238 52%,#0e0d18 100%)}
+.ivq-sc__stage::after{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(115deg,#ffffff06 0 2px,transparent 2px 9px),radial-gradient(ellipse at 50% 120%,#00000099,transparent 60%)}
+.ivq-sc.is-torch .ivq-sc__stage{background:radial-gradient(ellipse 80% 70% at 50% 35%,#5a5788 0%,#35345a 52%,#1b1a2c 100%)}
+.ivq-sc__pst{z-index:2;filter:drop-shadow(0 14px 16px #000000a8)}
+.ivq-sc__pst>.ivq-poster{animation:camFloatQ 4.2s ease-in-out .9s infinite alternate}
+@keyframes camFloatQ{from{transform:translate(0,0) rotate(0)}to{transform:translate(1.6px,-1.2px) rotate(.35deg)}}
+.ivq-sc__pst.is-blur{filter:blur(4px) drop-shadow(0 14px 16px #000000a8)}
+.ivq-sc__fr{z-index:3}
+.ivq-sc__fr .c{position:absolute;width:26px;height:26px;border:3px solid #6f97ff;filter:drop-shadow(0 0 6px #4e7bff99);transition:border-color .25s}
+.ivq-sc__fr .c.tl{top:0;left:0;border-right:0;border-bottom:0;border-radius:7px 0 0 0}
+.ivq-sc__fr .c.tr{top:0;right:0;border-left:0;border-bottom:0;border-radius:0 7px 0 0}
+.ivq-sc__fr .c.bl{bottom:0;left:0;border-right:0;border-top:0;border-radius:0 0 0 7px}
+.ivq-sc__fr .c.br{bottom:0;right:0;border-left:0;border-top:0;border-radius:0 0 7px 0}
+.ivq-sc__line{left:0;right:0;top:0;height:3px;border-radius:2px;background:linear-gradient(90deg,transparent,#5b8cff 20%,#9db8ff 50%,#5b8cff 80%,transparent);box-shadow:0 0 14px 4px #4e7bffa6,0 0 32px 8px #4e7bff55;animation:scanFullQ 2.2s ease-in-out .6s infinite}
+@keyframes scanFullQ{0%{top:0;opacity:0}12%{opacity:1}88%{opacity:1}100%{top:calc(100% - 3px);opacity:0}}
+.ivq-sc__chip{z-index:4;bottom:9px;padding:4px 12px;font-size:11px;font-weight:650;background:#00000099;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.ivq-sc__chip span{gap:6px}.ivq-sc__chip svg{width:12px;height:12px}
+.ivq-sc[data-st="read"] .ivq-sc__fr .c{border-color:#fff;filter:drop-shadow(0 0 6px #ffffff88)}
+.ivq-sc[data-st="done"] .ivq-sc__fr .c{border-color:#34c38f;filter:drop-shadow(0 0 6px #34c38f)}
+.ivq-sc[data-st="done"] [data-h="done"]{color:#7ee8bb}
+.ivq-sc--wrong .ivq-sc__fr .c,.ivq-sc--outside .ivq-sc__fr .c{border-color:#ff6b6b;filter:drop-shadow(0 0 6px #ff6b6b88)}
+.ivq-sc--unreadable .ivq-sc__fr .c{border-color:#ffc233;filter:drop-shadow(0 0 6px #ffc23388)}
+.ivq-sc__torch{z-index:4}
+.ivq-sc__off{z-index:2}
+/* #1138: esquinas como las de la cámara de la IV (26 px, trazo 3 px, radio 7 px, #6f97ff con brillo), en SVG porque la réplica anula los bordes */
+.ivq-sc__fr .ivq-corners{animation:none}
+.ivq-sc__fr .ivq-corners b{width:26px;height:26px;color:#6f97ff;filter:drop-shadow(0 0 6px #4e7bff99)}
+.ivq-sc__fr .ivq-corners svg{stroke-width:4.6}
+.ivq-sc[data-st="read"] .ivq-sc__fr .ivq-corners b{color:#fff;filter:drop-shadow(0 0 6px #ffffff88)}
+.ivq-sc[data-st="done"] .ivq-sc__fr .ivq-corners b{color:#34c38f;filter:drop-shadow(0 0 6px #34c38f)}
+.ivq-sc--wrong .ivq-sc__fr .ivq-corners b,.ivq-sc--outside .ivq-sc__fr .ivq-corners b{color:#ff6b6b;filter:drop-shadow(0 0 6px #ff6b6b88)}
+.ivq-sc--unreadable .ivq-sc__fr .ivq-corners b{color:#ffc233;filter:drop-shadow(0 0 6px #ffc23388)}
+/* ===== #1139 · disposición igual que la cámara de la IV («Fit the front side in the frame») ===== */
+.ivq-sc{gap:12px}
+.ivq-sc__head h2{font-size:26px;line-height:1.2}
+.ivq-sc__stage,.ivq-sc--wrong .ivq-sc__stage,.ivq-sc--outside .ivq-sc__stage,.ivq-sc--unreadable .ivq-sc__stage,.ivq-sc--denied .ivq-sc__stage{flex:1 1 0;min-height:200px;aspect-ratio:auto;max-height:none}
+.ivq-sc__obj{position:absolute;left:50%;top:47%;width:min(52%,250px);transform:translate(-50%,-50%);z-index:2}
+.ivq-sc__obj .ivq-sc__pst{position:relative;left:auto;top:auto;transform:rotate(-1.5deg)}
+.ivq-sc__obj .ivq-poster{width:100%;padding:7% 7% 6%;border-radius:12px;box-sizing:border-box}
+.ivq-sc__obj .ivq-poster__q{width:76%;margin:6% auto 4%}
+.ivq-sc__obj .ivq-poster__h{font-size:clamp(11px,3.2vw,14px)}.ivq-sc__obj .ivq-poster__t{font-size:clamp(10px,2.8vw,13px)}
+.ivq-sc__obj .ivq-sc__fr{position:absolute;left:-16px;right:-16px;top:-16px;bottom:-16px;width:auto;max-width:none;aspect-ratio:auto;transform:none}
+.ivq-sc__fr .ivq-corners b{width:30px;height:30px}
+.ivq-sc__fr .ivq-corners svg{stroke-width:4}
+.ivq-sc__line{left:12px;right:12px}
+.ivq-sc__chip{font-size:12px;padding:5px 14px}
+.ivq-sc__stage .ivq-sc__off{inset:0}
+/* botón secundario como «Choose from gallery»: sin fondo, texto oscuro con icono */
+.ivq-btn--ghost{background:none;color:#161643}.ivq-btn--ghost:hover{background:#f1f3fb}
+.ivq-dock .contents>.ivq-btn+.ivq-btn{margin-top:4px}
+@media (min-width:1024px){
+  .ivq-sc{max-width:none}
+  .ivq-sc__obj{width:min(30%,230px)}
+  .ivq-sc__acts{flex-direction:column;align-items:center;gap:8px}
+  .ivq-sc__acts .ivq-btn{width:auto;min-width:180px;height:40px;min-height:40px;font-size:13.5px}
+  .ivq-sc__acts .ivq-btn--ghost{background:#fff}
+}

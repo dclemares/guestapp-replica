@@ -1,0 +1,68 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:P;font-weight:400;src:url("../../site/assets/fonts/Poppins/poppins-v22-latin-regular.woff2")}
+@font-face{font-family:P;font-weight:500;src:url("../../site/assets/fonts/Poppins/poppins-v22-latin-500.woff2")}
+@font-face{font-family:P;font-weight:600;src:url("../../site/assets/fonts/Poppins/poppins-v22-latin-600.woff2")}
+@font-face{font-family:P;font-weight:700;src:url("../../site/assets/fonts/Poppins/poppins-v22-latin-700.woff2")}
+@page{size:210mm 297mm;margin:0}
+:root{--navy:#161643;--blue:#385bf8;--sec:#6b6b95;--soft:#f1f3fb}
+*{box-sizing:border-box;margin:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{font-family:P,sans-serif;color:var(--navy)}
+.page{position:relative;width:210mm;height:297mm;overflow:hidden;page-break-after:always;background:#fff;padding:22mm 20mm}
+.page:last-child{page-break-after:auto}
+.ft{position:absolute;left:20mm;right:20mm;bottom:12mm;display:flex;justify-content:space-between;font-size:8.5pt;color:var(--sec)}
+h2{font-size:27pt;line-height:1.1;font-weight:700;letter-spacing:-.02em}
+h2 em{font-style:normal;color:var(--blue)}
+.eye{font-size:8.5pt;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);margin-bottom:6mm}
+p{font-size:10.5pt;line-height:1.65}
+.lead{font-size:12pt;line-height:1.7;margin:7mm 0 10mm;color:#34345f}
+/* portada */
+.cover{padding:0;background:#15153f;color:#fff}
+.cover .ph{position:absolute;inset:0 0 88mm 0;background:url("../vendor/vela/deals/gb-alley.jpg") center 30%/cover}
+.cover .ph::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(21,21,63,.25),rgba(21,21,63,0) 40%,rgba(21,21,63,.9))}
+.cover .tag{position:absolute;left:20mm;top:20mm;font-size:8.5pt;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:2.2mm 4mm;border-radius:99px;background:rgba(255,255,255,.2)}
+.cover .tx{position:absolute;left:20mm;right:20mm;bottom:20mm}
+.cover h1{font-size:52pt;line-height:1;font-weight:700;letter-spacing:-.03em}
+.cover h1 em{font-style:normal;color:#aebcff}
+.cover p{margin-top:6mm;font-size:13pt;color:rgba(255,255,255,.78)}
+.cover .meta{margin-top:12mm;display:flex;gap:14mm;font-size:9pt;color:rgba(255,255,255,.7)}
+.cover .meta b{display:block;font-size:11pt;color:#fff;margin-top:1mm}
+/* tarjetas */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:5mm;margin-bottom:9mm}
+.card{padding:6mm;border-radius:6mm;background:var(--soft)}
+.card small{display:block;font-size:8pt;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--sec)}
+.card b{display:block;margin-top:2mm;font-size:14.5pt;font-weight:700;white-space:nowrap}
+.card span{display:block;margin-top:1mm;font-size:8.5pt;color:var(--sec)}
+.wifi{display:grid;grid-template-columns:1fr 1fr;gap:5mm;margin:5mm 0 10mm}
+.wifi div{padding:5mm 6mm;border-radius:5mm;background:var(--soft)}
+.wifi small{font-size:8pt;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--sec)}
+.wifi code{display:block;margin-top:1.5mm;font-family:ui-monospace,Menlo,monospace;font-size:12pt;font-weight:700}
+h3{font-size:14pt;font-weight:700;margin:0 0 3mm}
+ol.st{list-style:none;padding:0;counter-reset:s}
+ol.st li{counter-increment:s;display:flex;gap:4mm;margin-bottom:4mm;font-size:10.5pt;line-height:1.55}
+ol.st li::before{content:counter(s);flex:none;width:7mm;height:7mm;border-radius:50%;background:var(--blue);color:#fff;font-weight:700;font-size:9pt;display:grid;place-items:center;margin-top:.3mm}
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:6mm;margin-bottom:9mm}
+.rule{padding:6mm;border-radius:6mm;background:var(--soft)}
+.rule b{display:block;font-size:12pt;margin-bottom:2mm}
+.rule p{font-size:9.8pt;line-height:1.6;color:#34345f}
+.bins{display:grid;grid-template-columns:repeat(4,1fr);gap:4mm}
+.bin{padding:5mm;border-radius:5mm;background:var(--soft)}
+.bin i{display:block;width:6mm;height:6mm;border-radius:2mm;margin-bottom:3mm}
+.bin b{display:block;font-size:10pt}.bin small{display:block;margin-top:1mm;font-size:8pt;color:var(--sec);line-height:1.4}
+.map{height:78mm;border-radius:6mm;background:#e9edf8;overflow:hidden;position:relative;margin:7mm 0 9mm}
+.list{display:grid;grid-template-columns:1fr 1fr;gap:5mm 8mm}
+.list div b{display:block;font-size:10.5pt}.list div span{font-size:9.5pt;color:var(--sec);line-height:1.5}
+.sos{margin-top:9mm;padding:6mm 7mm;border-radius:6mm;background:#15153f;color:#fff;display:flex;justify-content:space-between;align-items:center}
+.sos b{font-size:22pt}.sos span{font-size:9.5pt;color:rgba(255,255,255,.75);max-width:95mm;line-height:1.5}
+.page:not(.cover)>*:not(.ft){zoom:1.27}
+.page:not(.cover) .map{height:70mm}
+
+.note{display:flex;gap:4mm;margin:6mm 0;padding:5mm 6mm;border-radius:5mm;background:rgba(56,91,248,.1);font-size:10pt;line-height:1.55}
+.note.am{background:rgba(255,194,51,.25);color:#6b4700}
+.amen{display:grid;grid-template-columns:1fr 1fr;gap:4mm;margin:5mm 0 9mm}
+.amen span{padding:4.5mm 5mm;border-radius:5mm;background:var(--soft);font-size:10.5pt;font-weight:500}
+.dish b{display:block;font-size:12pt;margin-bottom:2mm}
+.thanks{margin-top:8mm;padding:9mm;border-radius:7mm;background:linear-gradient(135deg,#15153f,#2e4bd0);color:#fff}
+.thanks b{display:block;font-size:20pt;line-height:1.2}.thanks span{display:block;margin-top:2mm;font-size:10.5pt;color:rgba(255,255,255,.8)}
+.cards.two{grid-template-columns:1fr 1fr}
+</style></head><body><section class="page cover"><div class="ph" style="background-image:url('../../vendor/vela/deals/gb-street2.jpg');background-position:center 50%"></div><span class="tag">Villa Calipso · Getting there</span>
+<div class="tx"><h1>Finding the <em>villa</em></h1><p>By car, train, bus or air: every way to our door.</p><div class="meta"><span>Edition<b>2026</b></span><span>Your hosts<b>Marta &amp; Javier</b></span><span>Reach us<b>In the app, any time</b></span></div></div></section><section class="page"><div class="eye">01 · By car</div><h2>By <em>car</em></h2><p class="lead">Villa Calipso is in the old part of Albacete, a short walk from Plaza Mayor. The street is narrow and one-way, so drive slowly.</p><div class="wifi" style="grid-template-columns:1fr"><div><small>Address</small><code>Calle Mayor 4, 02001 Albacete</code></div></div><ol class="st"><li><span>Follow the signs to <b>Centro</b> and turn into <b>Calle Mayor</b>.</span></li><li><span>Drive slowly: the street is narrow and one-way.</span></li><li><span>The villa is the <b>white house with the green gate</b>, on the left, at number 4.</span></li></ol><div class="note"><span>You can unload at the door for a few minutes. The Parking guidebook tells you where to leave the car afterwards.</span></div><div class="ft"><span>Villa Calipso · Getting there</span><span>2 / 4</span></div></section><section class="page"><div class="eye">02 · Public transport</div><h2>Train, bus <em>&amp; air</em></h2><p class="lead">Everything you need to reach us without a car.</p><div class="cards"><div class="card"><small>Train</small><b>12 min</b><span>By taxi from Albacete-Los Llanos</span></div><div class="card"><small>Bus</small><b>4 min walk</b><span>Lines 2 and 4 to Plaza Mayor</span></div><div class="card"><small>Airport</small><b>2 h</b><span>Valencia; Madrid is 2,5 h</span></div></div><p style="margin-bottom:5mm">The easiest way from the airport is a taxi or a private transfer, and we can help you arrange one. Taxis wait outside the main exit of the station.</p><div class="note"><span>A bus ticket costs about 1,40 €.</span></div><div class="ft"><span>Villa Calipso · Getting there</span><span>3 / 4</span></div></section><section class="page"><div class="eye">03 · Arrival</div><h2>Arriving <em>late</em></h2><p class="lead">Your door code works at any hour, so there is no need to wait for us.</p><div class="map"><svg viewBox="0 0 640 280" width="100%" height="100%" preserveAspectRatio="xMidYMid slice"><rect width="640" height="280" fill="#e9edf8"/><path d="M0 200 L640 120" stroke="#fff" stroke-width="22"/><path d="M180 0 L260 280" stroke="#fff" stroke-width="16"/><path d="M430 0 L380 280" stroke="#fff" stroke-width="12"/><path d="M0 60 L640 90" stroke="#fff" stroke-width="9"/><rect x="40" y="215" width="120" height="50" rx="10" fill="#cfe6d4"/><rect x="470" y="140" width="130" height="90" rx="12" fill="#bcd9f5"/><circle cx="300" cy="140" r="26" fill="rgba(56,91,248,.18)"/><circle cx="300" cy="140" r="11" fill="#385bf8"/><circle cx="300" cy="140" r="4.5" fill="#fff"/><text x="318" y="124" font-family="P,sans-serif" font-size="14" font-weight="700" fill="#161643">Villa Calipso</text><text x="468" y="128" font-family="P,sans-serif" font-size="11" font-weight="600" fill="#6b6b95">Plaza Mayor</text></svg></div><div class="list"><div><b>Arriving after 22:00</b><span>Please keep the noise down: the entrance is next to a neighbour’s bedroom.</span></div><div><b>Lost?</b><span>Write to us in the app and we will guide you to the door.</span></div><div><b>Check-in</b><span>From 15:00, any time after that.</span></div><div><b>Check-out</b><span>By 11:00.</span></div></div><div class="ft"><span>Villa Calipso · Getting there</span><span>4 / 4</span></div></section></body></html>

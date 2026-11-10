@@ -724,7 +724,7 @@ if (document.readyState !== 'loading' && !barDone) { barDone = true; addBar(); }
       b.classList.add('rep-cta'); if (b.closest('[role="dialog"]')) b.classList.add('rep-cta-m');   /* en modales ocupa el ancho de la hoja */
     });
     /* el botón secundario que acompaña al CTA (mismo contenedor) toma el mismo tamaño, con borde */
-    [].forEach.call(document.querySelectorAll('button.rep-cta'), function(p){ [].forEach.call(p.parentElement.children, function(s){ if (s === p || s.tagName !== 'BUTTON' || s.classList.contains('rep-cta') || s.classList.contains('rep-cta2')) return; var r = s.getBoundingClientRect(); if (r.width > 120 && r.height >= 36) { s.classList.add('rep-cta2'); if (p.classList.contains('rep-cta-m')) s.classList.add('rep-cta-m'); } }); });
+    [].forEach.call(document.querySelectorAll('button.rep-cta'), function(p){ [].forEach.call(p.parentElement.children, function(s){ if (s === p || s.tagName !== 'BUTTON' || s.classList.contains('rep-cta') || s.classList.contains('rep-cta2') || s.classList.contains('ivq-row')) return;   /* #1119: las filas de IV QR (p. ej. «Can’t find it?») no son botones secundarios */ var r = s.getBoundingClientRect(); if (r.width > 120 && r.height >= 36) { s.classList.add('rep-cta2'); if (p.classList.contains('rep-cta-m')) s.classList.add('rep-cta-m'); } }); });
   };
   var pend = 0, obs = function(){ if (pend) return; pend = setTimeout(function(){ pend = 0; mark(); }, 120); };
   var go = function(){ mark(); setTimeout(mark, 500); new MutationObserver(obs).observe(document.body, { childList: true, subtree: true }); };

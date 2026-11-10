@@ -437,7 +437,7 @@ var onClick = function(e){
 };
 /* el botón fijo de abajo (móvil) hace lo mismo que el del resumen; en V3 avanza de paso */
 document.addEventListener('click', function(e){
-  var b = e.target.closest && e.target.closest('[data-slot="cta-dock"] button'); if (!b || pv === 'orig') return;
+  var b = e.target.closest && e.target.closest('[data-slot="cta-dock"] button'); if (!b || pv === 'orig' || b.closest('.ivq-dock')) return;   /* el dock del flujo de IV con QR (#1096) es suyo */
   e.preventDefault(); e.stopPropagation(); main();
 }, true);
 

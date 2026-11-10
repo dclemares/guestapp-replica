@@ -1,0 +1,68 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:P;font-weight:400;src:url("../../site/assets/fonts/Poppins/poppins-v22-latin-regular.woff2")}
+@font-face{font-family:P;font-weight:500;src:url("../../site/assets/fonts/Poppins/poppins-v22-latin-500.woff2")}
+@font-face{font-family:P;font-weight:600;src:url("../../site/assets/fonts/Poppins/poppins-v22-latin-600.woff2")}
+@font-face{font-family:P;font-weight:700;src:url("../../site/assets/fonts/Poppins/poppins-v22-latin-700.woff2")}
+@page{size:210mm 297mm;margin:0}
+:root{--navy:#161643;--blue:#385bf8;--sec:#6b6b95;--soft:#f1f3fb}
+*{box-sizing:border-box;margin:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{font-family:P,sans-serif;color:var(--navy)}
+.page{position:relative;width:210mm;height:297mm;overflow:hidden;page-break-after:always;background:#fff;padding:22mm 20mm}
+.page:last-child{page-break-after:auto}
+.ft{position:absolute;left:20mm;right:20mm;bottom:12mm;display:flex;justify-content:space-between;font-size:8.5pt;color:var(--sec)}
+h2{font-size:27pt;line-height:1.1;font-weight:700;letter-spacing:-.02em}
+h2 em{font-style:normal;color:var(--blue)}
+.eye{font-size:8.5pt;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);margin-bottom:6mm}
+p{font-size:10.5pt;line-height:1.65}
+.lead{font-size:12pt;line-height:1.7;margin:7mm 0 10mm;color:#34345f}
+/* portada */
+.cover{padding:0;background:#15153f;color:#fff}
+.cover .ph{position:absolute;inset:0 0 88mm 0;background:url("../vendor/vela/deals/gb-alley.jpg") center 30%/cover}
+.cover .ph::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(21,21,63,.25),rgba(21,21,63,0) 40%,rgba(21,21,63,.9))}
+.cover .tag{position:absolute;left:20mm;top:20mm;font-size:8.5pt;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:2.2mm 4mm;border-radius:99px;background:rgba(255,255,255,.2)}
+.cover .tx{position:absolute;left:20mm;right:20mm;bottom:20mm}
+.cover h1{font-size:52pt;line-height:1;font-weight:700;letter-spacing:-.03em}
+.cover h1 em{font-style:normal;color:#aebcff}
+.cover p{margin-top:6mm;font-size:13pt;color:rgba(255,255,255,.78)}
+.cover .meta{margin-top:12mm;display:flex;gap:14mm;font-size:9pt;color:rgba(255,255,255,.7)}
+.cover .meta b{display:block;font-size:11pt;color:#fff;margin-top:1mm}
+/* tarjetas */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:5mm;margin-bottom:9mm}
+.card{padding:6mm;border-radius:6mm;background:var(--soft)}
+.card small{display:block;font-size:8pt;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--sec)}
+.card b{display:block;margin-top:2mm;font-size:14.5pt;font-weight:700;white-space:nowrap}
+.card span{display:block;margin-top:1mm;font-size:8.5pt;color:var(--sec)}
+.wifi{display:grid;grid-template-columns:1fr 1fr;gap:5mm;margin:5mm 0 10mm}
+.wifi div{padding:5mm 6mm;border-radius:5mm;background:var(--soft)}
+.wifi small{font-size:8pt;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--sec)}
+.wifi code{display:block;margin-top:1.5mm;font-family:ui-monospace,Menlo,monospace;font-size:12pt;font-weight:700}
+h3{font-size:14pt;font-weight:700;margin:0 0 3mm}
+ol.st{list-style:none;padding:0;counter-reset:s}
+ol.st li{counter-increment:s;display:flex;gap:4mm;margin-bottom:4mm;font-size:10.5pt;line-height:1.55}
+ol.st li::before{content:counter(s);flex:none;width:7mm;height:7mm;border-radius:50%;background:var(--blue);color:#fff;font-weight:700;font-size:9pt;display:grid;place-items:center;margin-top:.3mm}
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:6mm;margin-bottom:9mm}
+.rule{padding:6mm;border-radius:6mm;background:var(--soft)}
+.rule b{display:block;font-size:12pt;margin-bottom:2mm}
+.rule p{font-size:9.8pt;line-height:1.6;color:#34345f}
+.bins{display:grid;grid-template-columns:repeat(4,1fr);gap:4mm}
+.bin{padding:5mm;border-radius:5mm;background:var(--soft)}
+.bin i{display:block;width:6mm;height:6mm;border-radius:2mm;margin-bottom:3mm}
+.bin b{display:block;font-size:10pt}.bin small{display:block;margin-top:1mm;font-size:8pt;color:var(--sec);line-height:1.4}
+.map{height:78mm;border-radius:6mm;background:#e9edf8;overflow:hidden;position:relative;margin:7mm 0 9mm}
+.list{display:grid;grid-template-columns:1fr 1fr;gap:5mm 8mm}
+.list div b{display:block;font-size:10.5pt}.list div span{font-size:9.5pt;color:var(--sec);line-height:1.5}
+.sos{margin-top:9mm;padding:6mm 7mm;border-radius:6mm;background:#15153f;color:#fff;display:flex;justify-content:space-between;align-items:center}
+.sos b{font-size:22pt}.sos span{font-size:9.5pt;color:rgba(255,255,255,.75);max-width:95mm;line-height:1.5}
+.page:not(.cover)>*:not(.ft){zoom:1.27}
+.page:not(.cover) .map{height:70mm}
+
+.note{display:flex;gap:4mm;margin:6mm 0;padding:5mm 6mm;border-radius:5mm;background:rgba(56,91,248,.1);font-size:10pt;line-height:1.55}
+.note.am{background:rgba(255,194,51,.25);color:#6b4700}
+.amen{display:grid;grid-template-columns:1fr 1fr;gap:4mm;margin:5mm 0 9mm}
+.amen span{padding:4.5mm 5mm;border-radius:5mm;background:var(--soft);font-size:10.5pt;font-weight:500}
+.dish b{display:block;font-size:12pt;margin-bottom:2mm}
+.thanks{margin-top:8mm;padding:9mm;border-radius:7mm;background:linear-gradient(135deg,#15153f,#2e4bd0);color:#fff}
+.thanks b{display:block;font-size:20pt;line-height:1.2}.thanks span{display:block;margin-top:2mm;font-size:10.5pt;color:rgba(255,255,255,.8)}
+.cards.two{grid-template-columns:1fr 1fr}
+</style></head><body><section class="page cover"><div class="ph" style="background-image:url('../../vendor/vela/deals/gb-keys2.jpg');background-position:center 40%"></div><span class="tag">Villa Calipso · Wi-Fi & access</span>
+<div class="tx"><h1>Stay <em>connected</em></h1><p>Your network, your door code and everything included.</p><div class="meta"><span>Edition<b>2026</b></span><span>Your hosts<b>Marta &amp; Javier</b></span><span>Reach us<b>In the app, any time</b></span></div></div></section><section class="page"><div class="eye">01 · Wi-Fi</div><h2>Get <em>online</em></h2><p class="lead">Connect to the network below. The signal is strongest in the living room, next to the router.</p><div class="wifi"><div><small>Network</small><code>Calipso_Guest</code></div><div><small>Password</small><code>Villa-Calipso-26</code></div></div><div class="cards"><div class="card"><small>Router</small><b>Living room</b><span>Next to the TV</span></div><div class="card"><small>Speed</small><b>600 Mb</b><span>Fibre</span></div><div class="card"><small>Devices</small><b>Up to 10</b><span>At the same time</span></div></div><h3>If the signal is slow</h3><ol class="st"><li><span>Move closer to the router, which is in the living room.</span></li><li><span>Thick walls in the bedrooms can weaken it.</span></li><li><span>Restart the router by unplugging it for ten seconds.</span></li></ol><div class="ft"><span>Villa Calipso · Wi-Fi & access</span><span>2 / 4</span></div></section><section class="page"><div class="eye">02 · Access</div><h2>Door <em>code</em></h2><p class="lead">The keypad is on the right of the front door. Your personal code unlocks it from your arrival time until check-out.</p><ol class="st"><li><span>We show your code in the app as soon as you finish check-in.</span></li><li><span>Type the code on the keypad and push the door.</span></li><li><span>If the keypad doesn’t respond, press <b>#</b> twice and enter the code again.</span></li><li><span>Please don’t share your code with anyone.</span></li></ol><div class="note am"><span>The spare key is in the key box to the left of the gate, in case you ever need it.</span></div><div class="cards two"><div class="card"><small>Keypad</small><b>Right side</b><span>Front door</span></div><div class="card"><small>Spare key</small><b>Key box</b><span>Left of the gate</span></div></div><div class="ft"><span>Villa Calipso · Wi-Fi & access</span><span>3 / 4</span></div></section><section class="page"><div class="eye">03 · The house</div><h2>What’s <em>included</em></h2><p class="lead">Everything below is yours to enjoy during your stay.</p><div class="amen"><span>Wi-Fi</span><span>Air conditioning</span><span>Washing machine</span><span>Full kitchen</span><span>Free parking</span><span>Smart TV</span><span>Terrace &amp; pool</span><span>Heating</span></div><h3>Good to know</h3><div class="list"><div><b>Check-out</b><span>By 11:00. Ask us for a later one.</span></div><div><b>Quiet hours</b><span>22:00 to 08:00, every day.</span></div><div><b>Wi-Fi</b><span>Shared by the whole house: streaming in 4K on many screens may be slow.</span></div><div><b>Need help?</b><span>Write to us in the app, any time.</span></div></div><div class="ft"><span>Villa Calipso · Wi-Fi & access</span><span>4 / 4</span></div></section></body></html>

@@ -1,0 +1,14 @@
+/* #1100 · Old design v2: ajustes sobre ivqr.css (que ya tiene todas las piezas del diseño antiguo y del nuevo) */
+.ivq-rows--v2{display:flex;flex-direction:column;gap:8px}
+.ivq-rows--v2 .ivq-look{margin-top:0;padding:13px 14px;border-radius:18px}
+.ivq-au__eye--req{margin:18px 0 0!important}
+.ivq-au__eye--req+.ivq-checks{margin-top:8px}
+.ivq-au__art--d{display:flex;justify-content:center}
+.ivq-au__art--d .ivq-au__art{padding:0}
+.ivq-rgbox .ivq-au{margin-bottom:8px}
+.ivq-lk__card .ivq-au{margin:2px 0 0}
+.ivq-lk__card .ivq-au__in--c{padding:28px 20px 24px}
+.ivq-lk__card .ivq-au__in--pick{padding:22px 20px}
+.ivq-lk__card .ivq-au h3{font-size:22px}
+@media (min-width:1024px){.ivq-lk__card .ivq-au h3{font-size:24px}.ivq-lk__card .ivq-au__in--c,.ivq-lk__card .ivq-au__in--pick{display:flex;padding:30px 28px}}
+.ivq-lk__card>.ivq-eyb+h2{margin-top:2px}

@@ -1,0 +1,68 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:P;font-weight:400;src:url("../../site/assets/fonts/Poppins/poppins-v22-latin-regular.woff2")}
+@font-face{font-family:P;font-weight:500;src:url("../../site/assets/fonts/Poppins/poppins-v22-latin-500.woff2")}
+@font-face{font-family:P;font-weight:600;src:url("../../site/assets/fonts/Poppins/poppins-v22-latin-600.woff2")}
+@font-face{font-family:P;font-weight:700;src:url("../../site/assets/fonts/Poppins/poppins-v22-latin-700.woff2")}
+@page{size:210mm 297mm;margin:0}
+:root{--navy:#161643;--blue:#385bf8;--sec:#6b6b95;--soft:#f1f3fb}
+*{box-sizing:border-box;margin:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{font-family:P,sans-serif;color:var(--navy)}
+.page{position:relative;width:210mm;height:297mm;overflow:hidden;page-break-after:always;background:#fff;padding:22mm 20mm}
+.page:last-child{page-break-after:auto}
+.ft{position:absolute;left:20mm;right:20mm;bottom:12mm;display:flex;justify-content:space-between;font-size:8.5pt;color:var(--sec)}
+h2{font-size:27pt;line-height:1.1;font-weight:700;letter-spacing:-.02em}
+h2 em{font-style:normal;color:var(--blue)}
+.eye{font-size:8.5pt;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);margin-bottom:6mm}
+p{font-size:10.5pt;line-height:1.65}
+.lead{font-size:12pt;line-height:1.7;margin:7mm 0 10mm;color:#34345f}
+/* portada */
+.cover{padding:0;background:#15153f;color:#fff}
+.cover .ph{position:absolute;inset:0 0 88mm 0;background:url("../vendor/vela/deals/gb-alley.jpg") center 30%/cover}
+.cover .ph::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(21,21,63,.25),rgba(21,21,63,0) 40%,rgba(21,21,63,.9))}
+.cover .tag{position:absolute;left:20mm;top:20mm;font-size:8.5pt;font-weight:700;letter-spacing:.16em;text-transform:uppercase;padding:2.2mm 4mm;border-radius:99px;background:rgba(255,255,255,.2)}
+.cover .tx{position:absolute;left:20mm;right:20mm;bottom:20mm}
+.cover h1{font-size:52pt;line-height:1;font-weight:700;letter-spacing:-.03em}
+.cover h1 em{font-style:normal;color:#aebcff}
+.cover p{margin-top:6mm;font-size:13pt;color:rgba(255,255,255,.78)}
+.cover .meta{margin-top:12mm;display:flex;gap:14mm;font-size:9pt;color:rgba(255,255,255,.7)}
+.cover .meta b{display:block;font-size:11pt;color:#fff;margin-top:1mm}
+/* tarjetas */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:5mm;margin-bottom:9mm}
+.card{padding:6mm;border-radius:6mm;background:var(--soft)}
+.card small{display:block;font-size:8pt;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--sec)}
+.card b{display:block;margin-top:2mm;font-size:14.5pt;font-weight:700;white-space:nowrap}
+.card span{display:block;margin-top:1mm;font-size:8.5pt;color:var(--sec)}
+.wifi{display:grid;grid-template-columns:1fr 1fr;gap:5mm;margin:5mm 0 10mm}
+.wifi div{padding:5mm 6mm;border-radius:5mm;background:var(--soft)}
+.wifi small{font-size:8pt;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--sec)}
+.wifi code{display:block;margin-top:1.5mm;font-family:ui-monospace,Menlo,monospace;font-size:12pt;font-weight:700}
+h3{font-size:14pt;font-weight:700;margin:0 0 3mm}
+ol.st{list-style:none;padding:0;counter-reset:s}
+ol.st li{counter-increment:s;display:flex;gap:4mm;margin-bottom:4mm;font-size:10.5pt;line-height:1.55}
+ol.st li::before{content:counter(s);flex:none;width:7mm;height:7mm;border-radius:50%;background:var(--blue);color:#fff;font-weight:700;font-size:9pt;display:grid;place-items:center;margin-top:.3mm}
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:6mm;margin-bottom:9mm}
+.rule{padding:6mm;border-radius:6mm;background:var(--soft)}
+.rule b{display:block;font-size:12pt;margin-bottom:2mm}
+.rule p{font-size:9.8pt;line-height:1.6;color:#34345f}
+.bins{display:grid;grid-template-columns:repeat(4,1fr);gap:4mm}
+.bin{padding:5mm;border-radius:5mm;background:var(--soft)}
+.bin i{display:block;width:6mm;height:6mm;border-radius:2mm;margin-bottom:3mm}
+.bin b{display:block;font-size:10pt}.bin small{display:block;margin-top:1mm;font-size:8pt;color:var(--sec);line-height:1.4}
+.map{height:78mm;border-radius:6mm;background:#e9edf8;overflow:hidden;position:relative;margin:7mm 0 9mm}
+.list{display:grid;grid-template-columns:1fr 1fr;gap:5mm 8mm}
+.list div b{display:block;font-size:10.5pt}.list div span{font-size:9.5pt;color:var(--sec);line-height:1.5}
+.sos{margin-top:9mm;padding:6mm 7mm;border-radius:6mm;background:#15153f;color:#fff;display:flex;justify-content:space-between;align-items:center}
+.sos b{font-size:22pt}.sos span{font-size:9.5pt;color:rgba(255,255,255,.75);max-width:95mm;line-height:1.5}
+.page:not(.cover)>*:not(.ft){zoom:1.27}
+.page:not(.cover) .map{height:70mm}
+
+.note{display:flex;gap:4mm;margin:6mm 0;padding:5mm 6mm;border-radius:5mm;background:rgba(56,91,248,.1);font-size:10pt;line-height:1.55}
+.note.am{background:rgba(255,194,51,.25);color:#6b4700}
+.amen{display:grid;grid-template-columns:1fr 1fr;gap:4mm;margin:5mm 0 9mm}
+.amen span{padding:4.5mm 5mm;border-radius:5mm;background:var(--soft);font-size:10.5pt;font-weight:500}
+.dish b{display:block;font-size:12pt;margin-bottom:2mm}
+.thanks{margin-top:8mm;padding:9mm;border-radius:7mm;background:linear-gradient(135deg,#15153f,#2e4bd0);color:#fff}
+.thanks b{display:block;font-size:20pt;line-height:1.2}.thanks span{display:block;margin-top:2mm;font-size:10.5pt;color:rgba(255,255,255,.8)}
+.cards.two{grid-template-columns:1fr 1fr}
+</style></head><body><section class="page cover"><div class="ph" style="background-image:url('../../vendor/vela/deals/gb-hall.jpg');background-position:center 50%"></div><span class="tag">Villa Calipso · Check-out</span>
+<div class="tx"><h1>A smooth <em>goodbye</em></h1><p>Ten minutes and you are done. We take care of the rest.</p><div class="meta"><span>Edition<b>2026</b></span><span>Your hosts<b>Marta &amp; Javier</b></span><span>Reach us<b>In the app, any time</b></span></div></div></section><section class="page"><div class="eye">01 · Before you leave</div><h2>Before you <em>leave</em></h2><p class="lead">We hope you had a wonderful stay. Leaving is easy: you don’t need to strip the beds or do the dishes.</p><ol class="st"><li><span>Check-out is by <b>11:00</b>.</span></li><li><span>Close all windows and switch off the lights and the air conditioning.</span></li><li><span>Check the bathroom, the terrace and the fridge for anything you would like to take with you.</span></li><li><span>Leave the towels used in the bath, or in the shower if you prefer.</span></li></ol><div class="note"><span>The door locks by itself when you close it.</span></div><div class="ft"><span>Villa Calipso · Check-out</span><span>2 / 4</span></div></section><section class="page"><div class="eye">02 · Keys &amp; rubbish</div><h2>Keys &amp; <em>rubbish</em></h2><div class="rules"><div class="rule"><b>Keys</b><p>Leave the keys on the kitchen table. If you used the key box, put the spare key back and close it.</p></div><div class="rule"><b>Rubbish</b><p>Please take the bags down to the bins on the corner, to the right of the green gate.</p></div></div><h3>Recycling</h3><div class="bins"><div class="bin"><i style="background:#f2c230"></i><b>Yellow</b><small>Plastic, cans and cartons</small></div><div class="bin"><i style="background:#385bf8"></i><b>Blue</b><small>Paper and cardboard</small></div><div class="bin"><i style="background:#37b36d"></i><b>Green</b><small>Glass, without lids</small></div><div class="bin"><i style="background:#7b8099"></i><b>Grey</b><small>Everything else</small></div></div><div class="ft"><span>Villa Calipso · Check-out</span><span>3 / 4</span></div></section><section class="page"><div class="eye">03 · Last details</div><h2>Late <em>check-out</em></h2><p class="lead">If you need a few more hours, ask us the day before and we will do our best to make it work, depending on who arrives next.</p><div class="cards"><div class="card"><small>Standard</small><b>11:00</b><span>Check-out time</span></div><div class="card"><small>Ask us</small><b>The day before</b><span>For a later one</span></div><div class="card"><small>Always</small><b>Free</b><span>Leaving luggage</span></div></div><div class="thanks"><b>Thank you for staying with us.</b><span>Safe travels, and see you soon!</span></div><div class="ft"><span>Villa Calipso · Check-out</span><span>4 / 4</span></div></section></body></html>

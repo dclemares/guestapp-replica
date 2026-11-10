@@ -28,6 +28,8 @@ var BK = new URLSearchParams(location.search).get('bk'); if (BK === null) BK = '
 var MB = new URLSearchParams(location.search).get('mb'); if (['a','b','c','d','e'].indexOf(MB) < 0) MB = 'e';   /* definitiva móvil: barra superior tipo app (e); las otras solo por URL */
 var FIT = new URLSearchParams(location.search).get('fit') === 'on';
 var RS = new URLSearchParams(location.search).get('rs'); if (['new','prog','done'].indexOf(RS) < 0) RS = 'new';   /* por defecto: sin nada registrado */
+var IVQSUM = /^ivqr-v3-a-sum-/.test((window.__SCREEN && window.__SCREEN.id) || ''); if (IVQSUM) { var _pr = new URLSearchParams(location.search).get('ivreg'); if (_pr !== 'pend' && _pr !== 'all') { _pr = 'all'; try { _pr = localStorage.getItem('replica-ivqa3-reg') || 'all'; } catch (e) {} }   /* #1128: ?ivreg= manda (reg ya es la versión del hub) */ RS = _pr === 'pend' ? 'prog' : 'done'; }
+var IVQPEND = IVQSUM && RS === 'prog', IVQP1 = IVQPEND; if (IVQPEND) HC = '2';   /* #1129: IV QR con huéspedes pendientes, escritorio: «Share a link» en Vela (Quick actions) y, con P1, el aviso de la IV en la caja translúcida de la tarjeta (sin guardar el ajuste «Tarjeta del resumen») */   /* #1125: el cuadro «Registro» elige todos registrados o con huéspedes pendientes */   /* #1113: resumen de IV con QR (Old design v3) sobre esta pantalla real: todos registrados; ivqr-v3.js mete la sección azul (window.__ivqBox) */
 var SC = new URLSearchParams(location.search).get('sc'); if (['none','fade','arrow','pill'].indexOf(SC) < 0) SC = 'pill';
 var V5 = { v5c: 'seg', v5c1: 'ring', v5c2: 'bar', v5c3: 'ppl', v5ca: 'seg', v5cb: 'seg', v5cc: 'seg', v5d1: 'seg', v5d2: 'seg', v5d3: 'seg', v5d4: 'seg' };
 var SLOT = { v5d1: 'box', v5d2: 'rows', v5d3: 'chips', v5d4: 'slot' };   /* cómo se muestran los huéspedes sin añadir; '' = una fila con botón por huésped (V5c) */
@@ -66,6 +68,9 @@ function btn(l, to, sec){ return '<button type="button" class="v1-btn' + (sec ? 
 function rowH(x){
   var av, mid, act;
   if (x.s === 'new') { av = '<span class="v1-av v1-tint">' + I_PLUS + '</span>'; mid = '<span>Not added yet</span>'; act = btn('Add guest', 'g2-form-empty'); }
+  else if (IVQSUM && RS === 'prog' && (x.s === 'holder' || x.s === 'done')) { av = '<span class="v1-av v1-ok">' + ini(x.n) + '</span>'; mid = '<em class="v1-chip v1-chip-ok">Registered</em>'; act = KEB; }   /* #1125: con huéspedes pendientes, lo que importa es el registro (la IV se hace luego en la propiedad) */
+  else if (IVQSUM && RS === 'prog' && x.s === 'pa') { av = '<span class="v1-av">' + ini(x.n) + '</span>'; mid = '<em class="v1-chip">Details pending</em>'; act = btn('Start', 'g2-form-empty'); }
+  else if (x.s === 'done' && IVQSUM && x.k !== 'm') { av = '<span class="v1-av">' + ini(x.n) + '</span>'; mid = '<em class="v1-chip">Verification pending</em>'; act = '<button type="button" class="v1-btn" data-ivq="guest">Verify ID</button>'; }   /* #1113: registrado, falta la IV en la propiedad (los menores no la hacen) */
   else if (x.s === 'done') { av = '<span class="v1-av v1-ok">' + ini(x.n) + '</span>'; mid = '<em class="v1-chip v1-chip-ok">Registered</em>'; act = KEB; }
   else if (x.s === 'hn') { av = '<span class="v1-av">' + ini(x.n) + '</span>'; mid = '<em class="v1-chip">Details pending</em>'; act = btn('Start', 'form-empty'); }
   else if (x.s === 'pm') { av = '<span class="v1-av">' + ini(x.n) + '</span>'; mid = '<em class="v1-chip">Details pending</em>'; act = btn('<span class="lg">Complete details</span><span class="sm">Complete</span>', 'g2-form-empty'); }
@@ -138,14 +143,14 @@ function renderV5(){
     if (V === 'd') {   /* escritorio: "Change guest count" a la derecha de la fecha y el texto de compartir en una sección semitransparente */
       /* tarjeta del resumen (escritorio), dos versiones (?hc=1|2, control «Tarjeta del resumen»): 1 · invitar en la tarjeta (texto y bloque de compartir; Vela sin «Quick actions») · 2 · invitar en Vela (la tarjeta sin ellos) */
       hero = '<div class="v4-hero v5-hero v5-hero--d"><div class="v5h-top">' + (RS === 'done' ? '<span class="v5h-ok">Registration completed</span>' : '<span class="v5h-due">' + I_CLK + 'Due before 25 Nov</span>') + bChange('v5h-pill v5h-white v5h-chg') + '</div>' + prog
-        + (HC === '1' ? '<p class="v5h-st">' + (RS === 'done' ? "You're all set for your arrival." : SENT1) + '</p>' + (RS === 'done' ? '' : '<div class="v5h-share"><p><b>You can register everyone yourself.</b> If you prefer, share a link so each guest completes their own registration from their phone.</p>' + bShare('v5h-pill v5h-white v5h-shr') + '</div>') : (RS === 'done' ? '<p class="v5h-st">You\'re all set for your arrival.</p>' : '')) + '</div>';
+        + (HC === '1' ? '<p class="v5h-st">' + (RS === 'done' ? (IVQSUM ? 'Next, verify your identity at the property.' : "You're all set for your arrival.") : SENT1) + '</p>' + (RS === 'done' ? '' : '<div class="v5h-share"><p><b>You can register everyone yourself.</b> If you prefer, share a link so each guest completes their own registration from their phone.</p>' + bShare('v5h-pill v5h-white v5h-shr') + '</div>') : (RS === 'done' ? '<p class="v5h-st">' + (IVQSUM ? 'Next, verify your identity at the property.' : 'You\'re all set for your arrival.') + '</p>' : (IVQPEND ? '<p class="v5h-st">' + SENT1 + '</p>' + (IVQP1 ? '<div class="v5h-share ivq-pvbox"><p>' + ic('<path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4z"/><path d="M14 14h2v2h-2zM18 18h2v2h-2zM18 14h2M14 18v2"/>', 16) + '<span><b>' + (/sum-in/.test(window.__SCREEN.id) ? 'Then:' : 'Then, when you arrive:') + '</b> scan the QR code at the entrance to verify your identity.</span></p></div>' : '') : ''))) + '</div>';
     } else
-    hero = '<div class="v4-hero v5-hero"><div class="v5h-top">' + (RS === 'done' ? '<span class="v5h-ok">Registration completed</span>' : '<span class="v5h-due">' + I_CLK + 'Due before 25 Nov</span>') + '</div>' + prog + '<p class="v5h-st">' + (RS === 'done' ? "You're all set for your arrival." : SENT) + '</p>' + (CTA === 'text'
+    hero = '<div class="v4-hero v5-hero"><div class="v5h-top">' + (RS === 'done' ? '<span class="v5h-ok">Registration completed</span>' : '<span class="v5h-due">' + I_CLK + 'Due before 25 Nov</span>') + '</div>' + prog + '<p class="v5h-st">' + (RS === 'done' ? (IVQSUM ? 'Next, verify your identity at the property.' : "You're all set for your arrival.") : SENT) + '</p>' + (CTA === 'text'
       ? '<div class="v5c-acts v5c-acts--text"><button type="button" class="v5h-link" data-to="home-sheet">Change guest count</button><button type="button" class="v5h-link">Share a link</button></div>'
       : '<div class="v5c-acts">' + bChange('v5h-pill' + (CTA === 'white' ? ' v5h-white' : '')) + bShare('v5h-pill' + (CTA === 'white' ? ' v5h-white' : '')) + '</div>') + '</div>';
   }
   var CHIP = '<div class="v5fit-wrap"><button type="button" class="v5fit-chip" data-jump="minor">Minors ' + ic('<path d="m6 9 6 6 6-6"/>', 14) + '</button></div>';
-  var build = function(fit, chip){ return hero + (chip ? CHIP : '') + section('Booking holder', [m.holder], '', SLOT[REG] || '', false) + section('Other guests', m.adults, mode, SLOT[REG] || '', false, fit) + (m.minors.length ? section('Other minor guests', m.minors, mode, SLOT[REG] || '', true, fit) : ''); };
+  var build = function(fit, chip){ return hero + (IVQSUM && window.__ivqBox ? window.__ivqBox() : '') + (chip ? CHIP : '') + section('Booking holder', [m.holder], '', SLOT[REG] || '', false) + section('Other guests', m.adults, mode, SLOT[REG] || '', false, fit) + (m.minors.length ? section('Other minor guests', m.minors, mode, SLOT[REG] || '', true, fit) : ''); };
   if (FIT && V === 'm' && m.minors.length) {
     /* se compacta por pasos (registrados, huecos de adultos, huecos de menores) hasta que la sección de menores quede a la vista; si no cabe, chip "Minors" */
     var stages = [null, { fold: true }, { fold: true, collapse: true }, { fold: true, collapse: true, collapseMinor: true }], fits = false, s;
@@ -155,6 +160,7 @@ function renderV5(){
   fitChipUpdate();
   if (V === 'm' && MB === 'e' && window.__mobBar) { window.__mobBar.title('Guest summary'); }
 }
+window.__hubRender = renderV5;
 function minorHead(){ return [].filter.call(document.querySelectorAll('.hv5c .v1-h'), function(h){ return /minor/i.test(h.textContent); })[0]; }
 function minorFits(){ var h = minorHead(); if (!h) return true; return h.getBoundingClientRect().top + window.scrollY < window.innerHeight - 120; }
 function fitChipUpdate(){ var c = document.querySelector('.v5fit-wrap'), h = minorHead(); if (c && h) c.classList.toggle('off', h.getBoundingClientRect().top < window.innerHeight - 80); }

@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>IV QR flows</title>
+<!-- #1101 · Página de revisión de los flujos de IV con QR (Italia): todas las pantallas de los tres diseños en una lista,
+     con la vista móvil + escritorio al lado. Si un botón de la pantalla te saca del flujo, se vuelve con un clic. -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#161643;--sub:#5a6695;--mute:#8a8ca6;--blue:#385bf8;--soft:#f1f3fb;--soft2:#e9edff;--bg:#f6f7fc}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:400 14px/1.45 Poppins,system-ui,sans-serif;-webkit-font-smoothing:antialiased;display:grid;grid-template-columns:var(--aw,252px) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
+header{grid-column:1/-1;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 12px;background:#fff;box-shadow:0 4px 14px rgba(22,22,67,.06);z-index:2}
+header h1{margin:0;font-size:16px;font-weight:700;white-space:nowrap}
+header h1 span{color:var(--blue)}
+.seg{display:flex;gap:2px;padding:3px;border-radius:12px;background:var(--soft)}
+.seg button{height:28px;padding:0 10px;border:0;border-radius:9px;background:none;color:var(--sub);font:600 12px Poppins,system-ui,sans-serif;cursor:pointer;white-space:nowrap}
+.seg button.on{background:var(--ink);color:#fff}
+.seg button:focus-visible,.it:focus-visible,.nav button:focus-visible,.open:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.grow{flex:1}
+.nav{display:flex;gap:6px}
+.nav button,.open{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border:0;border-radius:10px;background:var(--soft);color:var(--ink);font:600 13px Poppins,system-ui,sans-serif;cursor:pointer;text-decoration:none;white-space:nowrap}
+.nav button:hover,.open:hover{background:var(--soft2)}
+.nav .ctl{background:var(--ink);color:#fff}.nav .ctl:hover{background:#2a2a63}.nav .ctl[aria-pressed="true"]{background:var(--blue)}
+/* #1126 · «Navigation» es un panel flotante como «Controls»: tarjeta blanca con su cabecera y botón de cerrar; se abre y se pliega desde la cabecera */
+body{background:linear-gradient(180deg,#e9ecf9 0%,#dde1f3 100%)}
+aside{position:relative;margin:12px 0 12px 12px;display:flex;flex-direction:column;min-height:0;border-radius:16px;background:rgba(255,255,255,.97);box-shadow:0 8px 24px rgba(22,22,67,.14);overflow:hidden}
+.nv-h{flex:none;display:flex;align-items:center;gap:8px;padding:12px 10px 6px 16px}
+.nv-h b{font-size:15px;font-weight:700}.nv-h span{font-size:11.5px;color:var(--mute)}
+.nv-h .nv-x{margin-left:auto;display:grid;place-items:center;width:28px;height:28px;border:0;border-radius:8px;background:var(--soft);color:var(--ink);cursor:pointer}
+.nv-h .nv-x:hover{background:var(--soft2)}.nv-h .nv-x:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+#list{flex:1;min-height:0;overflow:auto;padding:6px 8px 20px}
+body{transition:grid-template-columns .28s cubic-bezier(.4,0,.2,1)}aside#nav{transition:opacity .2s,margin .28s}
+body.nolist{grid-template-columns:0px minmax(0,1fr)}body.nolist aside#nav{margin-left:0;margin-right:0;opacity:0;pointer-events:none;visibility:hidden}   /* #1127: se contrae y se expande animado */
+.tl{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border:0;border-radius:10px;background:var(--ink);color:#fff;font:600 13px Poppins,system-ui,sans-serif;cursor:pointer;white-space:nowrap}
+.tl:hover{background:#2a2a63}.tl[aria-pressed="true"]{background:var(--blue)}.tl:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.cur{flex:0 1 auto;min-width:0;font-size:12.5px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (min-width:1100px){header{flex-wrap:nowrap}header .seg,header .nav,header h1,.tl{flex:none}.grow{min-width:8px}}.cur b{color:var(--ink);font-weight:600}
+#list h2{margin:18px 8px 8px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+#list h2:first-child{margin-top:4px}
+#list p.d{margin:-4px 8px 6px;font-size:11.5px;line-height:1.4;color:var(--sub)}
+.it{display:flex;align-items:center;gap:8px;width:100%;padding:6px 8px;border:0;border-radius:10px;background:none;color:var(--ink);font:500 12.5px/1.3 Poppins,system-ui,sans-serif;text-align:left;cursor:pointer}
+.it:hover{background:var(--soft)}
+.it i{flex:none;display:grid;place-items:center;width:20px;height:20px;border-radius:99px;background:var(--soft2);color:var(--blue);font-style:normal;font-size:11px;font-weight:700}
+.it.on{background:var(--ink);color:#fff}.it.on i{background:var(--blue);color:#fff}
+.it small{margin-left:auto;font-size:11px;color:var(--mute)}.it.on small{color:#c7d0ff}
+.it.x{color:var(--sub)}.it.x i{background:#f1f2f6;color:#8a8ca6}
+main{position:relative;min-width:0}
+main iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:transparent}
+.away{position:absolute;left:50%;bottom:16px;z-index:3;display:none;align-items:center;gap:10px;padding:8px 8px 8px 16px;border-radius:99px;background:var(--ink);color:#fff;font-size:13px;transform:translateX(-50%)}
+.away.on{display:flex}
+.away button{height:32px;padding:0 14px;border:0;border-radius:99px;background:#fff;color:var(--ink);font:600 12.5px Poppins,system-ui,sans-serif;cursor:pointer}
+@media (max-width:820px){body{grid-template-columns:1fr;grid-template-rows:auto auto minmax(0,1fr)}aside{max-height:34vh}main{min-height:60vh}}
+</style></head><body>
+<header>
+  
+  <h1>IV QR <span>flows</span></h1>
+  <div class="seg" id="design" role="group" aria-label="Design"></div>
+  <div class="seg" id="view" role="group" aria-label="View"></div>
+  <span class="grow"></span>
+  <span class="cur" id="cur" aria-live="polite"></span>
+  <div class="nav"><button type="button" id="prev" aria-label="Previous screen">← Prev</button><button type="button" id="next" aria-label="Next screen">Next →</button><a class="open" id="open" href="#" target="_blank" rel="noopener">Open alone ↗</a><button type="button" class="tl" id="tl" aria-pressed="true" aria-controls="nav"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg>Flows</button><button type="button" class="ctl" id="ctl" aria-pressed="false" hidden><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>Controls</button></div>
+</header>
+<aside id="nav" aria-label="Flows"><div class="nv-h"><b>Flows</b><span id="nvc"></span><button type="button" class="nv-x" id="nvx" aria-label="Close flows"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div id="list"></div></aside>
+<main><iframe id="fr" title="Screen preview"></iframe><div class="away" id="away" role="status"><span>You left the IV flow</span><button type="button" id="back">Back to the flow</button></div></main>
+<script>
+(function(){
+'use strict';
+/* los tres diseños y sus flujos; «linked» = pantallas de fuera a las que llevan (IV estándar, formulario, resumen) */
+var A = [['registered', 'Registered (before window)'], ['sum-before', 'Summary (before window)'], ['sum-in', 'Summary (in window)'], ['intro', 'Scan intro'], ['scan', 'Scanner'], ['wrong', 'Wrong property'], ['outside', 'Outside window'], ['unreadable', 'Unreadable'], ['denied', 'Camera denied'], ['desk', 'Desktop']];
+var B = [['landing', 'Landing'], ['find', 'Find'], ['multi', 'Multiple matches (+ field)'], ['notfound', 'Not found'], ['unreg', 'Not registered → registration'], ['ivstart', 'IV start'], ['done-all', 'Done (all)'], ['done-rem', 'Done (guests remaining)'], ['outside', 'Outside window']];
+var LINKED = [['g2-ivh', 'Standard IV (document + selfie)'], ['iv-intro-h', 'IV intro'], ['g2-form-empty', 'Guest registration form'], ['hub-after-1', 'Guest summary']];
+var D = {
+  old: { t: 'Old design', g: [['IV at property (QR)', 'The first version: blue card, presence confirmed, guest picker.', [['before', 'Before check-in day'], ['day', 'Check-in day'], ['scan', 'Scanner'], ['denied', 'Camera denied'], ['wrong', 'Wrong QR'], ['desk', 'Desktop handoff'], ['lookup', 'No session lookup'], ['ok', 'Presence confirmed'], ['pick', 'Guest picker'], ['after', 'After check-out']].map(function(x){ return ['ivqr-' + x[0], x[1]]; })]] },
+  v2: { t: 'Old design v2', g: [['A · Reservation link', 'Guest app, signed in. Production screens with the old look.', A.map(function(x){ return ['ivqr-v2-a-' + x[0], x[1]]; })], ['B · Property QR', 'Public page per property, opened from the QR at the door.', B.map(function(x){ return ['ivqr-v2-b-' + x[0], x[1]]; })]] },
+  v3: { t: 'Old design v3', g: [['A · Reservation link', 'What production does today (tested 5 Nov 2026), with the old look.', [['registered', 'Registered (before window)'], ['registered-in', 'Registered (in window, last guest)'], ['sum-before?ivreg=all', 'Summary · all guests registered (before window)'], ['sum-before?ivreg=pend', 'Summary · guests pending (before window)'], ['sum-in?ivreg=all', 'Summary · all guests registered (in window)'], ['sum-in?ivreg=pend', 'Summary · guests pending (in window)'], ['unavailable', 'Unavailable (tap guest)'], ['intro', 'Scan intro'], ['scan', 'Scanner'], ['wrong', 'Wrong property'], ['outside', 'Outside window'], ['unreadable', 'Unreadable'], ['denied', 'Camera denied'], ['desk', 'Desktop']].map(function(x){ return ['ivqr-v3-a-' + x[0], x[1]]; })], ['B · Property QR', 'Production flow with the Property Link / One click design: not found / multiple → document; found → reservation found → guestapp summary.', [['landing', 'Landing (find)'], ['multi', 'Multiple matches (+ document)'], ['notfound', 'Not found'], ['doc-wrong', 'Document doesn’t match']].map(function(x){ return ['ivqr-v3-b-' + x[0], x[1]]; })]] },
+  new: { t: 'New design', g: [['A · Reservation link', 'Guest app, signed in. Production spec (IT-4918).', A.map(function(x){ return ['ivqr-a-' + x[0], x[1]]; })], ['B · Property QR', 'Public page per property (IT-4917).', B.map(function(x){ return ['ivqr-b-' + x[0], x[1]]; })]] }
+};
+var VIEWS = [['split', 'Mobile + desktop'], ['m', 'Mobile'], ['d', 'Desktop']];
+var LS = { get: function(k, d){ try { return localStorage.getItem(k) || d; } catch (e) { return d; } }, set: function(k, v){ try { localStorage.setItem(k, v); } catch (e) {} } };
+var h = new URLSearchParams(location.hash.slice(1));
+var design = D[h.get('d')] ? h.get('d') : (D[LS.get('replica-ivq-design', 'old')] ? LS.get('replica-ivq-design', 'old') : 'old');
+var view = ['split', 'm', 'd'].indexOf(h.get('v')) > -1 ? h.get('v') : 'split';
+var fr = document.getElementById('fr'), list = document.getElementById('list');
+function flat(){ var o = []; D[design].g.forEach(function(g){ g[2].forEach(function(s){ o.push(s[0]); }); }); return o; }
+var cur = h.get('s') && flat().indexOf(h.get('s')) > -1 ? h.get('s') : flat()[0];
+/* #1128: una entrada puede llevar un caso en la URL de la pantalla (p. ej. «ivqr-v3-a-sum-in?ivreg=pend»): se pasa como q= a la vista */
+function url(key){ var p = key.split('?'), id = p[0], qq = p[1] ? '&q=' + encodeURIComponent(p[1]) : ''; return view === 'split' ? 'split.html?s=' + id + qq + '&ivd=' + design + '&fx=1' : 'phone.html?s=' + id + qq + '&dev=' + (view === 'm' ? 'i15' : 'mbp14') + '&ivd=' + design; }
+function seg(el, items, on, cb){ el.innerHTML = items.map(function(x){ return '<button type="button" data-k="' + x[0] + '" class="' + (x[0] === on ? 'on' : '') + '" aria-pressed="' + (x[0] === on) + '">' + x[1] + '</button>'; }).join(''); el.onclick = function(e){ var b = e.target.closest('button'); if (b) cb(b.getAttribute('data-k')); }; }
+function paint(){
+  seg(document.getElementById('design'), Object.keys(D).map(function(k){ return [k, D[k].t]; }), design, function(k){ design = k; LS.set('replica-ivq-design', k); cur = flat()[0]; go(); });
+  seg(document.getElementById('view'), VIEWS, view, function(k){ view = k; go(); });
+  var n = 0;
+  list.innerHTML = D[design].g.map(function(g){ return '<h2>' + g[0] + '</h2><p class="d">' + g[1] + '</p>' + g[2].map(function(s){ n++; return '<button type="button" class="it' + (s[0] === cur ? ' on' : '') + '" data-s="' + s[0] + '"' + (s[0] === cur ? ' aria-current="true"' : '') + '><i>' + n + '</i>' + s[1] + '</button>'; }).join(''); }).join('')
+    + '<h2>Linked screens</h2><p class="d">Where the flow continues, outside the IV QR screens.</p>' + LINKED.map(function(s){ return '<button type="button" class="it x' + (s[0] === cur ? ' on' : '') + '" data-s="' + s[0] + '"><i>↗</i>' + s[1] + '</button>'; }).join('');
+  document.getElementById('open').href = url(cur);
+  var f = flat(), i = f.indexOf(cur), nm = (list.querySelector('.it.on') || {}).textContent || cur;   /* #1124: con la lista plegada, la pantalla actual se ve arriba */
+  document.getElementById('nvc').textContent = D[design].t + ' · ' + f.length + ' screens';
+  document.getElementById('cur').innerHTML = (i > -1 ? '<b>' + (i + 1) + '/' + f.length + '</b> · ' : '') + nm.replace(/^\S+?(?=[A-Z])/, '').replace(/[<&]/g, '');
+}
+function go(){
+  paint(); fr.src = url(cur); lastIn = cur; document.getElementById('away').classList.remove('on');
+  history.replaceState(null, '', '#d=' + design + '&v=' + view + '&s=' + cur);
+  var on = list.querySelector('.it.on'); if (on) on.scrollIntoView({ block: 'nearest' });
+}
+list.onclick = function(e){ var b = e.target.closest('[data-s]'); if (b) { cur = b.getAttribute('data-s'); go(); } };
+function step(d){ var f = flat(), i = f.indexOf(cur); cur = f[i < 0 ? 0 : (i + d + f.length) % f.length]; go(); }
+document.getElementById('prev').onclick = function(){ step(-1); };
+document.getElementById('next').onclick = function(){ step(1); };
+document.addEventListener('keydown', function(e){ if (e.target.closest && e.target.closest('input,textarea')) return; if (e.key === 'ArrowDown' || e.key === 'ArrowRight' && e.altKey) { e.preventDefault(); step(1); } if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' && e.altKey) { e.preventDefault(); step(-1); } });
+/* si la pantalla navega dentro del marco, la lista la sigue; si sale de las pantallas de IV QR, aviso para volver */
+var lastIn = cur;
+setInterval(function(){
+  var s = null; try { var w = fr.contentWindow, q = new URLSearchParams(w.location.search); s = q.get('s'); if (!s) { var mm = /screens\/([^/]+)\.[md]\.html/.exec(w.location.pathname); s = mm && mm[1]; } } catch (e) {}
+  if (s && /^ivqr-v3-a-sum-/.test(s)) { var rg = 'all'; try { var mf = fr.contentWindow.document.getElementById('fr') || fr.contentWindow.document.querySelector('iframe'); var ls = (mf ? mf.contentWindow : fr.contentWindow).location.search; rg = /(^|[?&])ivreg=pend/.test(ls) ? 'pend' : (/(^|[?&])ivreg=all/.test(ls) ? 'all' : (localStorage.getItem('replica-ivqa3-reg') === 'pend' ? 'pend' : 'all')); } catch (e) {} s += '?ivreg=' + rg; }   /* #1128 */
+  if (!s || s === cur) return;
+  cur = s;
+  if (/^ivqr-/.test(s)) { lastIn = s; var dz = /^ivqr-v3-/.test(s) ? 'v3' : /^ivqr-v2-/.test(s) ? 'v2' : /^ivqr-(a|b)-/.test(s) ? 'new' : 'old'; if (dz !== design) design = dz; }
+  paint(); history.replaceState(null, '', '#d=' + design + '&v=' + view + '&s=' + cur);
+  document.getElementById('away').classList.toggle('on', !/^ivqr-/.test(s));
+}, 700);
+/* #1124: la lista de pantallas se pliega para dar todo el ancho al diseño (se recuerda) */
+var ctl = document.getElementById('ctl');   /* #1124: «Controls» abre o pliega el panel de la vista móvil + escritorio */
+function paintCtl(){ var on = false; try { on = !!fr.contentWindow.__getPO(); } catch (e) {} ctl.hidden = view !== 'split'; ctl.setAttribute('aria-pressed', String(on)); }
+ctl.onclick = function(){ var w = fr.contentWindow; if (w && w.__setPO) { w.__setPO(!w.__getPO()); paintCtl(); } else { try { localStorage.setItem('replica-flows-panel', '1'); } catch (e) {} fr.src = url(cur); } };   /* #1127: si el marco aún no está listo, se recarga con el panel abierto */
+fr.addEventListener('load', paintCtl);
+window.addEventListener('message', function(e){ if (e.data && e.data.rep === 'flows-po') paintCtl(); });
+var tl = document.getElementById('tl');
+function setList(v){ document.body.classList.toggle('nolist', !v); tl.setAttribute('aria-pressed', String(v)); tl.title = v ? 'Hide the screen list' : 'Show the screen list'; LS.set('replica-flows-list', v ? '1' : '0'); }
+tl.onclick = function(){ setList(document.body.classList.contains('nolist')); };
+document.getElementById('nvx').onclick = function(){ setList(false); tl.focus(); };
+setList(LS.get('replica-flows-list', '1') === '1');
+document.getElementById('back').onclick = function(){ cur = lastIn; go(); };
+go();
+})();
+</script>
+<script src="assets/i18n-en.js?v=1794321386"></script></body></html>

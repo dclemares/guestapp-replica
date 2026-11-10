@@ -19,6 +19,15 @@ python3 -m http.server 7791 -d site
 
 The root page opens the **mobile + desktop mockup** side by side (`split.html`): whatever you do in one frame is mirrored in the other. Single-device mockups (phone, tablet, desktop) are one click away in the top bar, and `screens.html` lists every captured screen.
 
+## Identity verification with a QR code at the property (Italy)
+
+`site/ivqr-flows.html` is a review page for the IV-with-QR flows: pick a design at the top, walk every screen from the **Flows** panel and change states from **Controls**. «Old design v3» follows what production does today, with our redesign on top:
+
+- **A · Reservation link** (guest app, signed in): summaries before and in the check-in window, with every guest registered or with guests still pending; the QR scanner (same camera UI as the identity verification, the code is read when you tap «Scan QR code»); wrong property, outside the window, unreadable code and camera blocked.
+- **B · Property QR** (public page with the Property Link design): find your reservation, multiple matches with document number, not found, document mismatch, and «Reservation found» that leads into the guest summary.
+
+Live at https://dclemares.github.io/guestapp-replica/ivqr-flows.html
+
 ## Property link prototype
 
 `site/property-link/` is a standalone prototype of the **property link / user link**: the public entry point where a guest finds their booking before the online check-in. Live at https://dclemares.github.io/guestapp-replica/property-link/ (mobile + desktop mockup).

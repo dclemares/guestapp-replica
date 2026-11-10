@@ -32,6 +32,15 @@ for _n in ('iv-intro-f', 'iv-intro-h'): screens[_n] = dict(screens['iv-1-intro']
 for _n in ('g2-registered', 'g2-registering', 'g2-register-failed'): screens[_n] = {'m': screens['hub-after-1']['m'], 'd': screens['hub-after-1']['d']}
 for _n in ('g2-iv', 'g2-ivh', 'g2-ivf'): screens[_n] = {'m': screens['hub-after-1']['m'], 'd': screens['hub-after-1']['d']}   # verificación de identidad: móvil y escritorio (iv.js)   # página "huésped registrado" (solo móvil): parte del resumen y la sustituye registered.js
 screens['keys'] = {'m': screens['cart']['m'], 'd': screens['cart']['d']}   # «Virtual keys»: pantalla de la app con la estructura de Pagos (access.js rellena el hueco)
+# #1098: IV con QR en la propiedad (Italia), dos flujos y una pantalla por estado (ivqr.js). A · enlace de la reserva · B · QR de la propiedad (web pública)
+IVQ = ['a-registered', 'a-sum-before', 'a-sum-in', 'a-intro', 'a-scan', 'a-wrong', 'a-outside', 'a-unreadable', 'a-denied', 'a-desk',
+       'b-landing', 'b-find', 'b-multi', 'b-notfound', 'b-unreg', 'b-ivstart', 'b-done-all', 'b-done-rem', 'b-outside']
+IVQ_OLD = ('before', 'day', 'scan', 'denied', 'wrong', 'desk', 'lookup', 'ok', 'pick', 'after')   # #1099: el diseño antiguo (#1095–#1097) convive con el nuevo (ivqr-old.js / ivqr-old.css), control «Design»
+for _s in IVQ_OLD: screens['ivqr-' + _s] = {'m': screens['cart']['m'], 'd': screens['cart']['d']}
+IVQ_V2 = ['v2-' + x for x in IVQ]
+IVQ_V3 = ['v3-a-registered', 'v3-a-registered-in', 'v3-a-sum-before', 'v3-a-unavailable', 'v3-a-sum-in', 'v3-a-intro', 'v3-a-scan', 'v3-a-wrong', 'v3-a-outside', 'v3-a-unreadable', 'v3-a-denied', 'v3-a-desk',
+          'v3-b-landing', 'v3-b-multi', 'v3-b-notfound', 'v3-b-doc-wrong']   # #1104: en B la portada y la búsqueda son una sola pantalla   # #1102: Old design v3, el aspecto antiguo con los flujos de producción (ivqr-v3.js / ivqr-v3.css)   # #1100: Old design v2, el aspecto del antiguo con las pantallas del nuevo (ivqr-v2.js / ivqr-v2.css)
+for _s in IVQ + IVQ_V2 + IVQ_V3: screens['ivqr-' + _s] = {'m': screens['hub-after-1']['m'], 'd': screens['hub-after-1']['d']} if _s in ('a-registered', 'v2-a-registered', 'v3-a-registered', 'v3-a-registered-in', 'v3-a-sum-before', 'v3-a-sum-in') else {'m': screens['cart']['m'], 'd': screens['cart']['d']}
 print(len(screens), 'screens')
 
 # ---------- css ----------
@@ -162,6 +171,16 @@ VT_HEAD = ('<style id="rep-vt">'
     '@media (max-width:1024px){@view-transition{navigation:auto}.page-wrapper>div:first-child,aside{view-transition-name:none}'
     '::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}}'
     '@media (prefers-reduced-motion:reduce){::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}}</style>')
+def _ivq_css(sid):
+    """#1099/#1100: cada diseño de IV QR carga solo sus estilos; el resto de pantallas, el nuevo y el antiguo (cuadro y tarjeta de la Home)"""
+    k = sid[5:] if sid.startswith('ivqr-') else None
+    L = lambda n: '<link rel="stylesheet" href="../assets/%s.css">' % n
+    if k in IVQ_OLD: return L('ivqr-old')
+    if k in IVQ: return L('ivqr')
+    if k == 'v3-a-sum-in': return L('access') + L('ivqr') + L('ivqr-v2') + L('ivqr-v3') + '<script>if(location.hash==="#from-found"){window.__ivqFromFound=1;document.documentElement.classList.add("ivq-pre")}</script>'   # #1112: llegada desde «reserva encontrada»: cortina azul desde el primer pintado (sin ver la página base)
+    if k in IVQ_V3: return (L('access') if k.startswith('v3-a-registered') or k.startswith('v3-a-sum-') else '') + (L('plink') if k.startswith('v3-b-') else '') + L('ivqr') + L('ivqr-v2') + L('ivqr-v3')   # B v3: el diseño del Property Link (#1103)
+    if k in IVQ_V2: return (L('access') if k == 'v2-a-registered' else '') + L('ivqr') + L('ivqr-v2')   # la página de registrado no trae access.css (tarjeta Aurora)
+    return L('ivqr') + L('ivqr-old')
 for sid, vs in screens.items():
     for v, p in vs.items():
         h = open(p, encoding='utf-8').read()
@@ -175,16 +194,18 @@ for sid, vs in screens.items():
         h = changes.home_center(h, v)
         h = changes.hero_access(h)
         if sid == 'keys': h = changes.keys_screen(h, v)
+        if sid.startswith('ivqr-') and sid[5:] in IVQ_OLD: h = changes.ivqr_screen_old(h, v, sid[5:])
+        elif sid.startswith('ivqr-') and sid not in ('ivqr-a-registered', 'ivqr-v2-a-registered', 'ivqr-v3-a-registered', 'ivqr-v3-a-registered-in', 'ivqr-v3-a-sum-before', 'ivqr-v3-a-sum-in'): h = changes.ivqr_screen(h, v, sid[5:])
         h = changes.checkin_variants(h)
-        if sid == 'hub-after-1': h = changes.hub_style(h, v)
+        if sid in ('hub-after-1', 'ivqr-v3-a-sum-before', 'ivqr-v3-a-sum-in'): h = changes.hub_style(h, v)   # #1113: el resumen v3 de IV con QR es el resumen real con la sección azul
         h = changes.form_assets(h)
-        if sid in ('g2-registered', 'g2-registering', 'g2-register-failed'): h = changes.registered_assets(h)
+        if sid in ('g2-registered', 'g2-registering', 'g2-register-failed', 'ivqr-a-registered', 'ivqr-v2-a-registered', 'ivqr-v3-a-registered', 'ivqr-v3-a-registered-in'): h = changes.registered_assets(h)
         if sid in ('g2-iv', 'g2-ivh', 'g2-ivf'): h = changes.iv_assets(h)
         if sid in ('iv-intro-f', 'iv-intro-h'): h = changes.ivintro_assets(h)
         if v == 'd': h = changes.home_rail(h)
         # vista Pagos: cuatro propuestas (pay-views.css / pay-views.js). Los controles salen en todas las pantallas; el rediseño, solo en «cart»
-        h = h.replace('</head>', '<link rel="stylesheet" href="../assets/pay-views.css"><link rel="stylesheet" href="../assets/taxes.css"><link rel="stylesheet" href="../assets/deposit.css"><link rel="stylesheet" href="../assets/checkout.css"><link rel="stylesheet" href="../assets/own.css"></head>', 1)
-        h = h.replace('<script src="../replica.js">', '<script src="../assets/pay-views.js"></script><script src="../assets/taxes.js"></script><script src="../assets/deposit.js"></script><script src="../assets/checkout.js"></script><script src="../assets/own.js"></script><script src="../assets/titles.js"></script><script src="../assets/vkeys-nav.js"></script><script src="../replica.js">', 1)
+        h = h.replace('</head>', '<link rel="stylesheet" href="../assets/pay-views.css"><link rel="stylesheet" href="../assets/taxes.css"><link rel="stylesheet" href="../assets/deposit.css"><link rel="stylesheet" href="../assets/checkout.css"><link rel="stylesheet" href="../assets/own.css">' + _ivq_css(sid) + '</head>', 1)
+        h = h.replace('<script src="../replica.js">', '<script src="../assets/pay-views.js"></script><script src="../assets/taxes.js"></script><script src="../assets/deposit.js"></script><script src="../assets/checkout.js"></script><script src="../assets/own.js"></script><script src="../assets/titles.js"></script><script src="../assets/vkeys-nav.js"></script><script src="../assets/ivqr-old.js"></script><script src="../assets/ivqr-v2.js"></script><script src="../assets/ivqr-v3.js"></script><script src="../assets/ivqr.js"></script><script src="../replica.js">', 1)
         if sid.startswith('home-sheet'):
             # UI B (people pictograms) is the chosen design for the guest-count step
             h = changes_ui.guest_count_ui(h, 'ages' if '-ages' in sid else 'total', not sid.endswith('-fixed'), 'b')
@@ -192,7 +213,7 @@ for sid, vs in screens.items():
         open(os.path.join(SITE, 'screens', '%s.%s.html' % (sid, v)), 'w', encoding='utf-8').write(h)
         # thumbnail
         png = p[:-5] + '.png'
-        if os.path.exists(png) and not sid.startswith('home-sheet') and sid != 'keys':
+        if os.path.exists(png) and not sid.startswith('home-sheet') and sid != 'keys' and not sid.startswith('ivqr-'):
             out = os.path.join(SITE, 'thumbs', '%s.%s.jpg' % (sid, v))
             subprocess.run(['sips', '-Z', '520', '-s', 'format', 'jpeg', '-s', 'formatOptions', '60', png, '--out', out], capture_output=True)
 print('images', len([v for v in img_map.values() if v]))
@@ -216,6 +237,15 @@ shutil.copy(os.path.join(HERE, 'checkin.js'), os.path.join(SITE, 'assets', 'chec
 shutil.copy(os.path.join(HERE, 'access.css'), os.path.join(SITE, 'assets', 'access.css'))
 shutil.copy(os.path.join(HERE, 'access.js'), os.path.join(SITE, 'assets', 'access.js'))
 shutil.copy(os.path.join(HERE, 'vkeys-nav.js'), os.path.join(SITE, 'assets', 'vkeys-nav.js'))   # «Virtual keys» en «Your stay» (#1005)
+shutil.copy(os.path.join(HERE, 'ivqr.js'), os.path.join(SITE, 'assets', 'ivqr.js'))   # #1095: IV con QR en la propiedad
+shutil.copy(os.path.join(HERE, 'ivqr.css'), os.path.join(SITE, 'assets', 'ivqr.css'))
+shutil.copy(os.path.join(HERE, 'ivqr-old.js'), os.path.join(SITE, 'assets', 'ivqr-old.js'))   # #1099: diseño antiguo
+shutil.copy(os.path.join(HERE, 'ivqr-old.css'), os.path.join(SITE, 'assets', 'ivqr-old.css'))
+shutil.copy(os.path.join(HERE, 'ivqr-v2.js'), os.path.join(SITE, 'assets', 'ivqr-v2.js'))   # #1100: Old design v2
+shutil.copy(os.path.join(HERE, 'ivqr-v2.css'), os.path.join(SITE, 'assets', 'ivqr-v2.css'))
+shutil.copy(os.path.join(HERE, 'ivqr-v3.js'), os.path.join(SITE, 'assets', 'ivqr-v3.js'))   # #1102: Old design v3
+shutil.copy(os.path.join(HERE, 'ivqr-v3.css'), os.path.join(SITE, 'assets', 'ivqr-v3.css'))
+shutil.copy(os.path.join(HERE, 'vendor', 'plink', 'plink.css'), os.path.join(SITE, 'assets', 'plink.css'))   # #1103: estilos del Property Link (copia del prototipo de :7794)
 shutil.copy(os.path.join(HERE, 'hub.css'), os.path.join(SITE, 'assets', 'hub.css'))
 shutil.copy(os.path.join(HERE, 'logo-check.jpg'), os.path.join(SITE, 'assets', 'logo-check.jpg'))
 shutil.copy(os.path.join(HERE, 'form.css'), os.path.join(SITE, 'assets', 'form.css'))
@@ -268,6 +298,13 @@ GROUPS = [
  ('Registro de huéspedes', ('hub', 'g2-iv', 'form-', 'submit', 'g2-')),
  ('Autofill: escaneo de documento', ('scan-',)),
  ('Verificación de identidad', ('iv-', 'pay-iv')),
+ ('IV QR · Diseño antiguo', tuple('ivqr-' + x for x in IVQ_OLD)),
+ ('IV QR · Diseño antiguo v2 · Enlace de la reserva', ('ivqr-v2-a-',)),
+ ('IV QR · Diseño antiguo v2 · QR de la propiedad', ('ivqr-v2-b-',)),
+ ('IV QR · Diseño antiguo v3 (producción) · Enlace de la reserva', ('ivqr-v3-a-',)),
+ ('IV QR · Diseño antiguo v3 (producción) · QR de la propiedad', ('ivqr-v3-b-',)),
+ ('IV QR · Diseño nuevo · Enlace de la reserva', ('ivqr-a-',)),
+ ('IV QR · Diseño nuevo · QR de la propiedad', ('ivqr-b-',)),
  ('Pagos', ('pay-', 'cart', 'order')),
 ]
 def group_of(sid):
@@ -275,7 +312,7 @@ def group_of(sid):
         if any(sid.startswith(p) for p in pre): return title
     return 'Otras'
 by = {}
-for sid in sorted(screens): by.setdefault(group_of(sid), []).append(sid)
+for sid in sorted(screens, key=lambda x: ('ivqr-%02d' % (list(IVQ_OLD) + IVQ + IVQ_V2 + IVQ_V3).index(x[5:])) if x.startswith('ivqr-') else x): by.setdefault(group_of(sid), []).append(sid)
 order = [g[0] for g in GROUPS] + ['Otras']
 cards = ''
 for g in order:
@@ -296,9 +333,10 @@ h2{font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:#385bf8;ma
 figure img{width:100%%;display:block;aspect-ratio:9/16;object-fit:cover;object-position:top;background:#eef0fb}figcaption{padding:8px 10px;font-size:12.5px}figcaption b{display:block;word-break:break-all}
 figcaption a{margin-right:8px;color:#385bf8;text-decoration:none;font-weight:600}</style></head><body><main>
 <h1>Réplica de la guestapp v2</h1><p class="s">Pantallas capturadas de la guestapp de staging, con sus mismos estilos y componentes. Se pueden recorrer haciendo clic. Ábrela en móvil o en escritorio y se adapta sola. Los datos son los de una reserva de pruebas.</p>
-<p class="s"><a href="screens/home.m.html" style="color:#385bf8;font-weight:700">Empezar por la Home →</a></p>
+<p class="s"><a href="screens/home.m.html" style="color:#385bf8;font-weight:700">Empezar por la Home →</a> &nbsp;·&nbsp; <a href="ivqr-flows.html" style="color:#385bf8;font-weight:700">Flujos de IV con QR →</a></p>
 %s</main></body></html>''' % cards
 open(os.path.join(SITE, 'screens.html'), 'w', encoding='utf-8').write(index)   # índice de pantallas
+shutil.copy(os.path.join(HERE, 'ivqr-flows.html'), os.path.join(SITE, 'ivqr-flows.html'))   # #1101: revisión de los flujos de IV con QR en una sola página
 shutil.copy(os.path.join(HERE, 'split.html'), os.path.join(SITE, 'index.html'))   # entrada por defecto: mockup móvil + escritorio
 # interfaz del prototipo en inglés: panel «Controls», barras de mockup e índice (traducción en tiempo de ejecución)
 shutil.copy(os.path.join(HERE, 'i18n-en.js'), os.path.join(SITE, 'assets', 'i18n-en.js'))

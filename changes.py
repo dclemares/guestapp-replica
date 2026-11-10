@@ -540,3 +540,39 @@ def keys_screen(html, v):
     html = html.replace('</head>', '<link rel="stylesheet" href="../assets/access.css"><style>.vk-old{display:none!important}html:not(.vk-tabs-on) .keys-view [role="tablist"]{display:none}</style></head>', 1)
     html = html.replace('<script src="../replica.js">', '<script src="../assets/access.js"></script><script src="../replica.js">', 1)
     return html
+
+
+def ivqr_screen(html, v, state):
+    """#1095: verificación de identidad con QR en la propiedad (Italia). Se parte de Pagos, como «Virtual keys», e ivqr.js rellena el hueco con el estado de la pantalla."""
+    html = html.replace('payments-view', 'ivq-view').replace('class="my-cart ', 'class="ivq-old ')
+    html = html.replace('Your Payments', 'Identity check')
+    html = html.replace('Review &amp; <span class="text-[var(--chekin-color-brand-blue)]">pay</span>', 'Verify at the <span class="text-[var(--chekin-color-brand-blue)]">property</span>')
+    html = re.sub(r'(<p class="m-0 max-w-\[480px\][^>]*>)Everything for your stay[^<]*</p>', r'\1Identity verification for Villa Calipso opens the day before check-in, once you scan the QR at the entrance.</p>', html, count=1)
+    for old, new in (("Money should never be a surprise — here's what is charged, what is only reserved, and what is already settled.", 'Identity verification opens the day before check-in and stays open until check-out. You start it by scanning the QR at the entrance. Ask me anything about it.'),
+                     ("What's a card authorisation?", 'Where is the QR code?'),
+                     ('Your card is registered, not charged. No money is blocked and your card limit stays available.', 'On a sign next to the main door of Villa Calipso, at eye level. It says “Scan to verify your identity”.'),
+                     ('Not sure about an extra?', 'Why do I need to be there?'),
+                     ('Move it to "pay later" from the ⋯ menu — it stays one tap away and is never charged.', 'Scanning the QR shows you’re at the property. Your host needs it before guests verify their identity.')):
+        html = html.replace(old, new)   # panel de Vela: ayuda sobre la verificación en la propiedad
+    html = html.replace('data-active="true"', 'data-active="false"')
+    html = html.replace('<html', '<html data-ivq-state="%s"' % state, 1)
+    html = html.replace('</head>', '<link rel="stylesheet" href="../assets/access.css"><style>.ivq-old{display:none!important}.ivq-view [role="tablist"]{display:none!important}</style></head>', 1)
+    return html
+
+
+def ivqr_screen_old(html, v, state):
+    """#1099: diseño antiguo (#1095–#1097), tal cual estaba antes de #1098. #1095: verificación de identidad con QR en la propiedad (Italia). Se parte de Pagos, como «Virtual keys», e ivqr.js rellena el hueco con el estado de la pantalla."""
+    html = html.replace('payments-view', 'ivq-view').replace('class="my-cart ', 'class="ivq-old ')
+    html = html.replace('Your Payments', 'Identity check')
+    html = html.replace('Review &amp; <span class="text-[var(--chekin-color-brand-blue)]">pay</span>', 'Verify at the <span class="text-[var(--chekin-color-brand-blue)]">property</span>')
+    html = re.sub(r'(<p class="m-0 max-w-\[480px\][^>]*>)Everything for your stay[^<]*</p>', r'\1Identity verification for Villa Calipso opens on check-in day, once you scan the QR at the entrance.</p>', html, count=1)
+    for old, new in (("Money should never be a surprise — here's what is charged, what is only reserved, and what is already settled.", 'Identity verification opens on check-in day, after you scan the QR at the entrance. Ask me anything about it.'),
+                     ("What's a card authorisation?", 'Where is the QR code?'),
+                     ('Your card is registered, not charged. No money is blocked and your card limit stays available.', 'On a sign next to the main door of Villa Calipso, at eye level. It says “Scan to verify your identity”.'),
+                     ('Not sure about an extra?', 'Why do I need to be there?'),
+                     ('Move it to "pay later" from the ⋯ menu — it stays one tap away and is never charged.', 'Scanning the QR shows you’re at the property. Your host needs it before guests verify their identity.')):
+        html = html.replace(old, new)   # panel de Vela: ayuda sobre la verificación en la propiedad
+    html = html.replace('data-active="true"', 'data-active="false"')
+    html = html.replace('<html', '<html data-ivq-state="%s"' % state, 1)
+    html = html.replace('</head>', '<link rel="stylesheet" href="../assets/access.css"><style>.ivq-old{display:none!important}.ivq-view [role="tablist"]{display:none!important}</style></head>', 1)
+    return html

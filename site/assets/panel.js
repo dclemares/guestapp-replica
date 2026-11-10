@@ -31,6 +31,7 @@
     var el = e.target && e.target.closest ? e.target.closest(TARGET) : null; if (!el || el.closest('#rep-panel,#rep-panel-set,[data-rep-bar],.rep-switch,.rail-switch')) return;
     if (el.tagName === 'A' && el.target === '_blank') return;
     if (el.matches('[data-vk="open"],[data-vk="mopen"]')) return;   /* abrir puerta: lo replica access.js, que sabe qué puerta es */
+    if (el.matches('[data-ivq]')) return;   /* flujo de IV con QR (#1096): navegar ya se repite solo y el resto lo replica ivqr.js por acción */
     if (el.getAttribute('data-a') === 'gallery' || (el.tagName === 'INPUT' && el.type === 'file')) return;   /* abre el selector de archivos: la imagen elegida se comparte aparte */
     var sg = { tag: el.tagName, text: txt(el), attrs: attrs(el) }, list = cands(sg);
     send({ rep: 'ui-click', sig: sg, idx: Math.max(0, list.indexOf(el)) });
@@ -147,6 +148,7 @@ var rootS = null, bodyS = null;
 function dock(){
   if (!root || !hosted) return;
   var stage = doc.querySelector('.stage'), top = stage ? Math.round(stage.getBoundingClientRect().top) : 70;
+  if (split && win.__panelDock) { win.__panelDock(root); return; }   /* #1124: la página de flujos (split.html?fx=1) coloca el panel ella misma (plegable) */
   if (split) { var W0 = win.innerWidth, w0 = Math.max(200, Math.round(W0 / 4) - 16), h0 = Math.max(160, win.innerHeight - top - 16) + 'px'; root.style.width = w0 + 'px'; root.style.right = 'auto'; root.style.maxHeight = ''; root.style.left = (Math.round(W0 * 3 / 4) + 8) + 'px'; root.style.top = top + 'px'; root.style.height = h0; return; }
   /* el tercio derecho de la ventana (el mockup ocupa los otros dos): «Controles» y «Ajustes de la reserva» lado a lado, como antes */
   var W = win.innerWidth, x0 = Math.round(W * 2 / 3), gap = 8, w = Math.max(180, Math.round((W / 3 - gap * 3) / 2));
