@@ -561,7 +561,8 @@ var swA = document.createElement('div'); swA.className = 'acc-switch vk-sw-lb iv
 var swB = document.createElement('div'); swB.className = 'acc-switch vk-sw-lb ivq-sw';
 function paintSw(){
   var r = readK(), rs = resK(), mk = matchK();
-  swA.innerHTML = ivdRow() + '<span>Pantalla</span>' + SA.map(function(s){ return b('a', s, NA[s], flow === 'a' && s === state); }).join('')
+  swA.innerHTML = '<span>Pantalla</span>'   /* #1143: sin el selector de diseño (solo v3) */
+    + '' + SA.map(function(s){ return b('a', s, NA[s], flow === 'a' && s === state); }).join('')
     + '<span>Registro</span>' + b('reg', 'all', 'Todos registrados', regK() === 'all') + b('reg', 'pend', 'Faltan huéspedes', regK() === 'pend')
     + '<span>Versión del resumen</span>' + b('sum', 'v12', 'V1.2 · Titular (final)', sumK() === 'v12') + b('sum', 'au', 'V5 · Tarjeta Aurora', sumK() === 'au');
   swB.innerHTML = '<span>Pantalla</span>' + SB.map(function(s){ return b('b', s, NB[s], flow === 'b' && s === state); }).join('')

@@ -11,7 +11,7 @@ body{background:var(--bg);color:var(--ink);font:400 14px/1.45 Poppins,system-ui,
 header{grid-column:1/-1;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 12px;background:#fff;box-shadow:0 4px 14px rgba(22,22,67,.06);z-index:2}
 header h1{margin:0;font-size:16px;font-weight:700;white-space:nowrap}
 header h1 span{color:var(--blue)}
-.seg{display:flex;gap:2px;padding:3px;border-radius:12px;background:var(--soft)}
+.seg{display:flex;gap:2px;padding:3px;border-radius:12px;background:var(--soft)}.seg[hidden]{display:none}
 .seg button{height:28px;padding:0 10px;border:0;border-radius:9px;background:none;color:var(--sub);font:600 12px Poppins,system-ui,sans-serif;cursor:pointer;white-space:nowrap}
 .seg button.on{background:var(--ink);color:#fff}
 .seg button:focus-visible,.it:focus-visible,.nav button:focus-visible,.open:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
@@ -52,8 +52,8 @@ main iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background
 </style></head><body>
 <header>
   
-  <h1>IV QR <span>flows</span></h1>
-  <div class="seg" id="design" role="group" aria-label="Design"></div>
+  <h1>IV QR <span>flows</span> <small style="font-weight:600;font-size:12px;color:var(--sub);margin-left:4px">Old design v3</small></h1>
+  <div class="seg" id="design" role="group" aria-label="Design" hidden></div>
   <div class="seg" id="view" role="group" aria-label="View"></div>
   <span class="grow"></span>
   <span class="cur" id="cur" aria-live="polite"></span>
@@ -74,10 +74,12 @@ var D = {
   v3: { t: 'Old design v3', g: [['A · Reservation link', 'What production does today (tested 5 Nov 2026), with the old look.', [['registered?ivreg=all', 'Registered · all guests registered (before window)'], ['registered?ivreg=pend', 'Registered · guests pending (before window)'], ['registered-in', 'Registered (in window, last guest)'], ['sum-before?ivreg=all', 'Summary · all guests registered (before window)'], ['sum-before?ivreg=pend', 'Summary · guests pending (before window)'], ['sum-in?ivreg=all', 'Summary · all guests registered (in window)'], ['sum-in?ivreg=pend', 'Summary · guests pending (in window)'], ['unavailable', 'Unavailable (tap guest)'], ['intro', 'Scan intro'], ['scan', 'Scanner'], ['wrong', 'Wrong property'], ['outside', 'Outside window'], ['unreadable', 'Unreadable'], ['denied', 'Camera denied'], ['desk', 'Desktop']].map(function(x){ return ['ivqr-v3-a-' + x[0], x[1]]; })], ['B · Property QR', 'Production flow with the Property Link / One click design: not found / multiple → document; found → reservation found → guestapp summary.', [['landing', 'Landing (find)'], ['multi', 'Multiple matches (+ document)'], ['notfound', 'Not found'], ['doc-wrong', 'Document doesn’t match']].map(function(x){ return ['ivqr-v3-b-' + x[0], x[1]]; })]] },
   new: { t: 'New design', g: [['A · Reservation link', 'Guest app, signed in. Production spec (IT-4918).', A.map(function(x){ return ['ivqr-a-' + x[0], x[1]]; })], ['B · Property QR', 'Public page per property (IT-4917).', B.map(function(x){ return ['ivqr-b-' + x[0], x[1]]; })]] }
 };
+/* #1143: solo «Old design v3» (los otros diseños siguen en la réplica, pero no en esta página) */
+delete D.old; delete D.v2; delete D.new;
 var VIEWS = [['split', 'Mobile + desktop'], ['m', 'Mobile'], ['d', 'Desktop']];
 var LS = { get: function(k, d){ try { return localStorage.getItem(k) || d; } catch (e) { return d; } }, set: function(k, v){ try { localStorage.setItem(k, v); } catch (e) {} } };
 var h = new URLSearchParams(location.hash.slice(1));
-var design = D[h.get('d')] ? h.get('d') : (D[LS.get('replica-ivq-design', 'old')] ? LS.get('replica-ivq-design', 'old') : 'old');
+var design = 'v3';
 var view = ['split', 'm', 'd'].indexOf(h.get('v')) > -1 ? h.get('v') : 'split';
 var fr = document.getElementById('fr'), list = document.getElementById('list');
 function flat(){ var o = []; D[design].g.forEach(function(g){ g[2].forEach(function(s){ o.push(s[0]); }); }); return o; }
@@ -113,9 +115,9 @@ setInterval(function(){
   if (s && /^ivqr-v3-a-(sum-|registered$)/.test(s)) { var rg = 'all'; try { var mf = fr.contentWindow.document.getElementById('fr') || fr.contentWindow.document.querySelector('iframe'); var ls = (mf ? mf.contentWindow : fr.contentWindow).location.search; rg = /(^|[?&])ivreg=pend/.test(ls) ? 'pend' : (/(^|[?&])ivreg=all/.test(ls) ? 'all' : (localStorage.getItem('replica-ivqa3-reg') === 'pend' ? 'pend' : 'all')); } catch (e) {} s += '?ivreg=' + rg; }   /* #1128 */
   if (!s || s === cur) return;
   cur = s;
-  if (/^ivqr-/.test(s)) { lastIn = s; var dz = /^ivqr-v3-/.test(s) ? 'v3' : /^ivqr-v2-/.test(s) ? 'v2' : /^ivqr-(a|b)-/.test(s) ? 'new' : 'old'; if (dz !== design) design = dz; }
+  if (/^ivqr-v3-/.test(s)) lastIn = s;
   paint(); history.replaceState(null, '', '#d=' + design + '&v=' + view + '&s=' + cur);
-  document.getElementById('away').classList.toggle('on', !/^ivqr-/.test(s));
+  document.getElementById('away').classList.toggle('on', !/^ivqr-v3-/.test(s));
 }, 700);
 /* #1124: la lista de pantallas se pliega para dar todo el ancho al diseño (se recuerda) */
 var ctl = document.getElementById('ctl');   /* #1124: «Controls» abre o pliega el panel de la vista móvil + escritorio */
