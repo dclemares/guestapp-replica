@@ -321,7 +321,7 @@ function vCreate(){
   f += field({ k: 'guests', label: 'How many guests?', hint: 'Including you. Children count too.', body: '<div class="pl-step"><span>Guests</span><div class="ctl"><button type="button" data-a="gm" aria-label="One guest less"' + (S.f.guests <= 1 ? ' disabled' : '') + '>−</button><output aria-live="polite">' + S.f.guests + '</output><button type="button" class="add" data-a="gp" aria-label="One guest more"' + (S.f.guests >= 16 ? ' disabled' : '') + '>+</button></div></div>' });
   f += textField('cName', 'Your name', 'e.g. Maria Lowe', '', 'autocomplete="name" autocapitalize="words"');
   f += textField('cEmail', 'Your email', 'name@email.com', 'We send you a link to come back to your check-in.', 'type="email" inputmode="email" autocomplete="email" autocapitalize="off"');
-  var card = '<section class="pl-card" aria-labelledby="pl-h"><h2 id="pl-h">Your stay</h2><p class="pl-lead">' + (S.fromNone ? 'We couldn\'t find a booking with those details. Add your stay and Villa Calipso receives your check-in straight away.' : 'Villa Calipso receives this check-in with your dates.') + '</p>' + f + '</section>';
+  var card = '<section class="pl-card" aria-labelledby="pl-h"><h2 id="pl-h">Your stay</h2><p class="pl-lead">' + (S.fromNone ? 'We just need a few more details about your stay to get your check-in ready.' : 'Villa Calipso receives this check-in with your dates.') + '</p>' + f + '</section>';
   var dock = '<div class="pl-dock"><div><button type="button" class="pl-btn pri" data-a="cgo"' + (S.busy ? ' aria-busy="true"' : '') + '>' + (S.busy ? '<span class="pl-spin" aria-hidden="true"></span>Starting…' : 'Start check-in' + ic('arrow', 18)) + '</button></div></div>';
   return hero() + '<div class="pl-col">' + card + dock + '</div>';
 }
