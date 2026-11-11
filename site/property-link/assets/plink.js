@@ -321,7 +321,7 @@ function vCreate(){
   f += field({ k: 'guests', label: 'How many guests?', hint: 'Including you. Children count too.', body: '<div class="pl-step"><span>Guests</span><div class="ctl"><button type="button" data-a="gm" aria-label="One guest less"' + (S.f.guests <= 1 ? ' disabled' : '') + '>−</button><output aria-live="polite">' + S.f.guests + '</output><button type="button" class="add" data-a="gp" aria-label="One guest more"' + (S.f.guests >= 16 ? ' disabled' : '') + '>+</button></div></div>' });
   f += textField('cName', 'Your name', 'e.g. Maria Lowe', '', 'autocomplete="name" autocapitalize="words"');
   f += textField('cEmail', 'Your email', 'name@email.com', 'We send you a link to come back to your check-in.', 'type="email" inputmode="email" autocomplete="email" autocapitalize="off"');
-  var card = '<section class="pl-card" aria-labelledby="pl-h"><h2 id="pl-h">Your stay</h2><p class="pl-lead">Villa Calipso receives this check-in with your dates.</p>' + f + '</section>';
+  var card = '<section class="pl-card" aria-labelledby="pl-h"><h2 id="pl-h">Your stay</h2><p class="pl-lead">' + (S.fromNone ? 'We couldn\'t find a booking with those details. Add your stay and Villa Calipso receives your check-in straight away.' : 'Villa Calipso receives this check-in with your dates.') + '</p>' + f + '</section>';
   var dock = '<div class="pl-dock"><div><button type="button" class="pl-btn pri" data-a="cgo"' + (S.busy ? ' aria-busy="true"' : '') + '>' + (S.busy ? '<span class="pl-spin" aria-hidden="true"></span>Starting…' : 'Start check-in' + ic('arrow', 18)) + '</button></div></div>';
   return hero() + '<div class="pl-col">' + card + dock + '</div>';
 }
@@ -1663,12 +1663,14 @@ function search(){
     S.cta = null; S.sheet = null;
     if (o === 'block') { S.phase = 'blocked'; S.until = Date.now() + 60000; }
     else if (o === 'net') S.notice = 'net';
+    else if (o === 'none' && canCreate()) { toCreate(); S.fromNone = true; }   /* PL-60: se puede crear la reserva → a la primera, la pantalla para crearla, con lo que ya escribió */
     else if (o === 'none') { S.notice = 'none'; S.fails++; }
     else if (!S.needCout) { S.needCout = true; S.notice = 'multi'; }
     else S.notice = 'ambig';
     render();
   }, C.av === '1' ? 1700 : 900);
 }
+function toCreate(){ S.phase = 'create'; S.err = {}; S.notice = null; S.f.cCin = S.f.cin; S.f.cCout = S.f.cout || S.f.cCout || ''; S.f.cName = S.f.name ? titleCase(S.f.name) : ''; S.f.cEmail = S.f.email.trim(); window.scrollTo(0, 0); }   /* prerrellena llegada, salida, nombre y email si los puso en el buscador */
 function createGo(){
   var e = {}, f = S.f;
   if (!f.cCin) e.cCin = 'Choose a date.';
@@ -1677,7 +1679,16 @@ function createGo(){
   if (f.cEmail.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(f.cEmail.trim())) e.cEmail = 'This email doesn\'t look complete.';
   S.err = e; if (Object.keys(e).length) { render(); return; }
   S.busy = true; render();
-  setTimeout(goApp, 900);
+  if (PL && !RLF) homeLoad();   /* la home se carga oculta mientras dice «Starting…» */
+  setTimeout(PL ? plHome : goApp, 900);
+}
+/* PL-61: property link → guestapp sin salir de la pantalla: la home de la réplica en el marco de siempre (sin su panel de controles, que ya está el nuestro). Antes se navegaba a la réplica y su panel «Controls» aparecía dentro de la pantalla */
+function plHome(){
+  if (/[?&]hold=1/.test(location.search)) return;
+  var show = function(){ RLF.__hold = false; RLF.classList.remove('pl-hold'); try { RLF.contentWindow.scrollTo(0, 0); } catch (e) {} RLF.classList.add('on'); S.busy = false;
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) RLF.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 450, easing: 'cubic-bezier(.4,0,.2,1)' }); };
+  if (!RLF) homeLoad();
+  if (RLF.__ok) show(); else RLF.__go = show;
 }
 function goApp(){ if (/[?&]hold=1/.test(location.search)) return; location.href = (location.port === '7794' ? 'http://localhost:7791/screens/' : '../../screens/') + 'home.' + (DESK ? 'd' : 'm') + '.html'; }   /* en local, la réplica de :7791; publicado, la réplica del mismo sitio */
 
@@ -1715,7 +1726,7 @@ document.addEventListener('click', function(ev){
     case 'close': S.sheet = null; break;
     case 'search': if (S.sheet !== 'search' && !S.cta) search(); return;
     case 'cancel': clearTimeout(timer); S.sheet = null; S.cta = null; S.needCout = false; S.f.cout = ''; break;
-    case 'create': S.phase = 'create'; S.err = {}; S.f.cCin = S.f.cin; S.f.cName = S.f.name ? titleCase(S.f.name) : ''; S.f.cEmail = S.f.email; window.scrollTo(0, 0); break;
+    case 'create': toCreate(); S.fromNone = false; break;
     case 'back': S.phase = 'form'; S.err = {}; break;
     case 'gm': S.f.guests = Math.max(1, S.f.guests - 1); break;
     case 'gp': S.f.guests = Math.min(16, S.f.guests + 1); break;
