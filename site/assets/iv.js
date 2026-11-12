@@ -35,7 +35,17 @@ function kl(k){ return k === 'id' && OLD[S.c] ? 'ID card · since 2021' : KLAB[k
 function sideImg(kind, side){ return kind === 'idold' ? '../autofill/assets/catalog/' + S.c + '-' + OLD[S.c] + '-front.webp' : kind === 'dl' ? IMG('US', 'dl-' + side) : kind === 'rp' ? IMG('ES', 'tie-' + side) : IMG(S.c, 'id-' + side); }   /* carnet de conducir y permiso de residencia: imágenes de ejemplo del catálogo */
 
 KIC.idold = KIC.id;
-var SELFIE_PART = { k: 'selfie', t: 'Selfie', ttl: 'Get ready for your selfie', sub: 'We compare your face with the photo on your document. Two quick things first.', steps: [['Remove anything covering your face', I.user], ['Your face well lit, with no shadows', I.sun], ['Take a selfie', I.cam]], tips: [[I.user, 'Take off hats, caps and sunglasses'], [I.sun, 'Use good, even light on your face'], [I.eye, 'Look straight at the camera']] };
+/* comprobación de la cara (Ajustes de la reserva › Comprobación de la cara): 'selfie' = foto de la cara · 'live' = liveness check (movimientos guiados en directo en lugar de una foto). Solo aplica con Biometría */
+var FACE = 'live'; try { FACE = window.__LIVE_ONLY ? 'live' : localStorage.getItem('rep-face') === 'selfie' ? 'selfie' : 'live'; } catch (e) {}
+var LV = FACE === 'live';
+I.move = ic('<path d="M5 9 2 12l3 3M19 9l3 3-3 3M2 12h6M16 12h6"/><circle cx="12" cy="12" r="3"/>', 18);
+var SELFIE_PART = LV
+  ? { k: 'selfie', t: 'Liveness check', ttl: 'Get ready for a liveness check', sub: 'You\'ll follow a few simple moves so we can match your face with your document. Two quick things first.', steps: [['Remove anything covering your face', I.user], ['Your face well lit, with no shadows', I.sun], ['Follow the moves on screen', I.move]], tips: [[I.user, 'Take off hats, caps and sunglasses'], [I.sun, 'Use good, even light on your face'], [I.move, 'Move slowly and keep your face in the oval']] }
+  : { k: 'selfie', t: 'Selfie', ttl: 'Get ready for your selfie', sub: 'We compare your face with the photo on your document. Two quick things first.', steps: [['Remove anything covering your face', I.user], ['Your face well lit, with no shadows', I.sun], ['Take a selfie', I.cam]], tips: [[I.user, 'Take off hats, caps and sunglasses'], [I.sun, 'Use good, even light on your face'], [I.eye, 'Look straight at the camera']] };
+var FW = LV ? 'liveness check' : 'selfie';   /* cómo se nombra el paso de la cara en los textos */
+/* liveness: movimientos guiados (texto, dirección de la flecha, pose simulada de la foto de ejemplo) */
+var LMOVES = [['Look straight at the camera', '', 'c'], ['Slowly turn your head to the left', 'l', 'l'], ['Now slowly to the right', 'r', 'r'], ['Move a little closer', '', 'z']];
+var LIVEST = -1, LIVET = 0;   /* -1 = aún no empieza · 0..n-1 = movimiento actual · n = terminado */
 /* segundo del vídeo (a 1×) en que se cumple cada paso: gafas fuera · luz corregida */
 var SV = '3'; try { SV = localStorage.getItem('rep-sv'); if (!/^[123]$/.test(SV)) SV = '3'; } catch (e) {}
 var SELFIE_VIDS = { '1': { src: 'selfie-clean-1.mp4', at: [1.9, 2.7, 3.6], rate: 0.75 }, '2': { src: 'selfie-clean-2.mp4', at: [4.3, 6.4, 7.4], rate: 1 }, '3': { src: 'selfie-clean-3.mp4', at: [3.7, 5.9, 6.9], rate: 1 } };   /* vídeo 2: gorra ~1,6 s · gafas ~4,3 s · luz ~6,4 s */
@@ -85,8 +95,10 @@ function selfieVid(){
   v.addEventListener('playing', function(){ v.playbackRate = rt; });
 }
 /* modo de verificación (Controles > Identity verification): 'bio' = anverso + reverso + selfie y se analiza cara, biometría y MRZ · 'doc' = solo la parte con las líneas de lectura y solo se analiza el MRZ */
-var MODE = 'bio'; try { MODE = localStorage.getItem('rep-ivm') === 'doc' ? 'doc' : 'bio'; } catch (e) {}
-var S = { step: 'doc', c: 'ES', d: kindsFor('ES')[0], i: 0 };   /* España por defecto */   /* i: parte actual */
+var MODE = 'bio'; try { MODE = !window.__LIVE_ONLY && localStorage.getItem('rep-ivm') === 'doc' ? 'doc' : 'bio'; } catch (e) {}
+var S = { step: 'doc', c: 'ES', d: kindsFor('ES')[0], i: 0 };
+/* pantalla suelta (fuera del flujo de la guestapp): arranca en la preparación del liveness y nada lleva a otras pantallas */
+var ONLY = !!window.__LIVE_ONLY, PV = Q.get('pv') || '2', LVV = Q.get('lv') || '5'; if (ONLY) document.documentElement.classList.add('lv-only');   /* réplica: con «Liveness check» el selfie usa la preparación V2 y la cámara E (12-nov-2026) */ if (ONLY) { LV = true; FACE = 'live'; MODE = 'bio'; S.d = 'passport'; S.i = 1; S.step = 'intro'; }   /* España por defecto */   /* i: parte actual */
 function parts(){
   var all = partsAll(); if (MODE !== 'doc') return all;
   var p = S.d === 'passport' || S.d === 'idold' ? all[0] : all.filter(function(x){ return x.k === 'back'; })[0];
@@ -131,24 +143,27 @@ function prepBody(pr){ return '<div class="iv-prepw"><iframe class="iv-prep" tit
 function checks(p){
   if (!p) return [];
   if (MODE === 'doc') return [{ k: 'mrz' }];                                 /* solo documento: únicamente el MRZ */
-  if (p.k === 'selfie') return [{ k: 'face' }, { k: 'match' }];            /* selfie: cara + comprobación biométrica con el documento */
+  if (p.k === 'selfie') return LV ? [{ k: 'live' }, { k: 'match' }] : [{ k: 'face' }, { k: 'match' }];   /* selfie: cara + biometría · liveness: persona en directo + biometría */
   if (p.k === 'back') return [{ k: 'mrz' }];                                /* reverso: solo el MRZ */
   if (p.k === 'page' || S.d === 'idold') return [{ k: 'face' }, { k: 'mrz' }];   /* pasaporte y DNI antiguo (FR, RO): cara + MRZ */
   return [{ k: 'face' }];                                                   /* anverso: solo la cara */
 }
-function failed(p){ return checks(p).filter(function(c){ return OUT === c.k || (OUT === 'both' && c.k !== 'match'); }).map(function(c){ return c.k; }); }
+function failed(p){ return checks(p).filter(function(c){ return OUT === c.k || (OUT === 'both' && (c.k === 'face' || c.k === 'mrz')); }).map(function(c){ return c.k; }); }
 function errCopy(p){
   var f = failed(p), still = TRIES >= 2, both = f.length > 1, k = f[0], tips, ttl, b;
   if (both) { ttl = still ? 'We still can\'t verify your document' : 'We couldn\'t verify your document'; b = 'We couldn\'t find a face or read the lines of your document.'; }
   else if (k === 'mrz') { ttl = still ? 'We still can\'t read your document' : 'We couldn\'t read your document'; b = 'We couldn\'t read the lines of your document.'; }
+  else if (k === 'live') { ttl = still ? 'We still can\'t complete the liveness check' : 'We couldn\'t complete the liveness check'; b = 'We couldn\'t confirm that a real person was following the moves in front of the camera.'; }
+  else if (k === 'match' && LV) { ttl = still ? 'We still can\'t match your face' : 'We couldn\'t match your face'; b = 'We couldn\'t confirm that your face matches the photo on your document.'; }
   else if (k === 'match') { ttl = still ? 'We still can\'t match your selfie' : 'We couldn\'t match your selfie'; b = 'We couldn\'t confirm that your selfie matches the photo on your document.'; }
   else { ttl = still ? 'We still can\'t find your face' : 'We couldn\'t find your face'; b = p.k === 'selfie' ? 'We couldn\'t find a face in your selfie.' : 'We couldn\'t find a face in this photo.'; }
   tips = p.k === 'selfie' ? SELFIE_PART.tips : [[I.cam, 'Fit the whole document inside the frame'], [I.sun, 'Use good, even light and avoid glare'], [I.flat, 'Hold still until the photo is sharp']];
-  return { ttl: ttl, b: b, tips: tips, s: still ? 'You can try once more with a new photo.' : 'This can happen if the photo is blurry, the picture is cut off or the light is poor.' };
+  var lvp = LV && p.k === 'selfie';
+  return { ttl: ttl, b: b, tips: tips, s: lvp ? (still ? 'You can try once more.' : 'This can happen if your face leaves the oval, you move too fast or the light is poor.') : still ? 'You can try once more with a new photo.' : 'This can happen if the photo is blurry, the picture is cut off or the light is poor.' };
 }
 function msgs(p){
   var tail = ['Still working on it…', 'Running an extra check…', 'Almost there, thanks for your patience…'], h = [];
-  checks(p).forEach(function(c){ h.push(c.k === 'face' ? 'Analyzing your face…' : c.k === 'mrz' ? 'Reading the lines of your document…' : 'Comparing your selfie with your document…'); });
+  checks(p).forEach(function(c){ h.push(c.k === 'face' ? 'Analyzing your face…' : c.k === 'mrz' ? 'Reading the lines of your document…' : c.k === 'live' ? 'Confirming it\'s a real person, live…' : LV ? 'Comparing your face with your document…' : 'Comparing your selfie with your document…'); });
   if (p && p.k !== 'selfie') h.push('Checking the photo is sharp and complete…');
   return h.concat(tail);
 }
@@ -159,8 +174,9 @@ function runChecks(){
   function say(k){ var m = root && root.querySelector('#iv-msg'); if (!m) return; var L = ML.length, tail = L - 3, t = k < L ? ML[k] : ML[tail + (k - L) % 3]; m.classList.add('out'); setTimeout(function(){ if (m.isConnected) { m.textContent = t; m.classList.remove('out'); } }, 180); }
   function verdict(){
     var big = root.querySelector('#iv-ring'), h = root.querySelector('.iv-h'), m = root.querySelector('#iv-msg'), sub = root.querySelector('.iv-sub');
-    if (bad.length) { big.classList.add('ko'); big.querySelector('.iv-pc').innerHTML = '<span class="iv-ckok ko">' + I.x + '</span>'; if (m) m.textContent = 'We found a problem with the photo.'; TRIES++; tm = setTimeout(function(){ go('error'); }, 900); return; }
-    TRIES = 0; big.classList.add('ok'); railPre(); big.querySelector('.iv-pc').innerHTML = '<span class="iv-ckok">' + I.ok + '</span>'; if (h) h.textContent = 'Photo verified'; if (sub) sub.innerHTML = '&nbsp;'; if (m) m.textContent = 'Everything looks good.';
+    var lvp = LV && p.k === 'selfie';
+    if (bad.length) { big.classList.add('ko'); big.querySelector('.iv-pc').innerHTML = '<span class="iv-ckok ko">' + I.x + '</span>'; if (m) m.textContent = lvp ? 'We found a problem with the check.' : 'We found a problem with the photo.'; TRIES++; tm = setTimeout(function(){ go('error'); }, 900); return; }
+    TRIES = 0; big.classList.add('ok'); railPre(); big.querySelector('.iv-pc').innerHTML = '<span class="iv-ckok">' + I.ok + '</span>'; if (h) h.textContent = lvp ? 'Liveness confirmed' : 'Photo verified'; if (sub) sub.innerHTML = '&nbsp;'; if (m) m.textContent = 'Everything looks good.';
     tm = setTimeout(function(){ if (S.i < n - 1) { S.i++; go('intro'); } else { if (FROM === 'flow') { location.href = pg('g2-form-empty', '?ivd=1&ivc=' + encodeURIComponent(S.c) + '&ivk=' + encodeURIComponent(S.d) + '&ivn=' + encodeURIComponent((CATBY[S.c] || [])[1] || '')); return; } go('verifying'); tm = setTimeout(function(){ go('done'); }, 3200); } }, 900);
   }
   function resolve(k){
@@ -176,7 +192,7 @@ function runChecks(){
       if (q >= 1) { tm = setTimeout(function(){ resolve(0); }, 350); return; }
       tm = setTimeout(loop, 30); return;
     }
-    if (VT && el >= VT * 1000) { tf = Date.now(); pf = pc; var mm = root.querySelector('#iv-msg'); if (mm) mm.textContent = 'Finishing up…'; tm = setTimeout(loop, 0); return; }
+    if (VT && !ONLY && el >= VT * 1000) {   /* pantalla suelta: el caso de uso termina en «Checking it's really you» (no pasa al veredicto) */ tf = Date.now(); pf = pc; var mm = root.querySelector('#iv-msg'); if (mm) mm.textContent = 'Finishing up…'; tm = setTimeout(loop, 0); return; }
     pc = el < T ? 96 * (1 - Math.pow(1 - el / T, 1.35)) : Math.min(99, 96 + Math.floor((el - T) / 5000));
     draw(pc);
     var k = Math.floor(el / ivl); if (k !== last) { last = k; if (k > 0) say(k); }
@@ -185,21 +201,42 @@ function runChecks(){
   loop();
 }
 var root = null, tm = 0;
+/* liveness check: anillo de progreso alrededor del óvalo + chip + movimientos; se actualiza sin repintar para no reiniciar la cámara */
+function lvRing(seg){ if (seg) { var h = ''; for (var i = 0; i < LMOVES.length; i++) h += '<path class="sg" data-lvseg="' + i + '" pathLength="100" stroke-dasharray="' + (100 / LMOVES.length - 3) + ' ' + (100 - 100 / LMOVES.length + 3) + '" stroke-dashoffset="' + (-(100 / LMOVES.length) * i - 1.5) + '"/>'; return '<svg class="iv-lring seg" viewBox="0 0 100 100" aria-hidden="true">' + h + '</svg>'; } return '<svg class="iv-lring" viewBox="0 0 100 100" aria-hidden="true"><path class="pr" d="M50 1.4A48.6 48.6 0 1 0 50 98.6A48.6 48.6 0 1 0 50 1.4" pathLength="100" stroke-dasharray="100" stroke-dashoffset="' + (LIVEST >= LMOVES.length ? 0 : 100) + '"/></svg>'; }
+function lvSize(o){ var sv = o && o.querySelector('.iv-lring'); if (!sv) return; var w = o.clientWidth, h = o.clientHeight; if (!w || !h) return; sv.setAttribute('viewBox', '0 0 ' + w + ' ' + h); var rx = Math.max(1, w / 2 - 3.5), ry = Math.max(1, h / 2 - 3.5), cx = w / 2, t = h / 2 - ry, bt = h / 2 + ry, dd = 'M' + cx + ' ' + t + 'A' + rx + ' ' + ry + ' 0 1 0 ' + cx + ' ' + bt + 'A' + rx + ' ' + ry + ' 0 1 0 ' + cx + ' ' + t; [].forEach.call(sv.querySelectorAll('.pr,.sg'), function(e){ e.setAttribute('d', dd); }); }   /* empieza arriba y avanza en sentido antihorario, sin rotar (rotar una elipse la deforma) */
+function lvChip(){ return LIVEST >= LMOVES.length ? 'Liveness check complete' : 'Move ' + (LIVEST + 1) + ' of ' + LMOVES.length; }
+function lvApply(){
+  if (!root || S.step !== 'cam') return; var n = LMOVES.length, done = LIVEST >= n, m = LMOVES[Math.min(LIVEST, n - 1)];
+  var vf = root.querySelector('.iv-vf.selfie'), h = root.querySelector('.iv-h'), ch = vf && vf.querySelector(':scope > .iv-chip'), hint = root.querySelector('.iv-hint'), pr = root.querySelector('.iv-lring .pr'), b = root.querySelector('[data-a="lstart"]');
+  if (!vf) return;
+  vf.setAttribute('data-lv', done ? 'ok' : m[2]); vf.setAttribute('data-ld', done ? '' : m[1]); vf.classList.add('lv-run');
+  if (h && !root.classList.contains('lv-fixttl')) { h.classList.add('lv-sw'); setTimeout(function(){ if (h.isConnected) { h.textContent = done ? 'Done, thank you' : m[0]; h.classList.remove('lv-sw'); } }, 160); }
+  if (ch) ch.textContent = lvChip();
+  if (hint) hint.textContent = done ? 'Checking your moves…' : 'Move slowly · keep your face inside the oval';
+  if (pr) { pr.style.transition = done ? 'stroke-dashoffset .35s ease' : 'stroke-dashoffset 2.1s linear'; pr.setAttribute('stroke-dashoffset', String(done ? 0 : 100 - 100 * (LIVEST + 1) / n)); }
+  if (window.__lvTick && LVV !== '0') window.__lvTick(root, LIVEST, n, LMOVES);
+  if (b) { b.disabled = true; b.innerHTML = done ? I.ok + 'Liveness check complete' : '<i class="iv-cspin"></i>Follow the moves…'; }
+}
+function lvRun(){
+  clearTimeout(LIVET); LIVEST = 0; lvApply();
+  (function next(){ LIVET = setTimeout(function(){ if (S.step !== 'cam') return; LIVEST++; lvApply(); if (LIVEST < LMOVES.length) next(); else LIVET = setTimeout(function(){ if (S.step !== 'cam') return; go('checking'); runChecks(); }, 1100); }, 2300); })();
+}
 function stepLabel(){ if (S.step === 'doc') return ''; var n = parts().length + 1; return 'Step ' + (S.i + 1) + ' of ' + n; }   /* anverso 1 · reverso 2 · selfie 3 · formulario 4 (con pasaporte: página 1 · selfie 2 · formulario 3) */   /* el "Step 1 of 4" aparece al llegar a la foto del anverso */
 function view(){
   var P = parts(), p = P[S.i];
   if (S.step === 'doc') {
     var kinds = S.c ? kindsFor(S.c) : [];
-    return { eye: '', ttl: 'Which document will you use?', sub: MODE === 'doc' ? 'We\'ll guide you through photographing it so we can read it.' : 'We\'ll guide you through each part of it and finish with a quick selfie.',
+    return { eye: '', ttl: 'Which document will you use?', sub: MODE === 'doc' ? 'We\'ll guide you through photographing it so we can read it.' : 'We\'ll guide you through each part of it and finish with a quick ' + FW + '.',
       body: '<label class="iv-lbl" for="iv-ctry">Nationality</label><div class="iv-selw"><select id="iv-ctry" class="iv-sel"><option value="">Choose a country</option>' + COUNTRIES.map(function(x){ return '<option value="' + x[0] + '"' + (x[0] === S.c ? ' selected' : '') + '>' + x[1] + '</option>'; }).join('') + '</select></div>'
         + (S.c ? '<div class="iv-lbl">Document type</div><div class="iv-types n' + kinds.length + '" role="radiogroup" aria-label="Document type">' + kinds.map(function(k){ return '<button type="button" role="radio" aria-checked="' + (k === S.d) + '" class="iv-type' + (k === S.d ? ' on' : '') + '" data-a="type" data-k="' + k + '"><span class="iv-tic">' + ic(KIC[k], 22) + '</span><span class="iv-tl">' + kl(k) + '</span><span class="iv-rd"></span></button>'; }).join('') + '</div>' : '')
         + (S.c && S.d ? (function(){ var one = S.d === 'passport' || S.d === 'idold', two = !one && MODE !== 'doc', dOnly = MODE === 'doc';
           var imgs = dOnly && !one ? '<img src="' + sideImg(S.d, 'back') + '" alt="Back side of your ' + kl(S.d) + '">' : two ? '<img src="' + sideImg(S.d, 'front') + '" alt="Front side of your ' + kl(S.d) + '"><img src="' + sideImg(S.d, 'back') + '" alt="Back side of your ' + kl(S.d) + '">' : S.d === 'idold' ? '<img src="' + sideImg('idold', 'front') + '" alt="Front side of your ' + KLAB.idold + '">' : '<img src="' + IMG(S.c, 'passport') + '" alt="Photo page of your passport">';
-          var ttl = S.d === 'passport' ? 'Photo page' : S.d === 'idold' ? 'Front side only' : dOnly ? 'Back side only' : 'Front and back side', sb = S.d === 'passport' ? 'The page with your photo and details' + (dOnly ? '.' : ', then a quick selfie.') : S.d === 'idold' ? 'The reading lines are on the front, so you don\'t need the back.' + (dOnly ? '' : ' Then a quick selfie.') : dOnly ? 'The reading lines are on the back of your document.' : 'Both sides of your document, then a quick selfie.';
+          var ttl = S.d === 'passport' ? 'Photo page' : S.d === 'idold' ? 'Front side only' : dOnly ? 'Back side only' : 'Front and back side', sb = S.d === 'passport' ? 'The page with your photo and details' + (dOnly ? '.' : ', then a quick ' + FW + '.') : S.d === 'idold' ? 'The reading lines are on the front, so you don\'t need the back.' + (dOnly ? '' : ' Then a quick ' + FW + '.') : dOnly ? 'The reading lines are on the back of your document.' : 'Both sides of your document, then a quick ' + FW + '.';
           return '<div class="iv-pv"><div class="iv-pvi' + (two ? ' two' : '') + '">' + imgs + '</div><p class="iv-pvc"><b>You will photograph: ' + ttl + '</b><span>' + sb + '</span></p></div>'; })() : ''),
       act: btn('start', 'Continue', 'pri', S.d ? '' : ' disabled') };
   }
   if (S.step === 'intro') {
+    if (LV && p.k === 'selfie' && window.__lpView) { var lp = window.__lpView(PV); if (lp) return { eye: '', ttl: lp.ttl, sub: lp.sub, body: lp.body, act: lp.act, lp: PV }; }
     var pr = protoFor(p);
     if (pr) return { eye: '', ttl: p.ttl, sub: 'Follow these tips for a sharp, readable photo.', pp: true, body: prepBody(pr), act: btn('cam', 'I\'m ready · Open camera', 'pri') + gal(p) };
     var stage = p.k === 'selfie' ? '<div class="iv-stage selfie"><video class="iv-selfie-anim" src="../selfie/' + SELFIE_VIDS[SV].src + '" autoplay muted playsinline role="img" aria-label="Take off your hat and glasses, then take your selfie"></video></div>' : '<div class="iv-stage"><img src="' + p.img + '" alt=""></div>';
@@ -208,8 +245,14 @@ function view(){
   if (S.step === 'cam') {
     var pr2 = protoFor(p);
     if (pr2) return { eye: '', ttl: fitTtl(p), sub: '', pp: true, body: prepBody(pr2), act: btn('shoot', I.cam + 'Take photo', 'pri', DOCON ? '' : ' disabled') + gal(p) };
-    var camMsg = CAMON ? (LIVE && CAMERR ? 'Camera unavailable · allow access' : 'Keep your whole face inside the oval') : (CAMW ? '<i class="iv-cspin"></i>Turning on camera…' : 'Camera is off');
-    var inner = p.k === 'selfie' ? '<div class="iv-vf selfie ' + (CAMON ? 'on' : 'off') + '"><div class="iv-feed">' + (LIVE ? '' : '<img class="iv-feedimg" src="../selfie/selfie-photo.jpg" alt="" draggable="false">') + '</div><div class="iv-oval" data-oval>' + ghost() + '</div><span class="iv-chip">' + camMsg + '</span></div>' : '<div class="iv-vf"><span class="c tl"></span><span class="c tr"></span><span class="c bl"></span><span class="c br"></span><img src="' + p.img + '" alt=""><i class="iv-scan"></i></div>';
+    var lvc = LV && p.k === 'selfie';
+    var LX = lvc && LVV !== '0' && window.__lvCam ? window.__lvCam(LVV, { moves: LMOVES, st: LIVEST }) : null;
+    var camMsg = CAMON ? (LIVE && CAMERR ? 'Camera unavailable · allow access' : lvc ? (LIVEST >= 0 ? lvChip() : 'Keep your face inside the oval, then start') : 'Keep your whole face inside the oval') : (CAMW ? '<i class="iv-cspin"></i>Turning on camera…' : 'Camera is off');
+    var inner = p.k === 'selfie' ? '<div class="iv-vf selfie ' + (CAMON ? 'on' : 'off') + '"><div class="iv-feed">' + (LIVE ? '' : '<img class="iv-feedimg" src="../selfie/selfie-photo.jpg" alt="" draggable="false">') + '</div><div class="iv-oval" data-oval>' + ghost() + (lvc ? lvRing(LX && LX.seg) : '') + '</div>' + (LX && LX.vf ? LX.vf : '') + (lvc ? '<span class="iv-larr l" aria-hidden="true"></span><span class="iv-larr r" aria-hidden="true"></span>' : '') + '<span class="iv-chip" role="status" aria-live="polite">' + camMsg + '</span></div>' : '<div class="iv-vf"><span class="c tl"></span><span class="c tr"></span><span class="c bl"></span><span class="c br"></span><img src="' + p.img + '" alt=""><i class="iv-scan"></i></div>';
+    if (LX) return { eye: '', ttl: LX.ttl, sub: '', cls: LX.cls, body: '<div class="iv-stage cam">' + inner + (LX.hint ? '<p class="iv-hint">' + LX.hint + '</p>' : '') + '</div>' + (LX.after || ''),
+      act: LIVEST >= 0 ? btn('lstart', LIVEST >= LMOVES.length ? I.ok + 'Liveness check complete' : '<i class="iv-cspin"></i>Follow the moves…', 'pri', ' disabled') : btn('lstart', I.move + 'Start liveness check', 'pri', !CAMON ? ' disabled' : '') };
+    if (lvc) return { eye: 'Part ' + (S.i + 1) + ' of ' + P.length + ' · ' + p.t, ttl: LIVEST >= 0 && LIVEST < LMOVES.length ? LMOVES[LIVEST][0] : LIVEST >= LMOVES.length ? 'Done, thank you' : 'Fit your face in the oval', sub: '', body: '<div class="iv-stage cam">' + inner + '<p class="iv-hint">' + (LIVEST >= 0 ? 'Move slowly · keep your face inside the oval' : 'We\'ll ask you for ' + LMOVES.length + ' simple moves · about 10 seconds') + '</p></div>',
+      act: LIVEST >= 0 ? btn('lstart', '<i class="iv-cspin"></i>Follow the moves…', 'pri', ' disabled') : btn('lstart', I.move + 'Start liveness check', 'pri', !CAMON ? ' disabled' : '') };
     return { eye: 'Part ' + (S.i + 1) + ' of ' + P.length + ' · ' + p.t, ttl: fitTtl(p), sub: '', body: '<div class="iv-stage cam">' + inner + '<p class="iv-hint">' + (p.k === 'selfie' ? 'Look straight ahead · keep your face evenly lit' : 'Hold still until the photo is sharp') + '</p></div>',
       act: btn('shoot', I.cam + 'Take photo', 'pri', p.k === 'selfie' && !CAMON ? ' disabled' : '') + gal(p) };
   }
@@ -220,14 +263,14 @@ function view(){
         + '<div class="iv-adj-z"><button type="button" data-z="-1" aria-label="Zoom out">' + ic('<path d="M5 12h14"/>', 18) + '</button><input type="range" class="iv-adj-r" min="1" max="4" step="0.01" value="1" aria-label="Zoom"><button type="button" data-z="1" aria-label="Zoom in">' + ic('<path d="M12 5v14M5 12h14"/>', 18) + '</button></div></div>',
       act: btn('adjconfirm', 'Confirm photo', 'pri') + btn('gallery', I.img + 'Choose another photo', 'sec') };
   }
-  if (S.step === 'checking') { var cs = checks(p), R = 52, C = (2 * Math.PI * R).toFixed(1); return { eye: '', ttl: 'Checking your photo', sub: 'Please keep this screen open.', body: '<div class="iv-mid iv-pg">'
+  if (S.step === 'checking') { var cs = checks(p), R = 52, C = (2 * Math.PI * R).toFixed(1); return { eye: '', ttl: LV && p.k === 'selfie' ? 'Checking it\'s really you' : 'Checking your photo', sub: 'Please keep this screen open.', body: '<div class="iv-mid iv-pg">'
     + '<div class="iv-ring" id="iv-ring"><svg viewBox="0 0 120 120" aria-hidden="true"><defs><linearGradient id="ivg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4a6cff"/><stop offset="1" stop-color="#8aa2ff"/></linearGradient></defs><circle class="tr" cx="60" cy="60" r="' + R + '"/><circle class="pr" id="iv-pr" cx="60" cy="60" r="' + R + '" stroke-dasharray="' + C + '" stroke-dashoffset="' + C + '"/></svg><div class="iv-pc"><b id="iv-pct" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">0%</b></div></div>'
     + '<p class="iv-msg" id="iv-msg" role="status" aria-live="polite">' + msgs(p)[0] + '</p>'
-    + '<div class="iv-chips">' + cs.map(function(c){ return '<span class="iv-chip" data-k="' + c.k + '"><i></i>' + (c.k === 'face' ? 'Face' : c.k === 'mrz' ? 'Document lines' : 'Match with document') + '</span>'; }).join('') + '</div></div>', act: '' }; }
-  if (S.step === 'error') { var er = errCopy(p); return { eye: '', ttl: er.ttl, sub: '', err: true, body: '<div class="iv-alert">' + I.warn + '<div><b>' + er.b + '</b><span>' + er.s + '</span></div></div><ul class="iv-etips">' + er.tips.map(function(t){ return '<li><span>' + t[0] + '</span>' + t[1] + '</li>'; }).join('') + '</ul>', act: btn('cam', 'Retake photo', 'pri') + gal(p) }; }
-  if (S.step === 'verifying') return { eye: '', ttl: MODE === 'doc' ? 'Verifying your document…' : 'Verifying your identity…', sub: '&nbsp;', body: '<div class="iv-mid"><i class="iv-spin"></i><ol class="iv-vs"><li class="d">Document read</li>' + (MODE === 'doc' ? '<li class="a">Checking the reading lines</li><li>Document confirmed</li>' : '<li class="a">Matching your selfie</li><li>Identity confirmed</li>') + '</ol></div>', act: '' };
+    + '<div class="iv-chips">' + cs.map(function(c){ return '<span class="iv-chip" data-k="' + c.k + '"><i></i>' + (c.k === 'face' ? 'Face' : c.k === 'mrz' ? 'Document lines' : c.k === 'live' ? 'Liveness' : 'Match with document') + '</span>'; }).join('') + '</div></div>', act: '' }; }
+  if (S.step === 'error') { var er = errCopy(p); return { eye: '', ttl: er.ttl, sub: '', err: true, body: '<div class="iv-alert">' + I.warn + '<div><b>' + er.b + '</b><span>' + er.s + '</span></div></div><ul class="iv-etips">' + er.tips.map(function(t){ return '<li><span>' + t[0] + '</span>' + t[1] + '</li>'; }).join('') + '</ul>', act: btn('cam', LV && p.k === 'selfie' ? 'Try again' : 'Retake photo', 'pri') + gal(p) }; }
+  if (S.step === 'verifying') return { eye: '', ttl: MODE === 'doc' ? 'Verifying your document…' : 'Verifying your identity…', sub: '&nbsp;', body: '<div class="iv-mid"><i class="iv-spin"></i><ol class="iv-vs"><li class="d">Document read</li>' + (MODE === 'doc' ? '<li class="a">Checking the reading lines</li><li>Document confirmed</li>' : (LV ? '<li class="a">Matching your face</li><li>Identity confirmed</li>' : '<li class="a">Matching your selfie</li><li>Identity confirmed</li>')) + '</ol></div>', act: '' };
   var toForm = FROM === 'flow';
-  return { eye: '', ttl: MODE === 'doc' ? 'Document verified' : 'Identity verified', sub: (NAME ? esc(NAME) + ', your' : 'Your') + (MODE === 'doc' ? ' document has been read.' : ' document and selfie match.'), body: '<div class="iv-mid ok"><span class="iv-okc">' + I.ok + '</span>' + (toForm ? '<p class="iv-note go"><i class="iv-spin sm"></i>Taking you to your details…</p>' : '<p class="iv-note">' + I.shield + 'Your photos are used only to verify your identity.</p>') + '</div>', act: toForm ? '' : btn('fin', FROM === 'hub' ? 'Back to summary' : 'Continue', 'pri') };
+  return { eye: '', ttl: MODE === 'doc' ? 'Document verified' : 'Identity verified', sub: (NAME ? esc(NAME) + ', your' : 'Your') + (MODE === 'doc' ? ' document has been read.' : (LV ? ' document and face match.' : ' document and selfie match.')), body: '<div class="iv-mid ok"><span class="iv-okc">' + I.ok + '</span>' + (toForm ? '<p class="iv-note go"><i class="iv-spin sm"></i>Taking you to your details…</p>' : '<p class="iv-note">' + I.shield + (LV && MODE !== 'doc' ? 'Your photos and video are used only to verify your identity.' : 'Your photos are used only to verify your identity.') + '</p>') + '</div>', act: toForm ? '' : btn('fin', ONLY ? 'Start again' : FROM === 'hub' ? 'Back to summary' : 'Continue', 'pri') };
 }
 
 /* Elegir de la galería: abre el selector nativo del dispositivo; la imagen se encuadra (mover / ampliar) contra el marco guía y se confirma o se elige otra */
@@ -304,8 +347,8 @@ function veilStart(){
 }
 function ovalInit(){
   var o = document.querySelector('[data-oval]'); if (!o) return; var st = o.closest('.iv-stage');
-  function size(){ var H = st.clientHeight, W = st.clientWidth, h = Math.min(H * 0.9, W * 0.94 / 0.78); o.style.height = h + 'px'; o.style.width = (h * 0.78) + 'px'; }   /* el óvalo ocupa casi todo el visor: la cara sale lo más grande posible */
-  size(); window.addEventListener('resize', function(){ if (document.querySelector('[data-oval]') === o) size(); });
+  function size(){ var H = st.clientHeight, W = st.clientWidth, kf = root && root.classList.contains('lv-sm') ? 0.66 : root && root.classList.contains('lv-md') ? 0.76 : 0.9, h = Math.min(H * kf, W * (kf + 0.04) / 0.78); o.style.height = h + 'px'; o.style.width = (h * 0.78) + 'px'; st.style.setProperty('--ow', (h * 0.78) + 'px'); st.style.setProperty('--oh', h + 'px'); if (window.__lvAfterSize) window.__lvAfterSize(o); }   /* lv-sm / lv-md: óvalo más pequeño para dejar sitio a las instrucciones (versiones E–H) */   /* el óvalo ocupa casi todo el visor: la cara sale lo más grande posible */
+  size(); lvSize(o); window.addEventListener('resize', function(){ if (document.querySelector('[data-oval]') === o) { size(); lvSize(o); } });
 }
 function adjustInit(){
   var st = document.querySelector('.iv-adj-st'); if (!st) return;
@@ -381,7 +424,7 @@ function pvFit(){
 }
 function paint(){
   if (!root) return; var v = view(), main = root.querySelector('.iv-main'), keep = v.pp && main.querySelector('.iv-prepw');
-  root.className = 'iv-m iv-s-' + S.step + (v.err ? ' iv-err' : '');
+  root.className = 'iv-m iv-s-' + S.step + (v.err ? ' iv-err' : '') + (v.lp ? ' lp-v' + v.lp : '') + (v.cls ? ' ' + v.cls : '');
   var sk = ['doc', 'intro', 'cam', 'error'].indexOf(S.step) >= 0;   /* «Skip for now» se mantiene en el mismo sitio (a la derecha del título) hasta el formulario */
   var dtop = DESK ? '<div class="dbk-row iv-dtop"><button type="button" class="dbk-pill" data-a="prev" data-dbk="Back" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><i class="dbk-sep" aria-hidden="true">/</i><span class="dbk-eye">Identity verification' + (stepLabel() ? ' · ' + stepLabel() : '') + '</span></div>' : '';
   var head = dtop + '<div class="iv-hr' + (sk ? ' hs' : '') + '"><h1 class="iv-h">' + v.ttl + '</h1>' + (sk ? '<button type="button" class="iv-skipb" data-a="skip">Skip for now</button>' : '') + '</div>' + (v.sub ? '<p class="iv-sub">' + v.sub + '</p>' : '');
@@ -400,6 +443,7 @@ function paint(){
 var RC = 0;   /* centro vertical del anillo de «Checking your photo»: el spinner y el círculo de «Verified» se colocan exactamente ahí */
 function go(st){
   var rg = root && root.querySelector('#iv-ring'); if (rg) { var rb = rg.getBoundingClientRect(); RC = rb.top + rb.height / 2; }
+  if (st !== 'cam') { clearTimeout(LIVET); LIVEST = -1; }
   S.step = st; paint();
   if (RC && (st === 'verifying' || st === 'done') && root) {
     var el = root.querySelector('.iv-spin:not(.sm), .iv-okc'), mid = root.querySelector('.iv-mid');
@@ -410,10 +454,12 @@ function go(st){
 function onClick(e){
   var t = e.target.closest('[data-a]'); if (!t || t.disabled) return; e.preventDefault(); e.stopPropagation();
   var a = t.getAttribute('data-a'), n = parts().length;
+  if (ONLY) { if (a === 'lpchk') { if (window.__lpToggle) window.__lpToggle(t); return; } if (a === 'skip') return; if (a === 'fin' || (a === 'prev' && S.step !== 'cam' && S.step !== 'error')) { clearTimeout(tm); TRIES = 0; return go('intro'); } if (a === 'prev') { clearTimeout(tm); return go('intro'); } }
   if (a === 'type') { S.d = t.getAttribute('data-k'); return paint(); }
   if (a === 'skip') { if (window.__ivSkip) window.__ivSkip.open({ progress: S.i > 0 || ['error', 'checking', 'verifying', 'done'].indexOf(S.step) >= 0, go: null, to: FROM === 'flow' ? pg('g2-form-empty') : FROM === 'form' ? pg('g2-registering', '?gn=' + encodeURIComponent(NAME)) : pg('hub-after-1') }); return; }
   if (a === 'start') { S.i = 0; return go('intro'); }
-  if (a === 'cam') { CAMT0 = Date.now() + 2300 + (DCAM === 'anim' ? 1200 : 0); CAMON = false; clearTimeout(CAMT); var pc = parts()[S.i], sf = pc && pc.k === 'selfie'; CAMW = !!sf; if (window.__camSync) window.__camSync(); go('cam');
+  if (a === 'lstart') { if (LIVEST < 0) lvRun(); return; }
+  if (a === 'cam') { clearTimeout(LIVET); LIVEST = -1; CAMT0 = Date.now() + 2300 + (DCAM === 'anim' ? 1200 : 0); CAMON = false; clearTimeout(CAMT); var pc = parts()[S.i], sf = pc && pc.k === 'selfie'; CAMW = !!sf; if (window.__camSync) window.__camSync(); go('cam');
     if (sf) { var t0 = Date.now(); (function w(){ if (S.step !== 'cam') return; var el = Date.now() - t0; if (el >= 1300 && (!LIVE || CAM || CAMERR || el > 6000)) { CAMW = false; CAMON = true; if (window.__camSync) window.__camSync(); paint(); } else CAMT = setTimeout(w, 150); })(); }
     if (!sf && DCAM === 'anim' && protoFor(pc)) { DOCON = false; paint(); docCamStart(); } else DOCON = true;
     if (!sf && LIVE && DCAM !== 'anim' && protoFor(pc)) veilStart();
@@ -449,6 +495,7 @@ function rsvg(p, w){ return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 
 /* recomendaciones del panel de Vela mientras se ve la imagen: con la cámara, cómo tomar la foto; desde la galería, cómo debe ser la foto elegida */
 function photoTips(p, gallery){
   var k = p ? p.k : 'front', corners = rsvg(RI.scan, 18);
+  if (k === 'selfie' && LV) return { h: 'Tips for your liveness check', t: [[I.user, 'Keep your face inside the oval', 'The whole face in view during every move.'], [I.move, 'Move slowly', 'Follow each instruction calmly; there is no rush.'], [I.sun, 'Face the light', 'Even light on your face, with no shadows or backlight.'], [I.flat, 'Take off hats and sunglasses', 'Nothing covering your face.']] };
   if (k === 'selfie') return gallery
     ? { h: 'Choose a good selfie', t: [[I.user, 'Only you, face fully visible', 'No hats, sunglasses, masks or other people.'], [I.eye, 'Looking straight ahead', 'A front-facing photo, not a profile or a tilted head.'], [I.sun, 'Well lit and sharp', 'Even light on your face, no blur and no heavy shadows.'], [I.img, 'Recent and unedited', 'A photo that looks like you today, without filters.']] }
     : { h: 'Tips for your selfie', t: [[I.user, 'Keep your face inside the oval', 'Centered, with your whole face in view.'], [I.sun, 'Face the light', 'Even light on your face, with no shadows or backlight.'], [I.eye, 'Look at the camera', 'Straight ahead, with a neutral expression.'], [I.flat, 'Take off hats and sunglasses', 'Nothing covering your face.']] };
@@ -479,7 +526,7 @@ function railPaint(force){
   asd.classList.add('fx-nointro');
   var pr = priv.cloneNode(true); var pic = pr.querySelector('span'); if (pic && pic.querySelector('svg')) pic.parentNode.removeChild(pic); pr.querySelector('strong').textContent = 'Where you are in your registration'; var pd = pr.querySelector('strong').nextElementSibling; if (pd) pd.textContent = 'A few quick steps — we\'ll guide you through each one.';
   var animFrom = (RPC !== null && RPC < cur) ? RPC : null; RPC = cur;
-  var tipsL = P.map(function(p, i){ return 'Step ' + (i + 1) + ' · ' + (p.k === 'selfie' ? 'Selfie (biometrics)' : p.k === 'back' ? 'Back side photo' : p.k === 'page' ? 'Photo page' : 'Front side photo'); }); tipsL.push('Step ' + (P.length + 1) + ' · Your details');
+  var tipsL = P.map(function(p, i){ return 'Step ' + (i + 1) + ' · ' + (p.k === 'selfie' ? (LV ? 'Liveness check (biometrics)' : 'Selfie (biometrics)') : p.k === 'back' ? 'Back side photo' : p.k === 'page' ? 'Photo page' : 'Front side photo'); }); tipsL.push('Step ' + (P.length + 1) + ' · Your details');
   try { localStorage.setItem('rep-ivtips', JSON.stringify(tipsL)); } catch (e) {}
   var kinds = n === 1 ? (P[0].k === 'back' ? ['scan'] : ['id']) : P.map(function(p){ return p.k === 'selfie' ? 'who' : p.k === 'back' ? 'scan' : 'id'; }); kinds.push('doc');
   try { localStorage.setItem('rep-ivkinds', kinds.join(',')); } catch (e) {}
@@ -545,7 +592,7 @@ function mount(){
   d.addEventListener('click', function(e){ var b = e.target.closest('button'); if (!b) return; e.preventDefault(); e.stopPropagation(); var q = new URLSearchParams(location.search); q.set('dt', b.getAttribute('data-v')); location.search = '?' + q.toString(); });
   var add = function(){ if (window.__repPanel) window.__repPanel.add('Tipos de documento', d, 48); }; if (document.readyState !== 'loading') add(); else document.addEventListener('DOMContentLoaded', add); })();
 /* control: resultado simulado de la validación de cada foto */
-(function(){ var o = [['ok', 'Correcto'], ['face', 'Falla la cara'], ['mrz', 'Falla el MRZ'], ['both', 'Fallan cara y MRZ'], ['match', 'Falla la biometría (selfie)']], d = document.createElement('div'); d.className = 'ff-sw';
+(function(){ var o = [['ok', 'Correcto'], ['face', 'Falla la cara'], ['mrz', 'Falla el MRZ'], ['both', 'Fallan cara y MRZ'], ['match', LV ? 'Falla la biometría (cara)' : 'Falla la biometría (selfie)']].concat(LV ? [['live', 'Falla el liveness']] : []), d = document.createElement('div'); d.className = 'ff-sw';
   d.innerHTML = o.map(function(x){ return '<button type="button" data-v="' + x[0] + '"' + (x[0] === OUT ? ' class="on"' : '') + '>' + x[1] + '</button>'; }).join('');
   d.addEventListener('click', function(e){ var b = e.target.closest('button'); if (!b) return; e.preventDefault(); e.stopPropagation(); OUT = b.getAttribute('data-v'); try { localStorage.setItem('rep-io', OUT); } catch (x) {} [].forEach.call(d.children, function(c){ c.classList.toggle('on', c === b); }); });
   var add = function(){ if (window.__repPanel) window.__repPanel.add('Resultado de la foto', d, 49); }; if (document.readyState !== 'loading') add(); else document.addEventListener('DOMContentLoaded', add); })();
@@ -586,5 +633,5 @@ function mount(){
     S.img = m.img; clearTimeout(tm); go('adjust');   /* la misma imagen (un blob del otro marco, mismo origen) y el mismo paso de ajuste */
   });
 })();
-var n = 0; (function tryMount(){ if (!mount() && n++ < 20) setTimeout(tryMount, 100); })();
+var n = 0; (function tryMount(){ if (!mount()) { if (n++ < 20) setTimeout(tryMount, 100); return; } if (ONLY && Q.get('go') === 'cam') { var c = root.querySelector('[data-a="cam"]'); if (c) c.click(); } })();
 })();

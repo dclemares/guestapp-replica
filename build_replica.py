@@ -254,6 +254,8 @@ shutil.copy(os.path.join(HERE, 'registered.css'), os.path.join(SITE, 'assets', '
 shutil.copy(os.path.join(HERE, 'registered.js'), os.path.join(SITE, 'assets', 'registered.js'))
 shutil.copy(os.path.join(HERE, 'iv.css'), os.path.join(SITE, 'assets', 'iv.css'))
 shutil.copy(os.path.join(HERE, 'iv.js'), os.path.join(SITE, 'assets', 'iv.js'))
+shutil.copy(os.path.join(HERE, 'live-prep.js'), os.path.join(SITE, 'assets', 'live-prep.js'))   # liveness: preparación V2 y cámara E
+shutil.copy(os.path.join(HERE, 'live-prep.css'), os.path.join(SITE, 'assets', 'live-prep.css'))
 shutil.copy(os.path.join(HERE, 'ivintro.css'), os.path.join(SITE, 'assets', 'ivintro.css'))
 shutil.copy(os.path.join(HERE, 'ivintro.js'), os.path.join(SITE, 'assets', 'ivintro.js'))
 shutil.copy(os.path.join(HERE, 'ivskip.css'), os.path.join(SITE, 'assets', 'ivskip.css'))

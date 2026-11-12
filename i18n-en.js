@@ -9,7 +9,7 @@ var D = {
  'Bordes': 'Borders', 'Con borde': 'With border', 'Sin borde total': 'No border at all', 'Solo documento': 'Document only', 'Biometría': 'Biometrics',
  'Vista': 'View', 'Qué pantalla y qué estado estás viendo': 'Which screen and state you are viewing', 'Skip de la verificación': 'Verification skip',
  'Obligatoria': 'Required', 'Opcional': 'Optional', 'Sin skip': 'No skip', 'Tipos de documento': 'Document types', 'Resultado de la foto': 'Photo result',
- 'Correcto': 'Correct', 'Falla la cara': 'Face fails', 'Falla el MRZ': 'MRZ fails', 'Fallan cara y MRZ': 'Face and MRZ fail', 'Falla la biometría (selfie)': 'Biometrics fail (selfie)',
+ 'Correcto': 'Correct', 'Falla la cara': 'Face fails', 'Falla el MRZ': 'MRZ fails', 'Fallan cara y MRZ': 'Face and MRZ fail', 'Falla la biometría (selfie)': 'Biometrics fail (selfie)', 'Falla la biometría (cara)': 'Biometrics fail (face)', 'Falla el liveness': 'Liveness fails', 'Comprobación de la cara': 'Face check',
  'Respuesta del backend': 'Backend response', 'Sin fin': 'No end', 'Vídeo del selfie': 'Selfie video', 'Vídeo 1': 'Video 1', 'Vídeo 2': 'Video 2', 'Vídeo 3': 'Video 3',
  'Cámara del selfie': 'Selfie camera', 'Apagada': 'Off', 'Encendida': 'On', 'Mockup del selfie': 'Selfie mockup', 'Cámara real': 'Real camera',
  'Navegación': 'Navigation', 'Índice': 'Index', 'Ver en móvil': 'View on mobile', 'Llaves': 'Keys', 'Bloqueado': 'Locked', 'Antes de llegar': 'Before arrival', 'Listo': 'Ready',

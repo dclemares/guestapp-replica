@@ -512,8 +512,8 @@ def registered_assets(html):
 
 def iv_assets(html):
     """Identity verification (g2-iv): flujo documento → partes → selfie → verificado (iv.css / iv.js)."""
-    html = html.replace('</head>', '<link rel="stylesheet" href="../assets/ivskip.css"><link rel="stylesheet" href="../assets/iv.css"><style>html:not([data-iv-rail="1"]) aside{visibility:hidden;animation:ivRailShow 0s 1.2s forwards}@keyframes ivRailShow{to{visibility:visible}}</style></head>', 1)
-    html = html.replace('<script src="../replica.js">', '<script src="../assets/ivskip.js"></script><script src="../assets/iv.js"></script><script src="../replica.js">', 1)
+    html = html.replace('</head>', '<link rel="stylesheet" href="../assets/ivskip.css"><link rel="stylesheet" href="../assets/iv.css"><link rel="stylesheet" href="../assets/live-prep.css"><style>html:not([data-iv-rail="1"]) aside{visibility:hidden;animation:ivRailShow 0s 1.2s forwards}@keyframes ivRailShow{to{visibility:visible}}</style></head>', 1)
+    html = html.replace('<script src="../replica.js">', '<script src="../assets/ivskip.js"></script><script src="../assets/live-prep.js"></script><script src="../assets/iv.js"></script><script src="../replica.js">', 1)
     return html
 
 

@@ -47,6 +47,9 @@ function run(){
     var li = [].slice.call(document.querySelectorAll('li')).filter(function(l){ return /Confirm it's you/.test(l.textContent); })[0];
     if (li) { var sib = li.nextElementSibling; li.parentNode.removeChild(li); if (sib) { var nm = [].slice.call(sib.querySelectorAll('span,div')).filter(function(x){ return !x.children.length && /^3$/.test(x.textContent.trim()); })[0]; if (nm) nm.textContent = '2'; } }
   }
+  /* liveness check (Comprobación de la cara = Liveness check): el paso «Confirm it's you» describe los movimientos en lugar de la foto */
+  var LVI = true; try { LVI = localStorage.getItem('rep-face') !== 'selfie'; } catch (e) {}
+  if (LVI && !DOCONLY) { var tw0 = document.createTreeWalker(document.querySelector('main') || document.body, NodeFilter.SHOW_TEXT, null), t0; while ((t0 = tw0.nextNode())) { if (/A quick face scan, matched to your document photo/.test(t0.nodeValue)) t0.nodeValue = t0.nodeValue.replace('A quick face scan, matched to your document photo', 'A short liveness check: follow a few moves on screen'); } }
   /* viene de «Register next guest»: la verificación es de otra persona (ng=1) */
   if (new URLSearchParams(location.search).get('ng') === '1') {
     var RP = [[/Verify your/, 'Verify the'], [/^identity$/, 'next guest'], [/Choose your document/, 'Choose their document'], [/Scan your document/, 'Scan their document'], [/Confirm it's you/, 'Confirm it\'s them'], [/your document photo/, 'their document photo'], [/Confirm your details/, 'Confirm their details'], [/your entry form's/, 'their entry form\'s'], [/Use your phone/, 'Use their phone']];

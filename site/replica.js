@@ -531,6 +531,13 @@ if (!EMBED) {
     var m = b.getAttribute('data-ivs'); LSset('rep-iv', m === 'no' ? '0' : '1'); if (m !== 'no') LSset('rep-ivm', m);
     var q = new URLSearchParams(location.search); q.delete('iv'); history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q.toString() : '')); try { sessionStorage.setItem('rep-keep-reload', '1'); } catch (x) {} location.reload();
   }, true);
+  /* comprobación de la cara (solo con Biometría): Selfie (foto de la cara) o Liveness check (movimientos guiados en directo, sustituye al selfie). Por defecto, liveness */
+  var fcNow = LSget('rep-face', 'live') === 'selfie' ? 'selfie' : 'live';
+  var fcs = seg([['selfie', 'Selfie'], ['live', 'Liveness check']].map(function(x){ return '<button type="button" class="rs-chip' + (x[0] === fcNow ? ' on' : '') + '" data-fcs="' + x[0] + '">' + x[1] + '</button>'; }).join(''));
+  fcs.addEventListener('click', function(e){
+    var b = e.target.closest('[data-fcs]'); if (!b) return; e.preventDefault(); e.stopPropagation();
+    LSset('rep-face', b.getAttribute('data-fcs')); try { sessionStorage.setItem('rep-keep-reload', '1'); } catch (x) {} location.reload();   /* la verificación lo lee al cargar */
+  }, true);
   /* número de huéspedes (se lee en el resumen de huéspedes): ajuste de la reserva, siempre visible */
   var gcn = seg(['2', '4', '6', '9', '14'].map(function(n){ return '<button type="button" class="rs-chip' + (n === LSget('replica-gc-n', '4') ? ' on' : '') + '" data-gcn="' + n + '">' + n + '</button>'; }).join(''));
   gcn.addEventListener('click', function(e){
@@ -550,7 +557,7 @@ if (!EMBED) {
     LSset('replica-comp-trad', k === 'trad' ? '1' : '0'); LSset('replica-comp-chat', k === 'trad' ? '0' : '1'); LSset('replica-comp-v2', '0'); LSset('replica-comp-v3', '0'); LSset('replica-comp-v4', '1'); LSset('replica-comp-v5', '1');
     try { sessionStorage.setItem('rep-keep-reload', '1'); } catch (x) {} location.reload();   /* el panel de Vela se monta al cargar */
   }, true);
-  var addSet = function(){ pwPaint(); if (window.__repPanel) { window.__repPanel.add('Pagos', pw, 2); window.__repPanel.add('Tipo de depósito', dtp, 2.5); dtPaint(); window.__repPanel.add('Remote access', ra, 3); window.__repPanel.add('Número de huéspedes', gcn, 3.5); window.__repPanel.add('Componentes', cmp, 3.8); window.__repPanel.add('Vela sombreado', vsh, 3.85); window.__repPanel.add('Bordes', nbd, 3.86); window.__repPanel.add('Identity verification', ivs, 4); } else { document.body.appendChild(pw); document.body.appendChild(ra); document.body.appendChild(ivs); document.body.appendChild(cmp); } };
+  var addSet = function(){ pwPaint(); if (window.__repPanel) { window.__repPanel.add('Pagos', pw, 2); window.__repPanel.add('Tipo de depósito', dtp, 2.5); dtPaint(); window.__repPanel.add('Remote access', ra, 3); window.__repPanel.add('Número de huéspedes', gcn, 3.5); window.__repPanel.add('Componentes', cmp, 3.8); window.__repPanel.add('Vela sombreado', vsh, 3.85); window.__repPanel.add('Bordes', nbd, 3.86); window.__repPanel.add('Identity verification', ivs, 4); if (ivNow === 'bio') window.__repPanel.add('Comprobación de la cara', fcs, 4.1); } else { document.body.appendChild(pw); document.body.appendChild(ra); document.body.appendChild(ivs); document.body.appendChild(cmp); } };
   if (document.readyState !== 'loading') addSet(); else document.addEventListener('DOMContentLoaded', addSet);
 }
 /* switch for the Home right panel (desktop only) */

@@ -345,3 +345,25 @@ aside.fx-nointro>p{display:none!important}
 .iv-vc:focus-visible{outline:2px solid #385bf8;outline-offset:2px}
 
 .iv-vst{margin-bottom:11px}
+/* ===== Liveness check (sustituye al selfie: Ajustes de la reserva › Comprobación de la cara) ===== */
+.iv-lring{position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none;overflow:visible}
+.iv-lring path{fill:none;stroke-width:7}
+.iv-lring .pr{stroke:#2ac273;stroke-linecap:round}
+.iv-vf.selfie.lv-run .iv-oval{animation:none;border-color:rgba(255,255,255,.55)}
+.iv-vf.selfie[data-lv="ok"] .iv-oval{border-color:#2ac273}
+.iv-vf.selfie.lv-run img.iv-ghost{opacity:0;transition:opacity .4s ease}
+.iv-vf .iv-feed img.iv-feedimg{transition:transform 1.1s cubic-bezier(.4,0,.2,1)}
+.iv-vf.selfie[data-lv="l"] .iv-feed img.iv-feedimg{transform:translateX(-47%) perspective(900px) rotateY(-17deg)}
+.iv-vf.selfie[data-lv="r"] .iv-feed img.iv-feedimg{transform:translateX(-40%) perspective(900px) rotateY(17deg)}
+.iv-vf.selfie[data-lv="z"] .iv-feed img.iv-feedimg,.iv-vf.selfie[data-lv="ok"] .iv-feed img.iv-feedimg{transform:translateX(-43.5%) scale(1.1)}
+.iv-larr{position:absolute;top:50%;z-index:4;width:34px;height:34px;margin-top:-17px;border-radius:50%;background:rgba(255,255,255,.18);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.iv-larr::after{content:'';position:absolute;top:50%;left:50%;width:10px;height:10px;border:solid #fff;border-width:0 0 3px 3px;transform:translate(-30%,-50%) rotate(45deg)}
+.iv-larr.l{left:calc(5% + 24px)}.iv-larr.r{right:calc(5% + 24px)}.iv-larr.r::after{transform:translate(-70%,-50%) rotate(-135deg)}
+.iv-vf.selfie[data-ld="l"] .iv-larr.l,.iv-vf.selfie[data-ld="r"] .iv-larr.r{opacity:1}
+.iv-vf.selfie[data-ld="l"] .iv-larr.l{animation:ivLarrL 1s ease-in-out infinite}.iv-vf.selfie[data-ld="r"] .iv-larr.r{animation:ivLarrR 1s ease-in-out infinite}
+@keyframes ivLarrL{50%{transform:translateX(-6px)}}@keyframes ivLarrR{50%{transform:translateX(6px)}}
+.iv-h.lv-sw{opacity:0;transition:opacity .15s ease}.iv-h{transition:opacity .2s ease}
+.iv-b .iv-cspin{display:inline-block;width:14px;height:14px;margin-right:8px;vertical-align:-2px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:ivSp .8s linear infinite;box-sizing:border-box}
+@keyframes ivSp{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.iv-vf .iv-feed img.iv-feedimg,.iv-lring .pr{transition:none!important}.iv-larr{animation:none!important}}
+.iv-vf.selfie:not(.lv-run) .iv-lring{opacity:0}
