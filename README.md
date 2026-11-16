@@ -28,6 +28,19 @@ The root page opens the **mobile + desktop mockup** side by side (`split.html`):
 
 Live at https://dclemares.github.io/guestapp-replica/ivqr-flows.html
 
+## Host's own deal (upselling)
+
+`site/upsell-flows.html` is a review page for the detail view of an offer the host sells themselves (early check-in, late check-out, parking, transfer or a custom offer), redesigned to convert. Pick a design at the top, walk every screen from the **Flows** panel and change the deal from **Controls**:
+
+- **Designs:** V1 · Direct (everything on one screen, the first free option already picked, total always in the buy bar), V2 · Showcase (large photo, with/without comparison, what you get, host note, other offers, options in a sheet) V3 · Guided (choose · review · pay), V4 · At a glance (when, where and for whom first, then what you get and how it works), V5 · Story (the headline is the result and changes with what you pick), V6 · Pick one (the decision is a list of options with benefit and price) V7 · Express (short screen, questions answered, one-tap wallet payment), and four full-screen concepts with their own visual language: V8 · Ticket (the deal as a ticket that gets stamped when bought), V9 · Chat (the host offers it in a conversation with quick replies), V10 · Stories (three full-photo screens that advance with a tap) and V11 · Your day (an itinerary drawn to scale with a switch that shows the day with and without the extra).
+- **Flows:** automatic confirmation (deal → options → payment → declined card → confirmed), host approval (deal → options → send request → waiting → approved / rejected with the hold released or a refund) and offers that can't be bought (few left, sold out, past the deadline, already bought).
+- **Booking settings** tab: the deal as the host sets it up in the dashboard: offer, price type, availability (time slots, days, limited quantity), confirmation, how the card is charged with approval, deadline, other offers and social proof. Price types, the charge with approval and the deadline are marked «to confirm»; social proof needs data Chekin doesn't have today.
+- **Controls** tab: design, screen, offer state and a test card that is accepted or declined.
+- The own offers on the Home («Offered by your host») open this deal.
+- Screens `upsell-*` start from the Payments screen and `upsell.js` / `upsell.css` fill the gap. `python3 build_upsell.py` regenerates them from the built `site/` without a full rebuild; `build_replica.py` includes them too.
+
+Live at https://dclemares.github.io/guestapp-replica/upsell-flows.html
+
 ## Property link prototype
 
 `site/property-link/` is a standalone prototype of the **property link / user link**: the public entry point where a guest finds their booking before the online check-in. Live at https://dclemares.github.io/guestapp-replica/property-link/ (mobile + desktop mockup).

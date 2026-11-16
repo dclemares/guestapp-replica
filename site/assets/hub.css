@@ -647,3 +647,9 @@ html:has([role="dialog"]) .hub-sc,html:has([role="alertdialog"]) .hub-sc,html:ha
 
 /* idem para el otro botón flotante (own-sc) */
 html:has([role="dialog"]) .own-sc,html:has([role="alertdialog"]) .own-sc,html:has(.lv-ov) .own-sc,html:has(.ivs-ov) .own-sc,html:has(.ck-modal) .own-sc,html:has(.rep-sh-back) .own-sc,html:has(.rg-sheet) .own-sc,html:has(.t2-sheet) .own-sc,html:has([data-slot="drawer-overlay"]) .own-sc,html:has([data-slot="dialog-overlay"]) .own-sc,html:has([data-slot="sheet-overlay"]) .own-sc{display:none!important}
+/* escritorio y móvil: «Change guest count» como enlace azul centrado debajo del último huésped */
+.v5-chg{margin:14px 0 4px;text-align:center}
+@media (max-width:1023.98px){.v5-chg{margin:16px 0 20px}}
+.v5-chg-l{display:inline-flex;align-items:center;gap:6px;padding:4px 0;border:0;background:none;color:var(--chekin-color-brand-blue,#385bf8);font-size:13px;font-weight:600;cursor:pointer}
+.v5-chg-l svg{width:16px;height:16px}
+.v5-chg-l:hover span{text-decoration:underline;text-underline-offset:3px}

@@ -370,3 +370,5 @@ aside.fx-nointro>p{display:none!important}
 @keyframes ivSp{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.iv-vf .iv-feed img.iv-feedimg,.iv-lring .pr{transition:none!important}.iv-larr{animation:none!important}}
 .iv-vf.selfie:not(.lv-run) .iv-lring{opacity:0}
+/* móvil: el título del IV a 14 px de la barra superior desde el primer pintado (antes lo recolocaba replica.js con retraso y saltaba en cada paso) */
+@media (max-width:1023.98px){.iv-main{padding-top:14px}}

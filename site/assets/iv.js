@@ -440,6 +440,7 @@ function paint(){
   if (window.__mobBar) window.__mobBar.sub(stepLabel()); var sb = document.querySelector('header .mb-sub'); if (sb) sb.style.display = stepLabel() ? '' : 'none';
   selfieVid(); adjustInit(); camLook(); adjMockInit(); railPaint(); ovalInit(); pvFit(); if (S.step === 'cam') camStart(); else camStop();
   var bk = document.querySelector('header button[aria-label="Back"]'); if (bk) { bk.removeAttribute('data-to'); bk.setAttribute('data-a', 'prev'); }
+  try { if (window.__repCtaMark) window.__repCtaMark(); if (window.__repDockPad) window.__repDockPad(); } catch (e) {}   /* réplica: estilo y margen finales de los botones en el mismo pintado (antes llegaban con retraso y el pie daba un salto) */
 }
 var RC = 0;   /* centro vertical del anillo de «Checking your photo»: el spinner y el círculo de «Verified» se colocan exactamente ahí */
 function go(st){

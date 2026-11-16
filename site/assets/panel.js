@@ -30,6 +30,7 @@
     if (!e.isTrusted) return;   /* solo lo que hace la persona, no lo que se replica */
     var el = e.target && e.target.closest ? e.target.closest(TARGET) : null; if (!el || el.closest('#rep-panel,#rep-panel-set,[data-rep-bar],.rep-switch,.rail-switch')) return;
     if (el.tagName === 'A' && el.target === '_blank') return;
+    if (window.__uxSync && el.closest(window.__uxSync)) return;   /* upselling: ux.js replica sus propios gestos por atributos */
     if (el.matches('[data-vk="open"],[data-vk="mopen"]')) return;   /* abrir puerta: lo replica access.js, que sabe qué puerta es */
     if (el.matches('[data-ivq]')) return;   /* flujo de IV con QR (#1096): navegar ya se repite solo y el resto lo replica ivqr.js por acción */
     if (el.getAttribute('data-a') === 'gallery' || (el.tagName === 'INPUT' && el.type === 'file')) return;   /* abre el selector de archivos: la imagen elegida se comparte aparte */
@@ -165,8 +166,8 @@ function applyTab(){
     tabsEls.forEach(function(d){ [].forEach.call(d.querySelectorAll('[data-tab]'), function(b){ var on = b.getAttribute('data-tab') === curTab; b.classList.toggle('on', on); b.setAttribute('aria-selected', String(on)); }); });
   [body, bodyS].forEach(function(B){ if (!B) return; [].forEach.call(B.querySelectorAll('.rp-s'), function(x){
     var l = x.getAttribute('data-l'), t = x.getAttribute('data-t'); if (!l) return;
-    var which = split ? ((t === 'Componentes' || t === 'Vela sombreado' || t === 'Bordes' || t === 'Pay later' || t === 'Order summary' || t === 'Pendientes') ? 'comp' : (l === 'set' ? 'set' : 'ctl')) : (l === 'set' ? ((t === 'Componentes' || t === 'Vela sombreado' || t === 'Bordes' || t === 'Order summary' || t === 'Pendientes' || t === 'Sombreados' || t === 'Separación' || t === 'Fondo' || t === 'Pregunta del huésped') ? 'comp' : 'set') : null);
-    if (which) x.classList.toggle('rp-off', which !== curTab || (split && (which === 'ctl' || t === 'Order summary' || t === 'Pendientes') && x.getAttribute('data-dev') === 'd' && twin(x)));   /* un control que existe en las dos vistas se muestra una sola vez (actúa en ambas) */
+    var which = split ? ((t === 'Componentes' || t === 'Vela sombreado' || t === 'Bordes' || t === 'Pay later' || t === 'Order summary' || t === 'Pendientes' || t === 'Pendientes en la home') ? 'comp' : (l === 'set' ? 'set' : 'ctl')) : (l === 'set' ? ((t === 'Componentes' || t === 'Vela sombreado' || t === 'Bordes' || t === 'Order summary' || t === 'Pendientes' || t === 'Pendientes en la home' || t === 'Sombreados' || t === 'Separación' || t === 'Fondo' || t === 'Pregunta del huésped') ? 'comp' : 'set') : null);
+    if (which) x.classList.toggle('rp-off', which !== curTab || (split && (which === 'ctl' || t === 'Order summary' || t === 'Pendientes' || t === 'Pendientes en la home') && x.getAttribute('data-dev') === 'd' && twin(x)));   /* un control que existe en las dos vistas se muestra una sola vez (actúa en ambas) */
     if (split && which === 'ctl') { [].forEach.call(x.querySelectorAll('.rp-only'), function(n){ n.parentNode.removeChild(n); }); var hasTwin = twin(x), isD = x.getAttribute('data-dev') === 'd'; if (isD && !hasTwin || !isD && !twinOf(x)) { var lb = x.querySelector('.rp-sl'), tg = doc.createElement('em'); tg.className = 'rp-only'; tg.textContent = isD ? 'Solo escritorio' : 'Solo móvil'; tg.style.cssText = 'margin-left:6px;font:600 9px/1 system-ui,sans-serif;color:#385bf8;background:#eef1ff;border-radius:6px;padding:2px 5px;text-transform:none;letter-spacing:0;vertical-align:middle'; if (lb) lb.appendChild(tg); } }   /* con clase (no con style) para no pisar a «Tipo de depósito», que se oculta solo cuando no hay depósito */
   }); });
 }

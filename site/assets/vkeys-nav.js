@@ -11,7 +11,7 @@ function add(){
     var lab = g.querySelector('[data-sidebar="group-label"]'); if (!lab || lab.textContent.trim() !== 'Your stay' || g.querySelector('[data-vkeys]')) return;
     var ref = [].filter.call(g.querySelectorAll('[data-sidebar="menu-button"]'), function(b){ return /Recommendations/.test(b.textContent); })[0]; if (!ref) return;
     var li = ref.closest('li').cloneNode(true), b = li.querySelector('[data-sidebar="menu-button"]');
-    li.setAttribute('data-vkeys', ''); b.setAttribute('data-active', isKeys ? 'true' : 'false'); b.removeAttribute('aria-current'); b.removeAttribute('href');
+    li.setAttribute('data-vkeys', ''); b.setAttribute('data-active', isKeys ? 'true' : 'false'); var AC = '[background:var(--sidebar-item-active-bg)]'; if (b.classList.contains(AC) && !isKeys) b.classList.remove(AC);   /* la copia no hereda el resaltado de «Recommendations» */ b.removeAttribute('aria-current'); b.removeAttribute('href');
     var sv = b.querySelector('svg'); if (sv) { sv.setAttribute('class', String(sv.getAttribute('class') || '').replace(/lucide-[\w-]+/g, '') + ' lucide-key-round'); sv.innerHTML = KEY_SVG; }
     var walker = document.createTreeWalker(b, NodeFilter.SHOW_TEXT, null), n;
     while ((n = walker.nextNode())) if (/Recommendations/.test(n.nodeValue)) n.nodeValue = n.nodeValue.replace('Recommendations', 'Virtual keys');

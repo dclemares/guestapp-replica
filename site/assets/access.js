@@ -103,7 +103,7 @@ function paintTile(){
   tile.setAttribute('data-open', look === 'open' ? '1' : '0'); tile.removeAttribute('aria-haspopup');
   var n = leftN(), tot = conds().length, co = CHIP_OPEN[kt];
   var T = {
-    locked:  ['lock', 'Unlock your keys', 'Finish check-in to unlock your keys before your arrival', chip(n + (n === 1 ? ' step left' : ' steps left'), n + ' left'), Math.round((tot - n) / tot * 100)],
+    locked:  ['lock', 'Unlock your keys', 'Finish check-in to unlock your keys before your arrival', LS.get('rep-pendv', '1') === '2' ? chip(n + (n === 1 ? ' step left' : ' steps left'), n + ' left') : '', Math.round((tot - n) / tot * 100)],
     soon:    ['clock', 'Your keys are on the way', 'They appear here ' + (cfg.when === '24h' ? 'Tue 24 Nov · 15:00' : 'on Wed 25 Nov'), '', 100],
     gen:     ['refresh', 'Preparing your keys', 'This usually takes a few minutes', '', 100],
     wait:    ['clock', 'Your keys are set', 'Opens Wed 25 Nov · 15:00', '', 100],
@@ -679,7 +679,7 @@ function hasLink(){ return doorsData().some(function(d){ return d.ty === 'link';
 function dkTop(){ return ''; }
 function dkBottom(){
   var eci = LS.get('rep-eci', '1') !== '0', lco = LS.get('rep-lco', '1') !== '0';   /* lo que ofrece el anfitrión (mismo ajuste que el Hub) */
-  var href = 'offers-all' + EXT;
+  var href = 'ux-list' + EXT;
   var row = function(icn, t, d){ return '<li><span class="vk-dk2__i">' + ic(icn, 16) + '</span><div><b>' + t + '</b><span>' + d + '</span></div></li>'; };
   var out = '<ul class="vk-dk2">' +
     row('clock', 'Check-in from 15:00', 'Your keys work from 15:00 on ' + arrD() + '. The doors won’t open before then.') +
@@ -689,7 +689,7 @@ function dkBottom(){
 }
 var offW81 = false, lb81 = 'row';   /* lb81: puerta con enlace en tarjeta, 'row' = una fila con «Open» a la derecha · 'big' = botón grande debajo */   /* escritorio: «Need more time?» abajo a todo el ancho */
 function offer81(){
-  var eci = LS.get('rep-eci', '1') !== '0', lco = LS.get('rep-lco', '1') !== '0', href = 'offers-all' + EXT;
+  var eci = LS.get('rep-eci', '1') !== '0', lco = LS.get('rep-lco', '1') !== '0', href = 'ux-list' + EXT;
   if (!eci && !lco) return '';
   return '<div class="vk-dk2__offer' + (offW81 ? ' vk-dk2__offer--wide' : '') + '"><div><b>Need more time?</b><span>Ask for an early check-in or a late check-out.</span></div><div class="vk-dk2__ob" data-n="' + ((eci ? 1 : 0) + (lco ? 1 : 0)) + '">' +
     (eci ? '<a href="' + href + '">' + ic('sun', 15) + 'Early check-in</a>' : '') + (lco ? '<a href="' + href + '">' + ic('moon', 15) + 'Late check-out</a>' : '') + '</div></div>';

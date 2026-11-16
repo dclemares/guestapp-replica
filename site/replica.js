@@ -28,7 +28,7 @@ try {
 if (S.has && S.has.indexOf(want) > -1 && S.v !== want) { location.replace(S.id + '.' + want + '.html' + location.search + location.hash); return; }
 
 /* things every screen shares: sidebar / bottom bar */
-var GLOBAL = { 'home':'home', 'registration':'hub-after-1', 'stay':'nav-stay', 'discover':'offers-all', 'recommendations':'offers-all',
+var GLOBAL = { 'home':'home', 'registration':'hub-after-1', 'stay':'nav-stay', 'discover':'ux-list', 'recommendations':'ux-list',
   'payments':'cart', 'virtual keys':'keys', 'faqs':'faqs', 'guest details':'hub-after-1' };
 
 /* Menú hamburguesa: el cajón se desliza sobre la propia pantalla (sin cargar otra página). Se toma de menu.*.html y se inyecta. */
@@ -111,8 +111,8 @@ var EMBED = new URLSearchParams(location.search).get('embed') === '1';
 })();
 (function(){   /* escritorio: el panel derecho (Vela y «Offers for your stay») proyecta una sombra suave hacia el contenido central, y «Offers» tiene el mismo ancho que Vela (320 px) */
   var rs = document.createElement('style'); rs.id = 'rep-rail-edge';
-  try { var vs0 = localStorage.getItem('replica-vela-shadow'); if (vs0 === '0') document.documentElement.setAttribute('data-vshadow', '0'); else if (vs0 === '2') document.documentElement.setAttribute('data-vshadow', 'old'); } catch (e) {}
-  rs.textContent = '@media (min-width:1024px){html[data-vshadow="old"] aside[data-slot="assistant-panel"],html[data-vshadow="old"] aside[data-slot="collapsible-rail"]{box-shadow:-14px 0 28px -18px rgba(22,22,67,.22),-1px 0 0 rgba(22,22,67,.04)!important}html:not([data-vshadow="0"]):not([data-vshadow="old"]) aside[data-slot="assistant-panel"],html:not([data-vshadow="0"]):not([data-vshadow="old"]) aside[data-slot="collapsible-rail"]{box-shadow:-1px 0 2px rgba(22,22,67,.05),-8px 0 22px rgba(22,22,67,.07)!important;position:relative;z-index:2}aside[data-slot="collapsible-rail"]{position:sticky}[class*="lg:grid-cols-[minmax(0,1fr)_324px]"]{grid-template-columns:minmax(0,1fr) clamp(320px,22vw,480px)!important}aside[data-slot="collapsible-rail"]{padding-left:24px!important;padding-right:24px!important}}';
+  try { var vs0 = localStorage.getItem('replica-vela-shadow2'); if (vs0 === null || vs0 === '0') document.documentElement.setAttribute('data-vshadow', '0'); else if (vs0 === '2') document.documentElement.setAttribute('data-vshadow', 'old'); } catch (e) {}
+  rs.textContent = '@media (min-width:1024px){html[data-vshadow="old"] aside[data-slot="assistant-panel"],html[data-vshadow="old"] aside[data-slot="collapsible-rail"]{box-shadow:-14px 0 28px -18px rgba(22,22,67,.22),-1px 0 0 rgba(22,22,67,.04)!important}html:not([data-vshadow="0"]):not([data-vshadow="old"]) aside[data-slot="assistant-panel"],html:not([data-vshadow="0"]):not([data-vshadow="old"]) aside[data-slot="collapsible-rail"]{box-shadow:-1px 0 2px rgba(22,22,67,.05),-8px 0 22px rgba(22,22,67,.07)!important;position:relative;z-index:2}aside[data-slot="collapsible-rail"]{position:sticky}[class*="lg:grid-cols-[minmax(0,1fr)_324px]"]{grid-template-columns:minmax(0,1fr) clamp(400px,22vw,480px)!important}aside[data-slot="collapsible-rail"]{padding-left:24px!important;padding-right:24px!important}}';
   (document.head || document.documentElement).appendChild(rs);
 })();
 (function(){   /* Componentes → Bordes: «Sin borde total» = todo borde invisible (tarjetas, cajas, barras, chips, rayas…) salvo los campos de formulario y el panel de controles. Los Suggested de Vela, sin borde, llevan un relleno tenue para seguir pareciendo pulsables. Las sombras añadidas dependen de Componentes → Sombreados (por defecto No). */
@@ -246,7 +246,7 @@ var EMBED = new URLSearchParams(location.search).get('embed') === '1';
 })();
 (function(){   /* Móvil: se quita la barra de navegación inferior (Home · Registration · Stay · Discover) y el espacio que reservaba debajo del contenido. */
   var nv = document.createElement('style'); nv.id = 'rep-no-bottom-nav';
-  nv.textContent = '@media (max-width:1023.98px){nav[data-slot="bottom-nav"]{display:none!important}:root{--mobile-bottom-nav-height:0px!important}[class*="pb-[var(--mobile-bottom-nav-height"]{padding-bottom:20px!important}}';
+  nv.textContent = '@media (max-width:1023.98px){nav[data-slot="bottom-nav"]{display:none!important}:root{--mobile-bottom-nav-height:0px!important}[class^="pb-[var(--mobile-bottom-nav-height"],[class*=" pb-[var(--mobile-bottom-nav-height"]{padding-bottom:20px!important}}';   /* solo la clase pb-[…] propia (no la variante «[&_…]:pb-[…]» del contenedor de la página, que lo hacía 20 px más alto que la pantalla y sacaba una segunda barra de scroll) */
   (document.head || document.documentElement).appendChild(nv);
 })();
 (function(){   /* CTA cuadrados SIEMPRE (en todos los modos de Bordes): esquinas de 12 px en los botones habituales desde el primer pintado, sin salto píldora → cuadrado. Los chips (Suggested, filtros) y los botones de icono redondos no cuentan como CTA. */
@@ -498,11 +498,11 @@ if (!EMBED) {
   }, true);
   window.addEventListener('replica-pay-change', dtPaint);
   /* remote access (sí / no) */
-  var vshV = LSget('replica-vela-shadow', '1'); if (['0', '1', '2'].indexOf(vshV) < 0) vshV = '1';
+  var vshV = LSget('replica-vela-shadow2', '0'); if (['0', '1', '2'].indexOf(vshV) < 0) vshV = '0';   /* por defecto «No» (2026-11-16) */
   var vsh = seg([['2', 'Antes'], ['1', 'Ahora'], ['0', 'No']].map(function(o){ return '<button type="button" class="rs-chip' + (o[0] === vshV ? ' on' : '') + '" data-vsh="' + o[0] + '">' + o[1] + '</button>'; }).join(''));   /* Componentes → Vela sombreado: Antes (sombra marcada) · Ahora (ligera, como la tarjeta T2) · No */
   vsh.addEventListener('click', function(e){
     var b = e.target.closest('[data-vsh]'); if (!b) return; e.preventDefault(); e.stopPropagation();
-    var v = b.getAttribute('data-vsh'); LSset('replica-vela-shadow', v);
+    var v = b.getAttribute('data-vsh'); LSset('replica-vela-shadow2', v);
     [].forEach.call(vsh.querySelectorAll('[data-vsh]'), function(c){ c.classList.toggle('on', c === b); });
     var setA = function(d){ try { if (v === '1') d.documentElement.removeAttribute('data-vshadow'); else d.documentElement.setAttribute('data-vshadow', v === '0' ? '0' : 'old'); } catch (x) {} };
     setA(document); try { [].forEach.call(window.parent.document.querySelectorAll('iframe'), function(f){ try { setA(f.contentDocument); } catch (x) {} }); } catch (x) {}
@@ -733,6 +733,7 @@ if (document.readyState !== 'loading' && !barDone) { barDone = true; addBar(); }
     /* el botón secundario que acompaña al CTA (mismo contenedor) toma el mismo tamaño, con borde */
     [].forEach.call(document.querySelectorAll('button.rep-cta'), function(p){ [].forEach.call(p.parentElement.children, function(s){ if (s === p || s.tagName !== 'BUTTON' || s.classList.contains('rep-cta') || s.classList.contains('rep-cta2') || s.classList.contains('ivq-row')) return;   /* #1119: las filas de IV QR (p. ej. «Can’t find it?») no son botones secundarios */ var r = s.getBoundingClientRect(); if (r.width > 120 && r.height >= 36) { s.classList.add('rep-cta2'); if (p.classList.contains('rep-cta-m')) s.classList.add('rep-cta-m'); } }); });
   };
+  window.__repCtaMark = mark;   /* el IV lo llama al pintar cada paso, para que los botones no se vean un instante sin su estilo */
   var pend = 0, obs = function(){ if (pend) return; pend = setTimeout(function(){ pend = 0; mark(); }, 120); };
   var go = function(){ mark(); setTimeout(mark, 500); new MutationObserver(obs).observe(document.body, { childList: true, subtree: true }); };
   if (document.readyState !== 'loading') go(); else document.addEventListener('DOMContentLoaded', go);
@@ -785,19 +786,19 @@ if (document.readyState !== 'loading' && !barDone) { barDone = true; addBar(); }
     + 'aside[data-slot="assistant-panel"] > div:first-child > div > div:last-child{height:14px!important;line-height:14px!important;display:flex;align-items:center;gap:0!important}';
   (document.head || document.documentElement).appendChild(st);
 })();
-/* Vela: la columna crece con la pantalla (320 px en portátil, hasta 480 px en monitor grande) y se puede comprimir con el botón «Collapse panel» (también en la home). Comprimida queda una pestaña de 56 px con el botón arriba (no se mueve), debajo el icono de Vela (que viaja hasta ahí con animación) y, en la home, «Offers for your stay» en vertical */
+/* Vela: la columna crece con la pantalla (400 px en portátil, hasta 480 px en monitor grande; desde 2026-11-16 el mismo ancho en todas las pantallas, también en los deals) y se puede comprimir con el botón «Collapse panel» (también en la home). Comprimida queda una pestaña de 56 px con el botón arriba (no se mueve), debajo el icono de Vela (que viaja hasta ahí con animación) y, en la home, «Offers for your stay» en vertical */
 (function(){
   if (!window.matchMedia('(min-width:1025px)').matches) return;
   var html = document.documentElement, KEY = 'rep-vela-min', min = false; try { min = localStorage.getItem(KEY) === '1'; } catch (e) {}
   var W = '.page-wrapper:has(> div > aside[data-slot="assistant-panel"])', A = 'aside[data-slot="assistant-panel"]', H = 'div:has(> aside[data-slot="collapsible-rail"])', R = 'aside[data-slot="collapsible-rail"]';
   if (min) { html.setAttribute('data-vela', 'min'); html.classList.add('rep-vela-boot'); }   /* al cargar ya comprimida no se anima la columna */
   var st = document.createElement('style'); st.id = 'rep-vela-col';
-  st.textContent = '@media (min-width:1025px){html.rep-vela-boot .page-wrapper,html.rep-vela-boot ' + H + ',html.rep-vela-boot ' + A + ' > *,html.rep-vela-boot ' + R + ' > div{transition:none!important}' + W + '{grid-template-columns:266px minmax(0,1fr) clamp(320px,22vw,480px)!important}'
+  st.textContent = '@media (min-width:1025px){html.rep-vela-boot .page-wrapper,html.rep-vela-boot ' + H + ',html.rep-vela-boot ' + A + ' > *,html.rep-vela-boot ' + R + ' > div{transition:none!important}' + W + '{grid-template-columns:266px minmax(0,1fr) clamp(400px,22vw,480px)!important}'
     + 'html[data-vela="min"] ' + W + '{grid-template-columns:266px minmax(0,1fr) 56px!important}'
     + 'html[data-vela="min"] ' + H + '{grid-template-columns:minmax(0,1fr) 56px!important}'
     + A + ',' + R + '{overflow:hidden!important}'
-    + A + ' > *:not(.rep-vtab){min-width:calc(clamp(320px,22vw,480px) - 48px);transition:opacity .22s ease .16s}'
-    + R + ' > div:not(.rep-vtab){min-width:calc(clamp(320px,22vw,480px) - 48px);transition:opacity .22s ease .16s}'
+    + A + ' > *:not(.rep-vtab){min-width:calc(clamp(400px,22vw,480px) - 48px);transition:opacity .22s ease .16s}'
+    + R + ' > div:not(.rep-vtab){min-width:calc(clamp(400px,22vw,480px) - 48px);transition:opacity .22s ease .16s}'
     + 'html[data-vela="min"] ' + A + ' > *:not(.rep-vtab),html[data-vela="min"] ' + R + ' > div:not(.rep-vtab){opacity:0;pointer-events:none;transition-duration:.12s;transition-delay:0s}'
     + 'html[data-vela="min"] ' + A + '{padding-left:0!important;padding-right:0!important}'
     + 'button[aria-label="Collapse panel"],button[aria-label="Expand panel"]{width:36px!important;height:36px!important;margin:-2px;z-index:50!important}'
@@ -915,6 +916,7 @@ if (document.readyState !== 'loading' && !barDone) { barDone = true; addBar(); }
       d.style.setProperty('padding-bottom', 'max(' + pb + 'px, env(safe-area-inset-bottom,0px))', 'important');
     });
   };
+  window.__repDockPad = run;   /* el IV lo llama al pintar cada paso: el pie ya sale con su margen final, sin encogerse después */
   [500, 1400, 2800].forEach(function(ms){ setTimeout(run, ms); });
   window.addEventListener('resize', function(){ setTimeout(run, 200); });
   var tm = null, ta = null, tb = null;
@@ -988,6 +990,8 @@ if (document.readyState !== 'loading' && !barDone) { barDone = true; addBar(); }
   window.__firstGap = find;
   var run = function(){
     if (window.scrollY > 4) return; var f = find(); if (!f) return;
+    if (f.e.closest('.iv-m')) return;
+    for (var sa = f.e.parentElement; sa && sa !== document.documentElement; sa = sa.parentElement) if (sa.scrollTop > 4) return;   /* la home se desplaza dentro de un contenedor (no la ventana): si ya está desplazada no se toca nada (antes subía el subtítulo encima del título) */   /* el IV ya trae su espacio en iv.css; recolocarlo con retraso hacía saltar el título en cada paso */
     var delta = f.gap + f.off - TARGET; if (delta < 1) return;
     var el = f.e;
     for (var a = f.e.parentElement; a && a !== document.body; a = a.parentElement) { var t = a.getBoundingClientRect().top; if (t < f.bar - 1 || f.top - t > 10) break; el = a; }
@@ -1046,4 +1050,37 @@ if (document.readyState !== 'loading' && !barDone) { barDone = true; addBar(); }
     var t = e.target; if (gesture || !t || !/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)) return;
     setTimeout(function(){ if (!gesture && document.activeElement === t) try { t.blur(); } catch (_) {} }, 0);
   }, true);
+})();
+
+/* ===== cajas de icono azul claro (lista de pasos, guidebooks, carrito, llaves): un solo estilo en toda la app =====
+   dibujo en nuestro azul (#385bf8, como los guidebooks) y un fondo algo más claro que el de los guidebooks */
+(function(){
+  var st = document.createElement('style'); st.id = 'rep-icbox';
+  var BOX = 'html .g-ic,html .p6i,html .vk-place3__i,html .vk-t__i--s,html .vk-addr__i,html .chk-vn4 [data-slot="task-row"]:not([data-state="done"])>span:first-child';
+  st.textContent = ':root{--rep-icbox-bg:#e8edff;--rep-icbox-fg:#385bf8}'
+    + BOX + '{background:var(--rep-icbox-bg)!important;color:var(--rep-icbox-fg)!important;border-color:transparent!important}'
+    + 'html .chk-vn4 [data-slot="task-row"]:not([data-state="done"])>span:first-child svg:not(.chk-pclock svg){color:var(--rep-icbox-fg)!important}';
+  (document.head || document.documentElement).appendChild(st);
+})();
+
+
+/* ===== móvil: barra de scroll como la de iOS. La nativa se oculta (no ocupa espacio) y, solo mientras se desplaza, aparece un indicador fino superpuesto que se desvanece al parar ===== */
+(function(){
+  if (!/\.m\.html/.test(location.pathname) && !(window.matchMedia && matchMedia('(max-width:1023.98px)').matches)) return;
+  var st = document.createElement('style'); st.id = 'rep-mscroll';
+  st.textContent = 'html,body,*{scrollbar-width:none!important}html::-webkit-scrollbar,body::-webkit-scrollbar,*::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}'
+    + '.rep-sbar{position:fixed;z-index:2147483000;width:3px;border-radius:3px;background:rgba(0,0,0,.38);opacity:0;pointer-events:none;transition:opacity .35s ease}.rep-sbar.on{opacity:1;transition:opacity .08s ease}';
+  (document.head || document.documentElement).appendChild(st);
+  var bar = null, tm = 0;
+  var show = function(el){
+    var isDoc = el === document || el === document.documentElement || el === document.body || el === document.scrollingElement;
+    var sh = isDoc ? document.scrollingElement.scrollHeight : el.scrollHeight, ch = isDoc ? innerHeight : el.clientHeight, top = isDoc ? scrollY : el.scrollTop;
+    if (sh <= ch + 2) return;
+    var r = isDoc ? { top: 0, right: innerWidth, height: innerHeight } : el.getBoundingClientRect();
+    var inset = 3, track = r.height - inset * 2, h = Math.max(36, track * ch / sh), y = r.top + inset + (track - h) * (top / (sh - ch));
+    if (!bar) { bar = document.createElement('div'); bar.className = 'rep-sbar'; bar.setAttribute('aria-hidden', 'true'); document.body.appendChild(bar); }
+    bar.style.top = y + 'px'; bar.style.height = h + 'px'; bar.style.left = (r.right - 3 - 3) + 'px';
+    bar.classList.add('on'); clearTimeout(tm); tm = setTimeout(function(){ bar.classList.remove('on'); }, 700);
+  };
+  document.addEventListener('scroll', function(e){ show(e.target); }, true);
 })();

@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>Upselling flows</title>
+<!-- Deal propio del anfitrión (upselling): todas las pantallas de los flujos en una lista, con la vista móvil + escritorio al lado.
+     «Design» cambia entre V1 · Directo, V2 · Escaparate y V3 · Guiado; «Controls» abre el panel con la configuración del deal. -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#161643;--sub:#5a6695;--mute:#8a8ca6;--blue:#385bf8;--soft:#f1f3fb;--soft2:#e9edff;--bg:#f6f7fc}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:400 14px/1.45 Poppins,system-ui,sans-serif;-webkit-font-smoothing:antialiased;display:grid;grid-template-columns:var(--aw,252px) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
+header{grid-column:1/-1;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 12px;background:#fff;box-shadow:0 4px 14px rgba(22,22,67,.06);z-index:2}
+header h1{margin:0;font-size:16px;font-weight:700;white-space:nowrap}
+header h1 span{color:var(--blue)}
+.seg{display:flex;gap:2px;padding:3px;border-radius:12px;background:var(--soft)}.seg[hidden]{display:none}
+.seg button{height:28px;padding:0 10px;border:0;border-radius:9px;background:none;color:var(--sub);font:600 12px Poppins,system-ui,sans-serif;cursor:pointer;white-space:nowrap}
+.seg button.on{background:var(--ink);color:#fff}
+.seg button:focus-visible,.it:focus-visible,.nav button:focus-visible,.open:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.grow{flex:1}
+.nav{display:flex;gap:6px}
+.nav button,.open{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border:0;border-radius:10px;background:var(--soft);color:var(--ink);font:600 13px Poppins,system-ui,sans-serif;cursor:pointer;text-decoration:none;white-space:nowrap}
+.nav button:hover,.open:hover{background:var(--soft2)}
+.nav .ctl{background:var(--ink);color:#fff}.nav .ctl:hover{background:#2a2a63}.nav .ctl[aria-pressed="true"]{background:var(--blue)}
+/* #1126 · «Navigation» es un panel flotante como «Controls»: tarjeta blanca con su cabecera y botón de cerrar; se abre y se pliega desde la cabecera */
+body{background:linear-gradient(180deg,#e9ecf9 0%,#dde1f3 100%)}
+aside{position:relative;margin:12px 0 12px 12px;display:flex;flex-direction:column;min-height:0;border-radius:16px;background:rgba(255,255,255,.97);box-shadow:0 8px 24px rgba(22,22,67,.14);overflow:hidden}
+.nv-h{flex:none;display:flex;align-items:center;gap:8px;padding:12px 10px 6px 16px}
+.nv-h b{font-size:15px;font-weight:700}.nv-h span{font-size:11.5px;color:var(--mute)}
+.nv-h .nv-x{margin-left:auto;display:grid;place-items:center;width:28px;height:28px;border:0;border-radius:8px;background:var(--soft);color:var(--ink);cursor:pointer}
+.nv-h .nv-x:hover{background:var(--soft2)}.nv-h .nv-x:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+#list{flex:1;min-height:0;overflow:auto;padding:6px 8px 20px}
+body{transition:grid-template-columns .28s cubic-bezier(.4,0,.2,1)}aside#nav{transition:opacity .2s,margin .28s}
+body.nolist{grid-template-columns:0px minmax(0,1fr)}body.nolist aside#nav{margin-left:0;margin-right:0;opacity:0;pointer-events:none;visibility:hidden}   /* #1127: se contrae y se expande animado */
+.tl{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border:0;border-radius:10px;background:var(--ink);color:#fff;font:600 13px Poppins,system-ui,sans-serif;cursor:pointer;white-space:nowrap}
+.tl:hover{background:#2a2a63}.tl[aria-pressed="true"]{background:var(--blue)}.tl:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.cur{flex:0 1 auto;min-width:0;font-size:12.5px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (min-width:1100px){header{flex-wrap:nowrap}header .seg,header .nav,header h1,.tl{flex:none}.grow{min-width:8px}}.cur b{color:var(--ink);font-weight:600}
+#list h2{margin:18px 8px 8px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+#list h2:first-child{margin-top:4px}
+#list p.d{margin:-4px 8px 6px;font-size:11.5px;line-height:1.4;color:var(--sub)}
+.it{display:flex;align-items:center;gap:8px;width:100%;padding:6px 8px;border:0;border-radius:10px;background:none;color:var(--ink);font:500 12.5px/1.3 Poppins,system-ui,sans-serif;text-align:left;cursor:pointer}
+.it:hover{background:var(--soft)}
+.it i{flex:none;display:grid;place-items:center;width:20px;height:20px;border-radius:99px;background:var(--soft2);color:var(--blue);font-style:normal;font-size:11px;font-weight:700}
+.it.on{background:var(--ink);color:#fff}.it.on i{background:var(--blue);color:#fff}
+.it small{margin-left:auto;font-size:11px;color:var(--mute)}.it.on small{color:#c7d0ff}
+.it.x{color:var(--sub)}.it.x i{background:#f1f2f6;color:#8a8ca6}
+main{position:relative;min-width:0}
+main iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:transparent}
+.away{position:absolute;left:50%;bottom:16px;z-index:3;display:none;align-items:center;gap:10px;padding:8px 8px 8px 16px;border-radius:99px;background:var(--ink);color:#fff;font-size:13px;transform:translateX(-50%)}
+.away.on{display:flex}
+.away button{height:32px;padding:0 14px;border:0;border-radius:99px;background:#fff;color:var(--ink);font:600 12.5px Poppins,system-ui,sans-serif;cursor:pointer}
+@media (max-width:820px){body{grid-template-columns:1fr;grid-template-rows:auto auto minmax(0,1fr)}aside{max-height:34vh}main{min-height:60vh}}
+header{flex-wrap:wrap!important}   /* siete diseños: la cabecera puede ocupar dos líneas */
+</style></head><body>
+<header>
+  
+  <h1>Upselling <span>flows</span> <small style="font-weight:600;font-size:12px;color:var(--sub);margin-left:4px">Host's own deal</small></h1>
+  <div class="seg" id="design" role="group" aria-label="Design"></div>
+  <div class="seg" id="view" role="group" aria-label="View"></div>
+  <span class="grow"></span>
+  <span class="cur" id="cur" aria-live="polite"></span>
+  <div class="nav"><button type="button" id="prev" aria-label="Previous screen">← Prev</button><button type="button" id="next" aria-label="Next screen">Next →</button><a class="open" id="open" href="#" target="_blank" rel="noopener">Open alone ↗</a><button type="button" class="tl" id="tl" aria-pressed="true" aria-controls="nav"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></svg>Flows</button><button type="button" class="ctl" id="ctl" aria-pressed="false" hidden><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>Controls</button></div>
+</header>
+<aside id="nav" aria-label="Flows"><div class="nv-h"><b>Flows</b><span id="nvc"></span><button type="button" class="nv-x" id="nvx" aria-label="Close flows"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div><div id="list"></div></aside>
+<main><iframe id="fr" title="Screen preview"></iframe><div class="away" id="away" role="status"><span>You left the upselling flow</span><button type="button" id="back">Back to the flow</button></div></main>
+<script>
+(function(){
+'use strict';
+/* Flujos del deal propio. Una entrada puede llevar un caso en la URL de la pantalla (p. ej. «upsell-pay?cf=approval»): se pasa como q= a la vista */
+var AUTO = [['upsell-detail?cf=auto&st=ok', 'Deal'], ['upsell-options?cf=auto&st=ok', 'Options', 'opt'], ['upsell-pay?cf=auto&st=ok', 'Payment'], ['upsell-failed?cf=auto&st=ok', 'Payment declined'], ['upsell-confirmed?cf=auto&st=ok', 'Confirmed']];
+var APPR = [['upsell-detail?cf=approval&st=ok', 'Deal'], ['upsell-options?cf=approval&st=ok', 'Options', 'opt'], ['upsell-pay?cf=approval&st=ok', 'Send request'], ['upsell-requested?cf=approval&st=ok', 'Request sent (waiting for host)'], ['upsell-approved?cf=approval&st=ok', 'Approved by host'], ['upsell-rejected?cf=approval&st=ok', 'Rejected · hold released or refund']];
+var BLOCK = [['upsell-detail?st=low', 'Few left (limited quantity)'], ['upsell-detail?st=soldout', 'Sold out'], ['upsell-detail?st=deadline', 'Past the booking deadline'], ['upsell-detail?st=bought', 'Already bought']];
+/* alrededor del deal (upsell-hub.js): la lista de extras del anfitrión, sin extras, y «My extras» para seguir lo pedido */
+var BROWSE = [['upsell-list', 'Extras from your host'], ['upsell-empty', 'No extras published']];
+var MINE = [['upsell-mine?mc=wait', 'Request waiting for host'], ['upsell-mine?mc=cancel', 'Cancel request?'], ['upsell-mine?mc=cancelled', 'Request cancelled · hold released'], ['upsell-mine?mc=declined', 'Not confirmed · host note + plan B']];
+var LINKED = [['home', 'Home · offers from your host'], ['cart', 'Payments']];
+var DS = { v1: { t: 'V1 · Direct', d: 'Everything on one screen, the first free option already picked, total always in the buy bar.' }, v2: { t: 'V2 · Showcase', d: 'Large photo, with/without comparison, what you get, host note and other offers. Options in a sheet.' }, v3: { t: 'V3 · Guided', d: 'Three steps: choose, review, pay. For deals with many options or host approval.' },
+  v4: { t: 'V4 · At a glance', d: 'When, where and for whom first; then what you get and how it works in three steps.' }, v5: { t: 'V5 · Story', d: 'The headline is the result and changes with what you pick; with/without comparison right below.' },
+  v6: { t: 'V6 · Pick one', d: 'The decision is a list of options, each with its benefit and price.' }, v7: { t: 'V7 · Express', d: 'A short screen with the questions answered and one-tap wallet payment, no payment sheet.' },
+  v8: { t: 'V8 · Ticket', d: 'The deal is a ticket: what, when, where and for whom. The stub holds the total and the payment, and gets stamped when bought.' }, v9: { t: 'V9 · Chat', d: 'The host offers it in a conversation: quick replies to choose, the offer arrives as a message with its button.' },
+  v10: { t: 'V10 · Stories', d: 'Three full-photo screens (what you gain, what you get, choose and pay) that advance on their own or with a tap.' }, v11: { t: 'V11 · Your day', d: 'The guest’s day as an itinerary drawn to scale, and a switch that shows it with and without the extra.' } };
+function groups(dk){ var f = function(l){ return l.filter(function(x){ return x[2] !== 'opt' || dk === 'v2' || dk === 'v3'; }); };   /* solo V2 y V3 tienen pantalla de opciones */
+  return [['Browse extras', 'Every extra the host offers for the stay, filtered by moment of the trip. Tap one to open its deal.', BROWSE], ['Automatic confirmation', DS[dk].d, f(AUTO)], ['Host approval', 'The host accepts or rejects the request from the dashboard.', f(APPR)], ['My extras', 'What the guest already requested or bought: follow a request, cancel it, or see why the host said no.', MINE], ['Offer not available', 'States that block or change the purchase.', BLOCK]]; }
+var VIEWS = [['split', 'Mobile + desktop'], ['m', 'Mobile'], ['d', 'Desktop']];
+var LS = { get: function(k, d){ try { return localStorage.getItem(k) || d; } catch (e) { return d; } }, set: function(k, v){ try { localStorage.setItem(k, v); } catch (e) {} } };
+var h = new URLSearchParams(location.hash.slice(1));
+var design = DS[h.get('d')] ? h.get('d') : (DS[LS.get('replica-ups-design', 'v1')] ? LS.get('replica-ups-design', 'v1') : 'v1');
+var view = ['split', 'm', 'd'].indexOf(h.get('v')) > -1 ? h.get('v') : 'split';
+var fr = document.getElementById('fr'), list = document.getElementById('list');
+function flat(){ var o = []; groups(design).forEach(function(g){ g[2].forEach(function(s){ o.push(s[0]); }); }); return o; }
+var cur = h.get('s') && flat().indexOf(h.get('s')) > -1 ? h.get('s') : flat()[0];
+function url(key){ var p = key.split('?'), id = p[0], qq = '&q=' + encodeURIComponent((p[1] ? p[1] + '&' : '') + 'upd=' + design); return view === 'split' ? 'split.html?s=' + id + qq + '&fx=1' : 'phone.html?s=' + id + qq + '&dev=' + (view === 'm' ? 'i15' : 'mbp14'); }
+function seg(el, items, on, cb){ el.innerHTML = items.map(function(x){ return '<button type="button" data-k="' + x[0] + '" class="' + (x[0] === on ? 'on' : '') + '" aria-pressed="' + (x[0] === on) + '">' + x[1] + '</button>'; }).join(''); el.onclick = function(e){ var b = e.target.closest('button'); if (b) cb(b.getAttribute('data-k')); }; }
+function paint(){
+  seg(document.getElementById('design'), Object.keys(DS).map(function(k){ return [k, DS[k].t.replace(' · ', ' ')]; }), design, function(k){ design = k; LS.set('replica-ups-design', k); if (flat().indexOf(cur) < 0) cur = flat()[0]; go(); });
+  seg(document.getElementById('view'), VIEWS, view, function(k){ view = k; go(); });
+  var n = 0;
+  list.innerHTML = groups(design).map(function(g){ return '<h2>' + g[0] + '</h2><p class="d">' + g[1] + '</p>' + g[2].map(function(s){ n++; return '<button type="button" class="it' + (s[0] === cur ? ' on' : '') + '" data-s="' + s[0] + '"' + (s[0] === cur ? ' aria-current="true"' : '') + '><i>' + n + '</i>' + s[1] + '</button>'; }).join(''); }).join('')
+    + '<h2>Linked screens</h2><p class="d">Where the deal is opened from and where the guest goes after.</p>' + LINKED.map(function(s){ return '<button type="button" class="it x' + (s[0] === cur ? ' on' : '') + '" data-s="' + s[0] + '"><i>↗</i>' + s[1] + '</button>'; }).join('');
+  document.getElementById('open').href = url(cur);
+  var f = flat(), i = f.indexOf(cur), nm = (list.querySelector('.it.on') || {}).textContent || cur;
+  document.getElementById('nvc').textContent = DS[design].t + ' · ' + f.length + ' screens';
+  document.getElementById('cur').innerHTML = (i > -1 ? '<b>' + (i + 1) + '/' + f.length + '</b> · ' : '') + nm.replace(/^\S+?(?=[A-Z])/, '').replace(/[<&]/g, '');
+}
+function go(){
+  LS.set('replica-ups-design', design);
+  var mq = /^upsell-mine\?mc=(\w+)/.exec(cur); if (mq) LS.set('replica-ups-mc', mq[1]);
+  paint(); fr.src = url(cur); lastIn = cur; document.getElementById('away').classList.remove('on');
+  history.replaceState(null, '', '#d=' + design + '&v=' + view + '&s=' + encodeURIComponent(cur));
+  var on = list.querySelector('.it.on'); if (on) on.scrollIntoView({ block: 'nearest' });
+}
+list.onclick = function(e){ var b = e.target.closest('[data-s]'); if (b) { cur = b.getAttribute('data-s'); go(); } };
+function step(d){ var f = flat(), i = f.indexOf(cur); cur = f[i < 0 ? 0 : (i + d + f.length) % f.length]; go(); }
+document.getElementById('prev').onclick = function(){ step(-1); };
+document.getElementById('next').onclick = function(){ step(1); };
+document.addEventListener('keydown', function(e){ if (e.target.closest && e.target.closest('input,textarea')) return; if (e.key === 'ArrowDown' || e.key === 'ArrowRight' && e.altKey) { e.preventDefault(); step(1); } if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' && e.altKey) { e.preventDefault(); step(-1); } });
+/* si la pantalla navega dentro del marco, la lista la sigue (la primera entrada con ese id); si sale de las pantallas del deal, aviso para volver */
+var lastIn = cur;
+setInterval(function(){
+  var s = null, dz = null; try { var w = fr.contentWindow, q = new URLSearchParams(w.location.search); s = q.get('s'); if (!s) { var mm = /screens\/([^/]+)\.[md]\.html/.exec(w.location.pathname); s = mm && mm[1]; } } catch (e) {}
+  try { dz = localStorage.getItem('replica-ups-design'); } catch (e) {}
+  if (dz && dz !== design && DS[dz]) { design = dz; paint(); }   /* el diseño también se cambia desde «Controls» */
+  var mc = null; try { mc = localStorage.getItem('replica-ups-mc'); } catch (e) {}   /* «My extras» cambia de caso sin salir de la pantalla */
+  if (!s || s === cur.split('?')[0] && (s !== 'upsell-mine' || cur.indexOf('mc=' + mc) > -1)) return;
+  var hit = flat().filter(function(k){ return k.split('?')[0] === s; }), cf = null; try { cf = localStorage.getItem('replica-ups-confirm'); } catch (e) {}
+  var pick = (s === 'upsell-mine' ? hit.filter(function(k){ return k.indexOf('mc=' + mc) > -1; })[0] : hit.filter(function(k){ return k.indexOf('cf=' + cf) > -1; })[0]) || hit[0];
+  cur = pick || s;
+  if (/^upsell-/.test(s)) lastIn = cur;
+  paint(); history.replaceState(null, '', '#d=' + design + '&v=' + view + '&s=' + encodeURIComponent(cur));
+  document.getElementById('away').classList.toggle('on', !/^upsell-/.test(s));
+}, 700);
+var ctl = document.getElementById('ctl');
+function paintCtl(){ var on = false; try { on = !!fr.contentWindow.__getPO(); } catch (e) {} ctl.hidden = view !== 'split'; ctl.setAttribute('aria-pressed', String(on)); }
+ctl.onclick = function(){ var w = fr.contentWindow; if (w && w.__setPO) { w.__setPO(!w.__getPO()); paintCtl(); } else { try { localStorage.setItem('replica-flows-panel', '1'); } catch (e) {} fr.src = url(cur); } };
+/* En «Mobile» y «Desktop» (phone.html) los cuadros van pegados al dispositivo y no tienen botón de cerrar: «Controls» los muestra u oculta */
+function phoneOn(){ return LS.get('replica-flows-panel', '1') !== '0'; }
+function phoneApply(){ try { var d = fr.contentDocument, s = d.getElementById('ups-po-css'); if (!s) { s = d.createElement('style'); s.id = 'ups-po-css'; d.head.appendChild(s); } s.textContent = phoneOn() ? '' : '#rep-panel.rp-dock,#rep-panel-set.rp-dock{display:none!important}'; } catch (e) {} }
+paintCtl = function(){ var on = view === 'split' ? false : phoneOn(); if (view === 'split') { try { on = !!fr.contentWindow.__getPO(); } catch (e) {} } else phoneApply(); ctl.hidden = false; ctl.style.display = ''; ctl.setAttribute('aria-pressed', String(on)); };
+ctl.onclick = function(){ var w = fr.contentWindow; if (view !== 'split') { LS.set('replica-flows-panel', phoneOn() ? '0' : '1'); paintCtl(); return; } if (w && w.__setPO) { w.__setPO(!w.__getPO()); paintCtl(); } else { LS.set('replica-flows-panel', '1'); fr.src = url(cur); } };
+fr.addEventListener('load', function(){ paintCtl(); setTimeout(paintCtl, 600); });
+window.addEventListener('message', function(e){ if (e.data && e.data.rep === 'flows-po') paintCtl(); });
+var tl = document.getElementById('tl');
+function setList(v){ document.body.classList.toggle('nolist', !v); tl.setAttribute('aria-pressed', String(v)); tl.title = v ? 'Hide the screen list' : 'Show the screen list'; LS.set('replica-flows-list', v ? '1' : '0'); }
+tl.onclick = function(){ setList(document.body.classList.contains('nolist')); };
+document.getElementById('nvx').onclick = function(){ setList(false); tl.focus(); };
+setList(LS.get('replica-flows-list', '1') === '1');
+document.getElementById('back').onclick = function(){ cur = lastIn; go(); };
+go();
+})();
+</script>
+<script src="assets/i18n-en.js?v=1794352503"></script></body></html>

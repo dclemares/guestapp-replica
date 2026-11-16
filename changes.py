@@ -477,7 +477,7 @@ def hub_style(html, v='m'):
             nav = hs[i0:i1]
             btns = _re.findall(r'<button data-slot="bottom-nav-item".*?</button>', nav, _re.S)
             if len(btns) == 4:
-                tos = ['home', None, None, 'offers-all']
+                tos = ['home', None, None, 'ux-list']
                 new = []
                 for k, b in enumerate(btns):
                     b = b.replace(' data-active="true" aria-current="page"', ' data-active="false"')

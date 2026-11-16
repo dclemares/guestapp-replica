@@ -1,0 +1,75 @@
+/* Deal propio · Extras, «My extras» y sin extras (upsell-hub.js). Mismo lenguaje que upsell.css: tarjetas blancas sin borde,
+   fondos suaves en vez de contornos, marino #161643, azul #385bf8, Poppins. */
+.uh{gap:14px}
+.uh .ic{width:16px;height:16px}
+.uh-av{flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--u-navy);color:#fff;font-weight:700;font-size:15px}
+.uh-av.s{width:22px;height:22px;font-size:10.5px}
+.uh-host{display:flex;gap:12px;align-items:flex-start;padding:14px;border-radius:18px;background:#fff}
+.uh-host b{display:block;font-size:15px}
+.uh-host small{display:block;color:var(--u-sec);font-size:12.5px;line-height:1.45;margin-top:2px}
+/* entrada a «My extras» */
+.uh-mine{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;border:0;border-radius:16px;background:#eef1ff;text-align:left}
+.uh-mine:hover{background:#e5eaff}
+.uh-mine .uh-mi{display:grid;place-items:center;width:36px;height:36px;border-radius:11px;background:#fff;color:var(--u-blue)}
+.uh-mine>span:nth-child(2){flex:1;min-width:0}
+.uh-mine b{display:block;font-size:14px}.uh-mine small{display:block;color:#3b4580;font-size:12px}
+.uh-mine em{font-style:normal;min-width:22px;height:22px;padding:0 7px;border-radius:999px;background:var(--u-amber);color:#4a3200;font-size:11.5px;font-weight:700;display:grid;place-items:center}
+.uh-mine em.no{background:var(--u-blue);color:#fff}
+.uh-mine>.ic{color:var(--u-sec)}
+/* filtros */
+.uh-fil{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px}
+html.ups-desk .uh-fil{margin:0;padding:0}
+.uh-fil::-webkit-scrollbar{display:none}
+.uh-fil button{flex:none;height:34px;padding:0 14px;border:0;border-radius:999px;background:#fff;color:var(--u-navy);font-size:13px;font-weight:500;white-space:nowrap}
+.uh-fil button[aria-pressed="true"]{background:var(--u-navy);color:#fff}
+/* tarjetas de extras */
+.uh-grid{display:grid;gap:12px}
+html.ups-desk .uh-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.uh-card{display:flex;flex-direction:column;width:100%;padding:0;border:0;border-radius:18px;background:#fff;text-align:left;overflow:hidden;transition:transform .15s}
+.uh-card:hover{transform:translateY(-1px)}
+.uh-card:active{transform:scale(.99)}
+.uh-ph{position:relative;display:block;aspect-ratio:16/7;background:#23235d}
+.uh-ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.uh-ph i{position:absolute;left:10px;top:10px;font-style:normal;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.92);color:var(--u-navy);font-size:11px;font-weight:700}
+.uh-bd{display:flex;flex-direction:column;gap:6px;padding:12px 14px 14px;flex:1}
+.uh-n{font-size:15.5px;font-weight:600}
+.uh-p{color:var(--u-sec);font-size:12.5px;line-height:1.45}
+.uh-ln{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--u-sec)}
+.uh-ln .ic{width:14px;height:14px;color:var(--u-blue)}
+.uh-st{align-self:flex-start;display:inline-flex;align-items:center;gap:5px;padding:3px 10px 3px 7px;border-radius:999px;font-size:11.5px;font-weight:600}
+.uh-st .ic{width:13px;height:13px}
+.uh-st.ok{background:#e7fbf1;color:#0b5c37}.uh-st.wait{background:#fff3cf;color:#6b4800}.uh-st.no{background:#ffe9ea;color:#a3222a}.uh-st.mute{background:var(--u-soft);color:var(--u-sec)}
+.uh-pr{display:flex;align-items:baseline;gap:4px;margin-top:auto;padding-top:4px}
+.uh-pr b{font-size:17px;font-weight:700;font-variant-numeric:tabular-nums}
+.uh-pr small{color:var(--u-sec);font-size:12px}
+.uh-go{margin-left:auto;display:inline-flex;align-items:center;gap:2px;color:var(--u-blue);font-size:13px;font-weight:600}
+.uh-go .ic{width:15px;height:15px}
+.uh-foot{margin:2px 4px 0;color:var(--u-sec);font-size:11.5px;text-align:center;text-wrap:balance}
+/* sin extras */
+.uh-empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;padding:36px 18px 28px;border-radius:20px;background:#fff}
+.uh-eic{display:grid;place-items:center;width:64px;height:64px;border-radius:50%;background:#eef1ff;color:var(--u-blue)}
+.uh-eic .ic{width:28px;height:28px}
+.uh-empty h2{margin:4px 0 0;font-size:20px;font-weight:700;text-wrap:balance}
+.uh-empty p{margin:0;color:var(--u-sec);font-size:13.5px;max-width:40ch;text-wrap:pretty}
+/* «My extras» */
+.uh-lede{margin:0 2px;color:var(--u-sec);font-size:13px}
+.uh-h{margin:6px 2px -4px;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--u-sec);font-weight:600}
+.uh-box{display:flex;flex-direction:column;gap:12px;padding:14px;border-radius:18px;background:#fff}
+.uh-bh{display:flex;align-items:flex-start;gap:10px;justify-content:space-between}
+.uh-bh .uh-st{flex:none;margin-top:2px}
+.uh-it{display:flex;align-items:center;gap:10px;min-width:0}
+.uh-it img{flex:none;width:48px;height:48px;border-radius:12px;object-fit:cover}
+.uh-it b{display:block;font-size:14.5px}.uh-it small{display:block;color:var(--u-sec);font-size:12px}
+.uh-msg{margin:0;color:var(--u-sec);font-size:12.5px}
+.uh-q{margin:0;padding:12px 14px;border-radius:14px;background:var(--u-soft)}
+.uh-q p{margin:0 0 8px;font-size:13.5px;color:var(--u-navy)}
+.uh-q cite{display:flex;align-items:center;gap:7px;font-style:normal;font-size:12px;color:var(--u-sec)}
+.uh-alt{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;background:#eef1ff}
+.uh-alt>span{flex:1;min-width:0}
+.uh-alt b{display:block;font-size:14px}.uh-alt small{display:block;color:#3b4580;font-size:12px}
+.uh-alt .ups-cta{flex:none;height:40px;font-size:13.5px;padding:0 14px}
+.uh-box .ups-cta.ghost{height:44px;font-size:14px}
+.uh-two{display:flex;flex-direction:column;gap:8px;width:100%}
+/* hoja «Cancel this request?» */
+.uh-sp{margin:0;color:var(--u-sec);font-size:13.5px}
+.uh-sf{display:flex;flex-direction:column;gap:8px}

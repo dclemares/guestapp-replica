@@ -1,9 +1,10 @@
 (function(){
 'use strict';
 var sec = document.querySelector('[data-testid="checkin-checklist"]'); if (!sec) return;
-/* VERSIÓN FINAL: P5 en escritorio y P1 en móvil. El resto, por URL (?chk=x, n4, p3, p9, o…) */
+/* VERSIÓN FINAL: P1 en móvil y en escritorio (antes P5 en escritorio). El resto, por URL (?chk=x, n4, p3, p9, o…) */
 var IS_MOBILE = (window.__SCREEN && window.__SCREEN.v) ? window.__SCREEN.v === 'm' : window.matchMedia('(max-width:1024px)').matches;
-var DEFAULT = IS_MOBILE ? 'p1' : 'p5';
+var PENDV = (function(){ try { return localStorage.getItem('rep-pendv') === '2' ? '2' : '1'; } catch (e) { return '1'; } })();   /* Componentes › «Pendientes en la home»: 1 = actual (por defecto) · 2 = anterior (PENDING en escritorio y «2 steps left») */
+var DEFAULT = PENDV === '2' && !IS_MOBILE ? 'p5' : 'p1';
 var v = (new URLSearchParams(location.search).get('chk') || DEFAULT).toLowerCase(); if (!/^(x|c1|n4|n4y|p1|p3|p4|p5|p8|p9|o)$/.test(v)) v = DEFAULT;
 function set(k){
   v = k; sec.parentNode.setAttribute('data-chk', k);
@@ -149,7 +150,7 @@ if (document.readyState !== 'loading') init(); else document.addEventListener('D
   };
   var t = null, sched = function(){ clearTimeout(t); t = setTimeout(prog, 60); };
   var start = function(){
-    apply(); window.addEventListener('storage', function(e){ if (e.key === KEY) apply(); });
+    apply(); window.addEventListener('storage', function(e){ if (e.key === KEY) apply(); if (e.key === 'rep-pendv') location.reload(); });
     var list = document.querySelector('.chk-vn4'); if (list) try { new MutationObserver(sched).observe(list, { subtree: true, attributes: true, attributeFilter: ['data-state', 'style'] }); } catch (e) {}
     var tries = 0, iv = setInterval(function(){
       if (window.__repPanel && window.__repPanel.add) {
@@ -162,8 +163,33 @@ if (document.readyState !== 'loading') init(); else document.addEventListener('D
           apply(); [].forEach.call(el.querySelectorAll('[data-pdv]'), function(c){ c.classList.toggle('on', c === b); });
         }, true);
         window.__repPanel.add('Pendientes', el, 27);
+        var PENDV = '1'; try { if (localStorage.getItem('rep-pendv') === '2') PENDV = '2'; } catch (_) {}
+        var ov = document.createElement('div'); ov.className = 'rail-switch';
+        ov.innerHTML = [['1', 'Opción 1 · actual'], ['2', 'Opción 2 · anterior']].map(function(o){ return '<button type="button" class="rs-chip' + (o[0] === PENDV ? ' on' : '') + '" data-pendv="' + o[0] + '">' + o[1] + '</button>'; }).join('');
+        ov.addEventListener('click', function(e){ var b = e.target.closest('[data-pendv]'); if (!b) return; e.preventDefault(); e.stopPropagation(); var v = b.getAttribute('data-pendv'); if (v === PENDV) return; try { localStorage.setItem('rep-pendv', v); } catch (_) {} location.reload(); }, true);
+        window.__repPanel.add('Pendientes en la home', ov, 26);
       } else if (++tries > 40) clearInterval(iv);
     }, 250);
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+})();
+/* Botones de la lista de pasos (Start, Pay …€): todos con el ancho del más ancho, con el texto centrado */
+(function(){
+  var vis = function(c){ return c.offsetWidth > 0 && parseFloat(getComputedStyle(c).fontSize) > 0; };
+  var eq = function(){
+    [].forEach.call(document.querySelectorAll('.chk-list'), function(l){
+      var cs = [].filter.call(l.querySelectorAll('.chk-cta'), vis);
+      cs.forEach(function(c){ c.style.minWidth = ''; });
+      var w = Math.ceil(Math.max.apply(null, cs.map(function(c){ return c.getBoundingClientRect().width; }).concat(0)));
+      if (cs.length > 1) cs.forEach(function(c){ c.style.minWidth = w + 'px'; });
+    });
+  };
+  var t = null, sched = function(){ clearTimeout(t); t = setTimeout(eq, 80); };
+  var start = function(){
+    sched(); window.addEventListener('resize', sched); window.addEventListener('load', sched);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(sched);
+    [].forEach.call(document.querySelectorAll('.chk-list'), function(l){ try { new MutationObserver(sched).observe(l, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['data-state', 'class'] }); } catch (e) {} });
+    var h = document.documentElement; try { new MutationObserver(sched).observe(h, { attributes: true }); } catch (e) {}
   };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
 })();

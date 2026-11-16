@@ -30,12 +30,12 @@ var RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').mat
 var DEF = { now: 10.25, hold: true, dep: true, auth: 230, depFee: 3.75, rel: 7, items: [{ k: 'tax', t: 'Tourist taxes', s: '1 of 4 guests · 3 already paid', val: 6, fee: 0.5 }], late: [] };
 var O = J('replica-order', DEF); if (!O || typeof O.now !== 'number') O = DEF;
 var order = function(){ var o = J('replica-order', DEF); return o && typeof o.now === 'number' ? o : DEF; };
-var payable = function(o){ return o.now > 0 || o.dep; };
+var payable = function(o){ return o.now > 0 || o.dep || o.xh > 0; };
 var relTxt = function(o){ return o.rel + (o.rel === 1 ? ' day' : ' days') + ' after check-out'; };
 var MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 var relDate = function(o){ var d = new Date(2026, 10, 27 + (o.rel || 7)); return d.getDate() + ' ' + MON[d.getMonth()]; };   /* el check-out de la réplica es el 27 Nov (pay-views.js); la retención se libera «rel» días después */
 var charges = function(o){ return o.items.map(function(i){ return { t: i.t, s: i.s, v: i.val + (i.fee || 0), fee: i.fee || 0 }; }).concat(o.dep && o.depFee ? [{ t: 'Deposit service fee', s: 'For the ' + money(o.auth) + (o.hold ? ' hold' : ' authorisation'), v: o.depFee, fee: 0, df: true }] : []); };
-var payLbl = function(o){ return o.now > 0 ? 'Pay ' + money(o.now) + (o.dep ? (o.hold ? ' and hold' : ' and authorise') : '') : (o.dep ? (o.hold ? 'Hold ' : 'Authorise ') + money(o.auth) : 'Confirm'); };
+var payLbl = function(o){ return o.now > 0 ? 'Pay ' + money(o.now) + (o.dep ? (o.hold ? ' and hold' : ' and authorise') : o.xh > 0 ? ' and hold' : '') : (o.dep ? (o.hold ? 'Hold ' : 'Authorise ') + money(o.auth) : o.xh > 0 ? 'Hold ' + money(o.xh) : 'Confirm'); };
 var depOnly = function(o){ return { now: o.depFee || 0, hold: o.hold, dep: true, auth: o.auth, depFee: o.depFee, rel: o.rel, items: [], late: o.late }; };
 var DEP = Q.get('dep') === '1';   /* reintento solo del depósito (tras «cobro OK, depósito rechazado»): viaja en la URL, no se guarda */
 
@@ -83,12 +83,13 @@ var field = function(k, label, id, ph, mode, ac){ return '<div class="ck-f" data
 var payForm = function(o){ return ''
     + '<div class="ck-wal"><button type="button" class="ck-w" data-ck="wallet" data-v="apple" aria-label="Pay with Apple Pay">Apple Pay</button><button type="button" class="ck-w" data-ck="wallet" data-v="google" aria-label="Pay with Google Pay">Google Pay</button></div><div class="ck-or"><span>or pay with card</span></div>'
     + '<div class="ck-fs">' + field('num', 'Card number', 'ck-num', '1234 1234 1234 1234', 'numeric', 'cc-number') + '<div class="ck-r2">' + field('exp', 'Expiry date', 'ck-exp', 'MM / YY', 'numeric', 'cc-exp') + field('cvc', 'CVC', 'ck-cvc', '123', 'numeric', 'cc-csc') + '</div></div>'
+    + (o.xh > 0 ? '<p class="ck-pn ck-pn--hold">' + ic('card', 15) + '<span>The same card is used for the ' + money(o.xh) + ' hold of your ' + ((o.xhl || []).length > 1 ? 'requests' : 'request') + ', in a separate operation. Only charged once we confirm.</span></p>' : '')
     + (o.dep ? '<p class="ck-pn' + (o.hold ? ' ck-pn--hold' : '') + '">' + ic('card', 15) + '<span>' + (o.hold ? 'The same card is used for the ' + money(o.auth) + ' hold, in a separate operation.' : 'Your card is saved for the deposit. Nothing is blocked.') + '</span></p>' : '');
 };
 var SECURE = 'Secured by Stripe with 3D Secure. Your card details never touch our servers.';
 
 /* ---------- operaciones: cobro y retención, siempre por separado ---------- */
-var ops = function(o){ var a = []; if (o.now > 0) a.push('pay'); if (o.dep) a.push('dep'); return a; };
+var ops = function(o){ var a = []; if (o.now > 0) a.push('pay'); if (o.xh > 0) a.push('xh'); if (o.dep) a.push('dep'); return a; };   /* xh: retención de los extras que necesitan aprobación (upselling) */
 var opSt = function(k){   /* wait | on | done | fail | void */
   var idx = ops(st.o).indexOf(k);
   if (st.step === 'ok') return 'done';
@@ -99,10 +100,12 @@ var opSt = function(k){   /* wait | on | done | fail | void */
 var payAmt = function(){ return st.step === 'part' ? paidTot(true) : st.o.now; };   /* en «cobro OK, depósito rechazado» la comisión del depósito no se cobra */
 var opTxt = function(k, s){ var o = st.o;
   if (k === 'pay') return { wait: 'Charge ' + money(payAmt()), on: 'Charging ' + money(payAmt()), done: 'Charged ' + money(payAmt()), void: 'Not charged', fail: 'Charge failed' }[s];
+  if (k === 'xh') { var xn = (o.xhl || []).length > 1 ? 'your requests' : 'your request'; return { wait: 'Hold for ' + xn, on: 'Holding for ' + xn, done: 'Held for ' + xn, void: 'Not held', fail: 'Hold declined' }[s]; }
   var h = o.hold ? 'Held' : 'Authorised';
   return { wait: (o.hold ? 'Hold ' : 'Authorise ') + money(o.auth), on: (o.hold ? 'Holding ' : 'Authorising ') + money(o.auth), done: h + ' ' + money(o.auth), void: 'Not ' + h.toLowerCase(), fail: (o.hold ? 'Hold' : 'Authorisation') + ' declined' }[s]; };
 var opSub = function(k, s){ var o = st.o;
   if (k === 'pay') return { wait: 'Taken now, final', on: 'Taken now, final', done: methodTxt() + ' · final', void: 'Nothing was charged', fail: 'Nothing was charged' }[s];
+  if (k === 'xh') return { wait: 'Not a charge', on: 'Not a charge', done: 'Not a charge · only charged once we confirm', void: 'Nothing was held', fail: 'Your bank declined it' }[s];
   return { wait: 'Not a charge', on: 'Not a charge', done: o.hold ? 'Not a charge · released ' + relDate(o) : 'Not a charge · nothing is blocked', void: 'Nothing was ' + (o.hold ? 'held' : 'authorised'), fail: 'Your bank declined it' }[s]; };
 var opIcon = function(s){ return s === 'wait' ? ic('clock', 13) : s === 'done' ? ic('chk', 14) : s === 'fail' ? ic('alert', 14) : s === 'void' ? ic('x', 14) : ''; };
 var REASONS = {
@@ -117,8 +120,8 @@ var paidTot = function(paidOnly){ return tkLines(paidOnly).reduce(function(a, c)
 var pendList = function(){ var l = (st.o.late || []).map(function(x){ return { t: x.t, v: x.val + (x.fee || 0), due: x.due || 'Due before check-in' }; }); if (st.step === 'part') l.unshift({ t: 'Security deposit', v: st.o.auth, due: 'Due before check-in', dep: true }); return l; };
 var titles = function(){   /* título y subtítulo de cada paso, comunes a todas las versiones */
   var o = st.o, pend = pendList().length, w = why();
-  if (st.step === 'proc') return st.pi === -1 ? ['Confirm it’s you', 'Your bank sent a request to your banking app. Approve the payment of ' + money(o.now > 0 ? o.now : o.auth) + ' to Villa Calipso.'] : ['Processing your payment', 'Each operation is done on its own. This takes a few seconds.'];
-  if (st.step === 'ok') return [pend ? 'Payment complete' : 'You’re all set', (o.dep && o.now > 0 ? 'Two separate operations, both done.' : 'Everything is done.') + (pend ? ' You still have something to pay before your stay.' : '')];
+  if (st.step === 'proc') return st.pi === -1 ? ['Confirm it’s you', 'Your bank sent a request to your banking app. Approve the payment of ' + money(o.now > 0 ? o.now : o.xh > 0 ? o.xh : o.auth) + ' to Villa Calipso.'] : ['Processing your payment', 'Each operation is done on its own. This takes a few seconds.'];
+  if (st.step === 'ok') return [pend ? 'Payment complete' : 'You’re all set', (ops(o).length === 3 ? 'Three separate operations, all done.' : ops(o).length === 2 ? 'Two separate operations, both done.' : 'Everything is done.') + (pend ? ' You still have something to pay before your stay.' : '')];
   if (st.step === 'fail') return ['Payment didn’t go through', w.t + '. ' + w.d];
   return ['Paid, but the deposit is still pending', 'Your payment went through. Your bank declined the ' + money(o.auth) + ' ' + (o.hold ? 'hold' : 'authorisation') + ', so the deposit isn’t done yet. ' + (o.depFee ? 'Its ' + money(o.depFee) + ' fee wasn’t charged.' : '')];
 };
@@ -131,9 +134,10 @@ var startPay = function(){
   var o = st.o, res = st.retry && cfgRes() === 'hold' ? 'ok' : cfgRes(), nCh = o.now > 0 ? 1 : 0, T = RM ? 500 : 1100;
   var after3ds = function(){
     if (res === 'declined' || res === 'funds') { wait(T, function(){ fail(res); }); return; }
-    wait(T, function(){ st.pi = nCh; render();          /* cobro hecho (si lo hay); ahora la retención, aparte */
-      if (!o.dep) { wait(T * .5, done); return; }
-      wait(T, function(){ if (res === 'hold' && o.items.length) { part(); return; } if (res === 'hold') { fail('hold'); return; } st.pi = nCh + 1; render(); wait(T * .5, done); }); });
+    wait(T, function(){ st.pi = nCh; render();          /* cobro hecho (si lo hay); ahora las retenciones, cada una aparte (extras y depósito) */
+      var next = function(){ var k = ops(o)[st.pi]; if (!k) { wait(T * .5, done); return; }
+        wait(T, function(){ if (k === 'dep' && res === 'hold') { if (o.items.length || o.xh > 0) part(); else fail('hold'); return; } st.pi++; render(); next(); }); };
+      next(); });
   };
   if (cfg3ds() && st.method === 'card') wait(T * .8, function(){ bankStart(); st.after = after3ds; });
   else after3ds();
@@ -183,7 +187,7 @@ whenPanel(function(){
 /* ===================== Carrito: V8 · tarjeta viva, y lo que pasa después en la misma V8 ===================== */
 var depState = DEP;
 var curOrder = function(){ var o = order(); return depState ? depOnly(o) : o; };
-var ORD = function(k){ return k === 'dep' && st.o.now <= 0 ? '#1045' : k === 'dep' ? '#1046' : '#1045'; };   /* números de orden de lo que se acaba de pagar: el cobro y la retención, cada uno con el suyo (siguen a #1044 del historial) */
+var ORD = function(k){ var i = ops(st.o).indexOf(k); return '#' + (1045 + Math.max(0, i)); };   /* números de orden de lo que se acaba de pagar: el cobro y la retención, cada uno con el suyo (siguen a #1044 del historial) */
 var keepVals = {};
 var keepNow = function(){ ['ck-num', 'ck-exp', 'ck-cvc'].forEach(function(id){ var el = document.getElementById(id); if (el) keepVals[id] = el.value; }); };
 document.addEventListener('input', function(e){ var t = e.target; if (t && /^ck-(num|exp|cvc)$/.test(t.id || '')) keepVals[t.id] = t.value; }, false);
@@ -229,6 +233,7 @@ var openLive = function(opts){
   m.innerHTML = '<div class="ck-sheet ck-msheet ck-lsheet" data-ph="form"><button type="button" class="ck-x" data-ckc="close" aria-label="Close">' + ic('x', 18) + '</button>'
     + '' + '<div class="ck-hd"><h2 id="ck-mt">Add your card</h2></div><div class="ck-lz">' + cardFace()
     + '<div class="ck-chips8">' + (o.now > 0 ? '<span class="ck-ch8"><small>Charged now</small><b>' + money(o.now) + '</b></span>' : '')
+    + (o.xh > 0 ? '<span class="ck-ch8 ck-hd8"><small>' + ((o.xhl || []).length > 1 ? 'Requests' : 'Request') + ' · held</small><b>' + money(o.xh) + '</b></span>' : '')
     + (o.dep ? '<span class="ck-ch8 ck-hd8"><small>' + (o.hold ? 'Held · not charged' : 'Authorised · not charged') + '</small><b>' + money(o.auth) + '</b></span>' : '') + '</div></div>'
     + '<div class="ck-rz"><div class="ck-rzb">' + depInfo() + (opts.note ? noteHtml(opts.note) : '') + payForm(o) + '</div>'
     + '<div class="ck-ft"><button type="button" class="ck-go" data-ckc="pay">' + ic('lock', 16) + payLbl(o) + '</button><p class="ck-sec">' + SECURE + '</p></div></div>'
@@ -266,6 +271,7 @@ var hintFor = function(){ return { sca: 'Open your banking app and approve the r
    y un resultado que dice qué viene después con el botón principal adaptado (pagos pendientes o inicio) */
 var v2Sub = function(k, s){ var o = st.o;
   if (k === 'pay') return { wait: 'Starts when your bank confirms', on: 'Contacting your bank…', done: methodTxt() + ' · final', void: 'Nothing was charged', fail: 'Nothing was charged' }[s];
+  if (k === 'xh') return { wait: o.now > 0 ? 'Starts right after the charge' : 'Starts when your bank confirms', on: 'Asking your bank to hold it…', done: 'Not a charge · only charged once we confirm', void: 'Nothing was held', fail: 'Your bank declined it' }[s];
   return { wait: o.now > 0 ? 'Starts right after the charge' : 'Starts when your bank confirms', on: o.hold ? 'Asking your bank to hold it…' : 'Asking your bank to authorise it…', done: o.hold ? 'Not a charge · released ' + relDate(o) : 'Not a charge · nothing is blocked', void: 'Nothing was ' + (o.hold ? 'held' : 'authorised'), fail: 'Your bank declined it' }[s]; };
 var swap = function(el, html){   /* cambia el contenido solo si es distinto y lo hace entrar con un fundido corto */
   if (!el || el.innerHTML === html) return; el.innerHTML = html; if (RM) return; el.classList.remove('v2-sw'); void el.offsetWidth; el.classList.add('v2-sw'); };
@@ -274,7 +280,7 @@ var tlSpecs = function(bank){   /* los pasos de la línea de tiempo: 3D Secure (
   var o = st.o, a = [];
   if (bank) a.push({ k: 'bank', s: st.expired ? 'fail' : 'on', icon: st.expired ? ic('clock', 14) : '', title: st.expired ? 'Request expired' : 'Confirm with your bank', no: '', sub: st.expired ? 'Send a new request to continue.' : (st.resent ? 'New request sent · expires in ' : 'Expires in ') + '<b id="v2-exp">' + mmss(st.secs) + '</b>' + (st.expired ? '' : '<span class="v2-zn"><b>Seeing 0,00€ in your banking app?</b> That’s normal. At this step your bank only checks that it’s you (3D Secure), so it may show a request of 0,00€.</span>'), amt: '' });
   else if (st.viaBank) a.push({ k: 'bank', s: 'done', icon: ic('chk', 14), title: 'Bank confirmed', no: '', sub: '3D Secure', amt: '' });
-  ops(o).forEach(function(k){ var s = opSt(k); a.push({ k: k, s: s, icon: opIcon(s), title: tlTitle(k, s), no: s === 'done' ? 'Order ' + ORD(k) : '', sub: v2Sub(k, s), amt: money(k === 'pay' ? payAmt() : o.auth) }); });
+  ops(o).forEach(function(k){ var s = opSt(k); a.push({ k: k, s: s, icon: opIcon(s), title: tlTitle(k, s), no: s === 'done' ? 'Order ' + ORD(k) : '', sub: v2Sub(k, s), amt: money(k === 'pay' ? payAmt() : k === 'xh' ? o.xh : o.auth) }); });
   if (st.step === 'ok' && st.rcpt === 1) a.push({ k: 'rcpt', s: 'on', icon: '', title: 'Generating your receipts', no: '', sub: 'One receipt for each operation', amt: '' });
   return a;
 };
@@ -303,7 +309,7 @@ var patchBar = function(bar, specs){   /* progreso continuo: avanza despacio hac
 var paintV2 = function(pz, focus){
   var t = titles(), o = st.o, pend = pendList().length, ft = pz.querySelector('.ck-pzf'), x = '', f = '', bank = st.step === 'proc' && st.pi === -1;
   var bar = pz.querySelector('.v2-bar'), specs = tlSpecs(bank); bar.className = 'v2-bar' + (st.step === 'ok' ? ' is-ok' : st.step === 'fail' ? ' is-fail' : st.step === 'part' ? ' is-part' : ''); patchBar(bar, specs);
-  swap(pz.querySelector('.ck-pzh'), '<h2 class="ck-pt" tabindex="-1">' + t[0] + '</h2><p class="ck-ps">' + (bank ? 'Approve the payment of ' + money(o.now > 0 ? o.now : o.auth) + ' to Villa Calipso in your banking app.' : st.step === 'ok' ? (o.dep && o.now > 0 ? 'Two separate operations, both done.' : 'Everything is done.') : t[1]) + '</p>');
+  swap(pz.querySelector('.ck-pzh'), '<h2 class="ck-pt" tabindex="-1">' + t[0] + '</h2><p class="ck-ps">' + (bank ? 'Approve the payment of ' + money(o.now > 0 ? o.now : o.xh > 0 ? o.xh : o.auth) + ' to Villa Calipso in your banking app.' : st.step === 'ok' ? (ops(o).length === 3 ? 'Three separate operations, all done.' : ops(o).length === 2 ? 'Two separate operations, both done.' : 'Everything is done.') : t[1]) + '</p>');
   var gen = st.step === 'ok' && st.rcpt === 1;
   patchTimeline(pz.querySelector('.v2-t'), specs);
   if (bank) { x = '';

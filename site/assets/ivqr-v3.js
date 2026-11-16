@@ -190,7 +190,7 @@ A.sum = function(inWin, boxOnly){
   return hero('info', '<div class="ivq-au__in ivq-au__in--pick"><div class="ivq-au__main">' + LIVE('Check-in day') + GLYPH + '<h3>Identity verification is now available</h3><p>The identity verification process is now available. Scan the QR code at the property entrance to access.</p></div></div>') + guests();
 };
 /* #1116 · sección del resumen DEFINITIVA (V1.2 · Titular, elegida entre #1114 y #1115): dentro de la tarjeta de progreso, una frase que lo dice todo */
-var sumK = function(){ return LS.get('replica-ivqa3-sum', 'v12') === 'au' ? 'au' : 'v12'; };   /* #1117: V1.2 (final) o V5 · tarjeta Aurora (cuadro «Versión del resumen») */
+var sumK = function(){ return 'au'; };   /* #1144: el resumen definitivo es V5 · tarjeta Aurora (V1.2 queda en el código, sin control) */   /* #1117: V1.2 (final) o V5 · tarjeta Aurora (cuadro «Versión del resumen») */
 var regQ = new URLSearchParams(location.search).get('ivreg');   /* #1128: la página de flujos pide el caso por la URL (?ivreg=all|pend); manda sobre el cuadro */
 var regK = function(){ if (regQ === 'pend' || regQ === 'all') return regQ; return LS.get('replica-ivqa3-reg', 'all') === 'pend' ? 'pend' : 'all'; };   /* #1125: todos registrados (como estaba) o con huéspedes pendientes */
 function sumBox(){ setTimeout(regK() === 'pend' ? sumPend : (sumK() === 'au' ? sumAu : sumIn), 0); return ''; }
@@ -563,8 +563,7 @@ function paintSw(){
   var r = readK(), rs = resK(), mk = matchK();
   swA.innerHTML = '<span>Pantalla</span>'   /* #1143: sin el selector de diseño (solo v3) */
     + '' + SA.map(function(s){ return b('a', s, NA[s], flow === 'a' && s === state); }).join('')
-    + '<span>Registro</span>' + b('reg', 'all', 'Todos registrados', regK() === 'all') + b('reg', 'pend', 'Faltan huéspedes', regK() === 'pend')
-    + '<span>Versión del resumen</span>' + b('sum', 'v12', 'V1.2 · Titular (final)', sumK() === 'v12') + b('sum', 'au', 'V5 · Tarjeta Aurora', sumK() === 'au');
+    + '<span>Registro</span>' + b('reg', 'all', 'Todos registrados', regK() === 'all') + b('reg', 'pend', 'Faltan huéspedes', regK() === 'pend');
   swB.innerHTML = '<span>Pantalla</span>' + SB.map(function(s){ return b('b', s, NB[s], flow === 'b' && s === state); }).join('')
     + '<span>Resultado de la búsqueda</span>' + [['one', 'Una'], ['multi', 'Varias'], ['none', 'Ninguna'], ['unreg', 'Sin registrar']].map(function(o){ return b('res', o[0], o[1], rs === o[0]); }).join('')
     + '<span>¿Coincide el documento?</span>' + b('match', 'yes', 'Sí', mk === 'yes') + b('match', 'no', 'No', mk === 'no')
@@ -575,7 +574,6 @@ function onSw(e){
   var g = t.getAttribute('data-g'), k = t.getAttribute('data-k');
   if (g === 'ivd') { ivdGo(k); return; }
   if (g === 'reg') { LS.set('replica-ivqa3-reg', k); var rk = k; location.href = 'ivqr-v3-a-' + (/^sum-/.test(state) || state === 'registered' ? state : 'sum-before') + EXT + '?ivreg=' + rk; return; }   /* #1128: el caso va en la URL, así la página de flujos lo sigue */
-  if (g === 'sum') { LS.set('replica-ivqa3-sum', k); LS.set('replica-ivqa3-reg', 'all'); location.href = 'ivqr-v3-a-' + (/^sum-/.test(state) ? state : 'sum-before') + EXT + '?ivreg=all'; return; }
   if (g === 'found') { if (flow === 'b') bFound(true); else location.href = 'ivqr-v3-b-landing' + EXT; return; }
   if (g === 'a' || g === 'b') { location.href = 'ivqr-v3-' + g + '-' + k + EXT; return; }
   LS.set({ read: 'replica-ivq-read', res: 'replica-ivqb3-res', match: 'replica-ivqb3-match', }[g], k);

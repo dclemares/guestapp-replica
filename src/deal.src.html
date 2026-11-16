@@ -1,0 +1,593 @@
+<meta charset="utf-8">
+<title>Deal propio · Upselling</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: banco de pruebas de 3 columnas (controles · pantalla del huésped · notas). La pantalla usa la guest app de Chekin tal cual; el marco es neutro y sigue el tema. */
+:root{
+  --bg:#eceef6; --surface:#ffffff; --ink:#161643; --muted:#5f6189; --line:#dfe2ef; --accent:#385bf8; --accent-soft:rgba(56,91,248,.12);
+  --ok:#0b8a52; --warn:#9a6400; --chip:#f3f4fa;
+  /* guest app (siempre claro: es el producto) */
+  --g-bg:#f4f5fb; --g-card:#fff; --g-navy:#161643; --g-blue:#385bf8; --g-blue-d:#294df1; --g-sec:#6b6b95; --g-soft:#f1f3fb; --g-line:#eceef6; --g-green:#37e08f; --g-green-ink:#04331f; --g-amber:#ffc233; --g-red:#e5484d;
+  --f:'Poppins',system-ui,-apple-system,'Segoe UI',sans-serif; --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e0f22;--surface:#17193a;--ink:#e8e9f8;--muted:#a3a5cc;--line:#2b2e55;--accent:#8197ff;--accent-soft:rgba(129,151,255,.16);--ok:#4fd79a;--warn:#ffc860;--chip:#20234a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e0f22;--surface:#17193a;--ink:#e8e9f8;--muted:#a3a5cc;--line:#2b2e55;--accent:#8197ff;--accent-soft:rgba(129,151,255,.16);--ok:#4fd79a;--warn:#ffc860;--chip:#20234a;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f);font-size:14px;line-height:1.45}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1480px;margin:0 auto;padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* cabecera */
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px 24px;margin-bottom:18px}
+.top h1{margin:0;font-size:22px;line-height:1.2;font-weight:700;text-wrap:balance}
+.top p{margin:4px 0 0;color:var(--muted);max-width:62ch}
+.vtabs{display:flex;gap:6px;padding:4px;border-radius:14px;background:var(--surface);border:1px solid var(--line);flex-wrap:wrap}
+.vtab{border:0;background:none;border-radius:10px;padding:8px 14px;text-align:left;min-width:0}
+.vtab b{display:block;font-size:13.5px;font-weight:600}
+.vtab small{display:block;font-size:11.5px;color:var(--muted)}
+.vtab[aria-pressed="true"]{background:var(--accent);color:#fff}
+.vtab[aria-pressed="true"] small{color:rgba(255,255,255,.82)}
+
+.grid{display:grid;grid-template-columns:300px minmax(0,1fr) 330px;gap:18px;align-items:start}
+@media (max-width:1240px){.grid{grid-template-columns:290px minmax(0,1fr)}.notes{grid-column:1/-1}}
+@media (max-width:820px){.grid{grid-template-columns:minmax(0,1fr)}}
+
+/* panel de controles */
+.ctl{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:6px 14px 14px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px);max-height:calc(100vh - 24px);overflow:auto}
+@media (max-width:820px){.ctl{position:static;max-height:none}}
+.ctl h2{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px;font-weight:600;display:flex;justify-content:space-between;gap:8px}
+.ctl h2 em{font-style:normal;letter-spacing:0;text-transform:none;font-weight:500}
+.seg{display:flex;flex-wrap:wrap;gap:5px}
+.seg button{border:1px solid var(--line);background:var(--chip);border-radius:9px;padding:5px 9px;font-size:12.5px;line-height:1.3}
+.seg button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.seg button:disabled{opacity:.38;cursor:not-allowed}
+.hint{margin:6px 0 0;font-size:11.5px;color:var(--muted)}
+.tag{display:inline-block;font-size:10px;font-weight:600;letter-spacing:.02em;border-radius:6px;padding:1px 6px;vertical-align:1px}
+.tag.ok{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok)}
+.tag.val{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn)}
+.tag.new{background:var(--accent-soft);color:var(--accent)}
+.sw{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12.5px;padding:6px 0}
+.sw input{accent-color:var(--accent);width:16px;height:16px}
+
+/* escenario */
+.stage{min-width:0;display:flex;flex-direction:column;align-items:center;gap:12px}
+.stagebar{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;font-size:12.5px;color:var(--muted)}
+.fit{width:100%;display:flex;justify-content:center;overflow:hidden}
+.scaler{transform-origin:top center}
+.frame{position:relative;background:#0b0b0f;padding:10px;border-radius:48px;box-shadow:0 30px 60px -30px rgba(10,10,40,.45)}
+.frame.m .scr{width:375px;height:780px;border-radius:38px}
+.frame.d{border-radius:14px;padding:30px 8px 8px}
+.frame.d::before{content:"";position:absolute;left:16px;top:11px;width:44px;height:9px;background:radial-gradient(circle,#ff5f57 4px,transparent 4.5px) 0 0/15px 9px repeat-x}
+.frame.d .scr{width:1040px;height:660px;border-radius:6px}
+
+/* ================= GUEST APP ================= */
+.scr{position:relative;overflow:hidden;background:var(--g-bg);color:var(--g-navy);font-family:var(--f);font-size:14px;line-height:1.45;container-type:inline-size}
+.scr b,.scr strong{font-weight:600}
+.scr button{font-family:var(--f)}
+.sb{position:absolute;inset:0 0 auto;height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;font-size:13px;font-weight:600;z-index:6;pointer-events:none}
+.frame.d .sb{display:none}
+.scroll{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
+.ic{width:18px;height:18px;flex:none}
+
+/* barra superior flotante */
+.nav{position:absolute;left:0;right:0;top:44px;display:flex;justify-content:space-between;padding:0 14px;z-index:5;pointer-events:none}
+.frame.d .nav{top:14px}
+.nbtn{pointer-events:auto;width:38px;height:38px;border-radius:50%;border:0;background:rgba(255,255,255,.94);display:grid;place-items:center;color:var(--g-navy);box-shadow:0 2px 10px rgba(22,22,67,.12)}
+
+.hero{position:relative;height:300px;background:#23235d}
+.hero img{width:100%;height:100%;object-fit:cover;display:block}
+.v2 .hero{height:470px}
+.hero .shade{position:absolute;inset:0;background:linear-gradient(to top,rgba(14,14,50,.9) 0,rgba(14,14,50,.5) 38%,rgba(14,14,50,0) 70%)}
+.hero .over{position:absolute;left:18px;right:18px;bottom:22px;color:#fff}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.92);color:var(--g-navy);font-size:11px;font-weight:700;letter-spacing:.02em}
+.over h1{margin:10px 0 4px;font-size:27px;line-height:1.15;font-weight:700;text-wrap:balance}
+.over p{margin:0;font-size:13.5px;color:rgba(255,255,255,.86);max-width:36ch}
+
+.body{position:relative;margin-top:-18px;background:var(--g-bg);border-radius:22px 22px 0 0;padding:20px 16px 130px;display:flex;flex-direction:column;gap:14px}
+.card{background:var(--g-card);border-radius:18px;padding:16px}
+.ttl h1{margin:6px 0 4px;font-size:22px;line-height:1.2;font-weight:700;text-wrap:balance}
+.ttl p{margin:0;color:var(--g-sec);font-size:13.5px}
+.pline{display:flex;align-items:baseline;gap:6px;margin-top:10px}
+.pline .pr{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums}
+.pline small{color:var(--g-sec);font-size:12.5px}
+.sup{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:12px;color:var(--g-sec)}
+.sup .av{width:26px;height:26px;border-radius:50%;background:#dfe4ff;color:var(--g-blue);display:grid;place-items:center;font-weight:700;font-size:11px}
+.lbl{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--g-sec);font-weight:600;margin:0 0 10px;display:flex;justify-content:space-between;gap:8px}
+.lbl span{letter-spacing:0;text-transform:none;font-weight:500}
+
+/* ganancia (antes/después) */
+.gain{display:flex;align-items:center;gap:12px;padding:14px;border-radius:16px;background:linear-gradient(135deg,#eef1ff,#f6f8ff);border:1px solid #dfe5ff}
+.gain .big{font-size:26px;font-weight:700;color:var(--g-blue);line-height:1;font-variant-numeric:tabular-nums}
+.gain small{display:block;color:var(--g-sec);font-size:12px}
+.gain b{display:block;font-size:13.5px}
+.tl{position:relative;margin-top:6px}
+.tl .row{display:grid;grid-template-columns:78px 1fr;align-items:center;gap:10px;font-size:12px;margin-top:8px}
+.tl .bar{height:12px;border-radius:999px;background:var(--g-soft);position:relative;overflow:hidden}
+.tl .bar i{position:absolute;top:0;bottom:0;border-radius:999px}
+.tl .ticks{display:grid;grid-template-columns:78px 1fr;gap:10px;font-size:10.5px;color:var(--g-sec);margin-top:4px}
+.tl .ticks div{display:flex;justify-content:space-between;font-variant-numeric:tabular-nums}
+
+/* selectores */
+.slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(74px,1fr));gap:8px}
+.slot{position:relative;border:1.5px solid var(--g-line);background:#fff;border-radius:12px;padding:9px 4px;text-align:center;font-weight:600;font-variant-numeric:tabular-nums;font-size:14px}
+.slot small{display:block;font-size:10.5px;font-weight:500;color:var(--g-sec)}
+.slot[aria-pressed="true"]{border-color:var(--g-blue);background:#eef1ff;color:var(--g-blue)}
+.slot[aria-pressed="true"] small{color:var(--g-blue)}
+.slot:disabled{color:#b7bcd6;background:var(--g-soft);border-color:transparent;cursor:not-allowed;text-decoration:line-through}
+.slot:disabled small{text-decoration:none;color:#b7bcd6}
+.days{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.day{border:1.5px solid var(--g-line);background:#fff;border-radius:12px;padding:8px 2px;text-align:center}
+.day small{display:block;font-size:10.5px;color:var(--g-sec);text-transform:uppercase;letter-spacing:.05em}
+.day b{display:block;font-size:17px;font-variant-numeric:tabular-nums}
+.day[aria-pressed="true"]{border-color:var(--g-blue);background:#eef1ff;color:var(--g-blue)}
+.day[aria-pressed="true"] small{color:var(--g-blue)}
+.day:disabled{opacity:.4;cursor:not-allowed}
+.step{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 0}
+.step+.step{border-top:1px solid var(--g-line);padding-top:12px;margin-top:6px}
+.step b{display:block;font-size:14px}.step small{display:block;color:var(--g-sec);font-size:12px}
+.stp{display:flex;align-items:center;gap:4px;background:var(--g-soft);border-radius:999px;padding:3px}
+.stp button{width:32px;height:32px;border-radius:50%;border:0;background:#fff;color:var(--g-navy);display:grid;place-items:center;font-size:17px;font-weight:600}
+.stp button:disabled{opacity:.35;cursor:not-allowed}
+.stp output{min-width:22px;text-align:center;font-weight:600;font-variant-numeric:tabular-nums}
+.selwrap{display:flex;flex-direction:column;gap:16px}
+.selblock.need{animation:need .9s ease}
+@keyframes need{0%,100%{box-shadow:none}30%{box-shadow:0 0 0 3px rgba(56,91,248,.35)}}
+
+.incl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.incl li{display:flex;gap:10px;font-size:13.5px;align-items:flex-start}
+.incl .ck{flex:none;width:22px;height:22px;border-radius:50%;background:rgba(55,224,143,.22);color:#0b5c37;display:grid;place-items:center;margin-top:-1px}
+.host{display:flex;gap:12px;align-items:flex-start}
+.host .av{flex:none;width:40px;height:40px;border-radius:50%;background:#ffe7a8;color:#7a5200;display:grid;place-items:center;font-weight:700}
+.host q{display:block;font-size:13.5px;quotes:none}
+.host small{color:var(--g-sec);font-size:12px}
+.trust{display:flex;flex-direction:column;gap:8px;font-size:12.5px;color:var(--g-sec)}
+.trust div{display:flex;gap:8px;align-items:center}
+.trust .ic{width:16px;height:16px;color:var(--g-navy)}
+.social{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:500;color:var(--g-navy);background:#fff8e3;border-radius:12px;padding:9px 12px}
+.social .ic{color:#b07a00;width:16px;height:16px}
+.urg{display:inline-flex;align-items:center;gap:6px;color:#b4232a;font-size:12.5px;font-weight:600}
+.urg i{width:7px;height:7px;border-radius:50%;background:#e5484d;box-shadow:0 0 0 3px rgba(229,72,77,.18)}
+
+.xs{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px}
+.xs::-webkit-scrollbar{display:none}
+.xc{flex:none;width:150px;background:#fff;border-radius:14px;overflow:hidden;border:0;padding:0;text-align:left}
+.xc img{width:100%;height:84px;object-fit:cover;display:block}
+.xc div{padding:8px 10px 10px}
+.xc b{display:block;font-size:13px;line-height:1.25}
+.xc small{color:var(--g-sec);font-size:12px;font-weight:600}
+
+/* barra fija de compra */
+.buy{position:absolute;left:0;right:0;bottom:0;z-index:4;background:rgba(255,255,255,.97);backdrop-filter:blur(8px);border-top:1px solid var(--g-line);padding:12px 16px 26px;display:flex;align-items:center;gap:12px}
+.frame.d .buy{padding-bottom:14px}
+.buy .tot{flex:none;min-width:0}
+.buy .tot b{display:block;font-size:19px;font-variant-numeric:tabular-nums;line-height:1.15}
+.buy .tot small{display:block;font-size:11.5px;color:var(--g-sec);white-space:nowrap}
+.cta{flex:1;height:52px;border:0;border-radius:14px;background:var(--g-blue);color:#fff;font-size:15.5px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:0 16px;transition:background .15s,transform .1s}
+.cta:hover{background:var(--g-blue-d)}
+.cta:active{transform:scale(.985)}
+.cta:disabled{background:#c9cee4;color:#fff;cursor:not-allowed}
+.cta.ghost{background:var(--g-soft);color:var(--g-navy)}
+.cta.ok{background:var(--g-green);color:var(--g-green-ink)}
+.cta.full{width:100%;flex:none}
+.buy .note{position:absolute;left:16px;right:16px;top:-30px;display:flex;justify-content:center}
+.buy .note span{background:var(--g-navy);color:#fff;font-size:11.5px;border-radius:999px;padding:4px 12px;display:inline-flex;gap:6px;align-items:center}
+.spin{width:18px;height:18px;border-radius:50%;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* hoja inferior */
+.dim{position:absolute;inset:0;background:rgba(14,14,50,.45);z-index:7}
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:8;background:var(--g-bg);border-radius:24px 24px 0 0;max-height:88%;display:flex;flex-direction:column;animation:up .28s cubic-bezier(.2,.8,.2,1)}
+@keyframes up{from{transform:translateY(30px);opacity:.4}}
+.frame.d .sheet{left:50%;right:auto;bottom:50%;transform:translate(-50%,50%);width:460px;border-radius:20px;max-height:90%;animation:none}
+.sh-h{display:flex;align-items:center;justify-content:space-between;padding:16px 16px 6px}
+.sh-h::before{content:"";position:absolute;left:50%;top:7px;width:38px;height:4px;margin-left:-19px;border-radius:9px;background:#d4d7e8}
+.frame.d .sh-h::before{display:none}
+.sh-h h2{margin:0;font-size:17px;font-weight:700}
+.sh-b{overflow-y:auto;padding:8px 16px 12px;display:flex;flex-direction:column;gap:12px;scrollbar-width:none}
+.sh-f{padding:10px 16px 26px;border-top:1px solid var(--g-line);background:#fff;border-radius:0 0 0 0}
+.frame.d .sh-f{padding-bottom:16px;border-radius:0 0 20px 20px}
+.x{width:32px;height:32px;border-radius:50%;border:0;background:var(--g-soft);display:grid;place-items:center}
+
+.item{display:flex;gap:12px;align-items:center}
+.item img{width:54px;height:54px;border-radius:12px;object-fit:cover;flex:none}
+.item b{display:block;font-size:14px}.item small{display:block;color:var(--g-sec);font-size:12px}
+.item .pr{margin-left:auto;font-weight:700;font-variant-numeric:tabular-nums}
+.lines{display:flex;flex-direction:column;gap:6px;font-size:13px;font-variant-numeric:tabular-nums}
+.lines div{display:flex;justify-content:space-between;gap:10px;color:var(--g-sec)}
+.lines .t{color:var(--g-navy);font-weight:700;font-size:15.5px;border-top:1px solid var(--g-line);padding-top:8px;margin-top:2px}
+.info{display:flex;gap:10px;padding:11px 12px;border-radius:12px;background:#eef1ff;font-size:12.5px;color:#26306e}
+.info .ic{color:var(--g-blue);width:17px;height:17px;margin-top:1px}
+.info.warn{background:#fff4f4;color:#7c1d22}.info.warn .ic{color:var(--g-red)}
+.wallet{height:50px;border-radius:12px;border:0;background:#000;color:#fff;font-weight:600;font-size:15px;display:flex;align-items:center;justify-content:center;gap:6px;width:100%}
+.or{display:flex;align-items:center;gap:10px;color:var(--g-sec);font-size:11.5px}
+.or::before,.or::after{content:"";flex:1;height:1px;background:var(--g-line)}
+.cardf{background:#fff;border:1.5px solid var(--g-line);border-radius:12px;padding:12px;display:grid;grid-template-columns:1fr auto auto;gap:10px;font-size:13.5px;font-variant-numeric:tabular-nums;color:var(--g-navy)}
+.cardf.err{border-color:var(--g-red)}
+.cardf span:not(:first-child){color:var(--g-sec)}
+.secure{display:flex;align-items:center;justify-content:center;gap:6px;font-size:11.5px;color:var(--g-sec);margin-top:8px}
+.secure .ic{width:13px;height:13px}
+
+/* V3: pasos */
+.v3top{position:sticky;top:0;z-index:3;background:var(--g-bg);padding:50px 16px 10px}
+.frame.d .v3top{padding-top:16px}
+.v3row{display:flex;align-items:center;gap:10px}
+.v3row .nbtn{box-shadow:none;background:#fff;flex:none}
+.v3row h2{margin:0;font-size:16px;font-weight:700;flex:1;text-align:center;padding-right:48px}
+.prog{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:12px}
+.prog div{font-size:11px;color:var(--g-sec);font-weight:600}
+.prog div::before{content:"";display:block;height:4px;border-radius:9px;background:#dde0ee;margin-bottom:5px}
+.prog div.on{color:var(--g-blue)}.prog div.on::before{background:var(--g-blue)}
+.prog div.done{color:var(--g-navy)}.prog div.done::before{background:var(--g-navy)}
+.v3body{padding:4px 16px 130px;display:flex;flex-direction:column;gap:12px}
+.mini{display:flex;gap:12px;align-items:center}
+.mini img{width:64px;height:64px;border-radius:14px;object-fit:cover}
+.mini b{display:block;font-size:15.5px}.mini small{display:block;color:var(--g-sec);font-size:12px}
+.edit{border:0;background:none;color:var(--g-blue);font-weight:600;font-size:12.5px;padding:0}
+.rv{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;font-size:13.5px}
+.rv+.rv{border-top:1px solid var(--g-line)}
+.rv span{color:var(--g-sec)}
+
+/* resultados */
+.res{padding:80px 20px 40px;display:flex;flex-direction:column;gap:14px;min-height:100%}
+.frame.d .res{max-width:520px;margin:0 auto;padding-top:40px}
+.badge{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;margin:0 auto}
+.badge .ic{width:34px;height:34px}
+.badge.ok{background:var(--g-green);color:var(--g-green-ink);animation:pop .45s cubic-bezier(.2,1.4,.4,1)}
+.badge.wait{background:#fff3cf;color:#7a5200}
+.badge.no{background:#ffe5e6;color:#b4232a}
+@keyframes pop{from{transform:scale(.4);opacity:0}}
+.res h1{margin:0;text-align:center;font-size:22px;line-height:1.25;font-weight:700;text-wrap:balance}
+.res .lead{margin:-4px 0 0;text-align:center;color:var(--g-sec);font-size:13.5px;text-wrap:balance}
+.tline{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.tline li{display:grid;grid-template-columns:22px 1fr;gap:10px;position:relative;padding-bottom:14px;font-size:13px}
+.tline li:last-child{padding-bottom:0}
+.tline li::before{content:"";position:absolute;left:10px;top:22px;bottom:2px;width:2px;background:var(--g-line)}
+.tline li:last-child::before{display:none}
+.tline .dot{width:22px;height:22px;border-radius:50%;background:var(--g-soft);display:grid;place-items:center;color:var(--g-sec)}
+.tline .dot .ic{width:13px;height:13px}
+.tline li.done .dot{background:var(--g-green);color:var(--g-green-ink)}
+.tline li.now .dot{background:var(--g-amber);color:#4a3200}
+.tline b{display:block}.tline small{color:var(--g-sec)}
+
+/* escritorio: detalle en dos columnas */
+.frame.d .v1 .detail,.frame.d .v2 .detail{display:grid;grid-template-columns:1.05fr 1fr;height:100%}
+.frame.d .detail .hero{height:100%}
+.frame.d .detail .body{margin-top:0;border-radius:0;overflow-y:auto;padding:28px 28px 120px}
+.frame.d .v1>.buy,.frame.d .v2>.buy{left:auto;width:48.8%}
+.frame.d .v3body,.frame.d .v3top{max-width:560px;margin:0 auto}
+
+/* notas */
+.notes{display:flex;flex-direction:column;gap:14px;min-width:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px}
+.panel h3{margin:0 0 4px;font-size:15px;font-weight:700}
+.panel .sub{margin:0 0 10px;color:var(--muted);font-size:12.5px}
+.panel ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:13px}
+.panel ul li::marker{color:var(--accent)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:12.5px;margin-top:10px}
+.kv dt{color:var(--muted)}.kv dd{margin:0}
+.flow{display:flex;flex-direction:column;gap:6px}
+.fn{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--chip);border-radius:10px;padding:7px 10px;font-size:12.5px;text-align:left;width:100%}
+.fn i{font-style:normal;flex:none;width:20px;height:20px;border-radius:50%;background:var(--surface);border:1px solid var(--line);display:grid;place-items:center;font-size:10.5px;font-weight:700;color:var(--muted)}
+.fn small{margin-left:auto;color:var(--muted);font-size:11px}
+.fn[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.fn[aria-pressed="true"] i{background:var(--accent);border-color:var(--accent);color:#fff}
+.fn.alt{margin-left:26px;width:calc(100% - 26px)}
+.ftitle{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:8px 0 2px}
+.facts{width:100%;border-collapse:collapse;font-size:12.5px}
+.facts td{padding:7px 0;border-top:1px solid var(--line);vertical-align:top}
+.facts td:last-child{text-align:right;white-space:nowrap;padding-left:8px}
+.src{font-size:11.5px;color:var(--muted);margin:10px 0 0}
+.src a{color:var(--accent)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Deal propio del anfitrión</h1>
+      <p>Vista de detalle de una oferta propia (upselling) en la guest app, rediseñada para vender. Cambia la versión, la configuración del deal y el paso del flujo; el teléfono responde a los toques igual que el producto.</p>
+    </div>
+    <div class="vtabs" role="group" aria-label="Versión" id="vtabs"></div>
+  </header>
+
+  <div class="grid">
+    <aside class="ctl" aria-label="Controles" id="ctl"></aside>
+    <section class="stage">
+      <div class="stagebar" id="stagebar"></div>
+      <div class="fit" id="fit"><div class="scaler" id="scaler"><div class="frame m" id="frame"><div class="scr" id="scr"></div></div></div></div>
+    </section>
+    <aside class="notes" id="notes"></aside>
+  </div>
+</div>
+
+<script>
+(function(){
+var IMG={early:'{{IMG:early-checkin}}',late:'{{IMG:habitacion}}',parking:'{{IMG:parking}}',transfer:'{{IMG:transfer}}',basket:'{{IMG:mesa}}',beach:'{{IMG:beach}}'};
+var P={
+ back:'<path d="m15 18-6-6 6-6"/>',x:'<path d="M18 6 6 18M6 6l12 12"/>',share:'<path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="m16 6-4-4-4 4M12 2v13"/>',
+ chk:'<path d="M20 6 9 17l-5-5"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',lock:'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+ info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',alert:'<path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/>',
+ refund:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>',star:'<path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/>',
+ msg:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/>',
+ user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',no:'<circle cx="12" cy="12" r="9"/><path d="m5.7 5.7 12.6 12.6"/>',card:'<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>',
+ apple:'<path d="M16.4 12.6c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.2-2.8.8-3.5.8s-1.9-.8-3.1-.8c-1.6 0-3 .9-3.9 2.3-1.7 2.9-.4 7.2 1.2 9.5.8 1.1 1.7 2.4 2.9 2.3 1.2 0 1.6-.7 3-.7s1.8.7 3.1.7c1.3 0 2.1-1.1 2.8-2.3.9-1.3 1.3-2.6 1.3-2.6s-2.4-1-2.4-3.9zM14.2 5.8c.6-.8 1.1-1.8 1-2.8-.9 0-2 .6-2.7 1.4-.6.7-1.1 1.7-1 2.7 1 .1 2-.5 2.7-1.3z" fill="currentColor" stroke="none"/>'
+};
+function ic(n,c){return '<svg class="ic'+(c?' '+c:'')+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+P[n]+'</svg>';}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+
+/* ---------- datos de ejemplo ---------- */
+var STAY={prop:'Casa Lavapiés',city:'Madrid',host:'Marta',guests:2,arrive:'Wed 25 Nov',leave:'Sat 28 Nov',days:[['Wed','25'],['Thu','26'],['Fri','27'],['Sat','28']]};
+var TYPES={
+ early:{n:'Early check-in',k:'Early check-in',img:'early',chip:'For your arrival',base:25,unit:'fixed',avail:'slots',slots:['10:00','11:00','12:00','13:00'],taken:['10:00'],std:'15:00',mode:'in',
+   pitch:'Skip the wait. Drop your bags and start your trip hours earlier.',incl:['Apartment ready from the time you pick','Door code sent on the morning you arrive','Free luggage drop if you land even earlier'],
+   quote:'Most flights from abroad land before noon. If you pick a time, I’ll have everything ready.'},
+ late:{n:'Late check-out',k:'Late check-out',img:'late',chip:'For your last day',base:20,unit:'fixed',avail:'slots',slots:['12:00','13:00','14:00'],taken:[],std:'11:00',mode:'out',
+   pitch:'Enjoy a slow last morning. Pack, have lunch, leave when you’re ready.',incl:['Keep the apartment until the time you pick','No cleaning knock at 11:00','Leave the keys as usual when you go'],
+   quote:'Your flight is in the evening? Stay a few more hours, there’s no booking after yours.'},
+ parking:{n:'Private parking',k:'Parking',img:'parking',chip:'During your stay',base:15,unit:'night',avail:'dates',
+   pitch:'A covered spot 50 m from the door, so you never have to circle the block.',incl:['Covered spot in the building’s garage','Garage remote handed over with the keys','In and out as often as you like'],
+   quote:'Street parking in Lavapiés is residents-only. The garage saves you a lot of stress.'},
+ transfer:{n:'Airport transfer',k:'Transfer',img:'transfer',chip:'For your arrival',base:45,unit:'fixed',avail:'slots',slots:['09:00','12:00','15:00','18:00','21:00'],taken:['09:00'],
+   pitch:'A driver waits at arrivals with your name and takes you straight to the door.',incl:['Pick-up at Madrid-Barajas, any terminal','Up to 4 passengers with luggage','Fixed price, tolls and waiting time included'],
+   quote:'Our usual driver, Luis, speaks English and knows exactly where to stop.'},
+ basket:{n:'Welcome basket',k:'Basket',img:'basket',chip:'Ready when you arrive',base:18,unit:'guest',avail:'stock',
+   pitch:'Breakfast sorted for your first morning, with produce from the market downstairs.',incl:['Bread, cheese, fruit and a bottle of wine','Coffee, milk and orange juice','Waiting in the kitchen when you walk in'],
+   quote:'Everything comes from Mercado de San Fernando, two minutes away.'}
+};
+var UNIT={free:'Free',fixed:'per booking',guest:'per guest',night:'per night',gn:'per guest · night'};
+var VERS=[['1','V1 · Directo','Compra en 2 toques'],['2','V2 · Escaparate','Vende el resultado'],['3','V3 · Guiado','Un paso por decisión']];
+
+/* ---------- estado ---------- */
+var S={v:'1',type:'early',unit:'fixed',confirm:'auto',charge:'hold',avail:'slots',status:'ok',scene:'detail',dev:'m',social:false,xsell:true,deadline:true};
+var sel={};
+function resetSel(){var t=TYPES[S.type];var first=(t.slots||[]).filter(function(x){return (t.taken||[]).indexOf(x)<0;})[0]||(t.slots||[])[0];
+  sel={slot:S.avail==='slots'?(t.slots?first:'11:00'):null,day:0,nights:[0,1,2],guests:STAY.guests,qty:1};}
+function T(){return TYPES[S.type];}
+function slotsOf(){var t=T();return t.slots||['10:00','12:00','14:00','16:00'];}
+function takenOf(){var t=T();return t.taken||[];}
+function nightsOn(){return S.unit==='night'||S.unit==='gn';}
+function guestsOn(){return S.unit==='guest'||S.unit==='gn';}
+function qtyOn(){return S.avail==='stock'||S.avail==='none';}
+function stockLeft(){return S.status==='low'?2:5;}
+function mult(){var m=1;if(guestsOn())m*=sel.guests;if(nightsOn())m*=sel.nights.length;if(qtyOn())m*=sel.qty;return m;}
+function total(){return S.unit==='free'?0:T().base*mult();}
+function eur(n){return '€'+(Math.round(n*100)/100).toFixed(n%1?2:0);}
+function priceTag(){return S.unit==='free'?'Free':eur(T().base);}
+function selReady(){if(S.avail==='slots'&&!sel.slot)return false;if(nightsOn()&&!sel.nights.length)return false;return true;}
+function blocked(){return S.status==='soldout'||S.status==='deadline';}
+function selSummary(){var t=T(),p=[];
+  if(S.avail==='slots')p.push((t.mode==='out'?'Leave at ':t.mode==='in'?'Check in at ':'Pick-up at ')+sel.slot);
+  if(S.avail==='dates'&&!nightsOn())p.push(STAY.days[sel.day].join(' ')+' Nov');
+  if(nightsOn())p.push(sel.nights.length+(sel.nights.length===1?' night':' nights'));
+  if(guestsOn())p.push(sel.guests+(sel.guests===1?' guest':' guests'));
+  if(qtyOn())p.push(sel.qty+(sel.qty===1?' unit':' units'));
+  return p.join(' · ');}
+function breakdown(){var t=T();if(S.unit==='free')return [['Price','Free']];var parts=[eur(t.base)];
+  if(guestsOn())parts.push(sel.guests+' guest'+(sel.guests>1?'s':''));if(nightsOn())parts.push(sel.nights.length+' night'+(sel.nights.length>1?'s':''));if(qtyOn()&&sel.qty>1)parts.push(sel.qty+' units');
+  return [[t.n,parts.join(' × ')]];}
+function payVerb(){if(S.unit==='free')return S.confirm==='approval'?'Request for free':'Add for free';return S.confirm==='approval'?'Request · '+eur(total()):'Pay '+eur(total());}
+
+/* ---------- piezas de la guest app ---------- */
+function gain(){var t=T();if(S.avail!=='slots'||!t.std||!sel.slot)return '';
+  var h=function(s){return parseInt(s,10);},d=t.mode==='in'?h(t.std)-h(sel.slot):h(sel.slot)-h(t.std);
+  var lo=8,hi=16,pc=function(x){return ((x-lo)/(hi-lo)*100).toFixed(1)+'%';};
+  var std=t.mode==='in'?'<i style="left:'+pc(h(t.std))+';right:0;background:#c9cee4"></i>':'<i style="left:0;width:'+pc(h(t.std))+';background:#c9cee4"></i>';
+  var you=t.mode==='in'?'<i style="left:'+pc(h(sel.slot))+';right:0;background:var(--g-blue)"></i>':'<i style="left:0;width:'+pc(h(sel.slot))+';background:var(--g-blue)"></i>';
+  return '<div class="gain"><div class="big">+'+d+'h</div><div><b>'+(t.mode==='in'?'Check in at '+sel.slot+' instead of '+t.std:'Leave at '+sel.slot+' instead of '+t.std)+'</b><small>'+(t.mode==='in'?STAY.arrive:STAY.leave)+' · that’s '+d+' extra hour'+(d>1?'s':'')+' of your trip</small></div></div>'
+   +(S.v==='2'?'<div class="tl"><div class="row"><span>Standard</span><div class="bar">'+std+'</div></div><div class="row"><b>With '+t.k.toLowerCase()+'</b><div class="bar">'+you+'</div></div><div class="ticks"><span></span><div><span>08:00</span><span>12:00</span><span>16:00</span></div></div></div>':'');}
+
+function selectors(){var t=T(),h='';
+  if(S.avail==='slots'){var sl=slotsOf(),tk=takenOf();
+    h+='<div class="selblock" data-blk="slot"><p class="lbl">'+(t.mode==='out'?'Leave at':t.mode==='in'?'Check in from':'Pick-up time')+(t.mode?'<span>'+(t.mode==='in'?STAY.arrive:STAY.leave)+'</span>':'<span>'+STAY.arrive+'</span>')+'</p><div class="slots">'
+      +sl.map(function(s){var off=tk.indexOf(s)>=0;return '<button type="button" class="slot" data-slot="'+s+'" aria-pressed="'+(sel.slot===s)+'"'+(off||blocked()?' disabled':'')+'>'+s+'<small>'+(off?'Taken':S.unit==='free'?'Free':eur(t.base))+'</small></button>';}).join('')+'</div></div>';}
+  if(nightsOn()||S.avail==='dates'){var multi=nightsOn();
+    h+='<div class="selblock" data-blk="days"><p class="lbl">'+(multi?'Nights':'Day')+'<span>'+(multi?sel.nights.length+' of 3 selected':'Pick one')+'</span></p><div class="days">'
+      +STAY.days.map(function(d,i){var on=multi?sel.nights.indexOf(i)>=0:sel.day===i,dis=multi&&i===3;return '<button type="button" class="day" data-day="'+i+'" aria-pressed="'+on+'"'+(dis||blocked()?' disabled':'')+'><small>'+d[0]+'</small><b>'+d[1]+'</b></button>';}).join('')+'</div></div>';}
+  var st='';
+  if(guestsOn())st+='<div class="step"><div><b>Guests</b><small>'+eur(t.base)+' each'+(nightsOn()?' per night':'')+'</small></div>'+stepper('guests',sel.guests,1,STAY.guests+2)+'</div>';
+  if(qtyOn())st+='<div class="step"><div><b>Quantity</b><small>'+(S.avail==='stock'?(S.status==='low'?'<span class="urg"><i></i>Only 2 left for your dates</span>':'5 available for your dates'):'How many you need')+'</small></div>'+stepper('qty',sel.qty,1,S.avail==='stock'?stockLeft():9)+'</div>';
+  if(st)h+='<div class="selblock">'+st+'</div>';
+  return h;}
+function stepper(k,v,min,max){return '<div class="stp"><button type="button" data-st="'+k+'" data-d="-1" aria-label="Less"'+(v<=min||blocked()?' disabled':'')+'>−</button><output>'+v+'</output><button type="button" data-st="'+k+'" data-d="1" aria-label="More"'+(v>=max||blocked()?' disabled':'')+'>+</button></div>';}
+
+function statusBanner(){
+  if(S.status==='soldout')return '<div class="info warn">'+ic('no')+'<div><b>Sold out for your dates</b><br>All '+(S.avail==='slots'?'times':'units')+' are booked for this stay. Other extras below are still available.</div></div>';
+  if(S.status==='deadline')return '<div class="info warn">'+ic('clock')+'<div><b>No longer available for this stay</b><br>'+esc(STAY.host)+' takes requests until 24 h before arrival.</div></div>';
+  if(S.status==='bought')return '<div class="info" style="background:#e7fbf1;color:#0b5c37">'+ic('chk')+'<div><b>Added to your stay</b><br>'+esc(selSummary())+' · paid '+eur(total())+'. Receipt sent by email.</div></div>';
+  return '';}
+function deadlineLine(){return S.deadline&&!blocked()&&S.status!=='bought'?'<div><span>'+ic('clock')+'</span>Book until 24 h before arrival · '+(S.type==='late'?'Fri 27 Nov':'Tue 24 Nov')+', 15:00</div>':'';}
+function trust(){var t=[];
+  if(S.confirm==='approval')t.push('<div>'+ic('msg')+(S.charge==='hold'?'You’re only charged if '+STAY.host+' confirms':'Full refund if '+STAY.host+' can’t confirm')+'</div>');
+  else t.push('<div>'+ic('chk')+'Confirmed instantly, no waiting</div>');
+  t.push('<div>'+ic('lock')+'Secure payment in the same app as your booking</div>');
+  var d=deadlineLine();if(d)t.push(d.replace('<span>','').replace('</span>',''));
+  return '<div class="trust">'+t.join('')+'</div>';}
+function host(){return '<div class="host"><div class="av">M</div><div><q>“'+esc(T().quote)+'”</q><small>'+esc(STAY.host)+', your host · '+esc(STAY.prop)+'</small></div></div>';}
+function incl(){return '<ul class="incl">'+T().incl.map(function(x){return '<li><span class="ck">'+ic('chk')+'</span>'+esc(x)+'</li>';}).join('')+'</ul>';}
+function others(){if(!S.xsell)return '';var ks=Object.keys(TYPES).filter(function(k){return k!==S.type;}).slice(0,4);
+  return '<div><p class="lbl">Guests also add</p><div class="xs">'+ks.map(function(k){var t=TYPES[k];return '<button type="button" class="xc" data-type="'+k+'"><img src="'+IMG[t.img]+'" alt=""><div><b>'+esc(t.n)+'</b><small>'+eur(t.base)+' '+UNIT[t.unit]+'</small></div></button>';}).join('')+'</div></div>';}
+function social(){return S.social&&!blocked()?'<div class="social">'+ic('star')+'34 guests at '+esc(STAY.prop)+' added this in the last 6 months</div>':'';}
+function nav(){return '<div class="nav"><button class="nbtn" type="button" data-go="detail" aria-label="Back">'+ic('back')+'</button><button class="nbtn" type="button" aria-label="Share">'+ic('share')+'</button></div>';}
+function statusBar(dark){return '<div class="sb" style="color:'+(dark?'#fff':'var(--g-navy)')+'"><span>9:41</span><span>●●● ▮</span></div>';}
+
+function buyBar(label,action,opt){opt=opt||{};var t=T();
+  if(S.status==='bought')return '<div class="buy"><button class="cta ghost full" type="button" data-go="done">View booking details</button></div>';
+  if(blocked())return '<div class="buy"><div class="tot"><b>'+priceTag()+'</b><small>'+(S.status==='soldout'?'Sold out':'Closed')+'</small></div><button class="cta" type="button" disabled>'+(S.status==='soldout'?'Sold out':'No longer available')+'</button></div>';
+  var note=opt.note?'<div class="note"><span>'+opt.note+'</span></div>':'';
+  return '<div class="buy">'+note+'<div class="tot"><b>'+(opt.from?'<small style="display:inline;font-weight:500">from </small>'+priceTag():(S.unit==='free'?'Free':eur(total())))+'</b><small>'+(opt.from?UNIT[S.unit]:(mult()>1?esc(breakdown()[0][1]):S.unit==='free'?'No charge':'total · taxes incl.'))+'</small></div><button class="cta" type="button" data-act="'+action+'">'+label+'</button></div>';}
+
+/* ---------- V1 · Directo ---------- */
+function v1(){var t=T();
+  return '<div class="detail">'+'<div class="hero"><img src="'+IMG[t.img]+'" alt=""></div>'
+   +'<div class="body"><div class="ttl"><span class="chip" style="background:#eef1ff;color:var(--g-blue)">'+esc(t.chip)+'</span><h1>'+esc(t.n)+'</h1><p>'+esc(t.pitch)+'</p>'
+   +'<div class="pline"><span class="pr">'+priceTag()+'</span><small>'+(S.unit==='free'?'offered by your host':UNIT[S.unit])+'</small></div></div>'
+   +statusBanner()+social()+gain()
+   +(S.status==='bought'?'':'<div class="card selwrap">'+selectors()+'</div>')
+   +'<div class="card">'+incl()+'</div>'+trust()+(blocked()?others():'')
+   +'</div>'+buyBar(payVerb(),S.unit==='free'?'finish':'checkout')+'</div>';}
+
+/* ---------- V2 · Escaparate ---------- */
+function v2(){var t=T();
+  return '<div class="detail"><div class="hero"><img src="'+IMG[t.img]+'" alt=""><span class="shade"></span><div class="over"><span class="chip">'+esc(t.chip)+'</span><h1>'+esc(t.n)+'</h1><p>'+esc(t.pitch)+'</p></div></div>'
+   +'<div class="body">'+statusBanner()+social()
+   +(gain()?'<div class="card">'+gain()+'</div>':'')
+   +'<div class="card"><p class="lbl">What you get</p>'+incl()+'</div>'
+   +'<div class="card">'+host()+'</div>'
+   +trust()+others()
+   +'</div>'+buyBar(S.avail==='slots'?'Choose a time':nightsOn()||S.avail==='dates'?'Choose dates':'Continue','options',{from:true})+'</div>';}
+function optionsSheet(){var t=T();
+  return '<div class="dim" data-go="detail"></div><div class="sheet" role="dialog" aria-label="Choose options"><div class="sh-h"><h2>'+esc(t.n)+'</h2><button class="x" type="button" data-go="detail" aria-label="Close">'+ic('x')+'</button></div>'
+   +'<div class="sh-b"><div class="card selwrap">'+selectors()+'</div>'+(gain()?gain():'')+'</div>'
+   +'<div class="sh-f">'+'<div style="display:flex;align-items:center;gap:12px"><div class="tot" style="flex:none"><b style="font-size:19px;font-variant-numeric:tabular-nums">'+(S.unit==='free'?'Free':eur(total()))+'</b><small style="display:block;font-size:11.5px;color:var(--g-sec)">'+esc(breakdown()[0][1])+'</small></div><button class="cta" type="button" data-act="'+(S.unit==='free'?'finish':'checkout')+'">'+payVerb()+'</button></div></div></div>';}
+
+/* ---------- V3 · Guiado ---------- */
+function v3top(n,title){var lab=['Choose','Review',S.unit==='free'?'Confirm':'Pay'];
+  return '<div class="v3top"><div class="v3row"><button class="nbtn" type="button" data-go="'+(n===1?'detail':n===2?'detail':'options')+'" aria-label="Back">'+ic('back')+'</button><h2>'+title+'</h2></div>'
+   +'<div class="prog">'+lab.map(function(l,i){return '<div class="'+(i+1<n?'done':i+1===n?'on':'')+'">'+(i+1)+'. '+l+'</div>';}).join('')+'</div></div>';}
+function v3mini(){var t=T();return '<div class="card mini"><img src="'+IMG[t.img]+'" alt=""><div style="min-width:0"><b>'+esc(t.n)+'</b><small>'+esc(t.pitch)+'</small></div></div>';}
+function v3a(){return '<div>'+v3top(1,'Choose your options')+'<div class="v3body">'+v3mini()+statusBanner()+social()
+  +(S.status==='bought'?'':'<div class="card selwrap">'+selectors()+'</div>')+gain()+'<div class="card"><p class="lbl">What you get</p>'+incl()+'</div></div>'
+  +buyBar('Continue','options')+'</div>';}
+function v3b(){var t=T();return '<div>'+v3top(2,'Review')+'<div class="v3body">'+v3mini()
+  +'<div class="card"><div class="rv"><span>Your choice</span><b>'+esc(selSummary()||'—')+'</b></div><div class="rv"><span>When</span><b>'+(nightsOn()?sel.nights.map(function(i){return STAY.days[i][1];}).join(', ')+' Nov':S.avail==='dates'?STAY.days[sel.day].join(' ')+' Nov':(t.mode==='out'?STAY.leave:STAY.arrive))+'</b></div><div class="rv"><span>Confirmation</span><b>'+(S.confirm==='approval'?'Host confirms':'Instant')+'</b></div><div class="rv"><span>Change</span><button class="edit" type="button" data-go="detail">Edit options</button></div></div>'
+  +'<div class="card lines">'+linesHtml()+'</div>'+approvalInfo()+trust()+'</div>'
+  +buyBar(S.unit==='free'?payVerb():'Continue to payment',S.unit==='free'?'finish':'checkout')+'</div>';}
+function v3c(err){return '<div>'+v3top(3,S.confirm==='approval'?'Send request':'Pay')+'<div class="v3body">'+payBlock(err)+'</div>'
+  +'<div class="buy"><div class="tot"><b>'+eur(total())+'</b><small>total · taxes incl.</small></div><button class="cta" type="button" data-act="pay">'+(S.scene==='paying'?'<span class="spin"></span>Processing…':payVerb())+'</button></div></div>';}
+
+/* ---------- pago (compartido) ---------- */
+function linesHtml(){var b=breakdown();return b.map(function(r){return '<div><span>'+esc(r[0])+'</span><span>'+esc(r[1])+'</span></div>';}).join('')+'<div class="t"><span>Total</span><span>'+(S.unit==='free'?'Free':eur(total()))+'</span></div>';}
+function approvalInfo(){if(S.confirm!=='approval')return '';
+  return '<div class="info">'+ic('info')+'<div>'+(S.charge==='hold'
+   ?'<b>'+esc(STAY.host)+' confirms this request.</b> We hold '+eur(total())+' on your card now and only charge it once it’s confirmed. If not, the hold is released.'
+   :'<b>'+esc(STAY.host)+' confirms this request.</b> You pay '+eur(total())+' now. If it can’t be confirmed, you get a full refund to the same card.')+'</div></div>';}
+function payBlock(err){var t=T();
+  return '<div class="card"><div class="item"><img src="'+IMG[t.img]+'" alt=""><div><b>'+esc(t.n)+'</b><small>'+esc(selSummary())+'</small></div><span class="pr">'+eur(total())+'</span></div></div>'
+   +'<div class="card lines">'+linesHtml()+'</div>'+approvalInfo()
+   +(err?'<div class="info warn">'+ic('alert')+'<div><b>Your card was declined.</b> Nothing was charged. Try another card or Apple Pay.</div></div>':'')
+   +'<button class="wallet" type="button" data-act="pay">'+ic('apple')+'Pay</button><div class="or">or pay with card</div>'
+   +'<div class="cardf'+(err?' err':'')+'"><span>'+ic('card')+' •••• •••• •••• '+(err?'0002':'4242')+'</span><span>12/28</span><span>•••</span></div>'
+   +'<div class="secure">'+ic('lock')+'Secure payment · charged by '+esc(STAY.prop)+'</div>';}
+function checkoutSheet(err){
+  return '<div class="dim" data-go="'+(S.v==='2'?'options':'detail')+'"></div><div class="sheet" role="dialog" aria-label="Payment"><div class="sh-h"><h2>'+(S.confirm==='approval'?'Send request':'Confirm and pay')+'</h2><button class="x" type="button" data-go="detail" aria-label="Close">'+ic('x')+'</button></div>'
+   +'<div class="sh-b">'+payBlock(err)+'</div><div class="sh-f"><button class="cta full" type="button" data-act="pay"'+(S.scene==='paying'?' disabled':'')+'>'+(S.scene==='paying'?'<span class="spin"></span>Processing…':payVerb())+'</button></div></div>';}
+
+/* ---------- resultados ---------- */
+function result(){var t=T(),sum=esc(selSummary()),sc=S.scene,h='';
+  var stepsA=function(state){return '<div class="card"><ul class="tline">'
+    +'<li class="done"><span class="dot">'+ic('chk')+'</span><div><b>Request sent</b><small>'+(S.unit==='free'?'No charge':S.charge==='hold'?eur(total())+' on hold, not charged':eur(total())+' paid')+'</small></div></li>'
+    +'<li class="'+(state==='wait'?'now':'done')+'"><span class="dot">'+ic(state==='wait'?'clock':'chk')+'</span><div><b>'+esc(STAY.host)+' reviews it</b><small>'+(state==='wait'?'You’ll get an email and a notification here':'Reviewed')+'</small></div></li>'
+    +'<li class="'+(state==='ok'?'done':'')+'"><span class="dot">'+ic(state==='no'?'x':'chk')+'</span><div><b>'+(state==='no'?'Not confirmed':'Confirmed')+'</b><small>'+(state==='ok'?(S.charge==='hold'&&S.unit!=='free'?eur(total())+' charged':'All set'):state==='no'?(S.charge==='hold'?'Hold released':'Refund issued'):'Pending')+'</small></div></li></ul></div>';};
+  if(sc==='done'&&S.confirm==='auto'){h='<div class="badge ok">'+ic('chk')+'</div><h1>'+esc(t.n)+' confirmed</h1><p class="lead">'+sum+' · '+(t.mode==='out'?STAY.leave:STAY.arrive)+'.<br>'+(S.unit==='free'?'Enjoy it.':'Paid '+eur(total())+'. Receipt sent to your email.')+'</p>'
+    +'<div class="card lines">'+linesHtml()+'</div>'+others()+'<button class="cta full" type="button" data-go="detail">Back to your stay</button>';}
+  else if(sc==='done'){h='<div class="badge wait">'+ic('clock')+'</div><h1>Request sent to '+esc(STAY.host)+'</h1><p class="lead">'+esc(t.n)+' · '+sum+'</p>'+stepsA('wait')+others()+'<button class="cta full ghost" type="button" data-go="detail">Back to your stay</button>';}
+  else if(sc==='approved'){h='<div class="badge ok">'+ic('chk')+'</div><h1>'+esc(STAY.host)+' confirmed your '+esc(t.n.toLowerCase())+'</h1><p class="lead">'+sum+' · '+(t.mode==='out'?STAY.leave:STAY.arrive)+'</p>'+stepsA('ok')+others()+'<button class="cta full" type="button" data-go="detail">Back to your stay</button>';}
+  else if(sc==='rejected'){var alt=S.avail==='slots'?slotsOf().filter(function(s){return s!==sel.slot&&takenOf().indexOf(s)<0;}).slice(-1)[0]:null;
+    h='<div class="badge no">'+ic('x')+'</div><h1>'+esc(STAY.host)+' couldn’t confirm it</h1><p class="lead">'+(S.unit==='free'?'Nothing was charged.':S.charge==='hold'?'The '+eur(total())+' hold on your card has been released. You weren’t charged.':'We’ve refunded '+eur(total())+' to your card. Banks take 5–10 days to show it.')+'</p>'
+     +stepsA('no')+(alt?'<div class="card"><p class="lbl">Still available</p><div class="step" style="padding:0"><div><b>'+esc(t.n)+' at '+alt+'</b><small>'+(S.unit==='free'?'Free':eur(total()))+'</small></div><button class="cta" style="flex:none;height:40px;font-size:13.5px" type="button" data-alt="'+alt+'">Request '+alt+'</button></div></div>':'')+others()+'<button class="cta full ghost" type="button" data-go="detail">Back to your stay</button>';}
+  return '<div class="res">'+h+'</div>';}
+
+/* ---------- montaje ---------- */
+var scr=document.getElementById('scr');
+function renderScreen(){var sc=S.scene,v=S.v,html='',dark=false;
+  if(sc==='done'||sc==='approved'||sc==='rejected'){html='<div class="scroll">'+result()+'</div>';}
+  else if(v==='3'){var inner=sc==='detail'?v3a():sc==='options'?v3b():v3c(sc==='failed');html='<div class="scroll v3">'+inner+'</div>';}
+  else{dark=true;var base=v==='1'?v1():v2();
+    var ov='';if(v==='2'&&sc==='options')ov=optionsSheet();if(sc==='checkout'||sc==='paying'||sc==='failed')ov=checkoutSheet(sc==='failed');
+    var i=base.lastIndexOf('<div class="buy">'),content=base.slice(0,i)+'</div>',bar=base.slice(i,base.length-6);
+    html='<div class="v'+v+'" style="position:absolute;inset:0"><div class="scroll">'+content+'</div>'+bar+'</div>'+nav()+ov;}
+  scr.innerHTML=statusBar(dark&&!(sc==='checkout'||sc==='paying'||sc==='failed'||(v==='2'&&sc==='options')))+html;
+}
+
+/* V3 y resultados: la barra fija también fuera del scroll */
+var _render=renderScreen;
+renderScreen=function(){_render();if(S.v==='3'&&['detail','options','checkout','paying','failed'].indexOf(S.scene)>=0){var b=scr.querySelector('.scroll .buy');if(b)scr.appendChild(b);}};
+
+/* ---------- controles ---------- */
+var ctl=document.getElementById('ctl');
+function seg(key,opts,hint){return '<div class="seg" role="group">'+opts.map(function(o){return '<button type="button" data-k="'+key+'" data-val="'+o[0]+'" aria-pressed="'+(S[key]===o[0])+'"'+(o[2]?' disabled':'')+'>'+o[1]+'</button>';}).join('')+'</div>'+(hint?'<p class="hint">'+hint+'</p>':'');}
+function scenes(){var a=S.confirm==='approval',free=S.unit==='free',v3=S.v==='3';
+  return [['detail',v3?'1 · Elegir':'Detalle'],['options',v3?'2 · Revisar':'Opciones',S.v==='1'],['checkout',v3?'3 · Pago':'Pago',free],['paying','Procesando',free],['failed','Pago fallido',free],['done',a?'Solicitud enviada':'Confirmado'],['approved','Aprobado',!a],['rejected','Rechazado',!a]];}
+function renderCtl(){
+  ctl.innerHTML=
+   '<h2>Paso del flujo</h2>'+seg('scene',scenes())
+  +'<h2>Estado de la oferta</h2>'+seg('status',[['ok','Disponible'],['low','Pocas unidades'],['soldout','Agotado'],['deadline','Fuera de plazo'],['bought','Ya comprado']],S.status==='low'&&S.avail!=='stock'?'«Pocas unidades» solo se muestra con disponibilidad por cantidad.':'')
+  +'<h2>Oferta <em><span class="tag ok">plantilla o personalizada</span></em></h2>'+seg('type',[['early','Early check-in'],['late','Late check-out'],['parking','Parking'],['transfer','Traslado'],['basket','Personalizada']])
+  +'<h2>Precio <em><span class="tag val">a validar</span></em></h2>'+seg('unit',[['free','Gratis'],['fixed','Fijo'],['guest','Por huésped'],['night','Por noche'],['gn','Huésped y noche']])
+  +'<h2>Disponibilidad <em><span class="tag ok">hora · cantidad</span></em></h2>'+seg('avail',[['none','Sin límite'],['slots','Franjas horarias'],['dates','Días'],['stock','Cantidad limitada']])
+  +'<h2>Confirmación <em><span class="tag ok">aprobación</span></em></h2>'+seg('confirm',[['auto','Automática'],['approval','Requiere aprobación']])
+  +(S.confirm==='approval'?'<h2>Cobro con aprobación <em><span class="tag val">a validar</span></em></h2>'+seg('charge',[['hold','Retener y cobrar al aprobar'],['charge','Cobrar y reembolsar si rechaza']],'Cambia el texto que ve el huésped antes de pagar y en los estados aprobado/rechazado.'):'')
+  +'<h2>Extras</h2>'
+  +'<label class="sw"><span>Plazo límite visible (24 h antes)</span><input type="checkbox" id="c-deadline" data-chk="deadline"'+(S.deadline?' checked':'')+'></label>'
+  +'<label class="sw"><span>Otras ofertas del anfitrión</span><input type="checkbox" id="c-xsell" data-chk="xsell"'+(S.xsell?' checked':'')+'></label>'
+  +'<label class="sw"><span>Prueba social <span class="tag new">dato nuevo</span></span><input type="checkbox" id="c-social" data-chk="social"'+(S.social?' checked':'')+'></label>'
+  +'<p class="hint">Sin datos de ventas reales, la prueba social no se debe mostrar: es una propuesta, no existe hoy.</p>';
+}
+function renderTop(){
+  document.getElementById('vtabs').innerHTML=VERS.map(function(v){return '<button type="button" class="vtab" data-k="v" data-val="'+v[0]+'" aria-pressed="'+(S.v===v[0])+'"><b>'+v[1]+'</b><small>'+v[2]+'</small></button>';}).join('');
+  document.getElementById('stagebar').innerHTML='<div class="seg" role="group" aria-label="Dispositivo">'+[['m','Móvil'],['d','Escritorio']].map(function(o){return '<button type="button" data-k="dev" data-val="'+o[0]+'" aria-pressed="'+(S.dev===o[0])+'">'+o[1]+'</button>';}).join('')+'</div><span>Toca el teléfono para avanzar · '+esc(STAY.prop)+', 2 huéspedes, 3 noches</span>';
+}
+
+/* ---------- notas ---------- */
+var WHY={
+ '1':{t:'V1 · Directo',for:'Deals simples y de impulso: early/late check-in, parking, cestas.',l:['Todo en una pantalla: la mejor opción libre viene preseleccionada, así el primer toque ya es «Pagar».','El total real (con huéspedes y noches) está siempre en la barra fija, sin sorpresas en el pago.','La ganancia se dice en horas («+4h»), no en características: se compra el resultado.','Apple Pay en la hoja de pago: 2 toques desde que se abre el deal.'],r:'Con muchas opciones (por huésped y noche + días) la pantalla se alarga; ahí rinde mejor V3.'},
+ '2':{t:'V2 · Escaparate',for:'Deals de ticket alto o experiencias: traslados, cestas, servicios del anfitrión.',l:['Foto a sangre con el título encima: el deal se percibe como producto, no como formulario.','Comparativa estándar vs. con el extra y «qué incluye» resuelven la duda antes de elegir.','La voz del anfitrión da confianza y razón concreta para comprar.','«Otros huéspedes añaden» sube el ticket con el resto de ofertas del mismo anfitrión.'],r:'Un toque más que V1 (abre hoja de opciones). Mide si la imagen compensa el paso extra.'},
+ '3':{t:'V3 · Guiado',for:'Deals con varias decisiones o con aprobación del anfitrión.',l:['Una decisión por pantalla y barra de progreso: menos carga, menos abandono en configuraciones largas.','Paso de revisión con desglose (€ × huéspedes × noches) antes de pedir la tarjeta.','Deja claro qué pasa con el dinero si el anfitrión no confirma, que es la mayor objeción en deals con aprobación.'],r:'Para un early check-in de 25 € es demasiado proceso: úsala solo si la configuración lo pide.'}
+};
+var FLOWS={auto:[['detail','Ve el deal'],['options','Elige opciones'],['checkout','Paga'],['done','Confirmado al momento']],approval:[['detail','Ve el deal'],['options','Elige opciones'],['checkout','Envía solicitud'],['done','Pendiente del anfitrión'],['approved','Aprobado',1],['rejected','Rechazado → reembolso o liberar retención',1]]};
+function renderNotes(){var w=WHY[S.v],f=FLOWS[S.confirm].slice();
+  if(S.v==='1')f=f.filter(function(x){return x[0]!=='options';});
+  if(S.unit==='free')f=f.filter(function(x){return x[0]!=='checkout';});
+  var extra=S.unit==='free'?[]:[['failed','Pago rechazado → reintentar',1]];
+  var out=f.map(function(x,i){return '<button type="button" class="fn'+(x[2]?' alt':'')+'" data-k="scene" data-val="'+x[0]+'" aria-pressed="'+(S.scene===x[0])+'"><i>'+(x[2]?'↳':i+1)+'</i>'+x[1]+'</button>';}).join('');
+  out+=extra.map(function(x){return '<button type="button" class="fn alt" data-k="scene" data-val="'+x[0]+'" aria-pressed="'+(S.scene===x[0])+'"><i>↳</i>'+x[1]+'</button>';}).join('');
+  document.getElementById('notes').innerHTML=
+   '<div class="panel"><h3>'+w.t+'</h3><p class="sub">'+w.for+'</p><ul>'+w.l.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul><dl class="kv"><dt>Riesgo</dt><dd>'+w.r+'</dd></dl></div>'
+  +'<div class="panel"><h3>Flujo con esta configuración</h3><p class="sub">'+(S.confirm==='approval'?'Con aprobación del anfitrión':'Confirmación automática')+(S.unit==='free'?' · gratis, sin pago':'')+'. Toca un paso para verlo.</p><div class="flow">'+out+'</div>'
+  +'<p class="ftitle">Estados que bloquean la compra</p><div class="flow">'+[['soldout','Agotado → enseña otras ofertas'],['deadline','Fuera de plazo → explica hasta cuándo'],['bought','Ya comprado → resumen y recibo']].map(function(x){return '<button type="button" class="fn" data-k="status" data-val="'+x[0]+'" aria-pressed="'+(S.status===x[0])+'"><i>!</i>'+x[1]+'</button>';}).join('')+'</div></div>'
+  +'<div class="panel"><h3>Qué permite Chekin hoy</h3><p class="sub">Lo que la vista asume de la configuración del deal.</p><table class="facts"><tbody>'
+  +[['Plantilla (early, late, transfer…) o personalizada','ok'],['Imagen propia o de la librería de Chekin','ok'],['Proveedor del servicio (nombre, email, teléfono)','ok'],['Disponibilidad por hora, duración o cantidad','ok'],['Propiedades donde se ofrece','ok'],['Ofertas que requieren aprobación del anfitrión','ok'],['Tipos de precio (por huésped, por noche…)','val'],['Retener vs. cobrar y reembolsar al aprobar','val'],['Plazo límite antes de la llegada','val'],['Prueba social con ventas reales','new']].map(function(r){return '<tr><td>'+r[0]+'</td><td><span class="tag '+r[1]+'">'+(r[1]==='ok'?'confirmado':r[1]==='val'?'a validar':'no existe')+'</span></td></tr>';}).join('')
+  +'</tbody></table><p class="src">Fuente: <a href="https://support.chekin.com/en/what-is-upselling-introductory-guide-chekin-help-center" target="_blank" rel="noopener">Chekin Help Center · Upselling</a>. La comisión del 10 % de Chekin no se muestra al huésped.</p></div>';
+}
+
+/* ---------- ajuste de coherencia ---------- */
+function normalize(){var sc=scenes().filter(function(s){return s[0]===S.scene;})[0];if(!sc||sc[2])S.scene='detail';
+  if(S.status==='low'&&S.avail!=='stock')S.avail='stock';}
+function renderAll(){normalize();renderTop();renderCtl();renderNotes();var fr=document.getElementById('frame');fr.className='frame '+S.dev;renderScreen();fit();}
+function fit(){var f=document.getElementById('fit'),s=document.getElementById('scaler'),fr=document.getElementById('frame');s.style.transform='';
+  var w=fr.offsetWidth,h=fr.offsetHeight,av=f.clientWidth,k=Math.min(1,av/w);s.style.transform='scale('+k+')';f.style.height=Math.ceil(h*k)+'px';}
+window.addEventListener('resize',fit);
+
+/* ---------- eventos ---------- */
+var typeDefaults=function(k){var t=TYPES[k];S.unit=t.unit;S.avail=t.avail;};
+document.addEventListener('click',function(e){var el=e.target.closest('[data-k],[data-go],[data-act],[data-slot],[data-day],[data-st],[data-type],[data-alt]');if(!el)return;
+  if(el.dataset.k){var k=el.dataset.k,v=el.dataset.val;S[k]=v;
+    if(k==='type'){typeDefaults(v);resetSel();S.scene='detail';if(S.status==='bought')S.status='ok';}
+    if(k==='avail'||k==='unit'){resetSel();if(k==='avail'&&v!=='stock'&&S.status==='low')S.status='ok';}
+    if(k==='status'&&['soldout','deadline','bought'].indexOf(v)>=0)S.scene='detail';
+    if(k==='scene'&&blocked())S.status='ok';
+    renderAll();return;}
+  if(el.dataset.type){S.type=el.dataset.type;typeDefaults(S.type);resetSel();S.scene='detail';S.status='ok';renderAll();var sc=scr.querySelector('.scroll');if(sc)sc.scrollTop=0;return;}
+  if(el.dataset.alt){sel.slot=el.dataset.alt;S.scene='checkout';renderAll();return;}
+  if(el.dataset.slot){sel.slot=el.dataset.slot;keep(renderScreen);return;}
+  if(el.dataset.day){var i=+el.dataset.day;if(nightsOn()){var p=sel.nights.indexOf(i);if(p>=0)sel.nights.splice(p,1);else sel.nights.push(i);sel.nights.sort();}else sel.day=i;keep(renderScreen);return;}
+  if(el.dataset.st){var key=el.dataset.st;sel[key]+= +el.dataset.d;keep(renderScreen);return;}
+  if(el.dataset.go){S.scene=el.dataset.go;renderAll();return;}
+  if(el.dataset.act){var a=el.dataset.act;
+    if(!selReady()){var b=scr.querySelector('.selblock');if(b){b.classList.remove('need');void b.offsetWidth;b.classList.add('need');b.scrollIntoView({block:'center',behavior:'smooth'});}return;}
+    if(a==='checkout'){S.scene='checkout';}
+    else if(a==='options'){S.scene='options';}
+    else if(a==='finish'){S.scene='done';}
+    else if(a==='pay'){if(S.scene==='paying')return;S.scene='paying';keep(renderScreen);renderCtl();renderNotes();setTimeout(function(){S.scene='done';renderAll();},1100);return;}
+    renderAll();}
+});
+document.addEventListener('change',function(e){var c=e.target.closest('[data-chk]');if(!c)return;S[c.dataset.chk]=c.checked;renderAll();});
+function keep(fn){var sc=scr.querySelectorAll('.scroll,.sh-b'),pos=[].map.call(sc,function(x){return x.scrollTop;});fn();[].forEach.call(scr.querySelectorAll('.scroll,.sh-b'),function(x,i){if(pos[i]!=null)x.scrollTop=pos[i];});}
+
+resetSel();renderAll();
+})();
+</script>

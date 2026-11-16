@@ -241,3 +241,4 @@ html[data-pend="4"] .chk-vn4 .chk-list>div:has(>[data-state="pending"]):not(.chk
 html[data-pend="4"] .chk-vn4 .chk-list>div:has(>[data-state="pending"]):not(.chk-list>div:has(>[data-state="pending"]) ~ div) .flex-col::before{content:"Next step";display:block;margin-bottom:2px;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--pd-blue)}
 html[data-pend="4"] .chk-vn4 .chk-list>div:has(>[data-state="pending"]):not(.chk-list>div:has(>[data-state="pending"]) ~ div) .chk-cta{background:var(--pd-blue)!important;border-color:var(--pd-blue)!important;color:#fff!important}
 html[data-pend="4"] .chk-vn4 .chk-list>div:has(>[data-state="pending"]) ~ div [data-state="pending"] .chk-cta{background:var(--pd-tint)!important;border-color:transparent!important;color:var(--pd-blue)!important}
+.chk-list .chk-cta{justify-content:center}

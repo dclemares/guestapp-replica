@@ -141,3 +141,152 @@ html body .bk-bar{clip-path:none!important}
 
 /* idem para el otro botón flotante (own-sc) */
 html:has([role="dialog"]) .own-sc,html:has([role="alertdialog"]) .own-sc,html:has(.lv-ov) .own-sc,html:has(.ivs-ov) .own-sc,html:has(.ck-modal) .own-sc,html:has(.rep-sh-back) .own-sc,html:has(.rg-sheet) .own-sc,html:has(.t2-sheet) .own-sc,html:has([data-slot="drawer-overlay"]) .own-sc,html:has([data-slot="dialog-overlay"]) .own-sc,html:has([data-slot="sheet-overlay"]) .own-sc{display:none!important}
+
+/* ===== Ofertas V4 · como la lista de Extras (upselling v3): cajita early/late, 3 deals en tarjetas y «See all» ===== */
+.own-o4{display:flex;flex-direction:column;gap:10px}
+.o4-x{padding:14px;border-radius:20px;background:#eef1ff}
+.o4-xh b{display:block;font:700 15px/20px Poppins,system-ui,sans-serif;color:#161643;letter-spacing:-.01em}
+.o4-xh b em{font-style:normal;color:#1f9d6b}
+.o4-xh small{display:block;margin-top:2px;font-size:12.5px;line-height:18px;color:#5b5f8f}
+.o4-xl{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.o4-xr{display:flex;align-items:center;gap:10px;width:100%;padding:8px 8px 8px 12px;border:0;border-radius:14px;background:#fff;text-align:left;font:inherit;color:#161643;cursor:pointer}
+.o4-xt{flex:1;min-width:0;display:flex;align-items:baseline;gap:8px}
+.o4-xt small{flex:none;font-size:12px;font-weight:600;color:#385bf8}
+.o4-xt b{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.o4-pill{flex:none;display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 4px 0 12px;border-radius:999px;background:#161643;color:#fff;font-size:13px;font-weight:700;white-space:nowrap}
+.o4-pill i{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#fff;color:#161643}
+.o4-l{display:flex;flex-direction:column;gap:10px}
+.o4-r{display:flex;align-items:center;gap:12px;padding:10px 12px 10px 10px;border-radius:20px;background:#fff;cursor:pointer}
+.o4-r img{flex:none;width:84px;height:84px;border-radius:14px;object-fit:cover;background:#23235d}
+.o4-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.o4-t b{font:700 15px/18.75px Poppins,system-ui,sans-serif;color:#161643}
+.o4-t small{font-size:12.5px;line-height:16.9px;color:#6b6b95}
+.o4-p{margin-top:4px;font-size:12px;color:#6b6b95}
+.o4-p strong{font-size:15px;font-weight:700;color:#161643}
+.o4-go{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:#e8ecff;color:#161643}
+.o4-all{align-self:center;width:auto;height:40px;margin-top:0;border-top:0}
+
+/* ===== Partners con la V4: como «From our partners» de la lista de Extras ===== */
+.own-p4{margin:0 0 24px}
+.p4-card{padding:6px 14px 12px;border-radius:22px;background:#fff}
+.p4-r{display:flex;align-items:center;gap:12px;width:100%;padding:12px 0;border:0;background:none;font:inherit;color:#161643;text-align:left;cursor:pointer}
+.p4-r+.p4-r{box-shadow:0 -1px 0 #eef0f7}
+.p4-ic{flex:none;display:grid;place-items:center;width:44px;height:44px;border-radius:14px;background:#161643;color:#fff}
+.p4-ic.i-walk{background:#ffc233;color:#161643}.p4-ic.i-wifi{background:linear-gradient(135deg,#ff5a6e,#8b3dff)}
+.p4-t{flex:1;min-width:0;display:flex;flex-direction:column}
+.p4-t b{font-size:15px;font-weight:700;line-height:20px}
+.p4-t small{font-size:12.5px;line-height:1.35;color:#6b6b95;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.p4-r em{flex:none;padding:3px 8px;border-radius:8px;background:#eef1ff;color:#385bf8;font-style:normal;font-size:12px;font-weight:700}
+.p4-r em.fr{background:#ffc233;color:#4a3200}
+.p4-go{flex:none;color:#8a8db0;display:grid}
+.p4-n{display:flex;align-items:center;gap:6px;margin:4px 0 0;padding-top:10px;box-shadow:0 -1px 0 #eef0f7;font-size:11.5px;color:#6b6b95}
+.p4-n svg{flex:none}
+
+/* cajita early/late de la home · versión final (2026-11-16, antes «V2.1»): fondo del azul claro de las cajas de iconos, filas blancas algo más altas y redondeadas */
+.o4-x{background:var(--rep-icbox-bg,#e8edff);padding:16px}
+.o4-xl{gap:8px}
+.o4-xr{padding:11px 10px 11px 14px;border-radius:16px}
+
+/* ===== Home móvil · espaciado unificado (2026-11-16). Escala: 16 entre las tarjetas de la reserva · 32 entre secciones · 12 del título al contenido y entre tarjetas de una sección · 24 antes de una subsección · 32 al final.
+   El contenedor de la home separa sus bloques con un gap de 20 px; los márgenes de aquí se calculan sobre él. */
+@media (max-width:1023.98px){
+  .chk-wrap{margin-top:-4px!important}                                   /* reserva → «2 steps to unlock your keys»: 16 */
+  .gb-sec{margin-top:12px!important;margin-bottom:0!important}           /* «2 steps» → Guidebooks: 32 */
+  .gb-sec .sec-h{margin-top:0!important;margin-bottom:12px!important}    /* título → lista: 12 */
+  section.mob-offers{margin-top:12px!important}                          /* Guidebooks → Offers for your stay: 32 */
+  .rv-actual .vela-heading{margin-bottom:10px!important}                 /* título → «Offered by your host»: 12 */
+  .rv-actual .vela-sec{margin-top:2px!important;margin-bottom:12px!important}   /* etiqueta → contenido: 12 */
+  .own-o4{gap:12px!important}                                            /* cajita, deals y «See all»: 12 */
+  .o4-l{gap:12px!important}
+  .o4-all{height:24px!important}                                         /* «See all» sin alto de botón: no abre un hueco de más */
+  .rv-actual .own-ov{margin-bottom:0!important}
+  .rv-actual .vela-sec:not(:first-child){margin-top:24px!important}      /* «See all» → «From our partners»: 24 */
+  .own-p4{margin-bottom:0!important}
+  .p4-card{padding-left:16px!important;padding-right:16px!important}     /* mismo relleno lateral que el resto de tarjetas */
+  section.mob-offers{margin-bottom:-12px!important}                     /* final de página: 32 (el contenedor ya suma 24 + 20) */
+}
+
+/* ===== Home escritorio · panel derecho (2026-11-16): «Offered by your host» queda como estaba; «From our partners» pasa a la tarjeta con iconos (la de móvil), sin carrusel, para que el panel no tenga scroll ===== */
+@media (min-width:1024px){
+  .rv-actual .vela-sec:not(:first-child){margin-top:24px!important;margin-bottom:12px!important}   /* antes de «From our partners»: 24 · etiqueta → tarjeta: 12 */
+  .own-p4{margin-bottom:0!important}
+  .p4-card{padding-left:16px!important;padding-right:16px!important}
+  /* si se elige la V4 en el panel de controles: cajita early/late con el día encima del nombre para que no se corte */
+  .o4-xr{padding:9px 8px 9px 12px}
+  .o4-xt{flex-direction:column;align-items:flex-start;gap:0}
+  .o4-xt small{font-size:11.5px;line-height:15px}
+  .o4-xt b{font-size:13.5px;line-height:18px}
+  .o4-r img{width:68px;height:68px;border-radius:12px}
+}
+@media (min-width:1024px) and (max-height:760px){ .p4-r{padding:9px 0} }   /* pantallas bajas: el panel derecho sigue sin scroll */
+
+/* ===== «From our partners» · escritorio · 5 versiones (html: .own-p4.pvN; Controls › «From our partners (escritorio)»). Sin delineados; todas caben sin scroll ===== */
+.fp{display:flex;flex-direction:column;gap:10px}
+.fp button{border:0;font:inherit;text-align:left;cursor:pointer}
+.fp em{flex:none;padding:2px 7px;border-radius:7px;background:#eef1ff;color:#385bf8;font-style:normal;font-size:11.5px;font-weight:700;line-height:16px}
+.fp em.fr{background:#ffc233;color:#4a3200}
+.fp-n{display:flex;align-items:center;gap:6px;margin:0;font-size:11px;line-height:15px;color:#7a7da3}
+.fp-n svg{flex:none}
+/* V1 · tres tiles en fila, cada uno con su color */
+.fp1-g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.fp1-t{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-width:0;padding:12px 10px;border-radius:16px;background:#f2f4fb;color:#161643}
+.fp1-t b{font-size:12.5px;line-height:16px;font-weight:700}
+.fp1-ic{display:grid;place-items:center;width:36px;height:36px;border-radius:12px;background:#161643;color:#fff}
+.fp1-t.i-walk .fp1-ic{background:#ffc233;color:#161643}.fp1-t.i-wifi .fp1-ic{background:linear-gradient(135deg,#ff5a6e,#8b3dff)}
+.fp1-t em.lk{background:none;padding:0;color:#385bf8}
+/* V2 · dos fotos lado a lado + barra eSIM */
+.fp2-g{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fp2-ph{position:relative;display:flex;align-items:flex-end;height:138px;padding:10px;border-radius:16px;background:#23235d center/cover no-repeat;color:#fff;overflow:hidden}
+.fp2-ph::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,15,50,0) 30%,rgba(15,15,50,.85))}
+.fp2-ph span{position:relative;display:flex;flex-direction:column;gap:2px}
+.fp2-ph small{font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;opacity:.85}
+.fp2-ph b{font-size:12.5px;line-height:16px;font-weight:700}
+.fp2-ph em{position:absolute;top:8px;right:8px}
+.fp2-bar{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border-radius:16px;background:linear-gradient(120deg,#ff5a6e,#8b3dff);color:#fff}
+.fp2-ic{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:rgba(255,255,255,.2)}
+.fp2-bt{flex:1;min-width:0;display:flex;flex-direction:column}
+.fp2-bt b{font-size:14px;line-height:18px}.fp2-bt small{font-size:11.5px;opacity:.9}
+.fp2-bar em{background:#fff;color:#6b2bd6}
+/* V3 · una destacada con foto + dos enlaces */
+.fp3-hero{position:relative;display:flex;flex-direction:column;justify-content:flex-end;gap:6px;width:100%;height:150px;padding:14px;border-radius:18px;background:#23235d center/cover no-repeat;color:#fff;overflow:hidden;isolation:isolate}
+.fp3-hero::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(15,15,50,.1),rgba(15,15,50,.88))}
+.fp3-k{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.fp3-hero b{font:700 16px/20px Poppins,system-ui,sans-serif}
+.fp3-cta{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;padding:6px 12px;border-radius:999px;background:#fff;color:#161643;font-size:12.5px;font-weight:700}
+.fp3-l{display:flex;flex-direction:column;gap:6px}
+.fp3-r{display:flex;align-items:center;gap:10px;width:100%;padding:9px 10px;border-radius:14px;background:#f2f4fb;color:#161643}
+.fp3-r b{flex:1;font-size:13.5px;font-weight:700}
+.fp3-ic{flex:none;display:grid;place-items:center;width:30px;height:30px;border-radius:10px;background:#161643;color:#fff}
+.fp3-ic.i-walk{background:#ffc233;color:#161643}.fp3-ic.i-wifi{background:linear-gradient(135deg,#ff5a6e,#8b3dff)}
+.fp3-go{flex:none;color:#8a8db0;display:grid}
+/* V4 · filas de color a todo el ancho */
+.fp4-l{display:flex;flex-direction:column;gap:8px}
+.fp4-r{display:flex;align-items:center;gap:10px;width:100%;padding:11px 12px;border-radius:16px;color:#fff;background:#161643}
+.fp4-r.i-walk{background:#ffc233;color:#161643}.fp4-r.i-wifi{background:linear-gradient(120deg,#ff5a6e,#8b3dff)}
+.fp4-ic{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:rgba(255,255,255,.18)}
+.fp4-r.i-walk .fp4-ic{background:rgba(22,22,67,.1)}
+.fp4-t{flex:1;min-width:0;display:flex;flex-direction:column}
+.fp4-t b{font-size:14px;line-height:18px}.fp4-t small{font-size:11.5px;line-height:15px;opacity:.85}
+.fp4-r em{background:rgba(255,255,255,.22);color:inherit}.fp4-r.i-walk em.fr{background:#161643;color:#ffc233}
+.fp4-go{flex:none;display:grid;opacity:.8}
+/* V5 · lista compacta, sin tarjeta, sobre el fondo del panel */
+.fp5-l{display:flex;flex-direction:column}
+.fp5-r{display:flex;align-items:center;gap:10px;width:100%;padding:8px 2px;background:none;color:#161643}
+.fp5-r+.fp5-r{box-shadow:0 -1px 0 #f0f1f7}
+.fp5-ic{flex:none;display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:#161643;color:#fff}
+.fp5-ic.i-walk{background:#ffc233;color:#161643}.fp5-ic.i-wifi{background:linear-gradient(135deg,#ff5a6e,#8b3dff)}
+.fp5-t{flex:1;min-width:0;display:flex;flex-direction:column}
+.fp5-t b{font-size:13.5px;line-height:18px}.fp5-t small{font-size:11.5px;line-height:15px;color:#6b6b95}
+/* el texto sobre fotos y colores va en blanco (otras reglas del panel lo oscurecían) */
+.own-p4.fp .fp2-ph,.own-p4.fp .fp2-bar,.own-p4.fp .fp3-hero,.own-p4.fp .fp4-r{color:#fff}
+.own-p4.fp .fp4-r.i-walk{color:#161643}
+.fp5-go{flex:none;display:grid;color:#8a8db0}   /* V5: icono de redirect a la derecha de cada partner */
+.o1-go{flex:none;display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#e8ecff;color:#161643}   /* V1: flechita en lugar del «+» (la fila entera abre el deal) */
+
+/* ===== Escritorio · el panel derecho (Vela / compra) mide lo mismo en todas las pantallas y no se anima al cambiar de página (2026-11-16).
+   Mismo ancho que replica.js (clamp 400–480 px), pero aquí en el CSS de la cabecera: ya está en su sitio en el primer pintado y la transición de la columna no arranca. Plegar el panel sigue animando. ===== */
+@media (min-width:1025px){
+  html:not([data-vela="min"]) .page-wrapper:has(> div > aside[data-slot="assistant-panel"]){grid-template-columns:266px minmax(0,1fr) clamp(400px,22vw,480px)!important}
+  html:not([data-vela="min"]) [class*="lg:grid-cols-[minmax(0,1fr)_324px]"]{grid-template-columns:minmax(0,1fr) clamp(400px,22vw,480px)!important}
+}
+@media (min-width:1024px){ html{scrollbar-width:none} html::-webkit-scrollbar{display:none} }   /* sin barra de scroll de la página: no desplaza el panel 15 px entre pantallas */
