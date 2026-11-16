@@ -1034,7 +1034,7 @@ document.addEventListener('click', function(e){
   if (el.hasAttribute('data-tip')) { var tb = el.parentNode.querySelector('.ux-tipb'), op = el.getAttribute('aria-expanded') !== 'true'; el.setAttribute('aria-expanded', String(op)); if (tb) tb.hidden = !op; return; }
   if (el.getAttribute('data-st') === 'cq') { var nq = sel.q + +a('data-dl'); if (nq < 1) { st.cart = st.cart.filter(function(x){ return x.id !== K; }); sel.q = 1; toast(esc(o.t) + ' removed from your cart'); } else { sel.q = Math.min(qMax(), nq); addLine(K, JSON.parse(JSON.stringify(sel))); } save(); render(true); return; }
   if (el.hasAttribute('data-st')) { sel.q = Math.max(1, sel.q + +a('data-dl')); render(true); reOpts(); return; }
-  if (el.hasAttribute('data-slot')) { sel.slot = a('data-slot'); render(true); reOpts(); return; }
+  if (el.hasAttribute('data-slot')) { var sv = a('data-slot'); if (!o || !slotted(o) || sortedSlots(o).map(function(x){ return x[0]; }).indexOf(sv) < 0) return; sel.slot = sv; render(true); reOpts(); return; }   /* solo horas del deal: la app también usa data-slot (p. ej. el panel «assistant-panel») y un clic en cualquier sitio lo cogía como hora */
   if (el.hasAttribute('data-dayx')) { var di = +a('data-dayx'), ix = sel.days.indexOf(di); if (ix > -1) sel.days.splice(ix, 1); else sel.days.push(di); sel.days.sort(); render(true); reOpts(); return; }
   if (el.hasAttribute('data-dd')) { sel.d = +a('data-dd'); render(true); reOpts(); return; }
   if (el.hasAttribute('data-time')) { sel.time = a('data-time'); render(true); reOpts(); return; }
