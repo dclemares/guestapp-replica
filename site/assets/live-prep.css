@@ -23,9 +23,10 @@
 .lp1-tips svg{color:#385bf8;flex:none}
 
 /* V2 · los 4 movimientos */
-.lp2-g{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0;padding:0;list-style:none}
+.lp2-g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0;padding:0;list-style:none}
 .lp2-g li{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 10px 14px;border-radius:16px;background:#eef1ff}
-.lp2-g b{font-size:13.5px;line-height:18px;color:#232044;font-weight:600}
+.lp2-g b{font-size:13.5px;line-height:18px;color:#232044;font-weight:600;text-align:center}
+.lp2-g small{margin-top:-3px;font-size:11.5px;line-height:15px;color:#6c6a8a;text-align:center}
 .lp2-n{position:absolute;top:10px;left:12px;width:22px;height:22px;border-radius:50%;background:#385bf8;color:#fff;font-size:12px;font-weight:700;display:grid;place-items:center}
 .lp-face{width:64px;height:64px}
 .lp2-pre{padding:14px 16px;border-radius:16px;background:#f4f5fa}
@@ -95,6 +96,7 @@
 .lvc-pf img{position:absolute;left:-30%;top:-2%;width:160%;max-width:none;opacity:.9;transition:transform .9s cubic-bezier(.4,0,.2,1)}
 .lvc-pip[data-p="l"] img{transform:perspective(200px) rotateY(-26deg) translateX(-8%);animation:lvcL 1.6s ease-in-out infinite}
 .lvc-pip[data-p="r"] img{transform:perspective(200px) rotateY(26deg) translateX(8%);animation:lvcR 1.6s ease-in-out infinite}
+.lvc-pip[data-p="u"] img{transform:perspective(200px) rotateX(22deg) translateY(-6%)}
 .lvc-pip[data-p="z"] img{animation:lvcZ 1.6s ease-in-out infinite}
 @keyframes lvcL{0%,100%{transform:none}45%,70%{transform:perspective(200px) rotateY(-26deg) translateX(-8%)}}
 @keyframes lvcR{0%,100%{transform:none}45%,70%{transform:perspective(200px) rotateY(26deg) translateX(8%)}}
@@ -172,7 +174,8 @@ body:has(.lv-full) header{display:none!important}
 .lvg-glow{position:absolute;left:50%;top:50%;z-index:3;width:var(--ow,200px);height:var(--oh,260px);transform:translate(-50%,-50%);border-radius:50%;pointer-events:none;opacity:0;transition:opacity .35s ease,box-shadow .35s ease}
 .lvv-g .lv-run[data-lv="l"] .lvg-glow{opacity:1;box-shadow:inset 26px 0 26px -14px rgba(92,124,255,.9),-10px 0 26px -6px rgba(92,124,255,.8)}
 .lvv-g .lv-run[data-lv="r"] .lvg-glow{opacity:1;box-shadow:inset -26px 0 26px -14px rgba(92,124,255,.9),10px 0 26px -6px rgba(92,124,255,.8)}
-.lvv-g .lv-run[data-lv="c"] .lvg-glow{opacity:1;box-shadow:inset 0 0 22px rgba(92,124,255,.55)}
+.lvv-g .lv-run[data-lv="u"] .lvg-glow{opacity:1;box-shadow:inset 0 26px 26px -14px rgba(92,124,255,.9),0 -10px 26px -6px rgba(92,124,255,.8)}
+.lvv-g .lv-run[data-lv="b"] .lvg-glow,.lvv-g .lv-run[data-lv="c"] .lvg-glow{opacity:1;box-shadow:inset 0 0 22px rgba(92,124,255,.55)}
 .lvv-g .lv-run[data-lv="z"] .lvg-glow{opacity:1;box-shadow:0 0 0 2px rgba(92,124,255,.9);animation:lvgZ 1.2s ease-in-out infinite}
 @keyframes lvgZ{50%{transform:translate(-50%,-50%) scale(1.09);box-shadow:0 0 0 2px rgba(92,124,255,.25)}}
 .lvv-g .iv-vf.selfie.lv-run .iv-oval{border-color:rgba(255,255,255,.45)}
@@ -223,7 +226,7 @@ body:has(.lv-full) header{display:none!important}
   .lp-v2 .iv-main{flex:none;overflow:visible}
   .lp-v2 .iv-sub{margin-bottom:24px}
   .lp2{display:flex;flex-direction:column;gap:16px}
-  .lp2-g{grid-template-columns:repeat(4,1fr);gap:12px}
+  .lp2-g{grid-template-columns:repeat(3,1fr);gap:12px}
   .lp2-g li{gap:14px;padding:34px 12px 24px;border-radius:16px}
   .lp2-g b{font-size:14px;line-height:20px}
   .lp2-n{top:12px;left:12px}
